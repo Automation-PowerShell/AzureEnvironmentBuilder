@@ -7,8 +7,9 @@
         #$Group = Get-AzADGroup -searchstring $rbacContributor
         #Add-AzADGroupMember -TargetGroupObjectId $Group.Id -MemberObjectId $NewVm.Id
 
-        Get-AzContext -Name "StorageSP" | Select-AzContext
-        #New-AzRoleAssignment -ObjectId $NewVm.Id -RoleDefinitionName "Contributor" -Scope "/subscriptions/$SubscriptionId/resourceGroups/$RGNameUAT/providers/Microsoft.Storage/storageAccounts/$StorAcc"
+        if ($RequireServicePrincipal) {
+            Get-AzContext -Name "StorageSP" | Select-AzContext | Out-Null
+        }
         New-AzRoleAssignment -ObjectId $NewVm.Id -RoleDefinitionName "Contributor" -Scope "/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroupName/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" -Verbose -ErrorAction SilentlyContinue
         Get-AzContext -Name "User" | Select-AzContext
 

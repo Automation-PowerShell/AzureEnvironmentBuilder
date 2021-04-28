@@ -1,8 +1,8 @@
 cd $PSScriptRoot
 
     # Main Control
-$RequireCreate = $true
-$RequireConfigure = $true
+$RequireCreate = $false
+$RequireConfigure = $false
 $UseTerraform = $false
 $RequireUpdateStorage = $true
 $RequireServicePrincipal = $false

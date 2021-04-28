@@ -6,8 +6,9 @@
         $NewVm = Get-AzADServicePrincipal -DisplayName $VMName
         #$Group = Get-AzADGroup -searchstring $rbacContributor
         #Add-AzADGroupMember -TargetGroupObjectId $Group.Id -MemberObjectId $NewVm.Id -Verbose
-        
-        Get-AzContext -Name "StorageSP" | Select-AzContext | Out-Null
+        if ($RequireServicePrincipal) {
+            Get-AzContext -Name "StorageSP" | Select-AzContext | Out-Null
+        }
         New-AzRoleAssignment -ObjectId $NewVm.Id -RoleDefinitionName "Contributor" -Scope "/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroupName/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" -Verbose -ErrorAction SilentlyContinue
         Get-AzContext -Name "User" | Select-AzContext | Out-Null
 
@@ -58,7 +59,9 @@ function ConfigureAdminStudioVM($VMName) {
         #$Group = Get-AzADGroup -searchstring $rbacContributor
         #Add-AzADGroupMember -TargetGroupObjectId $Group.Id -MemberObjectId $NewVm.Id
 
-        Get-AzContext -Name "StorageSP" | Select-AzContext | Out-Null
+        if ($RequireServicePrincipal) {
+            Get-AzContext -Name "StorageSP" | Select-AzContext | Out-Null
+        }
         New-AzRoleAssignment -ObjectId $NewVm.Id -RoleDefinitionName "Contributor" -Scope "/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroupName/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" -Verbose -ErrorAction SilentlyContinue
         Get-AzContext -Name "User" | Select-AzContext | Out-Null
         
@@ -108,7 +111,9 @@ function ConfigureJumpboxVM($VMName) {
         #$Group = Get-AzADGroup -searchstring $rbacContributor
         #Add-AzADGroupMember -TargetGroupObjectId $Group.Id -MemberObjectId $NewVm.Id
 
-        Get-AzContext -Name "StorageSP" | Select-AzContext | Out-Null
+        if ($RequireServicePrincipal) {
+            Get-AzContext -Name "StorageSP" | Select-AzContext | Out-Null
+        }
         New-AzRoleAssignment -ObjectId $NewVm.Id -RoleDefinitionName "Contributor" -Scope "/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroupName/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" -Verbose -ErrorAction SilentlyContinue
         Get-AzContext -Name "User" | Select-AzContext | Out-Null
         

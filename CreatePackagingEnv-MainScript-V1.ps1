@@ -65,7 +65,10 @@ function UpdateStorage {
             $IntuneWinUtilityContent = (Get-Content -Path "$ContainerScripts\IntuneWinUtilityTmpl.ps1").replace("xxxx", $StorAcc)
             $IntuneWinUtilityContent = $IntuneWinUtilityContent.replace("ssss", $azSubscription)
             $IntuneWinUtilityContent.replace("rrrr", $RGNameUAT) | Set-Content -Path "$ContainerScripts\IntuneWinUtility.ps1"
-
+            $JumpboxContent = (Get-Content -Path "$ContainerScripts\JumpboxTmpl.ps1").replace("xxxx", $StorAcc)
+            $JumpboxContent = $JumpboxContent.replace("ssss", $azSubscription)
+            $JumpboxContent.replace("rrrr", $RGNameUAT) | Set-Content -Path "$ContainerScripts\Jumpbox.ps1"
+            
             $MapFileContent = (Get-Content -Path "$ContainerScripts\MapDrvTmpl.ps1").replace("xxxx", $StorAcc)
             $MapFileContent.replace("yyyy", $Key.value[0]) | Set-Content -Path "$ContainerScripts\MapDrv.ps1"      
             
