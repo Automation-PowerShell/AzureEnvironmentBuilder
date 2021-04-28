@@ -25,13 +25,13 @@ Connect-AzAccount -identity -ErrorAction Stop -Subscription ssss
 # Copy files to machine
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Atempting to download HyperVLocalAdmin.xml from Azure storage account to C:\Windows\Temp"
 $StorAcc = Get-AzStorageAccount -ResourceGroupName rrrr -Name xxxx
-$passwordFile = Get-AzStorageBlobContent -Container data -Blob "./DomainJoin.xml" -Destination "c:\Windows\temp\" -Context $StorAcc.context
+$passwordFile = Get-AzStorageBlobContent -Container data -Blob "./HyperVLocalAdmin.xml" -Destination "c:\Windows\temp\" -Context $StorAcc.context
 $keyFile = Get-AzStorageBlobContent -Container data -Blob "./my.key" -Destination "c:\Windows\temp\" -Context $StorAcc.context
 $myKey = Get-Content "c:\Windows\Temp\my.key"
 
 # Create Local User Account
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Information -Message "Adding Standard User - eucuser"
-$user = Get-LocalUser -Name eucuser 
+$user = Get-LocalUser -Name eucuser -ErrorAction SilentlyContinue
 $password = Import-Clixml c:\Windows\temp\HyperVLocalAdmin.xml | ConvertTo-SecureString -Key $myKey
 if(!($user)) {
     $newuser = New-LocalUser -Name eucuser -AccountNeverExpires -Password $password -PasswordNeverExpires -UserMayNotChangePassword

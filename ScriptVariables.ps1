@@ -1,8 +1,8 @@
 cd $PSScriptRoot
 
     # Main Control
-$RequireCreate = $false
-$RequireConfigure = $false
+$RequireCreate = $true
+$RequireConfigure = $true
 $UseTerraform = $false
 $RequireUpdateStorage = $true
 $RequireServicePrincipal = $false
@@ -15,8 +15,8 @@ $RequireStorageAccount = $false
 $RequireVNET = $false
 $RequireNSG = $false
 $RequirePublicIPs = $true
-$RequireHyperV = $false
-$RequireStandardVMs = $true
+$RequireHyperV = $true
+$RequireStandardVMs = $false
 $RequireAdminStudioVMs = $false
 $RequireJumpboxVMs = $false
 
@@ -60,13 +60,13 @@ $FileShareName = "pkgazfiles01"                             # Storage FileShare 
 $ContainerScripts = "C:\Users\d.ames\OneDrive - Avanade\Documents\GitHub\PackagingEnvironmentBuilder\PackagingFactoryConfig-main" # All files in this path will be copied up to the Storage Account Container, so available to be run on the remote VMs (includes template script for packaging share mapping
 
     # Windows 10 VM Count, Name, Spec, and Settings
-$NumberofStandardVMs = 1                                    # Specify number of Standard VMs to be provisioned
+$NumberofStandardVMs = 0                                    # Specify number of Standard VMs to be provisioned
 $NumberofAdminStudioVMs = 0                                 # Specify number of AdminStudio VMs to be provisioned
 $NumberofJumpboxVMs = 0                                     # Specify number of Jumpbox VMs to be provisioned
 $VMNamePrefixStandard = "vmwleusvan"                        # Specifies the first part of the Standard VM name (usually alphabetic) (15 chars max)
 $VMNamePrefixAdminStudio = "vmwleusas"                      # Specifies the first part of the Admin Studio VM name (usually alphabetic) (15 chars max)
 $VMNamePrefixJumpbox = "vmwleusjb"                          # Specifies the first part of the Jumpbox VM name (usually alphabetic) (15 chars max)
-$VMNumberStartStandard = 103                                # Specifies the second part of the Standard VM name (usually numeric)
+$VMNumberStartStandard = 101                                # Specifies the second part of the Standard VM name (usually numeric)
 $VMNumberStartAdminStudio = 201                             # Specifies the second part of the Admin Studio VM name (usually numeric)
 $VMNumberStartJumpbox = 301                                 # Specifies the second part of the Jumpbox VM name (usually numeric)
 $VMSizeStandard = "Standard_B2s"                            # Specifies Azure Size to use for the Standard VM
@@ -96,3 +96,5 @@ $dataDiskSize = 128
     # Domain Variables
 $Domain = "wella.team"
 $OUPath = "OU=Packaging,OU=Servers,DC=wella,DC=team"
+#$Domain = "space"
+#$OUPath = "OU=Workstations,OU=Computers,OU=Space,DC=space,DC=dan"

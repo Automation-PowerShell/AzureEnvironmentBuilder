@@ -1,7 +1,7 @@
 ﻿#region Setup
 cd $PSScriptRoot
-. .\ClientVariables-Dan.ps1
 . .\ScriptVariables.ps1
+. .\ClientVariables-Dan.ps1
 
 Import-Module Az.Compute, Az.Accounts, Az.Storage, Az.Network, Az.Resources -ErrorAction SilentlyContinue
 if (!((Get-Module Az.Compute) -and (Get-Module Az.Accounts) -and (Get-Module Az.Storage) -and (Get-Module Az.Network) -and (Get-Module Az.Resources))) {
@@ -68,7 +68,13 @@ function UpdateStorage {
             $JumpboxContent = (Get-Content -Path "$ContainerScripts\JumpboxTmpl.ps1").replace("xxxx", $StorAcc)
             $JumpboxContent = $JumpboxContent.replace("ssss", $azSubscription)
             $JumpboxContent.replace("rrrr", $RGNameUAT) | Set-Content -Path "$ContainerScripts\Jumpbox.ps1"
-            
+            $BuildVMContent = (Get-Content -Path "$ContainerScripts\Build-VMTmpl.ps1").replace("xxxx", $StorAcc)
+            $BuildVMContent = $BuildVMContent.replace("ssss", $azSubscription)
+            $BuildVMContent = $BuildVMContent.replace("yyyyy",  $Key.value[0])
+            $BuildVMContent = $BuildVMContent.replace("dddd", $Domain)
+            $BuildVMContent = $BuildVMContent.replace("oooo", $OUPath)
+            $BuildVMContent.replace("rrrr", $RGNameUAT) | Set-Content -Path "$ContainerScripts\Build-VM.ps1"
+
             $MapFileContent = (Get-Content -Path "$ContainerScripts\MapDrvTmpl.ps1").replace("xxxx", $StorAcc)
             $MapFileContent.replace("yyyy", $Key.value[0]) | Set-Content -Path "$ContainerScripts\MapDrv.ps1"      
             

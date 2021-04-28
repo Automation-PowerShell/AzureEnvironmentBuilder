@@ -21,7 +21,7 @@
         Update-AzVM -VM $VMCreate -ResourceGroupName $RGNamePROD
 
         Restart-AzVm -ResourceGroupName $RGNamePROD -Name $VMName
-        RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/data/Prevision.ps1" "Prevision.ps1"
+        #RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/data/Prevision.ps1" "Prevision.ps1"
         RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/data/ConfigureDataDisk.ps1" "ConfigureDataDisk.ps1"
         RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/data/EnableHyperV.ps1" "EnableHyperV.ps1"
         Restart-AzVM -ResourceGroupName $RGNamePROD -Name $VMName | Out-Null    
