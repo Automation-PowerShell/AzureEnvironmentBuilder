@@ -19,7 +19,11 @@ module " + [char]34 + $VMName + [char]34 + " {
 function CreateHyperVVM-Script($VMName) {
     $Vnet = Get-AzVirtualNetwork -Name $VNetPROD -ResourceGroupName $RGNameVNET 
     $Subnet = Get-AzVirtualNetworkSubnetConfig -Name $SubnetName -VirtualNetwork $vnet
-    $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $RGNamePROD -Location $Location -SubnetId $Subnet.Id
+    if ($RequirePublicIPs) {
+        $PIP = New-AzPublicIpAddress -Name "$VMName-pip" -ResourceGroupName $ResourceGroupName -Location $Location -AllocationMethod Dynamic -Sku Basic -Tier Regional -IpAddressVersion IPv4
+        $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $ResourceGroupName -Location $Location -SubnetId $Subnet.Id -PublicIpAddressId $PIP.Id
+    }
+    else { $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $ResourceGroupName -Location $Location -SubnetId $Subnet.Id }
     $VirtualMachine = New-AzVMConfig -VMName $VMName -VMSize $VmSizeHyperV -IdentityType SystemAssigned -Tags $tags
     $VirtualMachine = Set-AzVMOperatingSystem -VM $VirtualMachine -Windows -ComputerName $VMName -Credential $VMCred #-ProvisionVMAgent -EnableAutoUpdate
     $VirtualMachine = Add-AzVMNetworkInterface -VM $VirtualMachine -Id $NIC.Id

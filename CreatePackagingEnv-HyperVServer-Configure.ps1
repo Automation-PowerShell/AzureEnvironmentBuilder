@@ -11,7 +11,7 @@
             Get-AzContext -Name "StorageSP" | Select-AzContext | Out-Null
         }
         New-AzRoleAssignment -ObjectId $NewVm.Id -RoleDefinitionName "Contributor" -Scope "/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroupName/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" -Verbose -ErrorAction SilentlyContinue
-        Get-AzContext -Name "User" | Select-AzContext
+        Get-AzContext -Name "User" | Select-AzContext | Out-Null
 
             # Add Data disk to Hyper-V server
         $dataDiskName = $VMName + '_datadisk1'
@@ -30,9 +30,9 @@
         RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/data/RunOnce.ps1" "RunOnce.ps1"
         #RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/data/DomainJoin.ps1" "DomainJoin.ps1"
         #Restart-AzVM -ResourceGroupName $RGNamePROD -Name $VMName | Out-Null    
-        Write-Host "Restarting VM..."
-        Start-Sleep -Seconds 120
-        #RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/data/Build-VM.ps1" "Build-VM.ps1"
+        #Write-Host "Restarting VM..."
+        #Start-Sleep -Seconds 120
+        RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/data/Build-VM.ps1" "Build-VM.ps1"
     }
     Else {
         Write-Host "*** Unable to configure Virtual Machine $VMName! ***"
