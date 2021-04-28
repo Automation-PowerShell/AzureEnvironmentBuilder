@@ -307,6 +307,8 @@ function UpdateStorage {
             $VMConfigContent.replace("rrrr", $RGNameUAT) | Set-Content -Path "$ContainerScripts\VMConfig.ps1"
             $DomainJoinContent = (Get-Content -Path "$ContainerScripts\DomainJoinTmpl.ps1").replace("xxxx", $StorAcc)
             $DomainJoinContent = $DomainJoinContent.replace("ssss", $azSubscription)
+            $DomainJoinContent = $DomainJoinContent.replace("dddd", $Domain)
+            $DomainJoinContent = $DomainJoinContent.replace("oooo", $OUPath)
             $DomainJoinContent.replace("rrrr", $RGNameUAT) | Set-Content -Path "$ContainerScripts\DomainJoin.ps1"
             $RunOnceContent = (Get-Content -Path "$ContainerScripts\RunOnceTmpl.ps1").replace("xxxx", $StorAcc)
             $RunOnceContent = $RunOnceContent.replace("ssss", $azSubscription)
