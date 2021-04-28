@@ -92,3 +92,7 @@ $VmSizeHyperV = "Standard_D2s_v4"                           # Specifies Azure Si
 $dataDiskTier = "S10"
 $dataDiskSKU = "Standard_LRS"
 $dataDiskSize = 128
+
+    # Domain Variables
+$Domain = "wella.team"
+$OUPath = "OU=Packaging,OU=Servers,DC=wella,DC=team"
