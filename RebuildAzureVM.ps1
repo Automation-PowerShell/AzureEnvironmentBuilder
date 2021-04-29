@@ -6,7 +6,7 @@ Param(
 #region Setup
 cd $PSScriptRoot
 . .\ScriptVariables.ps1
-. .\ClientVariables-Dan.ps1
+. .\ClientVariables-Wella.ps1
 
 Import-Module Az.Compute,Az.Accounts,Az.Storage,Az.Network,Az.Resources -ErrorAction SilentlyContinue
 if(!((Get-Module Az.Compute) -and (Get-Module Az.Accounts) -and (Get-Module Az.Storage) -and (Get-Module Az.Network) -and (Get-Module Az.Resources))) {
@@ -32,9 +32,13 @@ Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"  # Turns off 
 #endregion Setup
 
 function CreateStandardVM-Script($VMName) {
-    $Vnet = Get-AzVirtualNetwork -Name $VNet -ResourceGroupName "rg-wl-prod-vnet"
+    $Vnet = Get-AzVirtualNetwork -Name $VNetPROD -ResourceGroupName $RGNameVNET
     $Subnet = Get-AzVirtualNetworkSubnetConfig -Name $SubnetName -VirtualNetwork $vnet
-    $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $ResourceGroupName -Location $Location -SubnetId $Subnet.Id
+    if ($RequirePublicIPs) {
+        $PIP = New-AzPublicIpAddress -Name "$VMName-pip" -ResourceGroupName $ResourceGroupName -Location $Location -AllocationMethod Dynamic -Sku Basic -Tier Regional -IpAddressVersion IPv4
+        $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $ResourceGroupName -Location $Location -SubnetId $Subnet.Id -PublicIpAddressId $PIP.Id
+    }
+    else { $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $ResourceGroupName -Location $Location -SubnetId $Subnet.Id }
     $VirtualMachine = New-AzVMConfig -VMName $VMName -VMSize $VMSizeStandard -IdentityType SystemAssigned -Tags $tags
     $VirtualMachine = Set-AzVMOperatingSystem -VM $VirtualMachine -Windows -ComputerName $VMName -Credential $VMCred #-ProvisionVMAgent -EnableAutoUpdate
     $VirtualMachine = Add-AzVMNetworkInterface -VM $VirtualMachine -Id $NIC.Id
@@ -45,9 +49,13 @@ function CreateStandardVM-Script($VMName) {
 }
 
 function CreateAdminStudioVM-Script($VMName) {
-    $Vnet = Get-AzVirtualNetwork -Name $VNet -ResourceGroupName "rg-wl-prod-vnet"
+    $Vnet = Get-AzVirtualNetwork -Name $VNetPROD -ResourceGroupName $RGNameVNET
     $Subnet = Get-AzVirtualNetworkSubnetConfig -Name $SubnetName -VirtualNetwork $vnet
-    $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $ResourceGroupName -Location $Location -SubnetId $Subnet.Id
+    if ($RequirePublicIPs) {
+        $PIP = New-AzPublicIpAddress -Name "$VMName-pip" -ResourceGroupName $ResourceGroupName -Location $Location -AllocationMethod Dynamic -Sku Basic -Tier Regional -IpAddressVersion IPv4
+        $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $ResourceGroupName -Location $Location -SubnetId $Subnet.Id -PublicIpAddressId $PIP.Id
+    }
+    else { $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $ResourceGroupName -Location $Location -SubnetId $Subnet.Id }
     $VirtualMachine = New-AzVMConfig -VMName $VMName -VMSize $VMSizeAdminStudio -IdentityType SystemAssigned -Tags $tags
     $VirtualMachine = Set-AzVMOperatingSystem -VM $VirtualMachine -Windows -ComputerName $VMName -Credential $VMCred #-ProvisionVMAgent -EnableAutoUpdate
     $VirtualMachine = Add-AzVMNetworkInterface -VM $VirtualMachine -Id $NIC.Id
@@ -58,9 +66,13 @@ function CreateAdminStudioVM-Script($VMName) {
 }
 
 function CreateJumpboxVM-Script($VMName) {
-    $Vnet = Get-AzVirtualNetwork -Name $VNet -ResourceGroupName "rg-wl-prod-vnet"
+    $Vnet = Get-AzVirtualNetwork -Name $VNetPROD -ResourceGroupName $RGNameVNET
     $Subnet = Get-AzVirtualNetworkSubnetConfig -Name $SubnetName -VirtualNetwork $vnet
-    $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $ResourceGroupName -Location $Location -SubnetId $Subnet.Id
+    if ($RequirePublicIPs) {
+        $PIP = New-AzPublicIpAddress -Name "$VMName-pip" -ResourceGroupName $ResourceGroupName -Location $Location -AllocationMethod Dynamic -Sku Basic -Tier Regional -IpAddressVersion IPv4
+        $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $ResourceGroupName -Location $Location -SubnetId $Subnet.Id -PublicIpAddressId $PIP.Id
+    }
+    else { $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $ResourceGroupName -Location $Location -SubnetId $Subnet.Id }
     $VirtualMachine = New-AzVMConfig -VMName $VMName -VMSize $VMSizeJumpbox -IdentityType SystemAssigned -Tags $tags
     $VirtualMachine = Set-AzVMOperatingSystem -VM $VirtualMachine -Windows -ComputerName $VMName -Credential $VMCred #-ProvisionVMAgent -EnableAutoUpdate
     $VirtualMachine = Add-AzVMNetworkInterface -VM $VirtualMachine -Id $NIC.Id
