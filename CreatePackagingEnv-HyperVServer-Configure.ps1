@@ -1,5 +1,5 @@
 ﻿function ConfigureHyperVVM($VMName) {
-    $VMCreate = Get-AzVM -ResourceGroupName $RGNameUAT -Name $VMName
+    $VMCreate = Get-AzVM -ResourceGroupName $RGNamePROD -Name $VMName
     If ($VMCreate.ProvisioningState -eq "Succeeded") {
         Write-Host "Virtual Machine $VMName created successfully"
 
@@ -10,7 +10,7 @@
         if ($RequireServicePrincipal) {
             Get-AzContext -Name "StorageSP" | Select-AzContext | Out-Null
         }
-        New-AzRoleAssignment -ObjectId $NewVm.Id -RoleDefinitionName "Contributor" -Scope "/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroupName/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" -Verbose -ErrorAction SilentlyContinue
+        New-AzRoleAssignment -ObjectId $NewVm.Id -RoleDefinitionName "Contributor" -Scope "/subscriptions/$SubscriptionId/resourceGroups/$RGNameUAT/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" -Verbose -ErrorAction SilentlyContinue
         Get-AzContext -Name "User" | Select-AzContext | Out-Null
 
             # Add Data disk to Hyper-V server
@@ -21,18 +21,18 @@
         Update-AzVM -VM $VMCreate -ResourceGroupName $RGNamePROD
 
         Restart-AzVm -ResourceGroupName $RGNamePROD -Name $VMName
-        #RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/data/Prevision.ps1" "Prevision.ps1"
-        RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/data/ConfigureDataDisk.ps1" "ConfigureDataDisk.ps1"
-        RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/data/EnableHyperV.ps1" "EnableHyperV.ps1"
+        #RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/Prevision.ps1" "Prevision.ps1"
+        RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/ConfigureDataDisk.ps1" "ConfigureDataDisk.ps1"
+        RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/EnableHyperV.ps1" "EnableHyperV.ps1"
         Restart-AzVM -ResourceGroupName $RGNamePROD -Name $VMName | Out-Null    
         Write-Host "Restarting VM..."
         Start-Sleep -Seconds 120
-        RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/data/RunOnce.ps1" "RunOnce.ps1"
-        #RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/data/DomainJoin.ps1" "DomainJoin.ps1"
+        RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/RunOnce.ps1" "RunOnce.ps1"
+        #RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/DomainJoin.ps1" "DomainJoin.ps1"
         #Restart-AzVM -ResourceGroupName $RGNamePROD -Name $VMName | Out-Null    
         #Write-Host "Restarting VM..."
         #Start-Sleep -Seconds 120
-        RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/data/Build-VM.ps1" "Build-VM.ps1"
+        RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/Build-VM.ps1" "Build-VM.ps1"
     }
     Else {
         Write-Host "*** Unable to configure Virtual Machine $VMName! ***"

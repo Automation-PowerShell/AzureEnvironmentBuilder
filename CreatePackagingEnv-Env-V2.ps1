@@ -1,10 +1,10 @@
 ﻿function ConfigureNetwork {
     if ($RequireVNET -and !$UseTerraform) {
         $virtualNetworkPROD = New-AzVirtualNetwork -ResourceGroupName $RGNamePROD -Location $Location -Name $VNetPROD -AddressPrefix 10.0.0.0/16
-        $subnetConfigPROD = Add-AzVirtualNetworkSubnetConfig -Name default -AddressPrefix 10.0.0.0/24 -VirtualNetwork $virtualNetworkPROD
+        $subnetConfigPROD = Add-AzVirtualNetworkSubnetConfig -Name $SubnetNamePROD -AddressPrefix 10.0.0.0/24 -VirtualNetwork $virtualNetworkPROD
         if (!($RGNameUAT -match $RGNamePROD)) {
             $virtualNetworkUAT = New-AzVirtualNetwork -ResourceGroupName $RGNameUAT -Location $Location -Name $VNetUAT -AddressPrefix 10.0.0.0/16
-            $subnetConfigUAT = Add-AzVirtualNetworkSubnetConfig -Name default -AddressPrefix 10.0.0.0/24 -VirtualNetwork $virtualNetworkUAT
+            $subnetConfigUAT = Add-AzVirtualNetworkSubnetConfig -Name $SubnetNameUAT -AddressPrefix 10.0.0.0/24 -VirtualNetwork $virtualNetworkUAT
         }
 
         $rule1 = New-AzNetworkSecurityRuleConfig -Name rdp-rule -Description "Allow RDP" -Access Allow -Protocol Tcp -Direction Inbound -Priority 100 -SourceAddressPrefix * -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange 3389

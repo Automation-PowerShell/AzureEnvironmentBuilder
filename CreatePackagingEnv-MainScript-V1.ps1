@@ -121,6 +121,14 @@ if($RequireCreate) {
             $RG = New-AzResourceGroup -Name $RGNameUAT -Location $Location
             if ($RG.ResourceGroupName -eq $RGNameUAT) { Write-Host "UAT Resource Group created successfully" }Else { Write-Host "*** Unable to create UAT Resource Group! ***" }
         }
+        if (!($RGNameUATVNET -match $RGNameUAT)) {
+            $RG = New-AzResourceGroup -Name $RGNameUATVNET -Location $Location
+            if ($RG.ResourceGroupName -eq $RGNameUATVNET) { Write-Host "UAT VNET Resource Group created successfully" }Else { Write-Host "*** Unable to create UAT VNET Resource Group! ***" }
+        }
+        if (!($RGNamePRODVNET -match $RGNamePROD)) {
+            $RG = New-AzResourceGroup -Name $RGNamePRODVNET -Location $Location
+            if ($RG.ResourceGroupName -eq $RGNamePRODVNET) { Write-Host "PROD VNET Resource Group created successfully" }Else { Write-Host "*** Unable to create PROD VNET Resource Group! ***" }
+        }
     }
     if ($UseTerraform) {
         $TerraformMainTemplate = Get-Content -Path ".\Terraform\Root Template\main.tf" | Set-Content -Path ".\Terraform\main.tf"    
