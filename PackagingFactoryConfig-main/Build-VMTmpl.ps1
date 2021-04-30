@@ -20,8 +20,8 @@ $VMNetNATHost = "192.168.0.1"
 $VMNetNATPrefixLength = 24
 $VMHostIP = (Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias "Ethernet").IPAddress
 
-$Domain = "dddd"
-$OUPath = "oooo"
+$Domain = "ddddd"
+$OUPath = "ooooo"
 
 $IPAddress = ""
 $IPSubnetPrefix = "24"
@@ -170,8 +170,8 @@ function Create-VM {
 
             # Map Packaging Share
         $source = $source = "X:\EUC Applications\Packaging Environment Build Files\Prevision"
-        cmd.exe /C cmdkey /add:`"xxxx.file.core.windows.net`" /user:`"Azure\xxxx`" /pass:`"yyyyy`"
-        New-PSDrive -Name X -PSProvider FileSystem -Root "\\xxxx.file.core.windows.net\pkgazfiles01" -Persist
+        cmd.exe /C cmdkey /add:`"xxxxx.file.core.windows.net`" /user:`"Azure\xxxxx`" /pass:`"yyyyy`"
+        New-PSDrive -Name X -PSProvider FileSystem -Root "\\xxxxx.file.core.windows.net\pkgazfiles01" -Persist
         Copy-Item -Path $source\MapDrv.ps1 -Destination "C:\Users\Public\Desktop" -Force
         New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name "MapPackagingDrive" -Value "Powershell.exe -ExecutionPolicy Unrestricted -file `"C:\Users\Public\Desktop\MapDrv.ps1`"" -PropertyType "String"
 
@@ -211,11 +211,11 @@ Install-PackageProvider -Name NuGet -Force -ErrorAction Stop
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Loading Az.Storage module"
 Install-Module -Name Az.Storage -Force -ErrorAction Stop
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Attempting to connect to Azure"    
-Connect-AzAccount -Identity -ErrorAction Stop -Subscription ssss
+Connect-AzAccount -Identity -ErrorAction Stop -Subscription sssss
 
 # Copy files to machine
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Atempting to download DomainJoin.xml from Azure storage account to C:\Windows\Temp"
-$StorAcc = Get-AzStorageAccount -ResourceGroupName rrrr -Name xxxx
+$StorAcc = Get-AzStorageAccount -ResourceGroupName rrrrr -Name xxxxx
 $passwordFile1 = Get-AzStorageBlobContent -Container data -Blob "./HyperVLocalAdmin.xml" -Destination "c:\Windows\temp\" -Context $StorAcc.context
 $passwordFile2 = Get-AzStorageBlobContent -Container data -Blob "./DomainJoin.xml" -Destination "c:\Windows\temp\" -Context $StorAcc.context
 $passwordFile3 = Get-AzStorageBlobContent -Container data -Blob "./DomainUser.xml" -Destination "c:\Windows\temp\" -Context $StorAcc.context

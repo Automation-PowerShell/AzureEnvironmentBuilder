@@ -20,7 +20,7 @@ Install-PackageProvider -Name NuGet -Force -ErrorAction Stop
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Information -Message "Loading Az.Storage module"
 Install-Module -Name Az.Storage -Force -ErrorAction Stop
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Information -Message "Attempting to connect to Azure"    
-Connect-AzAccount -identity -ErrorAction Stop -Subscription ssss
+Connect-AzAccount -identity -ErrorAction Stop -Subscription sssss
 
 # Install Active Directory Tools
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Information -Message "Add Active Directory Tools Capability"

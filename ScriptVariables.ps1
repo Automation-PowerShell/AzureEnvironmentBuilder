@@ -45,7 +45,7 @@ $rbacContributor = "euc-rbac-contributor"
 $rbacReadOnly = "euc-rbac-readonly"
 
     # Storage Account and Container Names
-$StorAcc = "storageeucpackaging01"                          # Storage account name (if used) (24 chars maximum)
+$StorageAccountName = "storageeucpackaging01"                          # Storage account name (if used) (24 chars maximum)
 $ContainerName = "data"                                     # Storage container name (if used) (do not change from 'data')
 $FileShareName = "pkgazfiles01"                                # Storage FileShare name (if used) (do not change from 'pkgazfiles01')
 $ContainerScripts = "C:\Users\d.ames\OneDrive - Avanade\Documents\GitHub\PackagingEnvironmentBuilder\PackagingFactoryConfig-main" # All files in this path will be copied up to the Storage Account Container, so available to be run on the remote VMs (includes template script for packaging share mapping

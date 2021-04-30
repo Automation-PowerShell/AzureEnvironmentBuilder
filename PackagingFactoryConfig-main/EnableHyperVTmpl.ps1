@@ -20,7 +20,7 @@ Install-PackageProvider -Name NuGet -Force -ErrorAction Stop
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Information -Message "Loading Az.Storage module"
 Install-Module -Name Az.Storage -Force -ErrorAction Stop
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Information -Message "Attempting to connect to Azure"    
-Connect-AzAccount -identity -ErrorAction Stop -Subscription ssss
+Connect-AzAccount -identity -ErrorAction Stop -Subscription sssss
 
 # Install Hyper-V
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Information -Message "Enable Hyper-V"
@@ -37,7 +37,7 @@ Install-WindowsFeature -Name RSAT-AD-Tools -IncludeAllSubFeature
 mkdir -Path "F:\" -Name "Hyper-V" -Force
 mkdir -Path "F:\Hyper-V" -Name "Virtual Hard Disks" -Force
 
-$StorAcc = Get-AzStorageAccount -ResourceGroupName rrrr -Name xxxx
+$StorAcc = Get-AzStorageAccount -ResourceGroupName rrrrr -Name xxxxx
 $Result1 = Get-AzStorageBlobContent -Container data -Blob "hyperv-vms.csv" -Destination "c:\Windows\temp\" -Context $StorAcc.context -Force
 If ($Result1.Name -eq "hyperv-vms.csv") {
     Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Successfully downloaded hyperv-vms.csv"

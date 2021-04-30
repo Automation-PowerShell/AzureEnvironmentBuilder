@@ -20,11 +20,11 @@ Install-PackageProvider -Name NuGet -Force -ErrorAction Stop
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Information -Message "Loading Az.Storage module"
 Install-Module -Name Az.Storage -Force -ErrorAction Stop
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Information -Message "Attempting to connect to Azure"    
-Connect-AzAccount -identity -ErrorAction Stop -Subscription ssss
+Connect-AzAccount -identity -ErrorAction Stop -Subscription sssss
 
 # Copy files to machine
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Atempting to download HyperVLocalAdmin.xml from Azure storage account to C:\Windows\Temp"
-$StorAcc = Get-AzStorageAccount -ResourceGroupName rrrr -Name xxxx
+$StorAcc = Get-AzStorageAccount -ResourceGroupName rrrrr -Name xxxxx
 $passwordFile = Get-AzStorageBlobContent -Container data -Blob "./HyperVLocalAdmin.xml" -Destination "c:\Windows\temp\" -Context $StorAcc.context
 $keyFile = Get-AzStorageBlobContent -Container data -Blob "./my.key" -Destination "c:\Windows\temp\" -Context $StorAcc.context
 $myKey = Get-Content "c:\Windows\Temp\my.key"
