@@ -39,6 +39,7 @@ function UpdateStorage {
                 $content = $content.replace("ddddd", $Domain)
                 $content = $content.replace("ooooo", $OUPath)
                 $content = $content.replace("rrrrr", $RGNameUAT)
+                $content = $content.replace("fffff", $FileShareName)
                 $contentName = $template.Basename -replace "Tmpl"
                 $contentName = $contentName + ".ps1"
                 $content | Set-Content -Path "$ContainerScripts\$contentName"

@@ -31,3 +31,4 @@ PackagingFactoryConfig-main/MapDrv.ps1
 PackagingFactoryConfig-main/ORCA.ps1
 PackagingFactoryConfig-main/RunOnce.ps1
 PackagingFactoryConfig-main/VMConfig.ps1
+PackagingFactoryConfig-main/Prevision.ps1
