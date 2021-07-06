@@ -8,17 +8,17 @@ $RequireUpdateStorage = $true
 $RequireServicePrincipal = $false
 
     # Required Components
-$RequireUserGroups = $false
+$RequireUserGroups = $true
 $RequireRBAC = $false
-$RequireResourceGroups = $false
-$RequireStorageAccount = $false
-$RequireVNET = $false
-$RequireNSG = $false
+$RequireResourceGroups = $true
+$RequireStorageAccount = $true
+$RequireVNET = $true
+$RequireNSG = $true
 $RequirePublicIPs = $true
-$RequireHyperV = $false
 $RequireStandardVMs = $true
 $RequireAdminStudioVMs = $false
 $RequireJumpboxVMs = $false
+$RequireHyperV = $false
 
     # Azure Tags
 $tags = @{
@@ -26,7 +26,7 @@ $tags = @{
     "Envrionment"         = "Production"
 }
 
-    # General Config
+    # General Config Variables
 $location = "uksouth"                                       # Azure Region for resources to be built into
 $RGNameUAT = "rg-euc-packaging-uat"                         # UAT Resource group name
 $RGNamePROD = "rg-euc-packaging-prod"                       # PROD Resource group name
@@ -45,15 +45,15 @@ $rbacContributor = "euc-rbac-contributor"
 $rbacReadOnly = "euc-rbac-readonly"
 
     # Storage Account and Container Names
-$StorageAccountName = "storageeucpackaging01"                          # Storage account name (if used) (24 chars maximum)
-$ContainerName = "data"                                     # Storage container name (if used) (do not change from 'data')
-$FileShareName = "pkgazfiles01"                                # Storage FileShare name (if used) (do not change from 'pkgazfiles01')
-$ContainerScripts = "C:\Users\d.ames\OneDrive - Avanade\Documents\GitHub\PackagingEnvironmentBuilder\PackagingFactoryConfig-main" # All files in this path will be copied up to the Storage Account Container, so available to be run on the remote VMs (includes template script for packaging share mapping
+$StorageAccountName = "storageeucpackaging01"                       # Storage account name (if used) (24 chars maximum)
+$ContainerName = "data"                                             # Storage container name (if used) (do not change from 'data')
+$FileShareName = "pkgazfiles01"                                     # Storage FileShare name (if used) (do not change from 'pkgazfiles01')
+$ContainerScripts = "$PSScriptRoot\PackagingFactoryConfig-main"     # All files in this path will be copied up to the Storage Account Container, so available to be run on the remote VMs (includes template script for packaging share mapping
 
     # Windows 10 VM Count, Name, Spec, and Settings
 $NumberofStandardVMs = 1                                    # Specify number of Standard VMs to be provisioned
-$NumberofAdminStudioVMs = 0                                 # Specify number of AdminStudio VMs to be provisioned
-$NumberofJumpboxVMs = 0                                     # Specify number of Jumpbox VMs to be provisioned
+$NumberofAdminStudioVMs = 1                                 # Specify number of AdminStudio VMs to be provisioned
+$NumberofJumpboxVMs = 1                                     # Specify number of Jumpbox VMs to be provisioned
 $VMNamePrefixStandard = "vm-euc-van-"                       # Specifies the first part of the Standard VM name (usually alphabetic) (15 chars max)
 $VMNamePrefixAdminStudio = "vm-euc-as-"                     # Specifies the first part of the Admin Studio VM name (usually alphabetic) (15 chars max)
 $VMNamePrefixJumpbox = "vm-euc-jb-"                         # Specifies the first part of the Jumpbox VM name (usually alphabetic) (15 chars max)
@@ -80,6 +80,3 @@ $dataDiskTier = "S10"
 $dataDiskSKU = "Standard_LRS"
 $dataDiskSize = 128
 
-    # Domain Variables
-$Domain = ""
-$OUPath = ""

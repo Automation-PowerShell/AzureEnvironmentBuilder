@@ -4,22 +4,26 @@
         Write-Host "Virtual Machine $VMName created successfully"
         
         $NewVm = Get-AzADServicePrincipal -DisplayName $VMName
-        #$Group = Get-AzADGroup -searchstring $rbacContributor
-        #Add-AzADGroupMember -TargetGroupObjectId $Group.Id -MemberObjectId $NewVm.Id -Verbose
         if ($RequireServicePrincipal) {
             Get-AzContext -Name "StorageSP" | Select-AzContext | Out-Null
         }
-        New-AzRoleAssignment -ObjectId $NewVm.Id -RoleDefinitionName "Contributor" -Scope "/subscriptions/$SubscriptionId/resourceGroups/$RGNameUAT/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" -Verbose -ErrorAction SilentlyContinue
+        if ($RequireRBAC) {
+            $Group = Get-AzADGroup -searchstring $rbacContributor
+            Add-AzADGroupMember -TargetGroupObjectId $Group.Id -MemberObjectId $NewVm.Id -Verbose
+        }
+        else {
+            New-AzRoleAssignment -ObjectId $NewVm.Id -RoleDefinitionName "Contributor" -Scope "/subscriptions/$SubscriptionId/resourceGroups/$RGNameUAT/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" -Verbose -ErrorAction SilentlyContinue
+        }
         Get-AzContext -Name "User" | Select-AzContext | Out-Null
 
         Restart-AzVM -ResourceGroupName $RGNameUAT -Name $VMName | Out-Null
         Write-Host "Restarting VM..."
         #RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/Prevision.ps1" "Prevision.ps1"
-        RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/VMConfig.ps1" "VMConfig.ps1"
+        #RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/VMConfig.ps1" "VMConfig.ps1"
         RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/RunOnce.ps1" "RunOnce.ps1"
-        #RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/ORCA.ps1" "ORCA.ps1"
-        #RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/7-Zip.ps1" "7-Zip.ps1"
-        #RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/InstEd.ps1" "InstEd.ps1"
+        RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/ORCA.ps1" "ORCA.ps1"
+        RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/7-Zip.ps1" "7-Zip.ps1"
+        RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/InstEd.ps1" "InstEd.ps1"
         #RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/DesktopApps.ps1" "DesktopApps.ps1"
         #RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/GlassWire.ps1" "GlassWire.ps1"
         #RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/IntuneWinUtility.ps1" "IntuneWinUtility.ps1"
@@ -56,13 +60,16 @@ function ConfigureAdminStudioVM($VMName) {
         Write-Host "Virtual Machine $VMName created successfully"
         
         $NewVm = Get-AzADServicePrincipal -DisplayName $VMName
-        #$Group = Get-AzADGroup -searchstring $rbacContributor
-        #Add-AzADGroupMember -TargetGroupObjectId $Group.Id -MemberObjectId $NewVm.Id
-
         if ($RequireServicePrincipal) {
             Get-AzContext -Name "StorageSP" | Select-AzContext | Out-Null
         }
-        New-AzRoleAssignment -ObjectId $NewVm.Id -RoleDefinitionName "Contributor" -Scope "/subscriptions/$SubscriptionId/resourceGroups/$RGNameUAT/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" -Verbose -ErrorAction SilentlyContinue
+        if ($RequireRBAC) {
+            $Group = Get-AzADGroup -searchstring $rbacContributor
+            Add-AzADGroupMember -TargetGroupObjectId $Group.Id -MemberObjectId $NewVm.Id -Verbose
+        }
+        else {
+            New-AzRoleAssignment -ObjectId $NewVm.Id -RoleDefinitionName "Contributor" -Scope "/subscriptions/$SubscriptionId/resourceGroups/$RGNameUAT/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" -Verbose -ErrorAction SilentlyContinue
+        }
         Get-AzContext -Name "User" | Select-AzContext | Out-Null
         
         Restart-AzVM -ResourceGroupName $RGNameUAT -Name $VMName | Out-Null
@@ -108,13 +115,16 @@ function ConfigureJumpboxVM($VMName) {
         Write-Host "Virtual Machine $VMName created successfully"
         
         $NewVm = Get-AzADServicePrincipal -DisplayName $VMName
-        #$Group = Get-AzADGroup -searchstring $rbacContributor
-        #Add-AzADGroupMember -TargetGroupObjectId $Group.Id -MemberObjectId $NewVm.Id
-
         if ($RequireServicePrincipal) {
             Get-AzContext -Name "StorageSP" | Select-AzContext | Out-Null
         }
-        New-AzRoleAssignment -ObjectId $NewVm.Id -RoleDefinitionName "Contributor" -Scope "/subscriptions/$SubscriptionId/resourceGroups/$RGNameUAT/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" -Verbose -ErrorAction SilentlyContinue
+        if ($RequireRBAC) {
+            $Group = Get-AzADGroup -searchstring $rbacContributor
+            Add-AzADGroupMember -TargetGroupObjectId $Group.Id -MemberObjectId $NewVm.Id -Verbose
+        }
+        else {
+            New-AzRoleAssignment -ObjectId $NewVm.Id -RoleDefinitionName "Contributor" -Scope "/subscriptions/$SubscriptionId/resourceGroups/$RGNameUAT/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" -Verbose -ErrorAction SilentlyContinue
+        }
         Get-AzContext -Name "User" | Select-AzContext | Out-Null
         
         Restart-AzVM -ResourceGroupName $RGNameUAT -Name $VMName | Out-Null

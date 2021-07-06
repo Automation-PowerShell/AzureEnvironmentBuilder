@@ -1,22 +1,22 @@
 ﻿function ConfigureNetwork {
     if ($RequireVNET -and !$UseTerraform) {
-        $virtualNetworkPROD = New-AzVirtualNetwork -ResourceGroupName $RGNamePROD -Location $Location -Name $VNetPROD -AddressPrefix 10.0.0.0/16
+        $virtualNetworkPROD = New-AzVirtualNetwork -ResourceGroupName $RGNamePRODVNET -Location $Location -Name $VNetPROD -AddressPrefix 10.0.0.0/16
         $subnetConfigPROD = Add-AzVirtualNetworkSubnetConfig -Name $SubnetNamePROD -AddressPrefix 10.0.0.0/24 -VirtualNetwork $virtualNetworkPROD
-        if (!($RGNameUAT -match $RGNamePROD)) {
-            $virtualNetworkUAT = New-AzVirtualNetwork -ResourceGroupName $RGNameUAT -Location $Location -Name $VNetUAT -AddressPrefix 10.0.0.0/16
+        if (!($RGNameUATVNET -match $RGNamePRODVNET)) {
+            $virtualNetworkUAT = New-AzVirtualNetwork -ResourceGroupName $RGNameUATVNET -Location $Location -Name $VNetUAT -AddressPrefix 10.0.0.0/16
             $subnetConfigUAT = Add-AzVirtualNetworkSubnetConfig -Name $SubnetNameUAT -AddressPrefix 10.0.0.0/24 -VirtualNetwork $virtualNetworkUAT
         }
 
         $rule1 = New-AzNetworkSecurityRuleConfig -Name rdp-rule -Description "Allow RDP" -Access Allow -Protocol Tcp -Direction Inbound -Priority 100 -SourceAddressPrefix * -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange 3389
         $rule2 = New-AzNetworkSecurityRuleConfig -Name smb-rule -Description "Allow SMB" -Access Allow -Protocol Tcp -Direction Outbound -Priority 100 -SourceAddressPrefix * -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange 445
     
-        $nsgPROD = New-AzNetworkSecurityGroup -ResourceGroupName $RGNamePROD -Location $location -Name $NsgNamePROD -SecurityRules $rule1, $rule2     # $Rule1, $Rule2 etc. 
+        $nsgPROD = New-AzNetworkSecurityGroup -ResourceGroupName $RGNamePRODVNET -Location $location -Name $NsgNamePROD -SecurityRules $rule1, $rule2     # $Rule1, $Rule2 etc. 
         if ($nsgPROD.ProvisioningState -eq "Succeeded") {Write-Host "PROD Network Security Group created successfully"}Else{Write-Host "*** Unable to create or configure PROD Network Security Group! ***"}
         $VnscPROD = Set-AzVirtualNetworkSubnetConfig -Name default -VirtualNetwork $virtualNetworkPROD -AddressPrefix "10.0.1.0/24" -NetworkSecurityGroup $nsgPROD
         $virtualNetworkPROD | Set-AzVirtualNetwork >> null
         if ($virtualNetworkPROD.ProvisioningState -eq "Succeeded") {Write-Host "PROD Virtual Network created and associated with the Network Security Group successfully"}Else{Write-Host "*** Unable to create the PROD Virtual Network, or associate it to the Network Security Group! ***"}
-        if (!($RGNameUAT -match $RGNamePROD)) {
-            $nsgUAT = New-AzNetworkSecurityGroup -ResourceGroupName $RGNameUAT -Location $location -Name $NsgNameUAT -SecurityRules $rule1, $rule2     # $Rule1, $Rule2 etc. 
+        if (!($RGNameUATVNET -match $RGNamePRODVNET)) {
+            $nsgUAT = New-AzNetworkSecurityGroup -ResourceGroupName $RGNameUATVNET -Location $location -Name $NsgNameUAT -SecurityRules $rule1, $rule2     # $Rule1, $Rule2 etc. 
             if ($nsgUAT.ProvisioningState -eq "Succeeded") { Write-Host "UAT Network Security Group created successfully" }Else { Write-Host "*** Unable to create or configure UAT Network Security Group! ***" }
             $VnscUAT = Set-AzVirtualNetworkSubnetConfig -Name default -VirtualNetwork $virtualNetworkUAT -AddressPrefix "10.0.1.0/24" -NetworkSecurityGroup $nsgUAT
             $virtualNetworkUAT | Set-AzVirtualNetwork >> null

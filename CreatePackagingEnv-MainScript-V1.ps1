@@ -49,8 +49,8 @@ function UpdateStorage {
             Write-Error "An error occured trying to create the customised scripts for the packaging share."
             Write-Error $_.Exception.Message
         }
-        #. .\SyncFiles.ps1 -CallFromCreatePackaging -Recurse        # Sync Files to Storage Blob
-        . .\SyncFiles.ps1 -CallFromCreatePackaging                  # Sync Files to Storage Blob
+        . .\SyncFiles.ps1 -CallFromCreatePackaging -Recurse        # Sync Files to Storage Blob
+        #. .\SyncFiles.ps1 -CallFromCreatePackaging                  # Sync Files to Storage Blob
         Write-Host "Storage Account has been Updated with files"
     }
 }
@@ -87,11 +87,11 @@ if($RequireCreate) {
             $RG = New-AzResourceGroup -Name $RGNameUAT -Location $Location
             if ($RG.ResourceGroupName -eq $RGNameUAT) { Write-Host "UAT Resource Group created successfully" }Else { Write-Host "*** Unable to create UAT Resource Group! ***" }
         }
-        if (!($RGNameUATVNET -match $RGNameUAT)) {
+        if (!($RGNameUAT -match $RGNameUATVNET)) {
             $RG = New-AzResourceGroup -Name $RGNameUATVNET -Location $Location
             if ($RG.ResourceGroupName -eq $RGNameUATVNET) { Write-Host "UAT VNET Resource Group created successfully" }Else { Write-Host "*** Unable to create UAT VNET Resource Group! ***" }
         }
-        if (!($RGNamePRODVNET -match $RGNamePROD)) {
+        if (!($RGNamePROD -match $RGNamePRODVNET)) {
             $RG = New-AzResourceGroup -Name $RGNamePRODVNET -Location $Location
             if ($RG.ResourceGroupName -eq $RGNamePRODVNET) { Write-Host "PROD VNET Resource Group created successfully" }Else { Write-Host "*** Unable to create PROD VNET Resource Group! ***" }
         }
@@ -129,8 +129,10 @@ if($RequireUpdateStorage) {
 }
 
 if ($RequireConfigure) {
-        # Update RBAC
-    #UpdateRBAC
+    if ($RequireRBAC) {
+            # Update RBAC
+        UpdateRBAC
+    }
 
         # Configure Packaging VM Script
     .\CreatePackagingEnv-PackagingVms-Configure.ps1
