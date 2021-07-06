@@ -76,7 +76,7 @@ function UpdateRBAC {
 
 #region Main
 #=======================================================================================================================================================
-Set-Location $PSScriptRoot
+cd $PSScriptRoot
 
 if($RequireCreate) {
         # Create Resource Groups
