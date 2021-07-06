@@ -1,7 +1,7 @@
 ﻿#region Setup
 cd $PSScriptRoot
 . .\ScriptVariables.ps1
-. .\ClientVariables-Template.ps1
+. .\ClientVariables-Wella.ps1
 
 Import-Module Az.Compute, Az.Accounts, Az.Storage, Az.Network, Az.Resources -ErrorAction SilentlyContinue
 if (!((Get-Module Az.Compute) -and (Get-Module Az.Accounts) -and (Get-Module Az.Storage) -and (Get-Module Az.Network) -and (Get-Module Az.Resources))) {
