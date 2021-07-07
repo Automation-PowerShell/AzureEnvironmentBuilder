@@ -28,15 +28,15 @@ $tags = @{
 
     # General Config Variables
 $location = "uksouth"                                       # Azure Region for resources to be built into
-$RGNameUAT = "rg-euc-packaging-uat"                         # UAT Resource group name
+$RGNameDEV = "rg-euc-packaging-dev"                         # DEV Resource group name
 $RGNamePROD = "rg-euc-packaging-prod"                       # PROD Resource group name
-$RGNameUATVNET = "rg-euc-packaging-uat-vnet"                # UAT VNET Resource group name
+$RGNameDEVVNET = "rg-euc-packaging-dev-vnet"                # DEV VNET Resource group name
 $RGNamePRODVNET = "rg-euc-packaging-prod-vnet"              # PROD VNET Resource group name
-$VNetUAT = "vnet-euc-uat"                                   # UAT Environment Virtual Network name
+$VNetDEV = "vnet-euc-dev"                                   # DEV Environment Virtual Network name
 $VNetPROD = "vnet-euc-prod"                                 # PROD Environment Virtual Network name
-$SubnetNameUAT = "default"                                  # Environment Virtual Subnet name
+$SubnetNameDEV = "default"                                  # Environment Virtual Subnet name
 $SubnetNamePROD = "default"                                 # Environment Virtual Subnet name
-$NsgNameUAT = "nsg-euc-packaging-uat"                       # UAT Network Security Group name (firewall)
+$NsgNameDEV = "nsg-euc-packaging-dev"                       # DEV Network Security Group name (firewall)
 $NsgNamePROD = "nsg-euc-packaging-prod"                     # PROD Network Security Group name (firewall)
 
     # Environment Variables

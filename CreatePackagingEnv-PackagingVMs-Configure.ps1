@@ -1,5 +1,5 @@
 ﻿function ConfigureStandardVM($VMName) {
-    $VMCreate = Get-AzVM -ResourceGroupName $RGNameUAT -Name $VMName
+    $VMCreate = Get-AzVM -ResourceGroupName $RGNameDEV -Name $VMName
     If ($VMCreate.ProvisioningState -eq "Succeeded") {
         Write-Host "Virtual Machine $VMName created successfully"
         
@@ -12,11 +12,11 @@
             Add-AzADGroupMember -TargetGroupObjectId $Group.Id -MemberObjectId $NewVm.Id -Verbose
         }
         else {
-            New-AzRoleAssignment -ObjectId $NewVm.Id -RoleDefinitionName "Contributor" -Scope "/subscriptions/$SubscriptionId/resourceGroups/$RGNameUAT/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" -Verbose -ErrorAction SilentlyContinue
+            New-AzRoleAssignment -ObjectId $NewVm.Id -RoleDefinitionName "Contributor" -Scope "/subscriptions/$SubscriptionId/resourceGroups/$RGNameDEV/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" -Verbose -ErrorAction SilentlyContinue
         }
         Get-AzContext -Name "User" | Select-AzContext | Out-Null
 
-        Restart-AzVM -ResourceGroupName $RGNameUAT -Name $VMName | Out-Null
+        Restart-AzVM -ResourceGroupName $RGNameDEV -Name $VMName | Out-Null
         Write-Host "Restarting VM..."
         #RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/Prevision.ps1" "Prevision.ps1"
         #RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/VMConfig.ps1" "VMConfig.ps1"
@@ -32,7 +32,7 @@
             $VMName = $VMCreate.Name
             $SubscriptionId = (Get-AzContext).Subscription.Id
             $VMResourceId = $VMCreate.Id
-            $ScheduledShutdownResourceId = "/subscriptions/$SubscriptionId/resourceGroups/$RGNameUAT/providers/microsoft.devtestlab/schedules/shutdown-computevm-$VMName"
+            $ScheduledShutdownResourceId = "/subscriptions/$SubscriptionId/resourceGroups/$RGNameDEV/providers/microsoft.devtestlab/schedules/shutdown-computevm-$VMName"
 
             $Properties = @{}
             $Properties.Add('status', 'Enabled')
@@ -45,7 +45,7 @@
             Write-Host "Auto Shutdown Enabled for 1800"
         }
         if ($VMShutdown) {
-            $Stopvm = Stop-AzVM -ResourceGroupName $RGNameUAT -Name $VMName -Force
+            $Stopvm = Stop-AzVM -ResourceGroupName $RGNameDEV -Name $VMName -Force
             if ($Stopvm.Status -eq "Succeeded") { Write-Host "VM $VMName shutdown successfully" }Else { Write-Host "*** Unable to shutdown VM $VMName! ***" }
         }
     }
@@ -55,7 +55,7 @@
 }
 
 function ConfigureAdminStudioVM($VMName) {
-    $VMCreate = Get-AzVM -ResourceGroupName $RGNameUAT -Name $VMName
+    $VMCreate = Get-AzVM -ResourceGroupName $RGNameDEV -Name $VMName
     If ($VMCreate.ProvisioningState -eq "Succeeded") {
         Write-Host "Virtual Machine $VMName created successfully"
         
@@ -68,11 +68,11 @@ function ConfigureAdminStudioVM($VMName) {
             Add-AzADGroupMember -TargetGroupObjectId $Group.Id -MemberObjectId $NewVm.Id -Verbose
         }
         else {
-            New-AzRoleAssignment -ObjectId $NewVm.Id -RoleDefinitionName "Contributor" -Scope "/subscriptions/$SubscriptionId/resourceGroups/$RGNameUAT/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" -Verbose -ErrorAction SilentlyContinue
+            New-AzRoleAssignment -ObjectId $NewVm.Id -RoleDefinitionName "Contributor" -Scope "/subscriptions/$SubscriptionId/resourceGroups/$RGNameDEV/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" -Verbose -ErrorAction SilentlyContinue
         }
         Get-AzContext -Name "User" | Select-AzContext | Out-Null
         
-        Restart-AzVM -ResourceGroupName $RGNameUAT -Name $VMName | Out-Null
+        Restart-AzVM -ResourceGroupName $RGNameDEV -Name $VMName | Out-Null
         Write-Host "Restarting VM..."
         RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/Prevision.ps1" "Prevision.ps1"
         RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/VMConfig.ps1" "VMConfig.ps1"
@@ -87,7 +87,7 @@ function ConfigureAdminStudioVM($VMName) {
             $VMName = $VMCreate.Name
             $SubscriptionId = (Get-AzContext).Subscription.Id
             $VMResourceId = $VMCreate.Id
-            $ScheduledShutdownResourceId = "/subscriptions/$SubscriptionId/resourceGroups/$RGNameUAT/providers/microsoft.devtestlab/schedules/shutdown-computevm-$VMName"
+            $ScheduledShutdownResourceId = "/subscriptions/$SubscriptionId/resourceGroups/$RGNameDEV/providers/microsoft.devtestlab/schedules/shutdown-computevm-$VMName"
 
             $Properties = @{}
             $Properties.Add('status', 'Enabled')
@@ -100,7 +100,7 @@ function ConfigureAdminStudioVM($VMName) {
             Write-Host "Auto Shutdown Enabled for 1800"
         }
         if ($VMShutdown) {
-            $Stopvm = Stop-AzVM -ResourceGroupName $RGNameUAT -Name $VMName -Force
+            $Stopvm = Stop-AzVM -ResourceGroupName $RGNameDEV -Name $VMName -Force
             if ($Stopvm.Status -eq "Succeeded") { Write-Host "VM $VMName shutdown successfully" }Else { Write-Host "*** Unable to shutdown VM $VMName! ***" }
         }
     }
@@ -110,7 +110,7 @@ function ConfigureAdminStudioVM($VMName) {
 }
 
 function ConfigureJumpboxVM($VMName) {
-    $VMCreate = Get-AzVM -ResourceGroupName $RGNameUAT -Name $VMName
+    $VMCreate = Get-AzVM -ResourceGroupName $RGNameDEV -Name $VMName
     If ($VMCreate.ProvisioningState -eq "Succeeded") {
         Write-Host "Virtual Machine $VMName created successfully"
         
@@ -123,11 +123,11 @@ function ConfigureJumpboxVM($VMName) {
             Add-AzADGroupMember -TargetGroupObjectId $Group.Id -MemberObjectId $NewVm.Id -Verbose
         }
         else {
-            New-AzRoleAssignment -ObjectId $NewVm.Id -RoleDefinitionName "Contributor" -Scope "/subscriptions/$SubscriptionId/resourceGroups/$RGNameUAT/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" -Verbose -ErrorAction SilentlyContinue
+            New-AzRoleAssignment -ObjectId $NewVm.Id -RoleDefinitionName "Contributor" -Scope "/subscriptions/$SubscriptionId/resourceGroups/$RGNameDEV/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" -Verbose -ErrorAction SilentlyContinue
         }
         Get-AzContext -Name "User" | Select-AzContext | Out-Null
         
-        Restart-AzVM -ResourceGroupName $RGNameUAT -Name $VMName | Out-Null
+        Restart-AzVM -ResourceGroupName $RGNameDEV -Name $VMName | Out-Null
         Write-Host "Restarting VM..."
         #RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/Prevision.ps1" "Prevision.ps1"
         RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/RunOnce.ps1" "RunOnce.ps1"
@@ -137,7 +137,7 @@ function ConfigureJumpboxVM($VMName) {
             $VMName = $VMCreate.Name
             $SubscriptionId = (Get-AzContext).Subscription.Id
             $VMResourceId = $VMCreate.Id
-            $ScheduledShutdownResourceId = "/subscriptions/$SubscriptionId/resourceGroups/$RGNameUAT/providers/microsoft.devtestlab/schedules/shutdown-computevm-$VMName"
+            $ScheduledShutdownResourceId = "/subscriptions/$SubscriptionId/resourceGroups/$RGNameDEV/providers/microsoft.devtestlab/schedules/shutdown-computevm-$VMName"
 
             $Properties = @{}
             $Properties.Add('status', 'Enabled')
@@ -150,7 +150,7 @@ function ConfigureJumpboxVM($VMName) {
             Write-Host "Auto Shutdown Enabled for 1800"
         }
         if ($VMShutdown) {
-            $Stopvm = Stop-AzVM -ResourceGroupName $RGNameUAT -Name $VMName -Force
+            $Stopvm = Stop-AzVM -ResourceGroupName $RGNameDEV -Name $VMName -Force
             if ($Stopvm.Status -eq "Succeeded") { Write-Host "VM $VMName shutdown successfully" }Else { Write-Host "*** Unable to shutdown VM $VMName! ***" }
         }
     }
@@ -161,7 +161,7 @@ function ConfigureJumpboxVM($VMName) {
 
 function RunVMConfig($VMName, $BlobFilePath, $Blob) {
     $Params = @{
-        ResourceGroupName = $RGNameUAT
+        ResourceGroupName = $RGNameDEV
         VMName = $VMName
         Location = $Location
         FileUri = $BlobFilePath
