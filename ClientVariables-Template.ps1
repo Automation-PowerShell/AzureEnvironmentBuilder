@@ -11,6 +11,32 @@ $OUPath = ""
     # Script Customisations
 $VMListExclude = @()                    # Exclusion list for rebuilding Azure VMs
 
+    # Main Control
+$RequireCreate = $false
+$RequireConfigure = $false
+$UseTerraform = $false
+$RequireUpdateStorage = $false
+$RequireServicePrincipal = $false
+   
+    # Required Components
+$RequireUserGroups = $true
+$RequireRBAC = $true
+$RequireResourceGroups = $true
+$RequireStorageAccount = $true
+$RequireVNET = $true
+$RequireNSG = $true
+$RequirePublicIPs = $true
+$RequireStandardVMs = $true
+$RequireAdminStudioVMs = $true
+$RequireJumpboxVMs = $true
+$RequireHyperV = $true
+    
+    # Azure Tags
+$tags = @{
+    "Application"         = "EUC App Packaging"
+    "Envrionment"         = "Production"
+}
+    
     # Secure Key
 $KeyFile = "./my.key"
 $myKey = Get-Content $KeyFile
