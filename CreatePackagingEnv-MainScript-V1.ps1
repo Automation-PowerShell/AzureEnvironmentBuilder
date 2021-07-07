@@ -29,7 +29,7 @@ Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"  # Turns off 
 function UpdateStorage {
     if ($RequireUpdateStorage) {
         Try {
-            $Key = Get-AzStorageAccountKey -ResourceGroupName $RGNameUAT -AccountName $StorageAccountName
+            $Key = Get-AzStorageAccountKey -ResourceGroupName $RGNameDEV -AccountName $StorageAccountName
             $templates = Get-ChildItem -Path $ContainerScripts -Filter *tmpl* -File
             foreach ($template in $templates) {
                 $content = Get-Content -Path "$ContainerScripts\$(($template).Name)"
@@ -38,7 +38,7 @@ function UpdateStorage {
                 $content = $content.replace("yyyyy", $Key.value[0])
                 $content = $content.replace("ddddd", $Domain)
                 $content = $content.replace("ooooo", $OUPath)
-                $content = $content.replace("rrrrr", $RGNameUAT)
+                $content = $content.replace("rrrrr", $RGNameDEV)
                 $content = $content.replace("fffff", $FileShareName)
                 $contentName = $template.Basename -replace "Tmpl"
                 $contentName = $contentName + ".ps1"
@@ -63,10 +63,10 @@ function UpdateRBAC {
         New-AzRoleAssignment -ObjectId $OwnerGroup.Id -RoleDefinitionName "Owner" -ResourceGroupName $RGNamePROD | Out-Null
         New-AzRoleAssignment -ObjectId $ContributorGroup.Id -RoleDefinitionName "Contributor" -ResourceGroupName $RGNamePROD | Out-Null
         New-AzRoleAssignment -ObjectId $ReadOnlyGroup.Id -RoleDefinitionName "Reader" -ResourceGroupName $RGNamePROD | Out-Null
-        if (!($RGNameUAT -match $RGNamePROD)) {
-            New-AzRoleAssignment -ObjectId $OwnerGroup.Id -RoleDefinitionName "Owner" -ResourceGroupName $RGNameUAT | Out-Null
-            New-AzRoleAssignment -ObjectId $ContributorGroup.Id -RoleDefinitionName "Contributor" -ResourceGroupName $RGNameUAT | Out-Null
-            New-AzRoleAssignment -ObjectId $ReadOnlyGroup.Id -RoleDefinitionName "Reader" -ResourceGroupName $RGNameUAT | Out-Null
+        if (!($RGNameDEV -match $RGNamePROD)) {
+            New-AzRoleAssignment -ObjectId $OwnerGroup.Id -RoleDefinitionName "Owner" -ResourceGroupName $RGNameDEV | Out-Null
+            New-AzRoleAssignment -ObjectId $ContributorGroup.Id -RoleDefinitionName "Contributor" -ResourceGroupName $RGNameDEV | Out-Null
+            New-AzRoleAssignment -ObjectId $ReadOnlyGroup.Id -RoleDefinitionName "Reader" -ResourceGroupName $RGNameDEV | Out-Null
         }
         Write-Host "Role Assignments Set"
     } Catch {
@@ -83,13 +83,13 @@ if($RequireCreate) {
     if($RequireResourceGroups -and !$UseTerraform) {
         $RG = New-AzResourceGroup -Name $RGNamePROD -Location $Location
         if ($RG.ResourceGroupName -eq $RGNamePROD) {Write-Host "PROD Resource Group created successfully"}Else{Write-Host "*** Unable to create PROD Resource Group! ***"}
-        if (!($RGNameUAT -match $RGNamePROD)) {
-            $RG = New-AzResourceGroup -Name $RGNameUAT -Location $Location
-            if ($RG.ResourceGroupName -eq $RGNameUAT) { Write-Host "UAT Resource Group created successfully" }Else { Write-Host "*** Unable to create UAT Resource Group! ***" }
+        if (!($RGNameDEV -match $RGNamePROD)) {
+            $RG = New-AzResourceGroup -Name $RGNameDEV -Location $Location
+            if ($RG.ResourceGroupName -eq $RGNameDEV) { Write-Host "DEV Resource Group created successfully" }Else { Write-Host "*** Unable to create DEV Resource Group! ***" }
         }
-        if (!($RGNameUAT -match $RGNameUATVNET)) {
-            $RG = New-AzResourceGroup -Name $RGNameUATVNET -Location $Location
-            if ($RG.ResourceGroupName -eq $RGNameUATVNET) { Write-Host "UAT VNET Resource Group created successfully" }Else { Write-Host "*** Unable to create UAT VNET Resource Group! ***" }
+        if (!($RGNameDEV -match $RGNameDEVVNET)) {
+            $RG = New-AzResourceGroup -Name $RGNameDEVVNET -Location $Location
+            if ($RG.ResourceGroupName -eq $RGNameDEVVNET) { Write-Host "DEV VNET Resource Group created successfully" }Else { Write-Host "*** Unable to create DEV VNET Resource Group! ***" }
         }
         if (!($RGNamePROD -match $RGNamePRODVNET)) {
             $RG = New-AzResourceGroup -Name $RGNamePRODVNET -Location $Location
