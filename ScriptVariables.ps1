@@ -15,9 +15,9 @@ $RequireStorageAccount = $true
 $RequireVNET = $true
 $RequireNSG = $true
 $RequirePublicIPs = $true
-$RequireStandardVMs = $true
+$RequireStandardVMs = $false
 $RequireAdminStudioVMs = $false
-$RequireJumpboxVMs = $false
+$RequireJumpboxVMs = $true
 $RequireHyperV = $false
 
     # Azure Tags
