@@ -1,24 +1,24 @@
 cd $PSScriptRoot
 
     # Main Control
-$RequireCreate = $true
-$RequireConfigure = $true
+$RequireCreate = $false
+$RequireConfigure = $false
 $UseTerraform = $false
-$RequireUpdateStorage = $true
+$RequireUpdateStorage = $false
 $RequireServicePrincipal = $false
 
     # Required Components
 $RequireUserGroups = $true
-$RequireRBAC = $false
+$RequireRBAC = $true
 $RequireResourceGroups = $true
 $RequireStorageAccount = $true
 $RequireVNET = $true
 $RequireNSG = $true
 $RequirePublicIPs = $true
-$RequireStandardVMs = $false
-$RequireAdminStudioVMs = $false
+$RequireStandardVMs = $true
+$RequireAdminStudioVMs = $true
 $RequireJumpboxVMs = $true
-$RequireHyperV = $false
+$RequireHyperV = $true
 
     # Azure Tags
 $tags = @{
