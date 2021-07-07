@@ -1,52 +1,52 @@
 ﻿function CreateStandardVM-Script($VMName) {
-    $Vnet = Get-AzVirtualNetwork -Name $VNetUAT -ResourceGroupName $RGNameUATVNET 
-    $Subnet = Get-AzVirtualNetworkSubnetConfig -Name $SubnetNameUAT -VirtualNetwork $vnet
+    $Vnet = Get-AzVirtualNetwork -Name $VNetDEV -ResourceGroupName $RGNameDEVVNET 
+    $Subnet = Get-AzVirtualNetworkSubnetConfig -Name $SubnetNameDEV -VirtualNetwork $vnet
     if ($RequirePublicIPs) {
-        $PIP = New-AzPublicIpAddress -Name "$VMName-pip" -ResourceGroupName $RGNameUAT -Location $Location -AllocationMethod Dynamic -Sku Basic -Tier Regional -IpAddressVersion IPv4
-        $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $RGNameUAT -Location $Location -SubnetId $Subnet.Id -PublicIpAddressId $PIP.Id
+        $PIP = New-AzPublicIpAddress -Name "$VMName-pip" -ResourceGroupName $RGNameDEV -Location $Location -AllocationMethod Dynamic -Sku Basic -Tier Regional -IpAddressVersion IPv4
+        $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $RGNameDEV -Location $Location -SubnetId $Subnet.Id -PublicIpAddressId $PIP.Id
     }
-    else { $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $RGNameUAT -Location $Location -SubnetId $Subnet.Id }
+    else { $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $RGNameDEV -Location $Location -SubnetId $Subnet.Id }
     $VirtualMachine = New-AzVMConfig -VMName $VMName -VMSize $VMSizeStandard -IdentityType SystemAssigned -Tags $tags
     $VirtualMachine = Set-AzVMOperatingSystem -VM $VirtualMachine -Windows -ComputerName $VMName -Credential $LocalAdminCred #-ProvisionVMAgent -EnableAutoUpdate
     $VirtualMachine = Add-AzVMNetworkInterface -VM $VirtualMachine -Id $NIC.Id
     $VirtualMachine = Set-AzVMSourceImage -VM $VirtualMachine -PublisherName $VMSpecPublisherName -Offer $VMSpecOffer -Skus $VMSpecSKUS -Version $VMSpecVersion
     $VirtualMachine = Set-AzVMBootDiagnostic -VM $VirtualMachine -Disable
 
-    New-AzVM -ResourceGroupName $RGNameUAT -Location $Location -VM $VirtualMachine -Verbose
+    New-AzVM -ResourceGroupName $RGNameDEV -Location $Location -VM $VirtualMachine -Verbose
 }
 
 function CreateAdminStudioVM-Script($VMName) {
-    $Vnet = Get-AzVirtualNetwork -Name $VNetUAT -ResourceGroupName $RGNameUATVNET 
-    $Subnet = Get-AzVirtualNetworkSubnetConfig -Name $SubnetNameUAT -VirtualNetwork $vnet
+    $Vnet = Get-AzVirtualNetwork -Name $VNetDEV -ResourceGroupName $RGNameDEVVNET 
+    $Subnet = Get-AzVirtualNetworkSubnetConfig -Name $SubnetNameDEV -VirtualNetwork $vnet
     if ($RequirePublicIPs) {
-        $PIP = New-AzPublicIpAddress -Name "$VMName-pip" -ResourceGroupName $RGNameUAT -Location $Location -AllocationMethod Dynamic -Sku Basic -Tier Regional -IpAddressVersion IPv4
-        $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $RGNameUAT -Location $Location -SubnetId $Subnet.Id -PublicIpAddressId $PIP.Id
+        $PIP = New-AzPublicIpAddress -Name "$VMName-pip" -ResourceGroupName $RGNameDEV -Location $Location -AllocationMethod Dynamic -Sku Basic -Tier Regional -IpAddressVersion IPv4
+        $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $RGNameDEV -Location $Location -SubnetId $Subnet.Id -PublicIpAddressId $PIP.Id
     }
-    else { $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $RGNameUAT -Location $Location -SubnetId $Subnet.Id }
+    else { $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $RGNameDEV -Location $Location -SubnetId $Subnet.Id }
     $VirtualMachine = New-AzVMConfig -VMName $VMName -VMSize $VMSizeAdminStudio -IdentityType SystemAssigned -Tags $tags
     $VirtualMachine = Set-AzVMOperatingSystem -VM $VirtualMachine -Windows -ComputerName $VMName -Credential $LocalAdminCred #-ProvisionVMAgent -EnableAutoUpdate
     $VirtualMachine = Add-AzVMNetworkInterface -VM $VirtualMachine -Id $NIC.Id
     $VirtualMachine = Set-AzVMSourceImage -VM $VirtualMachine -PublisherName $VMSpecPublisherName -Offer $VMSpecOffer -Skus $VMSpecSKUS -Version $VMSpecVersion
     $VirtualMachine = Set-AzVMBootDiagnostic -VM $VirtualMachine -Disable
 
-    New-AzVM -ResourceGroupName $RGNameUAT -Location $Location -VM $VirtualMachine -Verbose
+    New-AzVM -ResourceGroupName $RGNameDEV -Location $Location -VM $VirtualMachine -Verbose
 }
 
 function CreateJumpboxVM-Script($VMName) {
-    $Vnet = Get-AzVirtualNetwork -Name $VNetUAT -ResourceGroupName $RGNameUATVNET 
-    $Subnet = Get-AzVirtualNetworkSubnetConfig -Name $SubnetNameUAT -VirtualNetwork $vnet
+    $Vnet = Get-AzVirtualNetwork -Name $VNetDEV -ResourceGroupName $RGNameDEVVNET 
+    $Subnet = Get-AzVirtualNetworkSubnetConfig -Name $SubnetNameDEV -VirtualNetwork $vnet
     if ($RequirePublicIPs) {
-        $PIP = New-AzPublicIpAddress -Name "$VMName-pip" -ResourceGroupName $RGNameUAT -Location $Location -AllocationMethod Dynamic -Sku Basic -Tier Regional -IpAddressVersion IPv4
-        $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $RGNameUAT -Location $Location -SubnetId $Subnet.Id -PublicIpAddressId $PIP.Id
+        $PIP = New-AzPublicIpAddress -Name "$VMName-pip" -ResourceGroupName $RGNameDEV -Location $Location -AllocationMethod Dynamic -Sku Basic -Tier Regional -IpAddressVersion IPv4
+        $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $RGNameDEV -Location $Location -SubnetId $Subnet.Id -PublicIpAddressId $PIP.Id
     }
-    else { $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $RGNameUAT -Location $Location -SubnetId $Subnet.Id }
+    else { $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $RGNameDEV -Location $Location -SubnetId $Subnet.Id }
     $VirtualMachine = New-AzVMConfig -VMName $VMName -VMSize $VMSizeStandard -IdentityType SystemAssigned -Tags $tags
     $VirtualMachine = Set-AzVMOperatingSystem -VM $VirtualMachine -Windows -ComputerName $VMName -Credential $LocalAdminCred #-ProvisionVMAgent -EnableAutoUpdate
     $VirtualMachine = Add-AzVMNetworkInterface -VM $VirtualMachine -Id $NIC.Id
     $VirtualMachine = Set-AzVMSourceImage -VM $VirtualMachine -PublisherName $VMSpecPublisherName -Offer $VMSpecOffer -Skus $VMSpecSKUS -Version $VMSpecVersion
     $VirtualMachine = Set-AzVMBootDiagnostic -VM $VirtualMachine -Disable
 
-    New-AzVM -ResourceGroupName $RGNameUAT -Location $Location -VM $VirtualMachine -Verbose
+    New-AzVM -ResourceGroupName $RGNameDEV -Location $Location -VM $VirtualMachine -Verbose
 }
 
 function CreateStandardVM-Terraform($VMName) {
@@ -152,7 +152,7 @@ function ScriptBuild {
         While ($Count -le $NumberofStandardVMs) {
             Write-Host "Creating $Count of $NumberofStandardVMs VMs"
             $VM = $VMNamePrefixStandard + $VMNumberStart
-            $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $RGNameUAT -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+            $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $RGNameDEV -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if (!$VMCheck) {
                 CreateStandardVM-Script "$VM"
             }
@@ -172,7 +172,7 @@ function ScriptBuild {
         While ($Count -le $NumberofAdminStudioVMs) {
             Write-Host "Creating $Count of $NumberofAdminStudioVMs VMs"
             $VM = $VMNamePrefixAdminStudio + $VMNumberStart
-            $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $RGNameUAT -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+            $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $RGNameDEV -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if (!$VMCheck) {
                 CreateAdminStudioVM-Script "$VM"
             }
@@ -192,7 +192,7 @@ function ScriptBuild {
         While ($Count -le $NumberofJumpboxVMs) {
             Write-Host "Creating $Count of $NumberofJumpboxVMs VMs"
             $VM = $VMNamePrefixJumpbox + $VMNumberStart
-            $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $RGNameUAT -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+            $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $RGNameDEV -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if (!$VMCheck) {
                 CreateJumpboxVM-Script "$VM"
             }
