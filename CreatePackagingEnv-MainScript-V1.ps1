@@ -29,7 +29,7 @@ Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"  # Turns off 
 function UpdateStorage {
     if ($RequireUpdateStorage) {
         Try {
-            $Key = Get-AzStorageAccountKey -ResourceGroupName $RGNameDEV -AccountName $StorageAccountName
+            $Key = Get-AzStorageAccountKey -ResourceGroupName $RGNameSTORE -AccountName $StorageAccountName
             $templates = Get-ChildItem -Path $ContainerScripts -Filter *tmpl* -File
             foreach ($template in $templates) {
                 $content = Get-Content -Path "$ContainerScripts\$(($template).Name)"
@@ -38,7 +38,7 @@ function UpdateStorage {
                 $content = $content.replace("yyyyy", $Key.value[0])
                 $content = $content.replace("ddddd", $Domain)
                 $content = $content.replace("ooooo", $OUPath)
-                $content = $content.replace("rrrrr", $RGNameDEV)
+                $content = $content.replace("rrrrr", $RGNameSTORE)
                 $content = $content.replace("fffff", $FileShareName)
                 $contentName = $template.Basename -replace "Tmpl"
                 $contentName = $contentName + ".ps1"
@@ -68,6 +68,11 @@ function UpdateRBAC {
             New-AzRoleAssignment -ObjectId $ContributorGroup.Id -RoleDefinitionName "Contributor" -ResourceGroupName $RGNameDEV | Out-Null
             New-AzRoleAssignment -ObjectId $ReadOnlyGroup.Id -RoleDefinitionName "Reader" -ResourceGroupName $RGNameDEV | Out-Null
         }
+        if (!($RGNameSTORE -match $RGNamePROD)) {
+            New-AzRoleAssignment -ObjectId $OwnerGroup.Id -RoleDefinitionName "Owner" -ResourceGroupName $RGNameSTORE | Out-Null
+            New-AzRoleAssignment -ObjectId $ContributorGroup.Id -RoleDefinitionName "Contributor" -ResourceGroupName $RGNameSTORE | Out-Null
+            New-AzRoleAssignment -ObjectId $ReadOnlyGroup.Id -RoleDefinitionName "Reader" -ResourceGroupName $RGNameSTORE | Out-Null
+        }
         Write-Host "Role Assignments Set"
     } Catch {
         Write-Error $_.Exception.Message
@@ -94,6 +99,10 @@ if($RequireCreate) {
         if (!($RGNamePROD -match $RGNamePRODVNET)) {
             $RG = New-AzResourceGroup -Name $RGNamePRODVNET -Location $Location
             if ($RG.ResourceGroupName -eq $RGNamePRODVNET) { Write-Host "PROD VNET Resource Group created successfully" }Else { Write-Host "*** Unable to create PROD VNET Resource Group! ***" }
+        } 
+        if (!($RGNamePROD -match $RGNameSTORE) -and $RequireStorageAccount) {
+            $RG = New-AzResourceGroup -Name $RGNameSTORE -Location $Location
+            if ($RG.ResourceGroupName -eq $RGNameSTORE) { Write-Host "STORE Resource Group created successfully" }Else { Write-Host "*** Unable to create STORE Resource Group! ***" }
         }
     }
     if ($UseTerraform) {

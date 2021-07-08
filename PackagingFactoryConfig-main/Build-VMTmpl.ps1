@@ -66,23 +66,24 @@ function Create-VM {
         Name = $VMName
         MemoryStartupBytes = $VMRamSize
         Generation = 1
-        #NewVHDPath = "$VMDrive\Hyper-V\$VHDFolder\$VMName\$VMName.vhdx"
-        #NewVHDSizeBytes = $VMVHDSize
+        NewVHDPath = "$VMDrive\Hyper-V\$VHDFolder\$VMName\$VMName.vhdx"
+        NewVHDSizeBytes = $VMVHDSize
         BootDevice = "VHD"
         Path = "$VMDrive\Hyper-V\$VMFolder\$VMName"
         SwitchName = (Get-VMSwitch -Name $VMSwitchName).Name
     }
 
-    $VMObject = New-VM @VM -NoVHD -Verbose -ErrorAction Stop
+    $VMObject = New-VM @VM -Verbose -ErrorAction Stop
+    #$VMObject = New-VM @VM -NoVHD -Verbose -ErrorAction Stop
     
-    New-Item -Path $VMDrive\Hyper-V\$VHDFolder\ -Name $VMName -ItemType Directory -Force -Verbose | Out-null
-    Copy-Item -Path $VMDrive\Hyper-V\$VHDFolder\Media\Vanilla-Windows10-Base+CERT.vhdx -Destination $VMDrive\Hyper-V\$VHDFolder\$VMName\$VMName.vhdx -Force -Verbose
+    #New-Item -Path $VMDrive\Hyper-V\$VHDFolder\ -Name $VMName -ItemType Directory -Force -Verbose | Out-null
+    #Copy-Item -Path $VMDrive\Hyper-V\$VHDFolder\Media\Vanilla-Windows10-Base+CERT.vhdx -Destination $VMDrive\Hyper-V\$VHDFolder\$VMName\$VMName.vhdx -Force -Verbose
     
     $VMObject | Set-VM -ProcessorCount $VMCPUCount
     $VMObject | Set-VM -StaticMemory
     $VMObject | Set-VM -AutomaticCheckpointsEnabled $false
     $VMObject | Set-VM -SnapshotFileLocation "$VMDrive\Hyper-V\$VMCheckpointFolder"
-    $VMObject | Add-VMHardDiskDrive -Path $VMDrive\Hyper-V\$VHDFolder\$VMName\$VMName.vhdx
+    #$VMObject | Add-VMHardDiskDrive -Path $VMDrive\Hyper-V\$VHDFolder\$VMName\$VMName.vhdx
     
     $Date = Get-Date -Format yyyy-MM-dd
     $Time = Get-Date -Format hh:mm
