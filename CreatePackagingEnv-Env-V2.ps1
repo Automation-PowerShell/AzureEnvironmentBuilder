@@ -40,12 +40,23 @@ function CreateRBACConfig {
 
 function CreateStorageAccount {
     if ($RequireStorageAccount -and !$UseTerraform) {
-        $storageAccount = New-AzStorageAccount -ResourceGroupName $RGNameDEV -AccountName $StorageAccountName -Location $location -SkuName Standard_LRS
+        $storageAccount = New-AzStorageAccount -ResourceGroupName $RGNameSTORE -AccountName $StorageAccountName -Location $location -SkuName Standard_LRS
+        Start-Sleep -Seconds 10
         $ctx = $storageAccount.Context
         $Container = New-AzStorageContainer -Name $ContainerName -Context $ctx -Permission Blob
-        If ($storageAccount.StorageAccountName -eq $StorageAccountName -and $Container.Name -eq $ContainerName) {Write-Host "Storage Account and container created successfully"}Else{Write-Host "*** Unable to create the Storage Account or container! ***"}
+        if ($storageAccount.StorageAccountName -eq $StorageAccountName -and $Container.Name -eq $ContainerName) {
+            Write-Host "Storage Account and container created successfully"
+        }
+        else {
+            Write-Host "*** Unable to create the Storage Account or container! ***"
+        }
         $Share = New-AzStorageShare -Name $FileShareName -Context $ctx
-        If ($Share.Name -eq $FileShareName) { Write-Host "Storage Share created successfully" }Else { Write-Host "*** Unable to create the Storage Share! ***"} 
+        if ($Share.Name -eq $FileShareName) {
+            Write-Host "Storage Share created successfully"
+        }
+        else { 
+            Write-Host "*** Unable to create the Storage Share! ***"
+        } 
     }
     else {
         Write-Host "Creation of Storage Account and Storage Container not required"
