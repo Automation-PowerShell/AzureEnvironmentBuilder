@@ -21,8 +21,8 @@ function RunVMConfig($ResourceGroup, $VMName, $BlobFilePath, $Blob) {
 
 function Write-LogScreen {
     Param(
-        [Parameter(Position = 0, Mandatory)][String]$String = "",
-        [Parameter(Position = 1, Mandatory)][ValidateSet('Info', 'Error', 'Debug')][String]$Level = "Info"
+        [Parameter(Position = 0, Mandatory)][String]$String,
+        [Parameter(Position = 1, Mandatory)][ValidateSet('Info', 'Error', 'Debug')][String]$Level
     )
 
     try {
@@ -32,6 +32,7 @@ function Write-LogScreen {
             }
 
             "Error" { 
+                $String = "ERROR: $String"
                 Write-Host $String -ForegroundColor Red
             }
 
@@ -58,6 +59,7 @@ function Write-LogFile {
             }
 
             "Error" { 
+                $String = "ERROR: $String"
                 Write-Host $String -ForegroundColor Red
             }
 
