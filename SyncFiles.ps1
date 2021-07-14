@@ -30,7 +30,7 @@ Write-Host "Running SyncFiles.ps1"
 Try {
     switch ($CallFromCreatePackaging) {
         $True { 
-            SyncFiles -LocalPath $ContainerScripts -ResourceGroupName $RGNameUAT -ContainerName $ContainerName -StorageAccountName $StorageAccountName }
+            SyncFiles -LocalPath $ContainerScripts -ResourceGroupName $RGNameSTORE -ContainerName $ContainerName -StorageAccountName $StorageAccountName }
         $False {
             #SyncFiles -LocalPath $SFLocalPath -ResourceGroupName $SFResourceGroupName -StorageAccountName $SFStorageAccountName -ContainerName $SFContainerName
         }

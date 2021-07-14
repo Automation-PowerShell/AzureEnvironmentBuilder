@@ -1,24 +1,24 @@
 cd $PSScriptRoot
 
     # Main Control
-$RequireCreate = $true
-$RequireConfigure = $true
+$RequireCreate = $false
+$RequireConfigure = $false
 $UseTerraform = $false
-$RequireUpdateStorage = $true
+$RequireUpdateStorage = $false
 $RequireServicePrincipal = $false
 
     # Required Components
 $RequireUserGroups = $true
-$RequireRBAC = $false
+$RequireRBAC = $true
 $RequireResourceGroups = $true
 $RequireStorageAccount = $true
 $RequireVNET = $true
 $RequireNSG = $true
 $RequirePublicIPs = $true
 $RequireStandardVMs = $true
-$RequireAdminStudioVMs = $false
-$RequireJumpboxVMs = $false
-$RequireHyperV = $false
+$RequireAdminStudioVMs = $true
+$RequireJumpboxVMs = $true
+$RequireHyperV = $true
 
     # Azure Tags
 $tags = @{
@@ -28,15 +28,16 @@ $tags = @{
 
     # General Config Variables
 $location = "uksouth"                                       # Azure Region for resources to be built into
-$RGNameUAT = "rg-euc-packaging-uat"                         # UAT Resource group name
-$RGNamePROD = "rg-euc-packaging-prod"                       # PROD Resource group name
-$RGNameUATVNET = "rg-euc-packaging-uat-vnet"                # UAT VNET Resource group name
-$RGNamePRODVNET = "rg-euc-packaging-prod-vnet"              # PROD VNET Resource group name
-$VNetUAT = "vnet-euc-uat"                                   # UAT Environment Virtual Network name
+$RGNameSTORE = "rg-euc-packaging-store"                     # Storage Account Resource Group name
+$RGNameDEV = "rg-euc-packaging-dev"                         # DEV Resource Group name
+$RGNamePROD = "rg-euc-packaging-prod"                       # PROD Resource Group name
+$RGNameDEVVNET = "rg-euc-packaging-dev-vnet"                # DEV VNET Resource Group name
+$RGNamePRODVNET = "rg-euc-packaging-prod-vnet"              # PROD VNET Resource Group name
+$VNetDEV = "vnet-euc-dev"                                   # DEV Environment Virtual Network name
 $VNetPROD = "vnet-euc-prod"                                 # PROD Environment Virtual Network name
-$SubnetNameUAT = "default"                                  # Environment Virtual Subnet name
+$SubnetNameDEV = "default"                                  # Environment Virtual Subnet name
 $SubnetNamePROD = "default"                                 # Environment Virtual Subnet name
-$NsgNameUAT = "nsg-euc-packaging-uat"                       # UAT Network Security Group name (firewall)
+$NsgNameDEV = "nsg-euc-packaging-dev"                       # DEV Network Security Group name (firewall)
 $NsgNamePROD = "nsg-euc-packaging-prod"                     # PROD Network Security Group name (firewall)
 
     # Environment Variables
