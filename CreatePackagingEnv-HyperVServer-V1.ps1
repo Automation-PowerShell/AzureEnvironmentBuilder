@@ -79,5 +79,7 @@ if ($UseTerraform) {
 else {
     ScriptBuild
 }
-Write-Host "Hyper-V Create Script Completed"
+$Date = Get-Date -Format yyyy-MM-dd
+$Time = Get-Date -Format hh:mm
+Write-Host "$Date - $Time -- Hyper-V Create Script Completed"
 #endregion Main
