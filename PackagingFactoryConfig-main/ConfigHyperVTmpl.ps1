@@ -1,6 +1,6 @@
-$scriptname = "EnableHyperV.ps1"
+$scriptname = "ConfigHyperV.ps1"
 $EventlogName = "Accenture"
-$EventlogSource = "Enable Hyper-V Script"
+$EventlogSource = "Config Hyper-V Script"
 
 # Create Error Trap
 trap {
@@ -22,21 +22,36 @@ Install-Module -Name Az.Storage -Force -ErrorAction Stop
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Information -Message "Attempting to connect to Azure"    
 Connect-AzAccount -identity -ErrorAction Stop -Subscription sssss
 
-# Install Hyper-V
-Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Information -Message "Enable Hyper-V"
-Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All -NoRestart
+# Map Storage Account
+cmd.exe /C cmdkey /add:`"xxxxx.file.core.windows.net`" /user:`"Azure\xxxxx`" /pass:`"yyyyy`"
+New-PSDrive -Name Z -PSProvider FileSystem -Root "\\xxxxx.file.core.windows.net\fffff" -Persist
 
-# Install Hyper-V Tools
-Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Information -Message "Enable Management Tools"
-Install-WindowsFeature -Name Hyper-V -IncludeManagementTools
+# Configure DHCP
+Import-Module DHCPServer -Force -ErrorAction Stop
+Add-DhcpServerv4Scope -StartRange 192.168.0.100 -EndRange 192.168.0.199 -Name "UAT Scope" -State Active -SubnetMask 255.255.254.0
+$DNSserver = (Get-DnsClientServerAddress -InterfaceAlias "Ethernet 2" -AddressFamily IPv4).ServerAddresses
+Set-DhcpServerv4OptionValue -DnsServer $DNSserver
+Set-DhcpServerv4OptionValue -DnsDomain "space.dan"
+Set-DhcpServerv4OptionValue -Router 192.168.0.1
 
-# Install RSAT
-Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Information -Message "Install RSAT Tools"
-Install-WindowsFeature -Name RSAT-AD-Tools -IncludeAllSubFeature
+# Hyper-v Settings and Files
+mkdir -Path "F:\" -Name "Hyper-V" -Force
+mkdir -Path "F:\Hyper-V" -Name "Virtual Hard Disks" -Force
+mkdir -Path "F:\Hyper-V" -Name "Media" -Force
+Copy-Item -Path "Z:\en_windows_10_business_editions_version_20h2_updated_dec_2020_x64_dvd_2af15d50.iso" -Destination "F:\Hyper-V\Media" -Force -Verbose
 
-# Install DHCP
-Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Information -Message "Install DHCP Tools"
-Install-WindowsFeature -Name DHCP -IncludeManagementTools
+# Windows Image Tools
+Install-Module -Name WindowsImageTools -Force -ErrorAction Stop
+Import-Module WindowsImageTools -Force
+$adminPassword = ConvertTo-SecureString "Password1234" -AsPlainText -Force  
+$adminCred = New-Object System.Management.Automation.PSCredential ("administrator", $adminPassword)
+New-UnattendXml -Path F:\Hyper-V\Media\Unattend.xml -AdminPassword $adminCred -logonCount 1 -enableAdministrator
+New-DataVHD -Path F:\Hyper-V\Media\basedisk.vhdx -Size 60GB -DataFormat NTFS -Dynamic
+#Mount-VHD -Path F:\Hyper-V\Media\basedisk.vhdx -PassThru | Get-Disk | Get-Partition | Get-Volume
+Mount-VHD -Path F:\Hyper-V\Media\basedisk.vhdx -NoDriveLetter
+#Install-WindowsFromWim -DiskNumber 0 -Index 3 -NoRecoveryTools -DiskLayout UEFI -WimPath "F:\Hyper-V\Media\en_windows_10_business_editions_version_20h2_updated_dec_2020_x64_dvd_2af15d50.iso"
+Install-WindowsFromWim -DiskNumber 2 -DiskLayout BIOS -NoRecoveryTools -Unattend F:\Hyper-V\Media\unattend.xml -SourcePath "F:\Hyper-V\Media\en_windows_10_business_editions_version_20h2_updated_dec_2020_x64_dvd_2af15d50.iso"
+Dismount-VHD -Path F:\Hyper-V\Media\basedisk.vhdx
 
 # Get Files from Blob
 $StorAcc = Get-AzStorageAccount -ResourceGroupName rrrrr -Name xxxxx

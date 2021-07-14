@@ -1,7 +1,13 @@
 ﻿#region Setup
 cd $PSScriptRoot
+
+    # Dot Source Variables
 . .\ScriptVariables.ps1
 . .\ClientVariables-Template.ps1
+
+    # Dot Source Functions
+. .\ScriptCoreFunctions.ps1
+. .\ScriptEnvironmentFunctions.ps1
 
 Import-Module Az.Compute, Az.Accounts, Az.Storage, Az.Network, Az.Resources -ErrorAction SilentlyContinue
 if (!((Get-Module Az.Compute) -and (Get-Module Az.Accounts) -and (Get-Module Az.Storage) -and (Get-Module Az.Network) -and (Get-Module Az.Resources))) {
@@ -26,84 +32,31 @@ if ($RequireServicePrincipal) {
 Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"  # Turns off Breaking Changes warnings for Cmdlets
 #endregion Setup
 
-function UpdateStorage {
-    if ($RequireUpdateStorage) {
-        Try {
-            $Key = Get-AzStorageAccountKey -ResourceGroupName $RGNameSTORE -AccountName $StorageAccountName
-            $templates = Get-ChildItem -Path $ContainerScripts -Filter *tmpl* -File
-            foreach ($template in $templates) {
-                $content = Get-Content -Path "$ContainerScripts\$(($template).Name)"
-                $content = $content.replace("xxxxx", $StorageAccountName)
-                $content = $content.replace("sssss", $azSubscription)
-                $content = $content.replace("yyyyy", $Key.value[0])
-                $content = $content.replace("ddddd", $Domain)
-                $content = $content.replace("ooooo", $OUPath)
-                $content = $content.replace("rrrrr", $RGNameSTORE)
-                $content = $content.replace("fffff", $FileShareName)
-                $contentName = $template.Basename -replace "Tmpl"
-                $contentName = $contentName + ".ps1"
-                $content | Set-Content -Path "$ContainerScripts\$contentName"
-            }     
-        }
-        Catch {
-            Write-Error "An error occured trying to create the customised scripts for the packaging share."
-            Write-Error $_.Exception.Message
-        }
-        . .\SyncFiles.ps1 -CallFromCreatePackaging -Recurse        # Sync Files to Storage Blob
-        #. .\SyncFiles.ps1 -CallFromCreatePackaging                  # Sync Files to Storage Blob
-        Write-Host "Storage Account has been Updated with files"
-    }
-}
-function UpdateRBAC {
-    Try {
-        $OwnerGroup = Get-AzADGroup -DisplayName $rbacOwner
-        $ContributorGroup = Get-AzADGroup -DisplayName $rbacContributor
-        $ReadOnlyGroup = Get-AzADGroup -DisplayName $rbacReadOnly
-
-        New-AzRoleAssignment -ObjectId $OwnerGroup.Id -RoleDefinitionName "Owner" -ResourceGroupName $RGNamePROD | Out-Null
-        New-AzRoleAssignment -ObjectId $ContributorGroup.Id -RoleDefinitionName "Contributor" -ResourceGroupName $RGNamePROD | Out-Null
-        New-AzRoleAssignment -ObjectId $ReadOnlyGroup.Id -RoleDefinitionName "Reader" -ResourceGroupName $RGNamePROD | Out-Null
-        if (!($RGNameDEV -match $RGNamePROD)) {
-            New-AzRoleAssignment -ObjectId $OwnerGroup.Id -RoleDefinitionName "Owner" -ResourceGroupName $RGNameDEV | Out-Null
-            New-AzRoleAssignment -ObjectId $ContributorGroup.Id -RoleDefinitionName "Contributor" -ResourceGroupName $RGNameDEV | Out-Null
-            New-AzRoleAssignment -ObjectId $ReadOnlyGroup.Id -RoleDefinitionName "Reader" -ResourceGroupName $RGNameDEV | Out-Null
-        }
-        if (!($RGNameSTORE -match $RGNamePROD)) {
-            New-AzRoleAssignment -ObjectId $OwnerGroup.Id -RoleDefinitionName "Owner" -ResourceGroupName $RGNameSTORE | Out-Null
-            New-AzRoleAssignment -ObjectId $ContributorGroup.Id -RoleDefinitionName "Contributor" -ResourceGroupName $RGNameSTORE | Out-Null
-            New-AzRoleAssignment -ObjectId $ReadOnlyGroup.Id -RoleDefinitionName "Reader" -ResourceGroupName $RGNameSTORE | Out-Null
-        }
-        Write-Host "Role Assignments Set"
-    } Catch {
-        Write-Error $_.Exception.Message
-    }
-}
-
 #region Main
 #=======================================================================================================================================================
 cd $PSScriptRoot
-Write-Warning "Are you sure you want to rebuild the Packaging Environment?  OK to Continue?" -WarningAction Inquire
+if($isProd) { Write-Warning "Are you sure you want to rebuild the Packaging Environment?  OK to Continue?" -WarningAction Inquire }
 
 if($RequireCreate) {
         # Create Resource Groups
     if($RequireResourceGroups -and !$UseTerraform) {
         $RG = New-AzResourceGroup -Name $RGNamePROD -Location $Location
-        if ($RG.ResourceGroupName -eq $RGNamePROD) {Write-Host "PROD Resource Group created successfully"}Else{Write-Host "*** Unable to create PROD Resource Group! ***"}
+        if ($RG.ResourceGroupName -eq $RGNamePROD) {Write-Log "PROD Resource Group created successfully"}Else{Write-Log "*** Unable to create PROD Resource Group! ***" -Level Error }
         if (!($RGNameDEV -match $RGNamePROD)) {
             $RG = New-AzResourceGroup -Name $RGNameDEV -Location $Location
-            if ($RG.ResourceGroupName -eq $RGNameDEV) { Write-Host "DEV Resource Group created successfully" }Else { Write-Host "*** Unable to create DEV Resource Group! ***" }
+            if ($RG.ResourceGroupName -eq $RGNameDEV) { Write-Log "DEV Resource Group created successfully" }Else { Write-Log "*** Unable to create DEV Resource Group! ***" -Level Error }
         }
         if (!($RGNameDEV -match $RGNameDEVVNET)) {
             $RG = New-AzResourceGroup -Name $RGNameDEVVNET -Location $Location
-            if ($RG.ResourceGroupName -eq $RGNameDEVVNET) { Write-Host "DEV VNET Resource Group created successfully" }Else { Write-Host "*** Unable to create DEV VNET Resource Group! ***" }
+            if ($RG.ResourceGroupName -eq $RGNameDEVVNET) { Write-Log "DEV VNET Resource Group created successfully" }Else { Write-Log "*** Unable to create DEV VNET Resource Group! ***" -Level Error }
         }
         if (!($RGNamePROD -match $RGNamePRODVNET)) {
             $RG = New-AzResourceGroup -Name $RGNamePRODVNET -Location $Location
-            if ($RG.ResourceGroupName -eq $RGNamePRODVNET) { Write-Host "PROD VNET Resource Group created successfully" }Else { Write-Host "*** Unable to create PROD VNET Resource Group! ***" }
+            if ($RG.ResourceGroupName -eq $RGNamePRODVNET) { Write-Log "PROD VNET Resource Group created successfully" }Else { Write-Log "*** Unable to create PROD VNET Resource Group! ***" -Level Error }
         } 
         if (!($RGNamePROD -match $RGNameSTORE) -and $RequireStorageAccount) {
             $RG = New-AzResourceGroup -Name $RGNameSTORE -Location $Location
-            if ($RG.ResourceGroupName -eq $RGNameSTORE) { Write-Host "STORE Resource Group created successfully" }Else { Write-Host "*** Unable to create STORE Resource Group! ***" }
+            if ($RG.ResourceGroupName -eq $RGNameSTORE) { Write-Log "STORE Resource Group created successfully" }Else { Write-Log "*** Unable to create STORE Resource Group! ***" -Level Error }
         }
     }
     if ($UseTerraform) {
@@ -152,5 +105,5 @@ if ($RequireConfigure) {
         .\CreatePackagingEnv-HyperVServer-Configure.ps1
     }
 }
-Write-Host "All Scripts Completed"
+Write-Log "All Scripts Completed"
 #endregion Main

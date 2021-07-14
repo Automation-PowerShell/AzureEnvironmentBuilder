@@ -108,7 +108,7 @@ function TerraformBuild {
         $Count = 1
         $VMNumberStart = $VMNumberStartStandard
         While ($Count -le $NumberofStandardVMs) {
-            Write-Host "Creating $Count of $NumberofStandardVMs VMs"
+            Write-Log "Creating $Count of $NumberofStandardVMs VMs"
             $VM = $VMNamePrefixStandard + $VMNumberStart
 
             CreateStandardVM-Terraform "$VM"
@@ -121,7 +121,7 @@ function TerraformBuild {
         $Count = 1
         $VMNumberStart = $VMNumberStartAdminStudio
         While ($Count -le $NumberofAdminStudioVMs) {
-            Write-Host "Creating $Count of $NumberofAdminStudioVMs VMs"
+            Write-Log "Creating $Count of $NumberofAdminStudioVMs VMs"
             $VM = $VMNamePrefixAdminStudio + $VMNumberStart
 
             CreateAdminStudioVM-Terraform "$VM"
@@ -134,7 +134,7 @@ function TerraformBuild {
         $Count = 1
         $VMNumberStart = $VMNumberStartJumpbox
         While ($Count -le $NumberofJumpboxVMs) {
-            Write-Host "Creating $Count of $NumberofJumpboxVMs VMs"
+            Write-Log "Creating $Count of $NumberofJumpboxVMs VMs"
             $VM = $VMNamePrefixJumpbox + $VMNumberStart
 
             CreateJumpboxVM-Terraform "$VM"
@@ -150,14 +150,14 @@ function ScriptBuild {
         $Count = 1
         $VMNumberStart = $VMNumberStartStandard
         While ($Count -le $NumberofStandardVMs) {
-            Write-Host "Creating $Count of $NumberofStandardVMs VMs"
+            Write-Log "Creating $Count of $NumberofStandardVMs VMs"
             $VM = $VMNamePrefixStandard + $VMNumberStart
             $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $RGNameDEV -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if (!$VMCheck) {
                 CreateStandardVM-Script "$VM"
             }
             else {
-                Write-Host "Virtual Machine $VM already exists!"
+                Write-Log "*** Virtual Machine $VM already exists! ***" -Level Error
                 break
             }
             $Count++
@@ -170,14 +170,14 @@ function ScriptBuild {
         $Count = 1
         $VMNumberStart = $VMNumberStartAdminStudio
         While ($Count -le $NumberofAdminStudioVMs) {
-            Write-Host "Creating $Count of $NumberofAdminStudioVMs VMs"
+            Write-Log "Creating $Count of $NumberofAdminStudioVMs VMs"
             $VM = $VMNamePrefixAdminStudio + $VMNumberStart
             $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $RGNameDEV -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if (!$VMCheck) {
                 CreateAdminStudioVM-Script "$VM"
             }
             else {
-                Write-Host "Virtual Machine $VM already exists!"
+                Write-Log "*** Virtual Machine $VM already exists! ***" -Level Error
                 break
             }
             $Count++
@@ -190,14 +190,14 @@ function ScriptBuild {
         $Count = 1
         $VMNumberStart = $VMNumberStartJumpbox
         While ($Count -le $NumberofJumpboxVMs) {
-            Write-Host "Creating $Count of $NumberofJumpboxVMs VMs"
+            Write-Log "Creating $Count of $NumberofJumpboxVMs VMs"
             $VM = $VMNamePrefixJumpbox + $VMNumberStart
             $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $RGNameDEV -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if (!$VMCheck) {
                 CreateJumpboxVM-Script "$VM"
             }
             else {
-                Write-Host "Virtual Machine $VM already exists!"
+                Write-Log "*** Virtual Machine $VM already exists! ***" -Level Error
                 break
             }
             $Count++
@@ -215,4 +215,4 @@ if ($UseTerraform) {
 else {
    ScriptBuild
 }
-Write-Host "Packaging VM Script Completed"
+Write-Log "Packaging VM Script Completed"
