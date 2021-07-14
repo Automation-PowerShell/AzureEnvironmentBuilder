@@ -8,6 +8,7 @@ $RequireUpdateStorage = $false
 $RequireServicePrincipal = $false
 
     # Required Components
+$isProd = $false                                            # Are we building a DEV or Prod Environment?
 $RequireUserGroups = $true
 $RequireRBAC = $true
 $RequireResourceGroups = $true
