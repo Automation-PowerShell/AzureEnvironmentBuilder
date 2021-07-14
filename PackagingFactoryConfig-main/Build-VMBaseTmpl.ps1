@@ -1,7 +1,7 @@
 ﻿#region Setup
-$scriptname = "Build-VM.ps1"                                    # This file's filename
+$scriptname = "Build-VMBase.ps1"                                # This file's filename
 $EventlogName = "Accenture"                                     # Event Log Folder Name
-$EventlogSource = "Hyper-V VM Build Script"                     # Event Log Source Name
+$EventlogSource = "Hyper-V VM Base Build Script"                # Event Log Source Name
 
 $VMDrive = "F:"                                                 # Specify the root disk drive to use
 $VMFolder = "Hyper-V"                                           # Specify the root folder to use
@@ -89,16 +89,15 @@ function Create-VM {
     $VMObject | Add-VMHardDiskDrive -Path $VMDrive\$VMFolder\$VHDFolder\$VMName\$VMName.vhdx
     
     #$Date = Get-Date -Format yyyy-MM-dd
-    #$Time = Get-Date -Format hh:mm
+    #$Time = Get-Date -Format HH:mm
     #$VMObject | Checkpoint-VM -SnapshotName "Base Config ($Date - $Time)"
 
     $VMObject | Start-VM -Verbose -ErrorAction Stop
     Start-Sleep -Seconds 360
 
-    #$IPAddress = ($VMListData | where {$_.Name -eq $VMName}).IPAddress
-    <#
-        # Pre Domain Join
-    Remove-Variable erroric -ErrorAction SilentlyContinue
+    
+        # Static IP Address
+    <#Remove-Variable erroric -ErrorAction SilentlyContinue
     Invoke-Command -VMName $VMName -Credential $LocalAdminCred -ErrorVariable erroric -ScriptBlock {
         #$NetAdapter = Get-NetAdapter -Physical | where {$_.Status -eq "Up"}
         #if (($NetAdapter | Get-NetIPConfiguration).IPv4Address.IPAddress) {
@@ -116,18 +115,49 @@ function Create-VM {
     if($erroric) {
         Write-Error $error[0]
         Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Error -Message $error[0].Exception
-    }
+    }#>
+
+        # VM Customisations
     Remove-Variable erroric -ErrorAction SilentlyContinue
     Invoke-Command -VMName $VMName -Credential $LocalAdminCred -ErrorVariable erroric -ScriptBlock {
+            # Cleanup and Rename Host
         Get-AppxPackage -Name Microsoft.MicrosoftOfficeHub | Remove-AppxPackage
         Rename-Computer -NewName $Using:VMName -LocalCredential $Using:LocalAdminCred -Restart -Verbose
+
+            # Map Packaging Share
+        #$source = $source = "X:\EUC Applications\Packaging Environment Build Files\Prevision"
+        #cmd.exe /C cmdkey /add:`"xxxxx.file.core.windows.net`" /user:`"Azure\xxxxx`" /pass:`"yyyyy`"
+        #New-PSDrive -Name X -PSProvider FileSystem -Root "\\xxxxx.file.core.windows.net\pkgazfiles01" -Persist
+        #Copy-Item -Path $source\MapDrv.ps1 -Destination "C:\Users\Public\Desktop" -Force
+        #New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name "MapPackagingDrive" -Value "Powershell.exe -ExecutionPolicy Unrestricted -file `"C:\Users\Public\Desktop\MapDrv.ps1`"" -PropertyType "String"
+                
+            # Autopilot Hardware ID
+        New-Item -Type Directory -Path "C:\HWID" -Force
+        Set-Location -Path "C:\HWID"
+        Set-ExecutionPolicy -Scope Process -ExecutionPolicy Unrestricted -Force -ErrorAction Stop
+        #Install-PackageProvider -Name NuGet -Force -ErrorAction Stop
+        Install-Script -Name Get-WindowsAutoPilotInfo -Force -ErrorAction Stop
+        Get-WindowsAutoPilotInfo.ps1 -OutputFile AutoPilotHWID.csv
+            
+            # Upload AutoPilotHWID
+        #mkdir -path "X:\EUC Applications\Packaging Environment Build Files\Autpilot IDs" -Name $env:COMPUTERNAME -Force
+        #Copy-Item -Path "C:\HWID\AutoPilotHWID.csv" -Destination "X:\EUC Applications\Packaging Environment Build Files\Autpilot IDs\$env:COMPUTERNAME" -Force
+    
+            # Add Windows Capibilities Back In
+        Add-WindowsCapability -Online -Name Microsoft.Windows.PowerShell.ISE~~~~0.0.1.0
+        Add-WindowsCapability -Online -Name App.StepsRecorder~~~~0.0.1.0
+        Add-WindowsCapability -Online -Name Microsoft.Windows.Notepad~~~~0.0.1.0
+        Add-WindowsCapability -Online -Name Microsoft.Windows.MSPaint~~~~0.0.1.0
+        Add-WindowsCapability -Online -Name Microsoft.Windows.WordPad~~~~0.0.1.0
     }
     if($erroric) {
         Write-Error $error[0]
         Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Error -Message $error[0].Exception
     }  
     Start-Sleep -Seconds 90
-    Remove-Variable erroric -ErrorAction SilentlyContinue
+
+        # Disable IPV6 and Domain Join
+    <#Remove-Variable erroric -ErrorAction SilentlyContinue
     Invoke-Command -VMName $VMName -Credential $LocalAdminCred -ErrorVariable erroric -ScriptBlock {
         Disable-NetAdapterBinding -Name "*" -ComponentID ms_tcpip6
         $joined=$false
@@ -152,9 +182,11 @@ function Create-VM {
     if($erroric) {
         Write-Error $error[0]
         Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Error -Message $error[0].Exception
-    }    
-        # Post Domain Join - LocalCred wont work anymore.
-    Start-Sleep -Seconds 90
+    }
+    Start-Sleep -Seconds 90#>
+
+    <#    # Post Domain Join - LocalCred wont work anymore.
+        # Firewall Changes
     Remove-Variable erroric -ErrorAction SilentlyContinue
     Invoke-Command -VMName $VMName -Credential $DomainUserCred -ErrorVariable erroric -ScriptBlock {
         Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server'-name "fDenyTSConnections" -Value 0
@@ -163,32 +195,6 @@ function Create-VM {
         #New-NetFirewallRule -DisplayName "Restrict_RDP_access" -Direction Inbound -Protocol TCP -LocalPort 3389 -RemoteAddress 192.168.1.0/24,192.168.2.100 -Action Allow
         #Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 1
         net localgroup "Remote Desktop Users" /add "Domain Users"
-        
-            # Autopilot Hardware ID
-        New-Item -Type Directory -Path "C:\HWID" -Force
-        Set-Location -Path "C:\HWID"
-        Set-ExecutionPolicy -Scope Process -ExecutionPolicy Unrestricted -Force -ErrorAction Stop
-        Install-PackageProvider -Name NuGet -Force -ErrorAction Stop
-        Install-Script -Name Get-WindowsAutoPilotInfo -Force -ErrorAction Stop
-        Get-WindowsAutoPilotInfo.ps1 -OutputFile AutoPilotHWID.csv
-
-            # Map Packaging Share
-        $source = $source = "X:\EUC Applications\Packaging Environment Build Files\Prevision"
-        cmd.exe /C cmdkey /add:`"xxxxx.file.core.windows.net`" /user:`"Azure\xxxxx`" /pass:`"yyyyy`"
-        New-PSDrive -Name X -PSProvider FileSystem -Root "\\xxxxx.file.core.windows.net\pkgazfiles01" -Persist
-        Copy-Item -Path $source\MapDrv.ps1 -Destination "C:\Users\Public\Desktop" -Force
-        New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name "MapPackagingDrive" -Value "Powershell.exe -ExecutionPolicy Unrestricted -file `"C:\Users\Public\Desktop\MapDrv.ps1`"" -PropertyType "String"
-
-            # Upload AutoPilotHWID
-        mkdir -path "X:\EUC Applications\Packaging Environment Build Files\Autpilot IDs" -Name $env:COMPUTERNAME -Force
-        Copy-Item -Path "C:\HWID\AutoPilotHWID.csv" -Destination "X:\EUC Applications\Packaging Environment Build Files\Autpilot IDs\$env:COMPUTERNAME" -Force
-
-            # Add Windows Capibilities Back In
-        Add-WindowsCapability -Online -Name Microsoft.Windows.PowerShell.ISE~~~~0.0.1.0
-        Add-WindowsCapability -Online -Name App.StepsRecorder~~~~0.0.1.0
-        Add-WindowsCapability -Online -Name Microsoft.Windows.Notepad~~~~0.0.1.0
-        Add-WindowsCapability -Online -Name Microsoft.Windows.MSPaint~~~~0.0.1.0
-        Add-WindowsCapability -Online -Name Microsoft.Windows.WordPad~~~~0.0.1.0
     }
     if($erroric) {
         Write-Error $error[0]
@@ -197,13 +203,19 @@ function Create-VM {
     #> 
 
     #$Date = Get-Date -Format yyyy-MM-dd
-    #$Time = Get-Date -Format hh:mm
+    #$Time = Get-Date -Format HH:mm
     #$VMObject | Checkpoint-VM -SnapshotName "Domain Joined ($Date - $Time)"
     #$VMNumber = $VMName.Trim($VmNamePrefix)
+
+    #$IPAddress = ($VMListData | where {$_.Name -eq $VMName}).IPAddress
+    $MACAddress = $VMObject.NetworkAdapters.MacAddress
+    $IPAddress = (Get-DhcpServerv4Scope | Get-DhcpServerv4Lease | where {($_.ClientId -replace "-") -eq $MACAddress}).IPAddress.IPAddressToString
+    
     if(!(Get-NetNatStaticMapping -NatName $VMNetNATName -ErrorAction SilentlyContinue | where {$_.ExternalPort -like "*$VMNumber"})) {
         Add-NetNatStaticMapping -ExternalIPAddress "0.0.0.0" -ExternalPort 50$VMNumber -InternalIPAddress $IPAddress -InternalPort 3389 -NatName $VMNetNATName -Protocol TCP -ErrorAction Stop | Out-Null
     }
-    $VMObject | Stop-VM -Force -Verbose -ErrorAction Stop
+    Start-Sleep -Seconds 120
+    $VMObject | Stop-VM -Force -TurnOff -Verbose -ErrorAction Stop
     Convert-VHD -Path $VMDrive\$VMFolder\$VHDFolder\$VMName\$VMName.vhdx -DestinationPath $VMDrive\$VMFolder\Media\$VMName.vhdx -VHDType Dynamic -Verbose
 }
 
@@ -213,7 +225,7 @@ New-EventLog -LogName $EventlogName -Source $EventlogSource -ErrorAction Silentl
 Limit-EventLog -OverflowAction OverWriteAsNeeded -MaximumSize 64KB -LogName $EventlogName
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Running $scriptname Script"
 
-<## Load Modules and Connect to Azure
+# Load Modules and Connect to Azure
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Loading NuGet module"
 Install-PackageProvider -Name NuGet -Force -ErrorAction Stop
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Loading Az.Storage module"
@@ -227,8 +239,8 @@ $StorAcc = Get-AzStorageAccount -ResourceGroupName rrrrr -Name xxxxx
 $passwordFile1 = Get-AzStorageBlobContent -Container data -Blob "./HyperVLocalAdmin.xml" -Destination "$TempFileStore" -Context $StorAcc.context
 $passwordFile2 = Get-AzStorageBlobContent -Container data -Blob "./DomainJoin.xml" -Destination "$TempFileStore" -Context $StorAcc.context
 $passwordFile3 = Get-AzStorageBlobContent -Container data -Blob "./DomainUser.xml" -Destination "$TempFileStore" -Context $StorAcc.context
-$hypervFile = Get-AzStorageBlobContent -Container data -Blob "./hyperv-vms.xml" -Destination "$TempFileStore" -Context $StorAcc.context
-$VMListData = Import-Csv $TempFileStore\hyperv-vms.csv
+#$hypervFile = Get-AzStorageBlobContent -Container data -Blob "./hyperv-vms.xml" -Destination "$TempFileStore" -Context $StorAcc.context
+#$VMListData = Import-Csv $TempFileStore\hyperv-vms.csv
 $keyFile = Get-AzStorageBlobContent -Container data -Blob "./my.key" -Destination "$TempFileStore" -Context $StorAcc.context
 $myKey = Get-Content "$TempFileStore\my.key"
 
@@ -244,7 +256,6 @@ $DomainUserCred = New-Object System.Management.Automation.PSCredential ($DomainU
 $DomainJoinUser = "wella\svc_PackagingDJ"
 $DomainJoinPassword = Import-Clixml $TempFileStore\DomainJoin.xml | ConvertTo-SecureString -Key $myKey
 $DomainJoinCred = New-Object System.Management.Automation.PSCredential ($DomainJoinUser, $DomainJoinPassword)
-#>
 
 # Import Hyper-V Module
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Importing Hyper-V Module"

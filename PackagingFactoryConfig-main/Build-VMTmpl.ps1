@@ -86,7 +86,7 @@ function Create-VM {
     #$VMObject | Add-VMHardDiskDrive -Path $VMDrive\Hyper-V\$VHDFolder\$VMName\$VMName.vhdx
     
     $Date = Get-Date -Format yyyy-MM-dd
-    $Time = Get-Date -Format hh:mm
+    $Time = Get-Date -Format HH:mm
     $VMObject | Checkpoint-VM -SnapshotName "Base Config ($Date - $Time)"
 
     $VMObject | Start-VM -Verbose -ErrorAction Stop
@@ -192,7 +192,7 @@ function Create-VM {
         Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Error -Message $error[0].Exception
     }  
     $Date = Get-Date -Format yyyy-MM-dd
-    $Time = Get-Date -Format hh:mm
+    $Time = Get-Date -Format HH:mm
     $VMObject | Checkpoint-VM -SnapshotName "Domain Joined ($Date - $Time)"
     #$VMNumber = $VMName.Trim($VmNamePrefix)
     if(!(Get-NetNatStaticMapping -NatName $VMNetNATName -ErrorAction SilentlyContinue | where {$_.ExternalPort -like "*$VMNumber"})) {

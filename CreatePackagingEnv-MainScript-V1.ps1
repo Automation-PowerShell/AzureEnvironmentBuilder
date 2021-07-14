@@ -41,22 +41,22 @@ if($RequireCreate) {
         # Create Resource Groups
     if($RequireResourceGroups -and !$UseTerraform) {
         $RG = New-AzResourceGroup -Name $RGNamePROD -Location $Location
-        if ($RG.ResourceGroupName -eq $RGNamePROD) {Write-Host "PROD Resource Group created successfully"}Else{Write-Host "*** Unable to create PROD Resource Group! ***"}
+        if ($RG.ResourceGroupName -eq $RGNamePROD) {Write-Log "PROD Resource Group created successfully"}Else{Write-Log "*** Unable to create PROD Resource Group! ***" -Level Error }
         if (!($RGNameDEV -match $RGNamePROD)) {
             $RG = New-AzResourceGroup -Name $RGNameDEV -Location $Location
-            if ($RG.ResourceGroupName -eq $RGNameDEV) { Write-Host "DEV Resource Group created successfully" }Else { Write-Host "*** Unable to create DEV Resource Group! ***" }
+            if ($RG.ResourceGroupName -eq $RGNameDEV) { Write-Log "DEV Resource Group created successfully" }Else { Write-Log "*** Unable to create DEV Resource Group! ***" -Level Error }
         }
         if (!($RGNameDEV -match $RGNameDEVVNET)) {
             $RG = New-AzResourceGroup -Name $RGNameDEVVNET -Location $Location
-            if ($RG.ResourceGroupName -eq $RGNameDEVVNET) { Write-Host "DEV VNET Resource Group created successfully" }Else { Write-Host "*** Unable to create DEV VNET Resource Group! ***" }
+            if ($RG.ResourceGroupName -eq $RGNameDEVVNET) { Write-Log "DEV VNET Resource Group created successfully" }Else { Write-Log "*** Unable to create DEV VNET Resource Group! ***" -Level Error }
         }
         if (!($RGNamePROD -match $RGNamePRODVNET)) {
             $RG = New-AzResourceGroup -Name $RGNamePRODVNET -Location $Location
-            if ($RG.ResourceGroupName -eq $RGNamePRODVNET) { Write-Host "PROD VNET Resource Group created successfully" }Else { Write-Host "*** Unable to create PROD VNET Resource Group! ***" }
+            if ($RG.ResourceGroupName -eq $RGNamePRODVNET) { Write-Log "PROD VNET Resource Group created successfully" }Else { Write-Log "*** Unable to create PROD VNET Resource Group! ***" -Level Error }
         } 
         if (!($RGNamePROD -match $RGNameSTORE) -and $RequireStorageAccount) {
             $RG = New-AzResourceGroup -Name $RGNameSTORE -Location $Location
-            if ($RG.ResourceGroupName -eq $RGNameSTORE) { Write-Host "STORE Resource Group created successfully" }Else { Write-Host "*** Unable to create STORE Resource Group! ***" }
+            if ($RG.ResourceGroupName -eq $RGNameSTORE) { Write-Log "STORE Resource Group created successfully" }Else { Write-Log "*** Unable to create STORE Resource Group! ***" -Level Error }
         }
     }
     if ($UseTerraform) {
@@ -105,7 +105,5 @@ if ($RequireConfigure) {
         .\CreatePackagingEnv-HyperVServer-Configure.ps1
     }
 }
-$Date = Get-Date -Format yyyy-MM-dd
-$Time = Get-Date -Format hh:mm
-Write-Host "$Date - $Time -- All Scripts Completed"
+Write-Log "All Scripts Completed"
 #endregion Main

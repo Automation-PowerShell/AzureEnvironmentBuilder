@@ -30,7 +30,7 @@ function CreateHyperVVM-Script($VMName) {
     $VirtualMachine = Set-AzVMSourceImage -VM $VirtualMachine -PublisherName 'MicrosoftWindowsServer' -Offer 'WindowsServer' -Skus '2019-Datacenter' -Version latest
     $VirtualMachine = Set-AzVMBootDiagnostic -VM $VirtualMachine -Disable
 
-    New-AzVM -ResourceGroupName $RGNamePROD -Location $Location -VM $VirtualMachine -Verbose  
+    New-AzVM -ResourceGroupName $RGNamePROD -Location $Location -VM $VirtualMachine -Verbose | Out-Null
 }
 
 function TerraformBuild {
@@ -39,7 +39,7 @@ function TerraformBuild {
         $Count = 1
         $VMNumberStart = $VMHyperVNumberStart
         While ($Count -le $NumberofHyperVVMs) {
-            Write-Host "Creating $Count of $NumberofHyperVVMs VMs"
+            Write-Log "Creating $Count of $NumberofHyperVVMs VMs"
             $VM = $VMHyperVNamePrefix + $VMNumberStart
 
             CreateHyperVVM-Terraform "$VM"
@@ -55,14 +55,14 @@ function ScriptBuild {
         $Count = 1
         $VMNumberStart = $VMHyperVNumberStart
         While ($Count -le $NumberofHyperVVMs) {
-            Write-Host "Creating $Count of $NumberofHyperVVMs VMs"
+            Write-Log "Creating $Count of $NumberofHyperVVMs VMs"
             $VM = $VMHyperVNamePrefix + $VMNumberStart
             $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $RGNamePROD -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if (!$VMCheck) {
                 CreateHyperVVM-Script "$VM"
             }
             else {
-                Write-Host "Virtual Machine $VM already exists!"
+                Write-Log "*** Virtual Machine $VM already exists! ***" -Level Error
                 break
             }
             $Count++
@@ -79,7 +79,5 @@ if ($UseTerraform) {
 else {
     ScriptBuild
 }
-$Date = Get-Date -Format yyyy-MM-dd
-$Time = Get-Date -Format hh:mm
-Write-Host "$Date - $Time -- Hyper-V Create Script Completed"
+Write-Log "Hyper-V Create Script Completed"
 #endregion Main

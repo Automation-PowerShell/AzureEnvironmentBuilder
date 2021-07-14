@@ -23,7 +23,7 @@ function UpdateStorage {
         }
         . .\SyncFiles.ps1 -CallFromCreatePackaging -Recurse        # Sync Files to Storage Blob
         #. .\SyncFiles.ps1 -CallFromCreatePackaging                  # Sync Files to Storage Blob
-        Write-Host "Storage Account has been Updated with files"
+        Write-Log "Storage Account has been Updated with files"
     }
 }
 function UpdateRBAC {
@@ -32,20 +32,20 @@ function UpdateRBAC {
         $ContributorGroup = Get-AzADGroup -DisplayName $rbacContributor
         $ReadOnlyGroup = Get-AzADGroup -DisplayName $rbacReadOnly
 
-        New-AzRoleAssignment -ObjectId $OwnerGroup.Id -RoleDefinitionName "Owner" -ResourceGroupName $RGNamePROD | Out-Null
-        New-AzRoleAssignment -ObjectId $ContributorGroup.Id -RoleDefinitionName "Contributor" -ResourceGroupName $RGNamePROD | Out-Null
-        New-AzRoleAssignment -ObjectId $ReadOnlyGroup.Id -RoleDefinitionName "Reader" -ResourceGroupName $RGNamePROD | Out-Null
+        New-AzRoleAssignment -ObjectId $OwnerGroup.Id -RoleDefinitionName "Owner" -ResourceGroupName $RGNamePROD -ErrorAction Ignore | Out-Null
+        New-AzRoleAssignment -ObjectId $ContributorGroup.Id -RoleDefinitionName "Contributor" -ResourceGroupName $RGNamePROD -ErrorAction Ignore | Out-Null
+        New-AzRoleAssignment -ObjectId $ReadOnlyGroup.Id -RoleDefinitionName "Reader" -ResourceGroupName $RGNamePROD -ErrorAction Ignore | Out-Null
         if (!($RGNameDEV -match $RGNamePROD)) {
-            New-AzRoleAssignment -ObjectId $OwnerGroup.Id -RoleDefinitionName "Owner" -ResourceGroupName $RGNameDEV | Out-Null
-            New-AzRoleAssignment -ObjectId $ContributorGroup.Id -RoleDefinitionName "Contributor" -ResourceGroupName $RGNameDEV | Out-Null
-            New-AzRoleAssignment -ObjectId $ReadOnlyGroup.Id -RoleDefinitionName "Reader" -ResourceGroupName $RGNameDEV | Out-Null
+            New-AzRoleAssignment -ObjectId $OwnerGroup.Id -RoleDefinitionName "Owner" -ResourceGroupName $RGNameDEV -ErrorAction Ignore | Out-Null
+            New-AzRoleAssignment -ObjectId $ContributorGroup.Id -RoleDefinitionName "Contributor" -ResourceGroupName $RGNameDEV -ErrorAction Ignore | Out-Null
+            New-AzRoleAssignment -ObjectId $ReadOnlyGroup.Id -RoleDefinitionName "Reader" -ResourceGroupName $RGNameDEV -ErrorAction Ignore | Out-Null
         }
         if (!($RGNameSTORE -match $RGNamePROD)) {
-            New-AzRoleAssignment -ObjectId $OwnerGroup.Id -RoleDefinitionName "Owner" -ResourceGroupName $RGNameSTORE | Out-Null
-            New-AzRoleAssignment -ObjectId $ContributorGroup.Id -RoleDefinitionName "Contributor" -ResourceGroupName $RGNameSTORE | Out-Null
-            New-AzRoleAssignment -ObjectId $ReadOnlyGroup.Id -RoleDefinitionName "Reader" -ResourceGroupName $RGNameSTORE | Out-Null
+            New-AzRoleAssignment -ObjectId $OwnerGroup.Id -RoleDefinitionName "Owner" -ResourceGroupName $RGNameSTORE -ErrorAction Ignore | Out-Null
+            New-AzRoleAssignment -ObjectId $ContributorGroup.Id -RoleDefinitionName "Contributor" -ResourceGroupName $RGNameSTORE -ErrorAction Ignore | Out-Null
+            New-AzRoleAssignment -ObjectId $ReadOnlyGroup.Id -RoleDefinitionName "Reader" -ResourceGroupName $RGNameSTORE -ErrorAction Ignore | Out-Null
         }
-        Write-Host "Role Assignments Set"
+        Write-Log "Role Assignments Set"
     } Catch {
         Write-Error $_.Exception.Message
     }
