@@ -9,13 +9,11 @@ function RunVMConfig($ResourceGroup, $VMName, $BlobFilePath, $Blob) {
     }
 
     $VMConfigure = Set-AzVMCustomScriptExtension @Params
-    $Date = Get-Date -Format yyyy-MM-dd
-    $Time = Get-Date -Format HH:mm
     if ($VMConfigure.IsSuccessStatusCode -eq $True) {
-        Write-Host "$Date - $Time -- Virtual Machine $VMName configured with $Blob successfully"
+        Write-Log "Virtual Machine $VMName configured with $Blob successfully"
     }
     else {
-        Write-Host "$Date - $Time -- *** Unable to configure Virtual Machine $VMName with $Blob ***"
+        Write-Log "*** Unable to configure Virtual Machine $VMName with $Blob ***"
     }
 }
 
@@ -36,7 +34,8 @@ function Write-LogScreen {
                 Write-Host $String -ForegroundColor Red
             }
 
-            "Debug" { 
+            "Debug" {
+                $String = "DEBUG: $String"
                 Write-Host $String -ForegroundColor Green
             }
         }
@@ -51,20 +50,21 @@ function Write-LogFile {
         [Parameter(Position = 0, Mandatory)][String]$String,
         [Parameter(Position = 1, Mandatory)][ValidateSet('Info', 'Error', 'Debug')][String]$Level
     )
-
+    $logfile = ".\PEB.log"
     try {
         switch ($Level) {
             "Info" { 
-                Write-Host $String
+                Out-File -FilePath $logfile -Append -Force $String
             }
 
             "Error" { 
                 $String = "ERROR: $String"
-                Write-Host $String -ForegroundColor Red
+                Out-File -FilePath $logfile -Append -Force $String
             }
 
-            "Debug" { 
-                Write-Host $String -ForegroundColor Green
+            "Debug" {
+                $String = "DEBUG: $String"
+                Out-File -FilePath $logfile -Append -Force $String
             }
         }
     }
