@@ -77,6 +77,7 @@ function UpdateRBAC {
 #region Main
 #=======================================================================================================================================================
 cd $PSScriptRoot
+Write-Warning "Are you sure you want to rebuild the Packaging Environment?  OK to Continue?" -WarningAction Inquire
 
 if($RequireCreate) {
         # Create Resource Groups

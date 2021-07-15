@@ -120,18 +120,18 @@ function Create-VM {
         # Pre Domain Join
     Remove-Variable erroric -ErrorAction SilentlyContinue
     Invoke-Command -VMName $VMName -Credential $LocalCred -ErrorVariable erroric -ScriptBlock {
-        $NetAdapter = Get-NetAdapter -Physical | where {$_.Status -eq "Up"}
-        if (($NetAdapter | Get-NetIPConfiguration).IPv4Address.IPAddress) {
-            $NetAdapter | Remove-NetIPAddress -AddressFamily IPv4 -Confirm:$false
-        }
-        if (($NetAdapter | Get-NetIPConfiguration).Ipv4DefaultGateway) {
-            $NetAdapter | Remove-NetRoute -AddressFamily IPv4 -Confirm:$false
-        }
-        $NetAdapter | New-NetIPAddress -AddressFamily IPv4 -IPAddress $Using:IPAddress -PrefixLength $Using:IPSubnetPrefix -DefaultGateway $Using:IPGateway | Out-Null
-        $NetAdapter | Set-DnsClientServerAddress -ServerAddresses $Using:IPDNS | Out-Null
-        Start-Sleep -Seconds 60
+        #$NetAdapter = Get-NetAdapter -Physical | where {$_.Status -eq "Up"}
+        #if (($NetAdapter | Get-NetIPConfiguration).IPv4Address.IPAddress) {
+        #    $NetAdapter | Remove-NetIPAddress -AddressFamily IPv4 -Confirm:$false
+        #}
+        #if (($NetAdapter | Get-NetIPConfiguration).Ipv4DefaultGateway) {
+        #    $NetAdapter | Remove-NetRoute -AddressFamily IPv4 -Confirm:$false
+        #}
+        #$NetAdapter | New-NetIPAddress -AddressFamily IPv4 -IPAddress $Using:IPAddress -PrefixLength $Using:IPSubnetPrefix -DefaultGateway $Using:IPGateway | Out-Null
+        #$NetAdapter | Set-DnsClientServerAddress -ServerAddresses $Using:IPDNS | Out-Null
+        #Start-Sleep -Seconds 60
         if(!(Test-Connection $VMHostIP -Quiet)) { Write-Error "Networking Issue" }
-        #if(!(Test-Connection "google.com" -Quiet)) { Write-Error "DNS Issue" }
+        if(!(Test-Connection "google.com" -Quiet)) { Write-Error "DNS Issue" }
     }
     if($erroric) {
         Write-Error $error[0]
@@ -229,7 +229,7 @@ Write-Host "Running RebuildHyperVVM.ps1"
 if($RVMVMName -eq "") {
     #$VMList = Get-VM -Name *
     $VMList = $VMListData
-    $RVMVMName = ($VMList | where { $_.Name -like "$VmNamePrefix*" } | select * | ogv -Title "Select Virtual Machine to Rebuild" -PassThru).Name
+    $RVMVMName = ($VMList | where { $_.Name -like "$VmNamePrefix*" } | select * | ogv -Title "Select Virtual Machine to Rebuild" -OutputMode Single).Name
 }
 
 Write-Host "Rebuilding $RVMVMName"
