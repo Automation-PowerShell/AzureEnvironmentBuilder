@@ -3,7 +3,7 @@ cd $PSScriptRoot
 
     # Dot Source Variables
 . .\ScriptVariables.ps1
-. .\ClientVariables-Dan.ps1
+. .\ClientVariables-Template.ps1
 
     # Dot Source Functions
 . .\ScriptCoreFunctions.ps1
