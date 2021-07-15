@@ -85,7 +85,7 @@ function CreateJumpboxVM-Script($VMName) {
 function ConfigureStandardVM($VMName) {
     $VMCreate = Get-AzVM -ResourceGroupName $RGNameDEV -Name $VMName
     If ($VMCreate.ProvisioningState -eq "Succeeded") {
-        Write-Host "Virtual Machine $VMName created successfully"
+        Write-Log "Virtual Machine $VMName created successfully"
         
         $NewVm = Get-AzADServicePrincipal -DisplayName $VMName
         if ($RequireServicePrincipal) {
@@ -101,7 +101,7 @@ function ConfigureStandardVM($VMName) {
         Get-AzContext -Name "User" | Select-AzContext | Out-Null
 
         Restart-AzVM -ResourceGroupName $RGNameDEV -Name $VMName | Out-Null
-        Write-Host "Restarting VM..."
+        Write-Log "Restarting VM..."
         #RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/Prevision.ps1" "Prevision.ps1"
         #RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/VMConfig.ps1" "VMConfig.ps1"
         #RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/RunOnce.ps1" "RunOnce.ps1"
@@ -126,22 +126,22 @@ function ConfigureStandardVM($VMName) {
             $Properties.Add('notificationSettings', @{status = 'Disabled'; timeInMinutes = 15 })
             $Properties.Add('targetResourceId', $VMResourceId)
             New-AzResource -Location $Location -ResourceId $ScheduledShutdownResourceId -Properties $Properties -Force | Out-Null
-            Write-Host "Auto Shutdown Enabled for 1800"
+            Write-Log "Auto Shutdown Enabled for 1800"
         }
         if ($VMShutdown) {
             $Stopvm = Stop-AzVM -ResourceGroupName $RGNameDEV -Name $VMName -Force
-            if ($Stopvm.Status -eq "Succeeded") { Write-Host "VM $VMName shutdown successfully" }Else { Write-Host "*** Unable to shutdown VM $VMName! ***" }
+            if ($Stopvm.Status -eq "Succeeded") { Write-Log "VM $VMName shutdown successfully" }Else { Write-Log "*** Unable to shutdown VM $VMName! ***" -Level Error }
         }
     }
     Else {
-        Write-Host "*** Unable to configure Virtual Machine $VMName! ***"
+        Write-Log "*** Unable to configure Virtual Machine $VMName! ***" -Level Error
     }
 }
 
 function ConfigureAdminStudioVM($VMName) {
     $VMCreate = Get-AzVM -ResourceGroupName $RGNameDEV -Name $VMName
     If ($VMCreate.ProvisioningState -eq "Succeeded") {
-        Write-Host "Virtual Machine $VMName created successfully"
+        Write-Log "Virtual Machine $VMName created successfully"
         
         $NewVm = Get-AzADServicePrincipal -DisplayName $VMName
         if ($RequireServicePrincipal) {
@@ -157,15 +157,15 @@ function ConfigureAdminStudioVM($VMName) {
         Get-AzContext -Name "User" | Select-AzContext | Out-Null
         
         Restart-AzVM -ResourceGroupName $RGNameDEV -Name $VMName | Out-Null
-        Write-Host "Restarting VM..."
-        RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/Prevision.ps1" "Prevision.ps1"
-        RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/VMConfig.ps1" "VMConfig.ps1"
+        Write-Log "Restarting VM..."
+        #RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/Prevision.ps1" "Prevision.ps1"
+        #RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/VMConfig.ps1" "VMConfig.ps1"
         RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/RunOnce.ps1" "RunOnce.ps1"
-        RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/AdminStudio.ps1" "AdminStudio.ps1"
-        RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/ORCA.ps1" "ORCA.ps1"
-        RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/GlassWire.ps1" "GlassWire.ps1"
-        RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/7-Zip.ps1" "7-Zip.ps1"
-        RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/InstEd.ps1" "InstEd.ps1"
+        #RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/AdminStudio.ps1" "AdminStudio.ps1"
+        #RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/ORCA.ps1" "ORCA.ps1"
+        #RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/GlassWire.ps1" "GlassWire.ps1"
+        #RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/7-Zip.ps1" "7-Zip.ps1"
+        #RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/InstEd.ps1" "InstEd.ps1"
         
         if ($AutoShutdown) {
             $VMName = $VMCreate.Name
@@ -181,22 +181,22 @@ function ConfigureAdminStudioVM($VMName) {
             $Properties.Add('notificationSettings', @{status = 'Disabled'; timeInMinutes = 15 })
             $Properties.Add('targetResourceId', $VMResourceId)
             New-AzResource -Location $Location -ResourceId $ScheduledShutdownResourceId -Properties $Properties -Force | Out-Null
-            Write-Host "Auto Shutdown Enabled for 1800"
+            Write-Log "Auto Shutdown Enabled for 1800"
         }
         if ($VMShutdown) {
             $Stopvm = Stop-AzVM -ResourceGroupName $RGNameDEV -Name $VMName -Force
-            if ($Stopvm.Status -eq "Succeeded") { Write-Host "VM $VMName shutdown successfully" }Else { Write-Host "*** Unable to shutdown VM $VMName! ***" }
+            if ($Stopvm.Status -eq "Succeeded") { Write-Log "VM $VMName shutdown successfully" }Else { Write-Log "*** Unable to shutdown VM $VMName! ***" -Level Error }
         }
     }
     Else {
-        Write-Host "*** Unable to configure Virtual Machine $VMName! ***"
+        Write-Log "*** Unable to configure Virtual Machine $VMName! ***" -Level Error
     }
 }
 
 function ConfigureJumpboxVM($VMName) {
     $VMCreate = Get-AzVM -ResourceGroupName $RGNameDEV -Name $VMName
     If ($VMCreate.ProvisioningState -eq "Succeeded") {
-        Write-Host "Virtual Machine $VMName created successfully"
+        Write-Log "Virtual Machine $VMName created successfully"
         
         $NewVm = Get-AzADServicePrincipal -DisplayName $VMName
         if ($RequireServicePrincipal) {
@@ -212,8 +212,8 @@ function ConfigureJumpboxVM($VMName) {
         Get-AzContext -Name "User" | Select-AzContext | Out-Null
         
         Restart-AzVM -ResourceGroupName $RGNameDEV -Name $VMName | Out-Null
-        Write-Host "Restarting VM..."
-        RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/Prevision.ps1" "Prevision.ps1"
+        Write-Log "Restarting VM..."
+        #RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/Prevision.ps1" "Prevision.ps1"
         RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/RunOnce.ps1" "RunOnce.ps1"
         RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/Jumpbox.ps1" "Jumpbox.ps1"
         RunVMConfig "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/DomainJoin.ps1" "DomainJoin.ps1"
@@ -232,15 +232,15 @@ function ConfigureJumpboxVM($VMName) {
             $Properties.Add('notificationSettings', @{status = 'Disabled'; timeInMinutes = 15 })
             $Properties.Add('targetResourceId', $VMResourceId)
             New-AzResource -Location $Location -ResourceId $ScheduledShutdownResourceId -Properties $Properties -Force | Out-Null
-            Write-Host "Auto Shutdown Enabled for 1800"
+            Write-Log "Auto Shutdown Enabled for 1800"
         }
         if ($VMShutdown) {
             $Stopvm = Stop-AzVM -ResourceGroupName $RGNameDEV -Name $VMName -Force
-            if ($Stopvm.Status -eq "Succeeded") { Write-Host "VM $VMName shutdown successfully" }Else { Write-Host "*** Unable to shutdown VM $VMName! ***" }
+            if ($Stopvm.Status -eq "Succeeded") { Write-Log "VM $VMName shutdown successfully" }Else { Write-Log "*** Unable to shutdown VM $VMName! ***" -Level Error }
         }
     }
     Else {
-        Write-Host "*** Unable to configure Virtual Machine $VMName! ***"
+        Write-Log "*** Unable to configure Virtual Machine $VMName! ***" -Level Error
     }
 }
 
@@ -256,7 +256,7 @@ function RunVMConfig($VMName, $BlobFilePath, $Blob) {
     }
 
     $VMConfigure = Set-AzVMCustomScriptExtension @Params
-    If ($VMConfigure.IsSuccessStatusCode -eq $True) { Write-Host "Virtual Machine $VMName configured with $Blob successfully" }Else { Write-Host "*** Unable to configure Virtual Machine $VMName with $Blob ***" }
+    If ($VMConfigure.IsSuccessStatusCode -eq $True) { Write-Log "Virtual Machine $VMName configured with $Blob successfully" }Else { Write-Log "*** Unable to configure Virtual Machine $VMName with $Blob ***" -Level Error }
 }
 
 function ScriptBuild-Create {
@@ -271,7 +271,7 @@ function ScriptBuild-Create {
                 CreateStandardVM-Script "$VMName"
             }
             else {
-                Write-Host "Virtual Machine $VMName doesn't exist!"
+                Write-Log "*** Virtual Machine $VMName doesn't exist! ***" -Level Error
                 CreateStandardVM-Script "$VMName"
             }
         }
@@ -285,7 +285,7 @@ function ScriptBuild-Create {
                 CreateAdminStudioVM-Script "$VMName"
             }
             else {
-                Write-Host "Virtual Machine $VMName doesn't exist!"
+                Write-Log "*** Virtual Machine $VMName doesn't exist! ***" -Level Error
                 CreateAdminStudioVM-Script "$VMName"
             }
         }
@@ -299,7 +299,7 @@ function ScriptBuild-Create {
                 CreateJumpboxVM-Script "$VMName"
             }
             else {
-                Write-Host "Virtual Machine $VMName doesn't exist!"
+                Write-Log "*** Virtual Machine $VMName doesn't exist! ***" -Level Error
                 CreateJumpboxVM-Script "$VMName"
             }
         }
@@ -345,12 +345,12 @@ function UpdateStorage {
         }
         #. .\SyncFiles.ps1 -CallFromCreatePackaging -Recurse        # Sync Files to Storage Blob
         . .\SyncFiles.ps1 -CallFromCreatePackaging                  # Sync Files to Storage Blob
-        Write-Host "Storage Account has been Updated with files"
+        Write-Log "Storage Account has been Updated with files"
     }
 }
 
 #region Main
-Write-Host "Running RebuildVM.ps1"
+Write-Log "Running RebuildVM.ps1"
 if($VMName -eq "") {
     $VMList = Get-AzVM -Name * -ResourceGroupName $RGNameDEV -ErrorAction SilentlyContinue
     $VMName = ($VMlist | where { $_.Name -notin $VMListExclude  } | select Name | ogv -Title "Select Virtual Machine to Rebuild" -PassThru).Name
@@ -360,11 +360,11 @@ if($VMName -eq "") {
 }
 Write-Warning "This Script is about to Rebuild: $VMName with Spec: $Spec.  OK to Continue?" -WarningAction Inquire
 
-#Write-Host "Syncing Files"
+#Write-Log "Syncing Files"
 #UpdateStorage
 
-Write-Host "Rebuilding: $VMName with Spec: $Spec"
+Write-Log "Rebuilding: $VMName with Spec: $Spec"
 ScriptBuild-Create
 ScriptBuild-Config
-Write-Host "Completed RebuildVM.ps1"
+Write-Log "Completed RebuildVM.ps1"
 #endregion Main

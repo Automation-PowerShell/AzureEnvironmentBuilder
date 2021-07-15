@@ -16,21 +16,20 @@ function SyncFiles {
     if(!$Context){$Context = $storageAccount.Context}
     #if(!$Container){$Container = Get-AzStorageContainer -Name $ContainerName -Context $Context}
     if($ScriptsOnly) {
-        $files = Get-ChildItem -Path $LocalPath\* -File -Include "*.ps1" | Set-AzStorageBlobContent -Container $ContainerName -Context $Context -Force    
+        Get-ChildItem -Path $LocalPath\* -File -Include "*.ps1" | Set-AzStorageBlobContent -Container $ContainerName -Context $Context -Force | Out-Null   
     }
     elseif ($Recurse) {
-        $files = Get-ChildItem -Path $LocalPath\* -File -Recurse | Set-AzStorageBlobContent -Container $ContainerName -Context $Context -Force
+        Get-ChildItem -Path $LocalPath\* -File -Recurse | Set-AzStorageBlobContent -Container $ContainerName -Context $Context -Force | Out-Null
     }
     else {
-        $files = Get-ChildItem -Path $LocalPath\* -File | Set-AzStorageBlobContent -Container $ContainerName -Context $Context -Force
+        Get-ChildItem -Path $LocalPath\* -File | Set-AzStorageBlobContent -Container $ContainerName -Context $Context -Force | Out-Null
     }
 }
-
-Write-Host "Running SyncFiles.ps1"
+Write-Log "Running SyncFiles.ps1"
 Try {
     switch ($CallFromCreatePackaging) {
         $True { 
-            SyncFiles -LocalPath $ContainerScripts -ResourceGroupName $RGNameDEV -ContainerName $ContainerName -StorageAccountName $StorageAccountName }
+            SyncFiles -LocalPath $ContainerScripts -ResourceGroupName $RGNameSTORE -ContainerName $ContainerName -StorageAccountName $StorageAccountName }
         $False {
             #SyncFiles -LocalPath $SFLocalPath -ResourceGroupName $SFResourceGroupName -StorageAccountName $SFStorageAccountName -ContainerName $SFContainerName
         }
@@ -39,4 +38,4 @@ Try {
     Write-Error "An error occured syncing files to the Storage Blob."
     Write-Error $_.Exception.Message
 }
-Write-Host "Completed SyncFiles.ps1"
+Write-Log "Completed SyncFiles.ps1"

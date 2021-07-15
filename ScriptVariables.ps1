@@ -8,6 +8,7 @@ $RequireUpdateStorage = $false
 $RequireServicePrincipal = $false
 
     # Required Components
+$isProd = $false                                            # Are we building a DEV or Prod Environment?
 $RequireUserGroups = $true
 $RequireRBAC = $true
 $RequireResourceGroups = $true
@@ -28,10 +29,11 @@ $tags = @{
 
     # General Config Variables
 $location = "uksouth"                                       # Azure Region for resources to be built into
-$RGNameDEV = "rg-euc-packaging-dev"                         # DEV Resource group name
-$RGNamePROD = "rg-euc-packaging-prod"                       # PROD Resource group name
-$RGNameDEVVNET = "rg-euc-packaging-dev-vnet"                # DEV VNET Resource group name
-$RGNamePRODVNET = "rg-euc-packaging-prod-vnet"              # PROD VNET Resource group name
+$RGNameSTORE = "rg-euc-packaging-store"                     # Storage Account Resource Group name
+$RGNameDEV = "rg-euc-packaging-dev"                         # DEV Resource Group name
+$RGNamePROD = "rg-euc-packaging-prod"                       # PROD Resource Group name
+$RGNameDEVVNET = "rg-euc-packaging-dev-vnet"                # DEV VNET Resource Group name
+$RGNamePRODVNET = "rg-euc-packaging-prod-vnet"              # PROD VNET Resource Group name
 $VNetDEV = "vnet-euc-dev"                                   # DEV Environment Virtual Network name
 $VNetPROD = "vnet-euc-prod"                                 # PROD Environment Virtual Network name
 $SubnetNameDEV = "default"                                  # Environment Virtual Subnet name

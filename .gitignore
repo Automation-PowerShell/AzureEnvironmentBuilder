@@ -32,3 +32,5 @@ PackagingFactoryConfig-main/ORCA.ps1
 PackagingFactoryConfig-main/RunOnce.ps1
 PackagingFactoryConfig-main/VMConfig.ps1
 PackagingFactoryConfig-main/Prevision.ps1
+PackagingFactoryConfig-main/Build-VMBase.ps1
+ClientVariables-NHS.ps1
