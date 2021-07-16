@@ -20,11 +20,11 @@ Install-PackageProvider -Name NuGet -Force -ErrorAction Stop
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Information -Message "Loading Az.Storage module"
 Install-Module -Name Az.Storage -Force -ErrorAction Stop
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Information -Message "Attempting to connect to Azure"    
-Connect-AzAccount -identity -ErrorAction Stop -Subscription 743e9d63-59c8-42c3-b823-28bb773a88a6
+Connect-AzAccount -identity -ErrorAction Stop -Subscription fdbeeaa5-02f9-4806-b4b6-3450ce500f51
 
 # Map Storage Account
-cmd.exe /C cmdkey /add:`"storageeucpackaging01.file.core.windows.net`" /user:`"Azure\storageeucpackaging01`" /pass:`"/xR1RQWgRIY7XNSjsK2GDmsoobgScVAibKQRtzzX7ZqsBIHe9v/fqqi+z5EixmCQmD6Pqk5vyBLTJpRG7gHHXA==`"
-New-PSDrive -Name Z -PSProvider FileSystem -Root "\\storageeucpackaging01.file.core.windows.net\pkgazfiles01" -Persist
+cmd.exe /C cmdkey /add:`"wlprodeusprodpkgstr01.file.core.windows.net`" /user:`"Azure\wlprodeusprodpkgstr01`" /pass:`"s9joA/NOc94meybF/lasFWDB55fFx3JP0OEYddtYljpRswpjErowqz9wXZe2zVY1/CW1Aujle3ED1fEJtnsEvg==`"
+New-PSDrive -Name Z -PSProvider FileSystem -Root "\\wlprodeusprodpkgstr01.file.core.windows.net\pkgazfiles01" -Persist
 
 # Configure DHCP
 Import-Module DHCPServer -Force -ErrorAction Stop
@@ -54,7 +54,7 @@ Install-WindowsFromWim -DiskNumber 2 -DiskLayout BIOS -NoRecoveryTools -Unattend
 Dismount-VHD -Path F:\Hyper-V\Media\basedisk.vhdx
 
 # Get Files from Blob
-$StorAcc = Get-AzStorageAccount -ResourceGroupName rg-euc-packaging-store -Name storageeucpackaging01
+$StorAcc = Get-AzStorageAccount -ResourceGroupName rg-wl-prod-packaging -Name wlprodeusprodpkgstr01
 <#$Result1 = Get-AzStorageBlobContent -Container data -Blob "hyperv-vms.csv" -Destination "c:\Windows\temp\" -Context $StorAcc.context -Force
 If ($Result1.Name -eq "hyperv-vms.csv") {
     Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Successfully downloaded hyperv-vms.csv"
