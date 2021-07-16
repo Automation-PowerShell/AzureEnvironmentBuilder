@@ -3,11 +3,14 @@ cd $PSScriptRoot
 
     # Dot Source Variables
 . .\ScriptVariables.ps1
-. .\ClientVariables-NHS.ps1
+. .\ClientLoadVariables.ps1
 
     # Dot Source Functions
 . .\ScriptCoreFunctions.ps1
 . .\ScriptEnvironmentFunctions.ps1
+. .\ScriptPackagingFunctions.ps1
+. .\ScriptHyperVFunctions.ps1
+. .\ClientLoadFunctions.ps1
 
 Import-Module Az.Compute, Az.Accounts, Az.Storage, Az.Network, Az.Resources -ErrorAction SilentlyContinue
 if (!((Get-Module Az.Compute) -and (Get-Module Az.Accounts) -and (Get-Module Az.Storage) -and (Get-Module Az.Network) -and (Get-Module Az.Resources))) {
@@ -33,7 +36,7 @@ Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"  # Turns off 
 #endregion Setup
 
 #region Main
-#=======================================================================================================================================================
+Write-Log "Running CreatePackagingEnv-MainScript-V1.ps1"
 cd $PSScriptRoot
 if($isProd) { Write-Warning "Are you sure you want to rebuild the Packaging Environment?  OK to Continue?" -WarningAction Inquire }
 
@@ -105,5 +108,7 @@ if ($RequireConfigure) {
         .\CreatePackagingEnv-HyperVServer-Configure.ps1
     }
 }
-Write-Log "All Scripts Completed"
+Write-Log "Completed CreatePackagingEnv-MainScript-V1.ps1"
+Write-Log "============================================================================================================="
+
 #endregion Main
