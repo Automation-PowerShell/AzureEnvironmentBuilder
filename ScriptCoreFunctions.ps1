@@ -13,7 +13,7 @@ function RunVMConfig($ResourceGroup, $VMName, $BlobFilePath, $Blob) {
         Write-Log "Virtual Machine $VMName configured with $Blob successfully"
     }
     else {
-        Write-Log "*** Unable to configure Virtual Machine $VMName with $Blob ***"
+        Write-Log "*** Unable to configure Virtual Machine $VMName with $Blob ***" -Level Error
     }
 }
 

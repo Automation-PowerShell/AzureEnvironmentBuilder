@@ -58,4 +58,5 @@ Write-Log "Rebuilding: $VMName with Spec: $Spec"
 ScriptBuild-Create-VM
 ScriptBuild-Config-VM
 Write-Log "Completed RebuildAzureVM.ps1"
+Write-Log "============================================================================================================="
 #endregion Main
