@@ -3,15 +3,14 @@ cd $PSScriptRoot
 
     # Dot Source Variables
 . .\ScriptVariables.ps1
-. .\ClientVariables-Wella.ps1
+. .\ClientLoadVariables.ps1
 
     # Dot Source Functions
 . .\ScriptCoreFunctions.ps1
 . .\ScriptEnvironmentFunctions.ps1
 . .\ScriptPackagingFunctions.ps1
 . .\ScriptHyperVFunctions.ps1
-. .\ClientHyperVFunctions-Template.ps1
-. .\ClientPackagingFunctions-Template.ps1
+. .\ClientLoadFunctions.ps1
 
 Import-Module Az.Compute, Az.Accounts, Az.Storage, Az.Network, Az.Resources -ErrorAction SilentlyContinue
 if (!((Get-Module Az.Compute) -and (Get-Module Az.Accounts) -and (Get-Module Az.Storage) -and (Get-Module Az.Network) -and (Get-Module Az.Resources))) {

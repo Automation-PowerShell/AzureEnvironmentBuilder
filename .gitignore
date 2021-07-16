@@ -35,3 +35,5 @@ PackagingFactoryConfig-main/Prevision.ps1
 PackagingFactoryConfig-main/Build-VMBase.ps1
 ClientVariables-NHS.ps1
 PEB.log
+ClientLoadFunctions.ps1
+ClientLoadVariables.ps1
