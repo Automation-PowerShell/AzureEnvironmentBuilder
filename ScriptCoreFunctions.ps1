@@ -54,17 +54,17 @@ function Write-LogFile {
     try {
         switch ($Level) {
             "Info" { 
-                Out-File -FilePath $logfile -Append -Force $String
+                $string | Out-File -FilePath $logfile -Append -Force
             }
 
             "Error" { 
                 $String = "ERROR: $String"
-                Out-File -FilePath $logfile -Append -Force $String
+                $string | Out-File -FilePath $logfile -Append -Force
             }
 
             "Debug" {
                 $String = "DEBUG: $String"
-                Out-File -FilePath $logfile -Append -Force $String
+                $string | Out-File -FilePath $logfile -Append -Force
             }
         }
     }
@@ -84,6 +84,7 @@ function Write-Log {
         $Time = Get-Date -Format HH:mm
         $String = "$Date - $Time -- $String"
         Write-LogScreen -String $String -Level $Level
+        Write-LogFile -String $String -Level $Level
     }
     catch {
 

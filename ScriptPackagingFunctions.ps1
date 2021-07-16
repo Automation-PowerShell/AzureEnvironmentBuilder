@@ -12,7 +12,7 @@ function CreateStandardVM-Script($VMName) {
     $VirtualMachine = Set-AzVMSourceImage -VM $VirtualMachine -PublisherName $VMSpecPublisherName -Offer $VMSpecOffer -Skus $VMSpecSKUS -Version $VMSpecVersion
     $VirtualMachine = Set-AzVMBootDiagnostic -VM $VirtualMachine -Disable
 
-    New-AzVM -ResourceGroupName $RGNameDEV -Location $Location -VM $VirtualMachine -Verbose
+    New-AzVM -ResourceGroupName $RGNameDEV -Location $Location -VM $VirtualMachine -Verbose | Out-Null
 }
 
 function CreateAdminStudioVM-Script($VMName) {
@@ -29,7 +29,7 @@ function CreateAdminStudioVM-Script($VMName) {
     $VirtualMachine = Set-AzVMSourceImage -VM $VirtualMachine -PublisherName $VMSpecPublisherName -Offer $VMSpecOffer -Skus $VMSpecSKUS -Version $VMSpecVersion
     $VirtualMachine = Set-AzVMBootDiagnostic -VM $VirtualMachine -Disable
 
-    New-AzVM -ResourceGroupName $RGNameDEV -Location $Location -VM $VirtualMachine -Verbose
+    New-AzVM -ResourceGroupName $RGNameDEV -Location $Location -VM $VirtualMachine -Verbose | Out-Null
 }
 
 function CreateJumpboxVM-Script($VMName) {
@@ -46,7 +46,7 @@ function CreateJumpboxVM-Script($VMName) {
     $VirtualMachine = Set-AzVMSourceImage -VM $VirtualMachine -PublisherName $VMSpecPublisherName -Offer $VMSpecOffer -Skus $VMSpecSKUS -Version $VMSpecVersion
     $VirtualMachine = Set-AzVMBootDiagnostic -VM $VirtualMachine -Disable
 
-    New-AzVM -ResourceGroupName $RGNameDEV -Location $Location -VM $VirtualMachine -Verbose
+    New-AzVM -ResourceGroupName $RGNameDEV -Location $Location -VM $VirtualMachine -Verbose | Out-Null
 }
 
 function ConfigureStandardVM($VMName) {
