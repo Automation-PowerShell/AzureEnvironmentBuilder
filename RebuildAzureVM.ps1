@@ -16,26 +16,9 @@ cd $PSScriptRoot
 . .\ScriptPackagingFunctions.ps1
 . .\ScriptHyperVFunctions.ps1
 . .\ClientLoadFunctions.ps1
-
-Import-Module Az.Compute,Az.Accounts,Az.Storage,Az.Network,Az.Resources -ErrorAction SilentlyContinue
-if (!((Get-Module Az.Compute) -and (Get-Module Az.Accounts) -and (Get-Module Az.Storage) -and (Get-Module Az.Network) -and (Get-Module Az.Resources))) {
-    Install-Module Az.Compute,Az.Accounts,Az.Storage,Az.Network,Az.Resources -Repository PSGallery -Scope CurrentUser -Force
-    Import-Module AZ.Compute,Az.Accounts,Az.Storage,Az.Network,Az.Resources
-}
-
-Clear-AzContext -Force
-Connect-AzAccount -Tenant $aztenant -Subscription $azSubscription
-$SubscriptionId = (Get-AzContext).Subscription.Id
-if (!($azSubscription -eq $SubscriptionId)) {
-    Write-Error "Subscription ID Mismatch!!!!"
-    exit
-}
-Get-AzContext | Rename-AzContext -TargetName "User" -Force
-if ($RequireServicePrincipal) {
-    Connect-AzAccount -Tenant $azTenant -Subscription $azSubscription -Credential $ServicePrincipalCred -ServicePrincipal
-    Get-AzContext | Rename-AzContext -TargetName "StorageSP" -Force
-    Get-AzContext -Name "User" | Select-AzContext
-}
+    
+    # Load Azure Modules and Connect
+ConnectTo-Azure
 
 Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"  # Turns off Breaking Changes warnings for Cmdlets
 #endregion Setup
@@ -51,7 +34,7 @@ if($VMName -eq "") {
 }
 Write-Warning "This Script is about to Rebuild: $VMName with Spec: $Spec.  OK to Continue?" -WarningAction Inquire
 
-#Write-Log "Syncing Files"
+    #Write-Log "Syncing Files"
 UpdateStorage
 
 Write-Log "Rebuilding: $VMName with Spec: $Spec"

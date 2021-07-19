@@ -91,3 +91,24 @@ function Write-Log {
     }
 }
 
+function ConnectTo-Azure {
+    Import-Module Az.Compute,Az.Accounts,Az.Storage,Az.Network,Az.Resources -ErrorAction SilentlyContinue
+    if (!((Get-Module Az.Compute) -and (Get-Module Az.Accounts) -and (Get-Module Az.Storage) -and (Get-Module Az.Network) -and (Get-Module Az.Resources))) {
+    Install-Module Az.Compute,Az.Accounts,Az.Storage,Az.Network,Az.Resources -Repository PSGallery -Scope CurrentUser -Force    
+        Import-Module AZ.Compute,Az.Accounts,Az.Storage,Az.Network,Az.Resources
+    }
+
+    Clear-AzContext -Force
+    Connect-AzAccount -Tenant $aztenant -Subscription $azSubscription | Out-Null
+    $SubscriptionId = (Get-AzContext).Subscription.Id
+    if (!($azSubscription -eq $SubscriptionId)) {
+        Write-Error "Subscription ID Mismatch!!!!"
+        exit
+    }
+    Get-AzContext | Rename-AzContext -TargetName "User" -Force | Out-Null
+    if ($RequireServicePrincipal) {
+        Connect-AzAccount -Tenant $azTenant -Subscription $azSubscription -Credential $ServicePrincipalCred -ServicePrincipal | Out-Null
+        Get-AzContext | Rename-AzContext -TargetName "StorageSP" -Force | Out-Null
+        Get-AzContext -Name "User" | Select-AzContext | Out-Null
+    }
+}
