@@ -16,7 +16,7 @@ cd $PSScriptRoot
 . .\ScriptPackagingFunctions.ps1
 . .\ScriptHyperVFunctions.ps1
 . .\ClientLoadFunctions.ps1
-    
+
     # Load Azure Modules and Connect
 ConnectTo-Azure
 
