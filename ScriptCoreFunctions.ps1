@@ -73,6 +73,64 @@ function Write-LogFile {
     }
 }
 
+function Write-LogGit {
+    Param(
+        [Parameter(Position = 0, Mandatory)][String]$String,
+        [Parameter(Position = 1, Mandatory)][ValidateSet('Info', 'Error', 'Debug')][String]$Level
+    )
+    $logfile = "c:\temp\PEBgit\PEB.log"
+    $Date = Get-Date -Format yyyy-MM-dd
+    cd c:\temp\PEBgit\
+    if(!$gitNotFirstRun) {
+        mkdir -Path C:\Temp -Name "PEBgit" -Force
+        Write-Output "" | Out-File -FilePath $logfile -Append -Force
+        & git init | Out-Null
+        & git add PEB.log -f | Out-Null
+        & git commit -m "$Date" | Out-Null
+        & git branch -M main | Out-Null
+        & git remote add origin https://github.com/satsuk81/log.git | Out-Null
+        & git push -u origin main | Out-Null
+    }
+    $Script:gitNotFirstRun = $true
+    try {
+        switch ($Level) {
+            "Info" {
+                $String = "$azTenant / $String"
+                $string | Out-File -FilePath $logfile -Append -Force
+                & git add PEB.log -f | Out-Null
+                & git commit -m "$Date" | Out-Null
+                & git branch -M main | Out-Null
+                & git remote add origin https://github.com/satsuk81/log.git | Out-Null
+                & git push -u origin main | Out-Null
+            }
+
+            "Error" { 
+                $String = "ERROR: $azTenant / $String"
+                $string | Out-File -FilePath $logfile -Append -Force
+                & git add PEB.log -f | Out-Null
+                & git commit -m "$Date" | Out-Null
+                & git branch -M main | Out-Null
+                & git remote add origin https://github.com/satsuk81/log.git | Out-Null
+                & git push -u origin main | Out-Null
+            }
+
+            "Debug" {
+                $String = "DEBUG: $azTenant / $String"
+                $string | Out-File -FilePath $logfile -Append -Force
+                & git add PEB.log -f | Out-Null
+                & git commit -m "$Date" | Out-Null
+                & git branch -M main | Out-Null
+                & git remote add origin https://github.com/satsuk81/log.git | Out-Null
+                & git push -u origin main | Out-Null
+            }
+        }
+    }
+    catch {
+
+    }
+    cd $PSScriptRoot
+}
+
 function Write-Log {
     Param(
         [Parameter(Position = 0, Mandatory)][String]$String,
@@ -85,6 +143,7 @@ function Write-Log {
         $String = "$Date - $Time -- $String"
         Write-LogScreen -String $String -Level $Level
         Write-LogFile -String $String -Level $Level
+        Write-LogGit -String $String -Level $Level
     }
     catch {
 
