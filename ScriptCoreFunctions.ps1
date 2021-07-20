@@ -22,7 +22,9 @@ function Write-LogScreen {
         [Parameter(Position = 0, Mandatory)][String]$String,
         [Parameter(Position = 1, Mandatory)][ValidateSet('Info', 'Error', 'Debug')][String]$Level
     )
-
+    $Date = Get-Date -Format yyyy-MM-dd
+    $Time = Get-Date -Format HH:mm
+    $String = "$Date - $Time -- $String"
     try {
         switch ($Level) {
             "Info" { 
@@ -50,21 +52,56 @@ function Write-LogFile {
         [Parameter(Position = 0, Mandatory)][String]$String,
         [Parameter(Position = 1, Mandatory)][ValidateSet('Info', 'Error', 'Debug')][String]$Level
     )
+    $Date = Get-Date -Format yyyy-MM-dd
+    $Time = Get-Date -Format HH:mm
+    $String = "$Date - $Time -- $String"
     $logfile = ".\PEB.log"
     try {
         switch ($Level) {
-            "Info" { 
-                $string | Out-File -FilePath $logfile -Append -Force
+            "Info" {
+                $String = "$String"
+                $string | Out-File -FilePath $logfile -Append -Force -Encoding ascii
             }
 
             "Error" { 
                 $String = "ERROR: $String"
-                $string | Out-File -FilePath $logfile -Append -Force
+                $string | Out-File -FilePath $logfile -Append -Force -Encoding ascii
             }
 
             "Debug" {
                 $String = "DEBUG: $String"
-                $string | Out-File -FilePath $logfile -Append -Force
+                $string | Out-File -FilePath $logfile -Append -Force -Encoding ascii
+            }
+        }
+    }
+    catch {
+
+    }
+}
+
+function Write-LogCMFile {
+    Param(
+        [Parameter(Position = 0, Mandatory)][String]$String,
+        [Parameter(Position = 1, Mandatory)][ValidateSet('Info', 'Error', 'Debug')][String]$Level
+    )
+    $Date = Get-Date -Format MM-dd-yyyy
+    $Time = Get-Date -Format HH:mm:ss
+    $logfile = ".\PEB.log"
+    try {
+        switch ($Level) {
+            "Info" {
+                $String = "<![LOG[$String]LOG]!><time=`"$Time.000-60`" date=`"$Date`" component=`"$azTenant`" context=`"`" type=`"1`" thread=`"`" file=`"`">"
+                $string | Out-File -FilePath $logfile -Append -Force -Encoding utf8
+            }
+
+            "Error" { 
+                $String = "<![LOG[$String]LOG]!><time=`"$Time.000-60`" date=`"$Date`" component=`"$azTenant`" context=`"`" type=`"3`" thread=`"`" file=`"`">"
+                $string | Out-File -FilePath $logfile -Append -Force -Encoding utf8
+            }
+
+            "Debug" {
+                $String = "<![LOG[$String]LOG]!><time=`"$Time.000-60`" date=`"$Date`" component=`"$azTenant`" context=`"`" type=`"2`" thread=`"`" file=`"`">"
+                $string | Out-File -FilePath $logfile -Append -Force -Encoding utf8
             }
         }
     }
@@ -78,22 +115,22 @@ function Write-LogGit {
         [Parameter(Position = 0, Mandatory)][String]$String,
         [Parameter(Position = 1, Mandatory)][ValidateSet('Info', 'Error', 'Debug')][String]$Level
     )
-    $logfile = "c:\temp\PEBgit\PEB.log"
     $Date = Get-Date -Format yyyy-MM-dd
+    $Time = Get-Date -Format HH:mm
+    $String = "$Date - $Time -- $String"
+    $logfile = "c:\temp\PEBgit\PEB.log"
     if(!$gitNotFirstRun) {
-        rmdir -Path C:\Temp\PEBgit -Force -Recurse
-        mkdir -Path C:\Temp -Name "PEBgit" -Force
+        rmdir -Path C:\Temp\PEBgit -Force -Recurse | Out-Null
+        mkdir -Path C:\Temp -Name "PEBgit" -Force | Out-Null
         cd c:\temp\PEBgit\
         & git init *>&1 | Out-Null
         & git pull https://github.com/satsuk81/log.git *>&1 | Out-Null
         if(!(Test-Path -Path $logfile)) {
-            Write-Output "" | Out-File -FilePath $logfile -Append -Force
+            Write-Output "" | Out-File -FilePath $logfile -Append -Force -Encoding ascii
         }
         & git add PEB.log -f *>&1 | Out-Null
-        #& git commit -a -m "$Date" | Out-Null
         & git branch -M main *>&1 | Out-Null
         & git remote add origin https://github.com/satsuk81/log.git *>&1 | Out-Null
-        #& git push -u origin main | Out-Null
     }
     cd c:\temp\PEBgit\
     $Script:gitNotFirstRun = $true
@@ -101,24 +138,21 @@ function Write-LogGit {
         switch ($Level) {
             "Info" {
                 $String = "$azTenant / $String"
-                $string | Out-File -FilePath $logfile -Append -Force
-                #& git add PEB.log -f | Out-Null
+                $string | Out-File -FilePath $logfile -Append -Force -Encoding ascii
                 & git commit -a -m "$Date" *>&1 | Out-Null
                 & git push -u origin main *>&1 | Out-Null
             }
 
             "Error" { 
                 $String = "ERROR: $azTenant / $String"
-                $string | Out-File -FilePath $logfile -Append -Force
-                #& git add PEB.log -f | Out-Null
+                $string | Out-File -FilePath $logfile -Append -Force -Encoding ascii
                 & git commit -a -m "$Date" *>&1 | Out-Null
                 & git push -u origin main *>&1 | Out-Null
             }
 
             "Debug" {
                 $String = "DEBUG: $azTenant / $String"
-                $string | Out-File -FilePath $logfile -Append -Force
-                #& git add PEB.log -f | Out-Null
+                $string | Out-File -FilePath $logfile -Append -Force -Encoding ascii
                 & git commit -a -m "$Date" *>&1 | Out-Null
                 & git push -u origin main *>&1 | Out-Null
             }
@@ -137,12 +171,14 @@ function Write-Log {
     )
 
     try {
-        $Date = Get-Date -Format yyyy-MM-dd
-        $Time = Get-Date -Format HH:mm
-        $String = "$Date - $Time -- $String"
         Write-LogScreen -String $String -Level $Level
-        Write-LogFile -String $String -Level $Level
-        if(!($isProd)) { Write-LogGit -String $String -Level $Level }
+        if(!($isProd)) {
+            Write-LogCMFile -String $String -Level $Level
+            Write-LogGit -String $String -Level $Level
+        }
+        else {
+            Write-LogFile -String $String -Level $Level
+        }
     }
     catch {
 
