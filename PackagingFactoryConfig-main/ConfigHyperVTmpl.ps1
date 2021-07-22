@@ -2,6 +2,8 @@ $scriptname = "ConfigHyperV.ps1"
 $EventlogName = "Accenture"
 $EventlogSource = "Config Hyper-V Script"
 
+$Domain = "ddddd"
+
 # Create Error Trap
 trap {
     Write-Error $error[0]
@@ -31,7 +33,7 @@ Import-Module DHCPServer -Force -ErrorAction Stop
 Add-DhcpServerv4Scope -StartRange 192.168.0.100 -EndRange 192.168.0.199 -Name "UAT Scope" -State Active -SubnetMask 255.255.254.0
 $DNSserver = (Get-DnsClientServerAddress -InterfaceAlias "Ethernet 2" -AddressFamily IPv4).ServerAddresses
 Set-DhcpServerv4OptionValue -DnsServer $DNSserver
-Set-DhcpServerv4OptionValue -DnsDomain "space.dan"
+Set-DhcpServerv4OptionValue -DnsDomain $Domain
 Set-DhcpServerv4OptionValue -Router 192.168.0.1
 
 # Hyper-v Settings and Files
@@ -55,18 +57,12 @@ Dismount-VHD -Path F:\Hyper-V\Media\basedisk.vhdx
 
 # Get Files from Blob
 $StorAcc = Get-AzStorageAccount -ResourceGroupName rrrrr -Name xxxxx
-<#$Result1 = Get-AzStorageBlobContent -Container data -Blob "hyperv-vms.csv" -Destination "c:\Windows\temp\" -Context $StorAcc.context -Force
-If ($Result1.Name -eq "hyperv-vms.csv") {
-    Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Successfully downloaded hyperv-vms.csv"
+$Result1 = Get-AzStorageBlobContent -Container data -Blob "./Media/en_windows_10_business_editions_version_20h2_updated_dec_2020_x64_dvd_2af15d50.iso" -Destination "F:\Hyper-V\" -Context $StorAcc.context -Force
+If ($Result1.Name -eq "Media/en_windows_10_business_editions_version_20h2_updated_dec_2020_x64_dvd_2af15d50.iso") {
+    Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Successfully downloaded iso file"
 }
 Else {
-    Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Error -Message "Failed to download hyperv-vms.csv"
+    Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Error -Message "Failed to download iso file"
 }
-$Result2 = Get-AzStorageBlobContent -Container data -Blob "Media/Vanilla-Windows10-Base+CERT.vhdx" -Destination "F:\Hyper-V\Virtual Hard Disks" -Context $StorAcc.context -Force
-If ($Result2.Name -eq "Media/Vanilla-Windows10-Base+CERT.vhdx") {
-    Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Successfully downloaded Media/Vanilla-Windows10-Base+CERT.vhdx"
-}
-Else {
-    Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Error -Message "Failed to download Media/Vanilla-Windows10-Base+CERT.vhdx"
-}#>
+
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Completed $scriptname"
