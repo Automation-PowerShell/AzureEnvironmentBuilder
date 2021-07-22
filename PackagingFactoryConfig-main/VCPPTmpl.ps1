@@ -1,8 +1,7 @@
 ﻿$app = "VCPP"
 $zip = $true
 $filename = "vcpp.zip"
-$exefilename = ".\vcpp.ps1"
-$Argument = ""
+$exefilename = ".\prereqs.ps1"
 
 $EventLogName = "Accenture"
 $EventLogSource = "$app Install Script"
@@ -34,9 +33,9 @@ $StorAcc = get-azstorageaccount -resourcegroupname rrrrr -name xxxxx
 if ($zip) {
     $Result = Get-AzStorageBlobContent -Container data -Blob "./Media/$filename" -destination "c:\Windows\temp\" -context $StorAcc.context
     If ($Result.Name -eq "Media/$filename") {
-        Expand-Archive -Path "C:\Windows\Temp\Media\" -DestinationPath C:\Windows\Temp\Media\$app\ -Force
+        Expand-Archive -Path "C:\Windows\Temp\Media\$filename" -DestinationPath C:\Windows\Temp\Media\ -Force
         cd C:\Windows\Temp\Media\$app\
-        Start-Process -FilePath "$exefilename" -ArgumentList $Argument -Wait -ErrorAction Stop
+        . .\$exefilename
     }
     Else {
         Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Error -Message "Failed to download $app"
@@ -46,7 +45,7 @@ else {
     $Result = Get-AzStorageBlobContent -Container data -Blob "./Media/$filename" -Destination "c:\Windows\temp\" -Context $StorAcc.context
     If ($Result.Name -eq "Media/$filename") {
         cd C:\Windows\Temp\Media\
-        Start-Process -FilePath "$exefilename" -ArgumentList $Argument -Wait -ErrorAction Stop
+        . .\$exefilename
     }
     Else {
         Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Error -Message "Failed to download $app"

@@ -40,3 +40,4 @@ ClientLoadVariables.ps1
 PackagingFactoryConfig-main/ConfigHyperV.ps1
 PackagingFactoryConfig-main/MECMConsole.ps1
 PackagingFactoryConfig-main/ConfigureDataDisk.ps1
+PackagingFactoryConfig-main/VCPP.ps1
