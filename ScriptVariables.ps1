@@ -19,6 +19,7 @@ $RequirePublicIPs = $true
 $RequireStandardVMs = $true
 $RequireAdminStudioVMs = $true
 $RequireJumpboxVMs = $true
+$RequireCoreVMs = $true
 $RequireHyperV = $true
 
     # Azure Tags
@@ -56,15 +57,19 @@ $ContainerScripts = "$PSScriptRoot\PackagingFactoryConfig-main"     # All files 
 $NumberofStandardVMs = 1                                    # Specify number of Standard VMs to be provisioned
 $NumberofAdminStudioVMs = 1                                 # Specify number of AdminStudio VMs to be provisioned
 $NumberofJumpboxVMs = 1                                     # Specify number of Jumpbox VMs to be provisioned
+$NumberofCoreVMs = 1                                        # Specify number of Core VMs to be provisioned
 $VMNamePrefixStandard = "vm-euc-van-"                       # Specifies the first part of the Standard VM name (usually alphabetic) (15 chars max)
 $VMNamePrefixAdminStudio = "vm-euc-as-"                     # Specifies the first part of the Admin Studio VM name (usually alphabetic) (15 chars max)
 $VMNamePrefixJumpbox = "vm-euc-jb-"                         # Specifies the first part of the Jumpbox VM name (usually alphabetic) (15 chars max)
+$VMNamePrefixCore = "vm-euc-core-"                          # Specifies the first part of the Core VM name (usually alphabetic) (15 chars max)
 $VMNumberStartStandard = 101                                # Specifies the second part of the Standard VM name (usually numeric)
 $VMNumberStartAdminStudio = 201                             # Specifies the second part of the Admin Studio VM name (usually numeric)
 $VMNumberStartJumpbox = 301                                 # Specifies the second part of the Jumpbox VM name (usually numeric)
+$VMNumberStartCore = 401                                    # Specifies the second part of the Core VM name (usually numeric)
 $VMSizeStandard = "Standard_B2s"                            # Specifies Azure Size to use for the Standard VM
 $VMSizeAdminStudio = "Standard_B2s"                         # Specifies Azure Size to use for the Admin Studio VM
 $VMSizeJumpbox = "Standard_B2s"                             # Specifies Azure Size to use for the Jumpbox VM
+$VMSizeCore = "Standard_B2s"                                # Specifies Azure Size to use for the Core VM
 
 $VMSpecPublisherName = "MicrosoftWindowsDesktop"
 $VMSpecOffer = "Windows-10"

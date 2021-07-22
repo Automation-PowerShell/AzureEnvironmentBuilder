@@ -1,6 +1,6 @@
 Param(
     [Parameter(Mandatory = $false)][string]$VMName = "",
-    [Parameter(Mandatory = $false)][ValidateSet('Standard', 'AdminStudio', 'Jumpbox')][string]$Spec = "Standard"
+    [Parameter(Mandatory = $false)][ValidateSet("Standard", "AdminStudio", "Jumpbox","Core")][string]$Spec = "Standard"
 )
 
 #region Setup
@@ -29,7 +29,7 @@ if($VMName -eq "") {
     $VMList = Get-AzVM -Name * -ResourceGroupName $RGNameDEV -ErrorAction SilentlyContinue
     $VMName = ($VMlist | where { $_.Name -notin $VMListExclude  } | select Name | ogv -Title "Select Virtual Machine to Rebuild" -PassThru).Name
     if (!$VMName) {exit}
-    $VMSpec = @("Standard","AdminStudio","Jumpbox")
+    $VMSpec = @("Standard","AdminStudio","Jumpbox","Core")
     $Spec = $VMSpec | ogv -Title "Select Virtual Machine Spec" -PassThru
 }
 Write-Warning "This Script is about to Rebuild: $VMName with Spec: $Spec.  OK to Continue?" -WarningAction Inquire
@@ -38,8 +38,8 @@ Write-Warning "This Script is about to Rebuild: $VMName with Spec: $Spec.  OK to
 UpdateStorage
 
 Write-Log "Rebuilding: $VMName with Spec: $Spec"
-ScriptBuild-Create-VM
-ScriptBuild-Config-VM
+ScriptRebuild-Create-VM
+ScriptRebuild-Config-VM
 Write-Log "Completed RebuildAzureVM.ps1"
 Write-Log "============================================================================================================="
 #endregion Main

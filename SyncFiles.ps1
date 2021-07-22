@@ -14,7 +14,6 @@ function SyncFiles {
 
     $StorageAccount = Get-AzStorageAccount -Name $StorageAccountName -ResourceGroupName $ResourceGroupName
     if(!$Context){$Context = $storageAccount.Context}
-    #if(!$Container){$Container = Get-AzStorageContainer -Name $ContainerName -Context $Context}
     if($ScriptsOnly) {
         Get-ChildItem -Path $LocalPath\* -File -Include "*.ps1" | Set-AzStorageBlobContent -Container $ContainerName -Context $Context -Force | Out-Null   
     }

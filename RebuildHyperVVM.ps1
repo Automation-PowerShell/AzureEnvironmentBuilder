@@ -3,6 +3,12 @@ Param(
 )
 
 #region Setup
+cd $PSScriptRoot
+
+    # Dot Source Variables
+. .\ScriptVariables.ps1
+. .\ClientLoadVariables.ps1
+
 $scriptname = "RebuildHyperVVM.ps1"                             # This file's filename
 $EventlogName = "Accenture"                                     # Event Log Folder Name
 $EventlogSource = "Hyper-V VM Rebuild Script"                   # Event Log Source Name
@@ -18,18 +24,7 @@ $VMCPUCount = 4
 $VMSwitchName = "Packaging Switch"
 $VMHostIP = (Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias "Ethernet 2").IPAddress
 
-$LocalCredUser = "DESKTOP-7O8HROP\admin"
-$DomainCredUser = "wella\T1-Daniel.Ames"
-$DomainJoinUser = "wella\svc_PackagingDJ"
-
-$Domain = "wella.team"
-$OUPath = "OU=Packaging,OU=Servers,DC=wella,DC=team"
-
-#$IPAddress = ""
-#$IPSubnetPrefix = "26"
-#$IPGateway = "10.22.255.129"
-#$IPDNS = @("10.21.224.10","10.21.224.11","10.21.239.196")
-
+    # For Static IP Configuration
 $IPAddress = ""
 $IPSubnetPrefix = "24"
 $IPGateway = "192.168.0.1"
