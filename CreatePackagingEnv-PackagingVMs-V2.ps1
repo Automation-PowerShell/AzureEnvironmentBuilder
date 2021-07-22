@@ -5,6 +5,6 @@ if ($UseTerraform) {
     TerraformBuild-VM
 }
 else {
-   ScriptBuild-VM
+    ScriptBuild-Create-VM
 }
 Write-Log "Packaging VM Script Completed"

@@ -1,7 +1,9 @@
 ﻿#region Setup
 cd $PSScriptRoot
+
+    # Dot Source Variables
 . .\ScriptVariables.ps1
-. .\ClientVariables-Dan.ps1
+. .\ClientLoadVariables.ps1
 
 Import-Module Az.Compute, Az.Accounts, Az.Storage, Az.Network, Az.Resources -ErrorAction SilentlyContinue
 if (!((Get-Module Az.Compute) -and (Get-Module Az.Accounts) -and (Get-Module Az.Storage) -and (Get-Module Az.Network) -and (Get-Module Az.Resources))) {
@@ -40,14 +42,4 @@ if(!($isProd)) {
     Remove-AzResourceGroup -Name $RGNameDEVVNET -Force -ErrorAction Ignore -Verbose         # Dont want to do this is a Production Environment
     Remove-AzResourceGroup -Name $RGNamePRODVNET -Force -ErrorAction Ignore -Verbose        # Dont want to do this is a Production Environment
 }
-#endregion
-
-
-#region old
-#del $ContainerScripts\MapDrv.ps1
-#del $ContainerScripts\RunOnce.ps1
-#del $ContainerScripts\AdminStudio.ps1
-#Remove-AzAdGroup -DisplayName "Packaging-Owner-RBAC" -Force
-#Remove-AzAdGroup -DisplayName "Packaging-Contributor-RBAC" -Force
-#Remove-AzAdGroup -DisplayName "Packaging-ReadOnly-RBAC" -Force
 #endregion

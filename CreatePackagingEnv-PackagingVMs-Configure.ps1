@@ -6,7 +6,7 @@ if ($UseTerraform) {
     TerraformConfigure-VM
 }
 else {
-   ScriptConfigure-VM
+    ScriptBuild-Config-VM
 }
 Write-Log "Configure Packaging VM Script Completed"
 #endregion Main

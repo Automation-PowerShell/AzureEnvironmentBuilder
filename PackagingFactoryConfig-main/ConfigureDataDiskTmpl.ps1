@@ -1,4 +1,4 @@
-$scriptname = "ConfigureDataDisk.ps1"
+﻿$scriptname = "ConfigureDataDisk.ps1"
 $EventlogName = "Accenture"
 $EventlogSource = "VM Configure Data Disk Script"
 
