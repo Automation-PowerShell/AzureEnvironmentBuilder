@@ -2,9 +2,9 @@ function UpdateStorage {
     if ($RequireUpdateStorage) {
         Try {
             $Key = Get-AzStorageAccountKey -ResourceGroupName $RGNameSTORE -AccountName $StorageAccountName
-            $templates = Get-ChildItem -Path $ContainerScripts -Filter *tmpl* -File
+            $templates = Get-ChildItem -Path $BlobFilesSource -Filter *tmpl* -File
             foreach ($template in $templates) {
-                $content = Get-Content -Path "$ContainerScripts\$(($template).Name)"
+                $content = Get-Content -Path "$BlobFilesSource\$(($template).Name)"
                 $content = $content.replace("xxxxx", $StorageAccountName)
                 $content = $content.replace("sssss", $azSubscription)
                 $content = $content.replace("yyyyy", $Key.value[0])
@@ -14,15 +14,15 @@ function UpdateStorage {
                 $content = $content.replace("fffff", $FileShareName)
                 $contentName = $template.Basename -replace "Tmpl"
                 $contentName = $contentName + ".ps1"
-                $content | Set-Content -Path "$ContainerScripts\$contentName"
+                $content | Set-Content -Path "$BlobFilesDest\$contentName"
             }     
         }
         Catch {
             Write-Error "An error occured trying to create the customised scripts for the packaging share."
             Write-Error $_.Exception.Message
         }
-        . .\SyncFiles.ps1 -CallFromCreatePackaging -Recurse        # Sync Files to Storage Blob
-        #. .\SyncFiles.ps1 -CallFromCreatePackaging                  # Sync Files to Storage Blob
+        . $PEBScripts\PEB-SyncFiles.ps1 -CallFromCreatePackaging -Recurse        # Sync Files to Storage Blob
+        #. $PEBScripts\PEB-SyncFiles.ps1 -CallFromCreatePackaging                  # Sync Files to Storage Blob
         Write-Log "Storage Account has been Updated with files"
     }
 }

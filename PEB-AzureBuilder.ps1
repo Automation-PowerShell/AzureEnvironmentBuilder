@@ -1,16 +1,20 @@
 ﻿#region Setup
 cd $PSScriptRoot
 
+    # Script Variables
+$root = $PSScriptRoot
+$PEBScripts = "$root\PEB-Scripts"
+
     # Dot Source Variables
-. .\ScriptVariables.ps1
-. .\ClientLoadVariables.ps1
+. $PEBScripts\ScriptVariables.ps1
+. $PEBScripts\ClientLoadVariables.ps1
 
     # Dot Source Functions
-. .\ScriptCoreFunctions.ps1
-. .\ScriptEnvironmentFunctions.ps1
-. .\ScriptPackagingFunctions.ps1
-. .\ScriptHyperVFunctions.ps1
-. .\ClientLoadFunctions.ps1
+. $PEBScripts\ScriptCoreFunctions.ps1
+. $PEBScripts\ScriptEnvironmentFunctions.ps1
+. $PEBScripts\ScriptPackagingFunctions.ps1
+. $PEBScripts\ScriptHyperVFunctions.ps1
+. $PEBScripts\ClientLoadFunctions.ps1
 
     # Load Azure Modules and Connect
 ConnectTo-Azure
@@ -19,8 +23,7 @@ Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"  # Turns off 
 #endregion Setup
 
 #region Main
-Write-Log "Running CreatePackagingEnv-MainScript-V1.ps1"
-cd $PSScriptRoot
+Write-Log "Running PEB-AzureBuilder.ps1"
 if($isProd) { Write-Warning "Are you sure you want to rebuild the Packaging Environment?  OK to Continue?" -WarningAction Inquire }
 
 if($RequireCreate) {
@@ -50,14 +53,14 @@ if($RequireCreate) {
     }
 
         # Environment Script
-    .\CreatePackagingEnv-Env-V2.ps1
+        . $PEBScripts\PEB-Env-V2.ps1
 
         # Create Packaging VM Script
-    .\CreatePackagingEnv-PackagingVms-V2.ps1
+        . $PEBScripts\PEB-PackagingVms-V2.ps1
 
         # Create Hyper-V Script
     if ($RequireHyperV) {
-        .\CreatePackagingEnv-HyperVServer-V1.ps1
+        . $PEBScripts\PEB-HyperVServer-V1.ps1
     }
 
     if($UseTerraform) {
@@ -84,13 +87,13 @@ if ($RequireConfigure) {
     }
 
         # Configure Packaging VM Script
-    .\CreatePackagingEnv-PackagingVms-Configure.ps1
+        . $PEBScripts\PEB-PackagingVms-Configure.ps1
 
         # Configure Hyper-V Script
     if($RequireHyperV) {
-        .\CreatePackagingEnv-HyperVServer-Configure.ps1
+        . $PEBScripts\PEB-HyperVServer-Configure.ps1
     }
 }
-Write-Log "Completed CreatePackagingEnv-MainScript-V1.ps1"
+Write-Log "Completed PEB-AzureBuilder.ps1"
 Write-Log "============================================================================================================="
 #endregion Main

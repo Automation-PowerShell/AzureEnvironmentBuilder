@@ -4,40 +4,22 @@
 *.tfstate
 *.hcl
 *.info
-*.info
 *.zip
 *.json
-/terraform/
-/Media Files/
-/Old Files/
 *.msi
 *.tf
 *.xml
 *.key
 *.csv
+PEB.log
 ClientVariables-Dan.ps1
 ClientVariables-Wella.ps1
-PackagingFactoryConfig-main/Build-VM.ps1
-PackagingFactoryConfig-main/7-Zip.ps1
-PackagingFactoryConfig-main/AdminStudio.ps1
-PackagingFactoryConfig-main/DesktopApps.ps1
-PackagingFactoryConfig-main/DomainJoin.ps1
-PackagingFactoryConfig-main/EnableHyperV.ps1
-PackagingFactoryConfig-main/GlassWire.ps1
-PackagingFactoryConfig-main/InstEd.ps1
-PackagingFactoryConfig-main/IntuneWinUtility.ps1
-PackagingFactoryConfig-main/Jumpbox.ps1
-PackagingFactoryConfig-main/MapDrv.ps1
-PackagingFactoryConfig-main/ORCA.ps1
-PackagingFactoryConfig-main/RunOnce.ps1
-PackagingFactoryConfig-main/VMConfig.ps1
-PackagingFactoryConfig-main/Prevision.ps1
-PackagingFactoryConfig-main/Build-VMBase.ps1
 ClientVariables-NHS.ps1
-PEB.log
 ClientLoadFunctions.ps1
 ClientLoadVariables.ps1
-PackagingFactoryConfig-main/ConfigHyperV.ps1
-PackagingFactoryConfig-main/MECMConsole.ps1
-PackagingFactoryConfig-main/ConfigureDataDisk.ps1
-PackagingFactoryConfig-main/VCPP.ps1
+/BlobFilesDestination/
+/ExtraFiles/
+/terraform/
+/Media Files/
+/Old Files/
+/PackagingFactoryConfig-main/
