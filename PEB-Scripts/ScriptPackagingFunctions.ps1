@@ -135,7 +135,7 @@ function ConfigureAdminStudioVM($VMName) {
             Add-AzADGroupMember -TargetGroupObjectId $Group.Id -MemberObjectId $NewVm.Id -Verbose | Out-Null
         }
         else {
-            New-AzRoleAssignment -ObjectId $NewVm.Id -RoleDefinitionName "Contributor" -Scope "/subscriptions/$azSubscription/resourceGroups/$$RGNameSTORE/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" -Verbose -ErrorAction SilentlyContinue | Out-Null
+            New-AzRoleAssignment -ObjectId $NewVm.Id -RoleDefinitionName "Contributor" -Scope "/subscriptions/$azSubscription/resourceGroups/$RGNameSTORE/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" -Verbose -ErrorAction SilentlyContinue | Out-Null
         }
         Get-AzContext -Name "User" | Select-AzContext | Out-Null
         
@@ -189,7 +189,7 @@ function ConfigureJumpboxVM($VMName) {
             Add-AzADGroupMember -TargetGroupObjectId $Group.Id -MemberObjectId $NewVm.Id -Verbose | Out-Null
         }
         else {
-            New-AzRoleAssignment -ObjectId $NewVm.Id -RoleDefinitionName "Contributor" -Scope "/subscriptions/$azSubscription/resourceGroups/$$RGNameSTORE/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" -Verbose -ErrorAction SilentlyContinue | Out-Null
+            New-AzRoleAssignment -ObjectId $NewVm.Id -RoleDefinitionName "Contributor" -Scope "/subscriptions/$azSubscription/resourceGroups/$RGNameSTORE/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" -Verbose -ErrorAction SilentlyContinue | Out-Null
         }
         Get-AzContext -Name "User" | Select-AzContext | Out-Null
         
@@ -240,7 +240,7 @@ function ConfigureCoreVM($VMName) {
             Add-AzADGroupMember -TargetGroupObjectId $Group.Id -MemberObjectId $NewVm.Id -Verbose | Out-Null
         }
         else {
-            New-AzRoleAssignment -ObjectId $NewVm.Id -RoleDefinitionName "Contributor" -Scope "/subscriptions/$azSubscription/resourceGroups/$$RGNameSTORE/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" -Verbose -ErrorAction SilentlyContinue | Out-Null
+            New-AzRoleAssignment -ObjectId $NewVm.Id -RoleDefinitionName "Contributor" -Scope "/subscriptions/$azSubscription/resourceGroups/$RGNameSTORE/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" -Verbose -ErrorAction SilentlyContinue | Out-Null
         }
         Get-AzContext -Name "User" | Select-AzContext | Out-Null
 
@@ -278,6 +278,7 @@ function ConfigureCoreVM($VMName) {
 }
 
 function ScriptRebuild-Create-VM {
+    Get-AzContext -Name "User" | Select-AzContext | Out-Null
     switch ($Spec) {
         "Standard" {
             $VMCheck = Get-AzVM -Name "$VMName" -ResourceGroup $RGNameDEV -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
@@ -328,7 +329,7 @@ function ScriptRebuild-Create-VM {
                 Get-AzNetworkInterface -Name $VMName* -ResourceGroupName $RGNameDEV | Remove-AzNetworkInterface -Force -Verbose | Out-Null
                 Get-AzPublicIpAddress -Name $VMName* -ResourceGroupName $RGNameDEV | Remove-AzPublicIpAddress -Force -Verbose | Out-Null
                 Get-AzDisk -Name $VMName* -ResourceGroupName $RGNameDEV | Remove-AzDisk -Force -Verbose | Out-Null
-                CreateJumpboxVM-Script "$VMName"
+                CreateCoreVM-Script "$VMName"
             }
             else {
                 Write-Log "*** Virtual Machine $VMName doesn't exist! ***" -Level Error
@@ -339,6 +340,7 @@ function ScriptRebuild-Create-VM {
 }
 
 function ScriptRebuild-Config-VM {
+    Get-AzContext -Name "User" | Select-AzContext | Out-Null
     switch ($Spec) {
         "Standard" {
             ConfigureStandardVM "$VMName"
@@ -606,7 +608,7 @@ if ($RequireAdminStudioVMs) {
     $VMNumberStart = $VMNumberStartAdminStudio
     While ($Count -le $NumberofAdminStudioVMs) {
         Write-Log "Configuring $Count of $NumberofAdminStudioVMs VMs"
-       $VM = $VMNamePrefixStandard + $VMNumberStart
+        $VM = $VMNamePrefixStandard + $VMNumberStart
         ConfigureAdminStudioVM "$VM"
         $Count++
         $VMNumberStart++
