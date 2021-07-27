@@ -48,10 +48,11 @@ $rbacContributor = "euc-rbac-contributor"
 $rbacReadOnly = "euc-rbac-readonly"
 
     # Storage Account and Container Names
-$StorageAccountName = "storageeucpackaging01"                       # Storage account name (if used) (24 chars maximum)
-$ContainerName = "data"                                             # Storage container name (if used) (do not change from 'data')
-$FileShareName = "pkgazfiles01"                                     # Storage FileShare name (if used) (do not change from 'pkgazfiles01')
-$ContainerScripts = "$PSScriptRoot\PackagingFactoryConfig-main"     # All files in this path will be copied up to the Storage Account Container, so available to be run on the remote VMs (includes template script for packaging share mapping
+$StorageAccountName = "storageeucpackaging01"               # Storage account name (if used) (24 chars maximum)
+$ContainerName = "data"                                     # Storage container name (if used) (do not change from 'data')
+$FileShareName = "pkgazfiles01"                             # Storage FileShare name (if used) (do not change from 'pkgazfiles01')
+$BlobFilesSource = "$root\BlobFilesSource"                  # Source Template Folder for CustomScriptExtension
+$BlobFilesDest = "$root\BlobFilesDestination"               # Destination Template Folder for CustomScriptExtension
 
     # Windows 10 VM Count, Name, Spec, and Settings
 $NumberofStandardVMs = 1                                    # Specify number of Standard VMs to be provisioned
@@ -87,3 +88,5 @@ $dataDiskTier = "S10"
 $dataDiskSKU = "Standard_LRS"
 $dataDiskSize = 128
 
+    # Script Variables
+ $ExtraFiles = "$root\ExtraFiles"

@@ -55,7 +55,7 @@ function Write-LogFile {
     $Date = Get-Date -Format yyyy-MM-dd
     $Time = Get-Date -Format HH:mm
     $String = "$Date - $Time -- $String"
-    $logfile = ".\PEB.log"
+    $logfile = "$root\PEB.log"
     try {
         switch ($Level) {
             "Info" {
@@ -86,7 +86,7 @@ function Write-LogCMFile {
     )
     $Date = Get-Date -Format MM-dd-yyyy
     $Time = Get-Date -Format HH:mm:ss
-    $logfile = ".\PEB.log"
+    $logfile = "$root\PEB.log"
     try {
         switch ($Level) {
             "Info" {
@@ -161,7 +161,7 @@ function Write-LogGit {
     catch {
 
     }
-    cd $PSScriptRoot
+    cd $root
 }
 
 function Write-Log {

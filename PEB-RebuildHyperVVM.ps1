@@ -219,7 +219,7 @@ function Create-VM {
 }
 
 #region Main
-Write-Host "Running RebuildHyperVVM.ps1"
+Write-Host "Running PEB-RebuildHyperVVM.ps1"
 
 if($RVMVMName -eq "") {
     #$VMList = Get-VM -Name *
@@ -233,5 +233,5 @@ Delete-VM -VMName $RVMVMName
 Create-VM -VMName $RVMVMName
 #Get-NetNatStaticMapping | select StaticMappingID,ExternalIPAddress,ExternalPort,InternalIPAddress,InternalPort | ConvertTo-JSON | Out-File -FilePath ".\netnatmapping.json"-Force
 Get-NetNatStaticMapping | select StaticMappingID,ExternalIPAddress,ExternalPort,InternalIPAddress,InternalPort | Export-CSV -Path ".\netnatmapping.csv" -Force -NoTypeInformation
-Write-Host "Completed RebuildHyperVVM.ps1"
+Write-Host "Completed PEB-RebuildHyperVVM.ps1"
 #endregion Main
