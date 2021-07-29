@@ -8,6 +8,7 @@ cd $PSScriptRoot
 
     # Script Variables
 $root = $PSScriptRoot
+#$root = $pwd
 $PEBScripts = "$root\PEB-Scripts"
 
     # Dot Source Variables
