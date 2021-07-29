@@ -1,4 +1,19 @@
-﻿#region Setup
+﻿<#
+.SYNOPSIS
+PEB-AzureBuilder.ps1
+
+.DESCRIPTION
+Packaging Environment Builder - Azure Builder.
+
+.INPUTS
+None.
+
+.OUTPUTS
+None.
+
+#>
+
+#region Setup
 cd $PSScriptRoot
 
     # Script Variables

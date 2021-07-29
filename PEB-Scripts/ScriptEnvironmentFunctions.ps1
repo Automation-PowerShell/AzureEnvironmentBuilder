@@ -18,8 +18,7 @@ function UpdateStorage {
             }     
         }
         Catch {
-            Write-Error "An error occured trying to create the customised scripts for the packaging share."
-            Write-Error $_.Exception.Message
+            Write-Log "*** An error occured trying to create the customised scripts for the Storage Blob ***" -Level Error
         }
         . $PEBScripts\PEB-SyncFiles.ps1 -CallFromCreatePackaging -Recurse        # Sync Files to Storage Blob
         #. $PEBScripts\PEB-SyncFiles.ps1 -CallFromCreatePackaging                  # Sync Files to Storage Blob
@@ -27,26 +26,22 @@ function UpdateStorage {
     }
 }
 function UpdateRBAC {
-    Try {
-        $OwnerGroup = Get-AzADGroup -DisplayName $rbacOwner
-        $ContributorGroup = Get-AzADGroup -DisplayName $rbacContributor
-        $ReadOnlyGroup = Get-AzADGroup -DisplayName $rbacReadOnly
+    $OwnerGroup = Get-AzADGroup -DisplayName $rbacOwner
+    $ContributorGroup = Get-AzADGroup -DisplayName $rbacContributor
+    $ReadOnlyGroup = Get-AzADGroup -DisplayName $rbacReadOnly
 
-        New-AzRoleAssignment -ObjectId $OwnerGroup.Id -RoleDefinitionName "Owner" -ResourceGroupName $RGNamePROD -ErrorAction Ignore | Out-Null
-        New-AzRoleAssignment -ObjectId $ContributorGroup.Id -RoleDefinitionName "Contributor" -ResourceGroupName $RGNamePROD -ErrorAction Ignore | Out-Null
-        New-AzRoleAssignment -ObjectId $ReadOnlyGroup.Id -RoleDefinitionName "Reader" -ResourceGroupName $RGNamePROD -ErrorAction Ignore | Out-Null
-        if (!($RGNameDEV -match $RGNamePROD)) {
-            New-AzRoleAssignment -ObjectId $OwnerGroup.Id -RoleDefinitionName "Owner" -ResourceGroupName $RGNameDEV -ErrorAction Ignore | Out-Null
-            New-AzRoleAssignment -ObjectId $ContributorGroup.Id -RoleDefinitionName "Contributor" -ResourceGroupName $RGNameDEV -ErrorAction Ignore | Out-Null
-            New-AzRoleAssignment -ObjectId $ReadOnlyGroup.Id -RoleDefinitionName "Reader" -ResourceGroupName $RGNameDEV -ErrorAction Ignore | Out-Null
-        }
-        if (!($RGNameSTORE -match $RGNamePROD)) {
-            New-AzRoleAssignment -ObjectId $OwnerGroup.Id -RoleDefinitionName "Owner" -ResourceGroupName $RGNameSTORE -ErrorAction Ignore | Out-Null
-            New-AzRoleAssignment -ObjectId $ContributorGroup.Id -RoleDefinitionName "Contributor" -ResourceGroupName $RGNameSTORE -ErrorAction Ignore | Out-Null
-            New-AzRoleAssignment -ObjectId $ReadOnlyGroup.Id -RoleDefinitionName "Reader" -ResourceGroupName $RGNameSTORE -ErrorAction Ignore | Out-Null
-        }
-        Write-Log "Role Assignments Set"
-    } Catch {
-        Write-Error $_.Exception.Message
+    New-AzRoleAssignment -ObjectId $OwnerGroup.Id -RoleDefinitionName "Owner" -ResourceGroupName $RGNamePROD -ErrorAction Ignore | Out-Null
+    New-AzRoleAssignment -ObjectId $ContributorGroup.Id -RoleDefinitionName "Contributor" -ResourceGroupName $RGNamePROD -ErrorAction Ignore | Out-Null
+    New-AzRoleAssignment -ObjectId $ReadOnlyGroup.Id -RoleDefinitionName "Reader" -ResourceGroupName $RGNamePROD -ErrorAction Ignore | Out-Null
+    if (!($RGNameDEV -match $RGNamePROD)) {
+        New-AzRoleAssignment -ObjectId $OwnerGroup.Id -RoleDefinitionName "Owner" -ResourceGroupName $RGNameDEV -ErrorAction Ignore | Out-Null
+        New-AzRoleAssignment -ObjectId $ContributorGroup.Id -RoleDefinitionName "Contributor" -ResourceGroupName $RGNameDEV -ErrorAction Ignore | Out-Null
+        New-AzRoleAssignment -ObjectId $ReadOnlyGroup.Id -RoleDefinitionName "Reader" -ResourceGroupName $RGNameDEV -ErrorAction Ignore | Out-Null
     }
+    if (!($RGNameSTORE -match $RGNamePROD)) {
+        New-AzRoleAssignment -ObjectId $OwnerGroup.Id -RoleDefinitionName "Owner" -ResourceGroupName $RGNameSTORE -ErrorAction Ignore | Out-Null
+        New-AzRoleAssignment -ObjectId $ContributorGroup.Id -RoleDefinitionName "Contributor" -ResourceGroupName $RGNameSTORE -ErrorAction Ignore | Out-Null
+        New-AzRoleAssignment -ObjectId $ReadOnlyGroup.Id -RoleDefinitionName "Reader" -ResourceGroupName $RGNameSTORE -ErrorAction Ignore | Out-Null
+    }
+    Write-Log "Role Assignments Set"
 }
