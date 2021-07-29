@@ -10,10 +10,10 @@ function RunVMConfig($ResourceGroup, $VMName, $BlobFilePath, $Blob) {
 
     $VMConfigure = Set-AzVMCustomScriptExtension @Params
     if ($VMConfigure.IsSuccessStatusCode -eq $True) {
-        Write-Log "Virtual Machine $VMName configured with $Blob successfully"
+        Write-Log "VM: $VMName configured with $Blob successfully"
     }
     else {
-        Write-Log "*** Unable to configure Virtual Machine $VMName with $Blob ***" -Level Error
+        Write-Log "*** VM: $VMName - Unable to configure Virtual Machine with $Blob ***" -Level Error
     }
 }
 
@@ -185,6 +185,55 @@ function Write-Log {
     }
 }
 
+function Write-DumpLine {
+    Param(
+        [Parameter(Position = 0, Mandatory)][String]$varname,
+        [Parameter(Position = 1, Mandatory)][String]$varvalue
+    )
+    $String = "$varname : $varvalue"
+    try {
+        Write-LogScreen -String $String -Level Debug
+        if(!($isProd)) {
+            Write-LogCMFile -String $String -Level Debug
+            Write-LogGit -String $String -Level Debug
+        }
+        else {
+            Write-LogFile -String $String -Level Debug
+        }
+    }
+    catch {
+
+    }
+}
+function Write-Dump {
+    Param(
+        [Parameter(Position = 0)][object]$object1,
+        [Parameter(Position = 1)][object]$object2,
+        [Parameter(Position = 2)][object]$object3,
+        [Parameter(Position = 3)][object]$object4,
+        [Parameter(Position = 4)][object]$object5
+    )
+    Write-Log -String "*** Write-Dump ***" -Level Debug
+    Write-DumpLine '$?' $?
+    Write-DumpLine '$azSubscription' $azSubscription
+    Write-DumpLine '$RGNameSTORE' $RGNameSTORE
+    Write-DumpLine '$StorageAccountName' $StorageAccountName
+    Write-DumpLine '$VMName' $VMName
+    Write-DumpLine '$RequireServicePrincipal' $RequireServicePrincipal
+    Write-DumpLine '$RequireRBAC' $RequireRBAC
+    Write-DumpLine '(Get-AzContext).Name' (Get-AzContext).Name
+    if($object1){Write-DumpLine '$object1' $object1}
+    if($object2){Write-DumpLine '$object2' $object2}
+    if($object3){Write-DumpLine '$object3' $object3}
+    if($object4){Write-DumpLine '$object4' $object4}
+    if($object5){Write-DumpLine '$object5' $object5}
+    if($Error[0]){Write-DumpLine '$Error[0]' $Error[0]}
+    if($Error[1]){Write-DumpLine '$Error[1]' $Error[1]}
+    if($Error[2]){Write-DumpLine '$Error[2]' $Error[2]}
+    Write-Log "=============================================================================================================" -Level Debug
+    exit
+}
+
 function ConnectTo-Azure {
     Import-Module Az.Accounts,Az.Compute,Az.Storage,Az.Network,Az.Resources -ErrorAction SilentlyContinue
     if (!((Get-Module Az.Accounts) -and (Get-Module Az.Compute) -and (Get-Module Az.Storage) -and (Get-Module Az.Network) -and (Get-Module Az.Resources))) {
@@ -196,7 +245,7 @@ function ConnectTo-Azure {
     Connect-AzAccount -Tenant $aztenant -Subscription $azSubscription | Out-Null
     $SubscriptionId = (Get-AzContext).Subscription.Id
     if (!($azSubscription -eq $SubscriptionId)) {
-        Write-Error "Subscription ID Mismatch!!!!"
+        Write-Log "*** Subscription ID Mismatch!!!! ***" -Level Error
         exit
     }
     Get-AzContext | Rename-AzContext -TargetName "User" -Force | Out-Null
