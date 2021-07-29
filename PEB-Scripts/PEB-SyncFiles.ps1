@@ -34,7 +34,6 @@ Try {
         }
     } 
 } Catch {
-    Write-Error "An error occured syncing files to the Storage Blob."
-    Write-Error $_.Exception.Message
+    Write-Log "*** An error occured syncing files to the Storage Blob ***" -Level Error
 }
 Write-Log "Completed PEB-SyncFiles.ps1"
