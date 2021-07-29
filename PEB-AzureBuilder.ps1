@@ -68,10 +68,10 @@ if($RequireCreate) {
     }
 
         # Environment Script
-        . $PEBScripts\PEB-Env-V2.ps1
+    . $PEBScripts\PEB-Env-V2.ps1
 
         # Create Packaging VM Script
-        . $PEBScripts\PEB-PackagingVms-V2.ps1
+    . $PEBScripts\PEB-PackagingVms-V2.ps1
 
         # Create Hyper-V Script
     if ($RequireHyperV) {
