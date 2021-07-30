@@ -8,7 +8,7 @@ function RunVMConfig($ResourceGroup, $VMName, $BlobFilePath, $Blob) {
         Name              = "ConfigureVM"
     }
 
-    $VMConfigure = Set-AzVMCustomScriptExtension @Params
+    $VMConfigure = Set-AzVMCustomScriptExtension @Params -ErrorAction SilentlyContinue
     if ($VMConfigure.IsSuccessStatusCode -eq $True) {
         Write-Log "VM: $VMName configured with $Blob successfully"
     }

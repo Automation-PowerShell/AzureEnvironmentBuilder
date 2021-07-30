@@ -1,6 +1,23 @@
+<#
+.SYNOPSIS
+PEB-RebuildAzureVM.ps1
+
+.DESCRIPTION
+Packaging Environment Builder - Rebuild Azure VM.
+Wrtitten by Graham Higginson and Daniel Ames.
+
+.NOTES
+Written by      : Graham Higginson & Daniel Ames
+Build Version   : 0.1 Alpha
+
+.LINK
+More Info       : https://github.com/satsuk81/PackagingEnvironmentBuilder
+
+#>
+
 Param(
-    [Parameter(Mandatory = $false)][string]$VMName = "",
-    [Parameter(Mandatory = $false)][ValidateSet("Standard", "AdminStudio", "Jumpbox","Core")][string]$Spec = "Standard"
+    [Parameter(Mandatory = $false)][string]$VMName = "wleusvanwin101",
+    [Parameter(Mandatory = $false)][ValidateSet("Standard", "AdminStudio", "Jumpbox","Core")][string]$Spec = "Core"
 )
 
 #region Setup
@@ -32,14 +49,14 @@ Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"  # Turns off 
 Write-Log "Running PEB-RebuildAzureVM.ps1"
 if($VMName -eq "") {
     $VMList = Get-AzVM -Name * -ResourceGroupName $RGNameDEV -ErrorAction SilentlyContinue
-    $VMName = ($VMlist | where { $_.Name -notin $VMListExclude  } | select Name | ogv -Title "Select Virtual Machine to Rebuild" -PassThru).Name
+    $VMName = ($VMlist | where { $_.Name -notin $VMListExclude  } | select Name | ogv -Title "Select Virtual Machine to Rebuild" -OutputMode Single).Name
     if (!$VMName) {exit}
     $VMSpec = @("Standard","AdminStudio","Jumpbox","Core")
-    $Spec = $VMSpec | ogv -Title "Select Virtual Machine Spec" -PassThru
+    $Spec = $VMSpec | ogv -Title "Select Virtual Machine Spec" -OutputMode Single
 }
 Write-Warning "This Script is about to Rebuild: $VMName with Spec: $Spec.  OK to Continue?" -WarningAction Inquire
 
-    #Write-Log "Syncing Files"
+    # Update Storage
 UpdateStorage
 
 Write-Log "Rebuilding: $VMName with Spec: $Spec"
