@@ -1,3 +1,20 @@
+<#
+.SYNOPSIS
+PEB-RebuildHyperVVM.ps1
+
+.DESCRIPTION
+Packaging Environment Builder - Rebuild HyperV VM.
+Wrtitten by Graham Higginson and Daniel Ames.
+
+.NOTES
+Written by      : Graham Higginson & Daniel Ames
+Build Version   : 0.1 Alpha
+
+.LINK
+More Info       : https://github.com/satsuk81/PackagingEnvironmentBuilder
+
+#>
+
 Param(
     [Parameter(Mandatory = $false)][string]$RVMVMName = ""
 )

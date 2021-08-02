@@ -1,6 +1,8 @@
 function UpdateStorage {
     if ($RequireUpdateStorage) {
+        Write-Log "Syncing Files..."
         Try {
+            if (!(Test-Path -Path $BlobFilesDest)) { New-Item -Path $BlobFilesDest -ItemType "directory" }
             $Key = Get-AzStorageAccountKey -ResourceGroupName $RGNameSTORE -AccountName $StorageAccountName
             $templates = Get-ChildItem -Path $BlobFilesSource -Filter *tmpl* -File
             foreach ($template in $templates) {
@@ -14,11 +16,12 @@ function UpdateStorage {
                 $content = $content.replace("fffff", $FileShareName)
                 $contentName = $template.Basename -replace "Tmpl"
                 $contentName = $contentName + ".ps1"
-                $content | Set-Content -Path "$BlobFilesDest\$contentName"
+                $content | Set-Content -Path "$BlobFilesDest\$contentName" -ErrorAction stop
             }     
         }
         Catch {
             Write-Log "*** An error occured trying to create the customised scripts for the Storage Blob ***" -Level Error
+            Write-Dump
         }
         . $PEBScripts\PEB-SyncFiles.ps1 -CallFromCreatePackaging -Recurse        # Sync Files to Storage Blob
         #. $PEBScripts\PEB-SyncFiles.ps1 -CallFromCreatePackaging                  # Sync Files to Storage Blob

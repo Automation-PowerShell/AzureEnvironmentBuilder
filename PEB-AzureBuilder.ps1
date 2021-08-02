@@ -4,12 +4,14 @@ PEB-AzureBuilder.ps1
 
 .DESCRIPTION
 Packaging Environment Builder - Azure Builder.
+Wrtitten by Graham Higginson and Daniel Ames.
 
-.INPUTS
-None.
+.NOTES
+Written by      : Graham Higginson & Daniel Ames
+Build Version   : 0.1 Alpha
 
-.OUTPUTS
-None.
+.LINK
+More Info       : https://github.com/satsuk81/PackagingEnvironmentBuilder
 
 #>
 
@@ -68,10 +70,10 @@ if($RequireCreate) {
     }
 
         # Environment Script
-        . $PEBScripts\PEB-Env-V2.ps1
+    . $PEBScripts\PEB-Env-V2.ps1
 
         # Create Packaging VM Script
-        . $PEBScripts\PEB-PackagingVms-V2.ps1
+    . $PEBScripts\PEB-PackagingVms-V2.ps1
 
         # Create Hyper-V Script
     if ($RequireHyperV) {
@@ -91,9 +93,8 @@ if($RequireCreate) {
 }
 
     # Update Storage
-if($RequireUpdateStorage) {
-    UpdateStorage
-}
+UpdateStorage
+
 
 if ($RequireConfigure) {
     if ($RequireRBAC) {

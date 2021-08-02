@@ -83,6 +83,7 @@ function ConfigureBaseVM {
         Write-Log "VM: $VMName created successfully"
         
         $NewVm = Get-AzADServicePrincipal -DisplayName $VMName
+        #$UserObjectID = (Get-AzADUser -ObjectId ((Get-AzContext -Name "User").Account.Id)).Id
         if ($RequireServicePrincipal) {
             Get-AzContext -Name "StorageSP" | Select-AzContext | Out-Null
         }
@@ -92,14 +93,15 @@ function ConfigureBaseVM {
             Get-AzContext -Name "User" | Select-AzContext | Out-Null
         }
         else {
-            New-AzRoleAssignment -ObjectId $NewVm.Id -RoleDefinitionName "Contributor" -Scope "/subscriptions/$azSubscription/resourceGroups/$RGNameSTORE/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" -ErrorAction SilentlyContinue | Out-Null
-            Get-AzContext -Name "User" | Select-AzContext | Out-Null
+            #New-AzRoleAssignment -ObjectId $NewVm.Id -RoleDefinitionName "Contributor" -Scope "/subscriptions/$azSubscription/resourceGroups/$RGNameSTORE/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" -ErrorAction SilentlyContinue | Out-Null
+            #New-AzRoleAssignment -ObjectId $UserObjectID -RoleDefinitionName "Owner" -ResourceGroupName $RGNameSTORE -ResourceName $StorageAccountName -ResourceType "Microsoft.Storage/storageAccounts"
+            New-AzRoleAssignment -ObjectId $NewVm.Id -RoleDefinitionName "Contributor" -ResourceGroupName $RGNameSTORE -ResourceName $StorageAccountName -ResourceType "Microsoft.Storage/storageAccounts" -ErrorAction SilentlyContinue | Out-Null
             $confirm = Get-AzRoleAssignment -ObjectId $NewVm.Id -Scope "/subscriptions/$azSubscription/resourceGroups/$RGNameSTORE/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" -ErrorAction SilentlyContinue
             if(!$confirm) {
                 Write-Log -String "*** VM: $VMName - Unable to set Storage Account Permission ***" -Level Error
                 Write-Dump $VMCreate.Identity.PrincipalId $NewVm.Id
             }
-       
+            Get-AzContext -Name "User" | Select-AzContext | Out-Null
         }
         Restart-AzVM -ResourceGroupName $RGNameDEV -Name $VMName | Out-Null
         Write-Log "VM: $VMName - Restarting VM..."
@@ -115,7 +117,7 @@ function ConfigureBaseVM {
             $Properties.Add('notificationSettings', @{status = 'Disabled'; timeInMinutes = 15 })
             $Properties.Add('targetResourceId', $VMCreate.Id)
             New-AzResource -Location $Location -ResourceId $ScheduledShutdownResourceId -Properties $Properties -Force | Out-Null
-            Write-Log "VM: $VMName - Auto Shutdown Enabled for 1800"
+            Write-Log "VM: $VMName - Auto Shutdown Enabled for 1800 GMT"
         }
     }
     else {

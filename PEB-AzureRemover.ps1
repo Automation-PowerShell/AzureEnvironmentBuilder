@@ -1,4 +1,21 @@
-﻿#region Setup
+﻿<#
+.SYNOPSIS
+PEB-AzureRemiver.ps1
+
+.DESCRIPTION
+Packaging Environment Builder - Azure Remover.
+Wrtitten by Graham Higginson and Daniel Ames.
+
+.NOTES
+Written by      : Graham Higginson & Daniel Ames
+Build Version   : 0.1 Alpha
+
+.LINK
+More Info       : https://github.com/satsuk81/PackagingEnvironmentBuilder
+
+#>
+
+#region Setup
 cd $PSScriptRoot
 
     # Script Variables
