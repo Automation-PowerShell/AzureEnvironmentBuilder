@@ -9,18 +9,18 @@ $RequireServicePrincipal = $false
 
     # Required Components
 $isProd = $false                                            # Are we building a DEV or Prod Environment?
-$RequireUserGroups = $true
-$RequireRBAC = $true
-$RequireResourceGroups = $true
-$RequireStorageAccount = $true
-$RequireVNET = $true
-$RequireNSG = $true
-$RequirePublicIPs = $true
-$RequireStandardVMs = $true
-$RequireAdminStudioVMs = $true
-$RequireJumpboxVMs = $true
-$RequireCoreVMs = $true
-$RequireHyperV = $true
+$RequireUserGroups = $false
+$RequireRBAC = $false
+$RequireResourceGroups = $false
+$RequireStorageAccount = $false
+$RequireVNET = $false
+$RequireNSG = $false
+$RequirePublicIPs = $false
+$RequireStandardVMs = $false
+$RequireAdminStudioVMs = $false
+$RequireJumpboxVMs = $false
+$RequireCoreVMs = $false
+$RequireHyperV = $false
 
     # Azure Tags
 $tags = @{

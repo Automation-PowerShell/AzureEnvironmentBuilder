@@ -103,7 +103,7 @@ if ($RequireConfigure) {
     }
 
         # Configure Packaging VM Script
-        . $PEBScripts\PEB-PackagingVms-Configure.ps1
+    . $PEBScripts\PEB-PackagingVms-Configure.ps1
 
         # Configure Hyper-V Script
     if($RequireHyperV) {

@@ -2,7 +2,7 @@
 $zip = $true
 $filename = "MECMConsole.zip"
 $exefilename = "consolesetup.exe"
-$Argument = "/q TargetDir=" + [char]34 + "C:\Program Files(x86)\Microsoft Endpoint Manager\AdminConsole" + [char]34 + " DefaultSiteServerName=" + [char]34 + "wlprodeusmem01.wella.team" + [char]34
+$Argument = "/q TargetDir=" + [char]34 + "C:\Program Files (x86)\Microsoft Endpoint Manager\AdminConsole" + [char]34 + " DefaultSiteServerName=" + [char]34 + "wlprodeusmem01.wella.team" + [char]34
 
 $EventLogName = "Accenture"
 $EventLogSource = "$app Install Script"

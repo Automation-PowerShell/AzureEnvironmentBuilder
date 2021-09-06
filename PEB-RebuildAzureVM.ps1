@@ -16,8 +16,8 @@ More Info       : https://github.com/satsuk81/PackagingEnvironmentBuilder
 #>
 
 Param(
-    [Parameter(Mandatory = $false)][string]$VMName = "wleusvanwin101",
-    [Parameter(Mandatory = $false)][ValidateSet("Standard", "AdminStudio", "Jumpbox","Core")][string]$Spec = "Core"
+    [Parameter(Mandatory = $false)][string]$VMName = "wleusvanwin117",
+    [Parameter(Mandatory = $false)][ValidateSet("Standard", "AdminStudio", "Jumpbox","Core")][string]$Spec = "Standard"
 )
 
 #region Setup
