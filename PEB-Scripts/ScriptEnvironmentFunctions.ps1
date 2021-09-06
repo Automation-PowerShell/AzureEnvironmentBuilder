@@ -17,7 +17,7 @@ function UpdateStorage {
                 $contentName = $template.Basename -replace "Tmpl"
                 $contentName = $contentName + ".ps1"
                 $content | Set-Content -Path "$BlobFilesDest\$contentName" -ErrorAction stop
-            }     
+            }
         }
         Catch {
             Write-Log "*** An error occured trying to create the customised scripts for the Storage Blob ***" -Level Error

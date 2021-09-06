@@ -30,12 +30,12 @@ function ConfigureHyperVVM($VMName) {
         RunVMConfig "$RGNamePROD" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/RunOnce.ps1" "RunOnce.ps1"
         RunVMConfig "$RGNamePROD" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/ConfigureDataDisk.ps1" "ConfigureDataDisk.ps1"
         RunVMConfig "$RGNamePROD" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/EnableHyperV.ps1" "EnableHyperV.ps1"
-        Restart-AzVM -ResourceGroupName $RGNamePROD -Name $VMName | Out-Null    
+        Restart-AzVM -ResourceGroupName $RGNamePROD -Name $VMName | Out-Null
         Write-Log "VM: $VMName - Restarting VM..."
         Start-Sleep -Seconds 120
         RunVMConfig "$RGNamePROD" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/ConfigHyperV.ps1" "ConfigHyperV.ps1"
         #RunVMConfig "$RGNamePROD" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/DomainJoin.ps1" "DomainJoin.ps1"
-        Restart-AzVM -ResourceGroupName $RGNamePROD -Name $VMName | Out-Null    
+        Restart-AzVM -ResourceGroupName $RGNamePROD -Name $VMName | Out-Null
         Write-Log "VM: $VMName - Restarting VM..."
         Start-Sleep -Seconds 120
         #RunVMConfig "$RGNamePROD" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/Build-VM.ps1" "Build-VM.ps1"

@@ -27,18 +27,18 @@ function Write-LogScreen {
     $String = "$Date - $Time -- $String"
     try {
         switch ($Level) {
-            "Info" { 
-                Write-Host $String
+            "Info" {
+                Write-Output $String
             }
 
-            "Error" { 
+            "Error" {
                 $String = "ERROR: $String"
-                Write-Host $String -ForegroundColor Red
+                Write-Output $String -ForegroundColor Red
             }
 
             "Debug" {
                 $String = "DEBUG: $String"
-                Write-Host $String -ForegroundColor Green
+                Write-Output $String -ForegroundColor Green
             }
         }
     }
@@ -63,7 +63,7 @@ function Write-LogFile {
                 $string | Out-File -FilePath $logfile -Append -Force -Encoding ascii
             }
 
-            "Error" { 
+            "Error" {
                 $String = "ERROR: $String"
                 $string | Out-File -FilePath $logfile -Append -Force -Encoding ascii
             }
@@ -94,7 +94,7 @@ function Write-LogCMFile {
                 $string | Out-File -FilePath $logfile -Append -Force -Encoding utf8
             }
 
-            "Error" { 
+            "Error" {
                 $String = "<![LOG[$String]LOG]!><time=`"$Time.000-60`" date=`"$Date`" component=`"$azTenant`" context=`"`" type=`"3`" thread=`"`" file=`"`">"
                 $string | Out-File -FilePath $logfile -Append -Force -Encoding utf8
             }
@@ -120,9 +120,9 @@ function Write-LogGit {
     $String = "$Date - $Time -- $String"
     $logfile = "c:\temp\PEBgit\PEB.log"
     if(!$gitNotFirstRun) {
-        rmdir -Path C:\Temp\PEBgit -Force -Recurse | Out-Null
+        Remove-Item -Path C:\Temp\PEBgit -Force -Recurse | Out-Null
         mkdir -Path C:\Temp -Name "PEBgit" -Force | Out-Null
-        cd c:\temp\PEBgit\
+        Set-Locationt-Location c:\temp\PEBgit\
         & git init *>&1 | Out-Null
         & git pull https://github.com/satsuk81/log.git *>&1 | Out-Null
         if(!(Test-Path -Path $logfile)) {
@@ -132,7 +132,7 @@ function Write-LogGit {
         & git branch -M main *>&1 | Out-Null
         & git remote add origin https://github.com/satsuk81/log.git *>&1 | Out-Null
     }
-    cd c:\temp\PEBgit\
+    Set-Location c:\temp\PEBgit\
     $Script:gitNotFirstRun = $true
     try {
         switch ($Level) {
@@ -143,7 +143,7 @@ function Write-LogGit {
                 & git push -u origin main *>&1 | Out-Null
             }
 
-            "Error" { 
+            "Error" {
                 $String = "ERROR: $azTenant / $String"
                 $string | Out-File -FilePath $logfile -Append -Force -Encoding ascii
                 & git commit -a -m "$Date" *>&1 | Out-Null
@@ -161,7 +161,7 @@ function Write-LogGit {
     catch {
 
     }
-    cd $root
+    Set-Location $root
 }
 
 function Write-Log {
@@ -237,7 +237,7 @@ function Write-Dump {
 function ConnectTo-Azure {
     Import-Module Az.Accounts,Az.Compute,Az.Storage,Az.Network,Az.Resources -ErrorAction SilentlyContinue
     if (!((Get-Module Az.Accounts) -and (Get-Module Az.Compute) -and (Get-Module Az.Storage) -and (Get-Module Az.Network) -and (Get-Module Az.Resources))) {
-    Install-Module Az.Accounts,Az.Compute,Az.Storage,Az.Network,Az.Resources -Repository PSGallery -Scope CurrentUser -Force    
+    Install-Module Az.Accounts,Az.Compute,Az.Storage,Az.Network,Az.Resources -Repository PSGallery -Scope CurrentUser -Force
         Import-Module Az.Accounts,AZ.Compute,Az.Storage,Az.Network,Az.Resources
     }
 

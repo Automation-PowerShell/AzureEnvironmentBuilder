@@ -1,5 +1,5 @@
 function CreateStandardVM-Script($VMName) {
-    $Vnet = Get-AzVirtualNetwork -Name $VNetDEV -ResourceGroupName $RGNameDEVVNET 
+    $Vnet = Get-AzVirtualNetwork -Name $VNetDEV -ResourceGroupName $RGNameDEVVNET
     $Subnet = Get-AzVirtualNetworkSubnetConfig -Name $SubnetNameDEV -VirtualNetwork $vnet
     if ($RequirePublicIPs) {
         $PIP = New-AzPublicIpAddress -Name "$VMName-pip" -ResourceGroupName $RGNameDEV -Location $Location -AllocationMethod Dynamic -Sku Basic -Tier Regional -IpAddressVersion IPv4
@@ -16,7 +16,7 @@ function CreateStandardVM-Script($VMName) {
 }
 
 function CreateAdminStudioVM-Script($VMName) {
-    $Vnet = Get-AzVirtualNetwork -Name $VNetDEV -ResourceGroupName $RGNameDEVVNET 
+    $Vnet = Get-AzVirtualNetwork -Name $VNetDEV -ResourceGroupName $RGNameDEVVNET
     $Subnet = Get-AzVirtualNetworkSubnetConfig -Name $SubnetNameDEV -VirtualNetwork $vnet
     if ($RequirePublicIPs) {
         $PIP = New-AzPublicIpAddress -Name "$VMName-pip" -ResourceGroupName $RGNameDEV -Location $Location -AllocationMethod Dynamic -Sku Basic -Tier Regional -IpAddressVersion IPv4
@@ -33,7 +33,7 @@ function CreateAdminStudioVM-Script($VMName) {
 }
 
 function CreateJumpboxVM-Script($VMName) {
-    $Vnet = Get-AzVirtualNetwork -Name $VNetDEV -ResourceGroupName $RGNameDEVVNET 
+    $Vnet = Get-AzVirtualNetwork -Name $VNetDEV -ResourceGroupName $RGNameDEVVNET
     $Subnet = Get-AzVirtualNetworkSubnetConfig -Name $SubnetNameDEV -VirtualNetwork $vnet
     if ($RequirePublicIPs) {
         $PIP = New-AzPublicIpAddress -Name "$VMName-pip" -ResourceGroupName $RGNameDEV -Location $Location -AllocationMethod Dynamic -Sku Basic -Tier Regional -IpAddressVersion IPv4
@@ -50,7 +50,7 @@ function CreateJumpboxVM-Script($VMName) {
 }
 
 function CreateCoreVM-Script($VMName) {
-    $Vnet = Get-AzVirtualNetwork -Name $VNetDEV -ResourceGroupName $RGNameDEVVNET 
+    $Vnet = Get-AzVirtualNetwork -Name $VNetDEV -ResourceGroupName $RGNameDEVVNET
     $Subnet = Get-AzVirtualNetworkSubnetConfig -Name $SubnetNameDEV -VirtualNetwork $vnet
     if ($RequirePublicIPs) {
         $PIP = New-AzPublicIpAddress -Name "$VMName-pip" -ResourceGroupName $RGNameDEV -Location $Location -AllocationMethod Dynamic -Sku Basic -Tier Regional -IpAddressVersion IPv4
@@ -114,7 +114,7 @@ function ConfigureJumpboxVM($VMName) {
     #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/Jumpbox.ps1" "Jumpbox.ps1"
     #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/MECMConsole.ps1" "MECMConsole.ps1"
     #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/DomainJoin.ps1" "DomainJoin.ps1"
-    
+
     if ($VMShutdown) {
         $Stopvm = Stop-AzVM -ResourceGroupName $RGNameDEV -Name $VMName -Force
         if ($Stopvm.Status -eq "Succeeded") {
@@ -147,7 +147,7 @@ function ConfigureBaseVM($VMName) {
     $VMCreate = Get-AzVM -ResourceGroupName $RGNameDEV -Name $VMName
     If ($VMCreate.ProvisioningState -eq "Succeeded") {
         Write-Log "VM: $VMName created successfully"
-        
+
         $NewVm = Get-AzADServicePrincipal -DisplayName $VMName
         if ($RequireServicePrincipal) {
             Get-AzContext -Name "StorageSP" | Select-AzContext | Out-Null
@@ -166,12 +166,12 @@ function ConfigureBaseVM($VMName) {
                 Write-Log -String "*** VM: $VMName - Unable to set Storage Account Permission ***" -Level Error
                 Write-Dump $VMCreate.Identity.PrincipalId $NewVm.Id
             }
-       
+
         }
         Restart-AzVM -ResourceGroupName $RGNameDEV -Name $VMName | Out-Null
         Write-Log "VM: $VMName - Restarting VM..."
         Start-Sleep -Seconds 120
-        
+
         if ($AutoShutdown) {
             $ScheduledShutdownResourceId = "/subscriptions/$azSubscription/resourceGroups/$RGNameDEV/providers/microsoft.devtestlab/schedules/shutdown-computevm-$VMName"
 
@@ -333,7 +333,7 @@ function ScriptBuild-Create-VM {
             $VMNumberStart++
         }
     }
-            
+
         # Build Core VMs
     if ($RequireCoreVMs) {
         $Count = 1
@@ -397,7 +397,7 @@ function ScriptBuild-Config-VM {
             $VMNumberStart++
         }
     }
-        
+
         # Configure Core VMs
     if ($RequireCoreVMs) {
         $Count = 1
@@ -514,7 +514,7 @@ function TerraformConfigure-VM {
         $Count = 1
         $VMNumberStart = $VMNumberStartStandard
         While ($Count -le $NumberofStandardVMs) {
-            Write-Log "Configuring $Count of $NumberofStandardVMs VMs"  
+            Write-Log "Configuring $Count of $NumberofStandardVMs VMs"
             $VM = $VMNamePrefixStandard + $VMNumberStart
             ConfigureStandardVM "$VM"
             $Count++
@@ -533,7 +533,7 @@ function TerraformConfigure-VM {
             $Count++
             $VMNumberStart++
         }
-    }   
+    }
 
         # Configure Jumpbox VMs
     if ($RequireJumpboxVMs) {
@@ -547,7 +547,7 @@ function TerraformConfigure-VM {
             $VMNumberStart++
         }
     }
-            
+
         # Configure Core VMs
     if ($RequireCoreVMs) {
         $Count = 1

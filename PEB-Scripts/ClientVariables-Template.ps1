@@ -5,7 +5,7 @@ $azSubscription = ""
     # Domain Variables
 $Domain = ""
 $OUPath = ""
-    
+
     # Script Customisations
 $VMListExclude = @()                    # Exclusion list for rebuilding Azure VMs
 
@@ -15,7 +15,7 @@ $RequireConfigure = $false
 $UseTerraform = $false
 $RequireUpdateStorage = $false
 $RequireServicePrincipal = $false
-   
+
     # Required Components
 $RequireUserGroups = $true
 $RequireRBAC = $true
@@ -28,13 +28,13 @@ $RequireStandardVMs = $true
 $RequireAdminStudioVMs = $true
 $RequireJumpboxVMs = $true
 $RequireHyperV = $true
-    
+
     # Azure Tags
 $tags = @{
     "Application"         = "EUC App Packaging"
     "Envrionment"         = "Production"
 }
-    
+
     # Secure Key
 $KeyFile = "$ExtraFiles\my.key"
 $myKey = Get-Content $KeyFile

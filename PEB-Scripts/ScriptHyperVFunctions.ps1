@@ -17,7 +17,7 @@ module " + [char]34 + $VMName + [char]34 + " {
 }
 
 function CreateHyperVVM-Script($VMName) {
-    $Vnet = Get-AzVirtualNetwork -Name $VNetPROD -ResourceGroupName $RGNamePRODVNET 
+    $Vnet = Get-AzVirtualNetwork -Name $VNetPROD -ResourceGroupName $RGNamePRODVNET
     $Subnet = Get-AzVirtualNetworkSubnetConfig -Name $SubnetNamePROD -VirtualNetwork $vnet
     if ($RequirePublicIPs) {
         $PIP = New-AzPublicIpAddress -Name "$VMName-pip" -ResourceGroupName $RGNamePROD -Location $Location -AllocationMethod Dynamic -Sku Basic -Tier Regional -IpAddressVersion IPv4
@@ -103,12 +103,12 @@ function ConfigureHyperVVM($VMName) {
         #RunVMConfig "$RGNamePROD" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/RunOnce.ps1" "RunOnce.ps1"
         #RunVMConfig "$RGNamePROD" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/ConfigureDataDisk.ps1" "ConfigureDataDisk.ps1"
         #RunVMConfig "$RGNamePROD" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/EnableHyperV.ps1" "EnableHyperV.ps1"
-        Restart-AzVM -ResourceGroupName $RGNamePROD -Name $VMName | Out-Null    
+        Restart-AzVM -ResourceGroupName $RGNamePROD -Name $VMName | Out-Null
         Write-Log "VM: $VMName - Restarting VM..."
         Start-Sleep -Seconds 120
         #RunVMConfig "$RGNamePROD" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/ConfigHyperV.ps1" "ConfigHyperV.ps1"
         #RunVMConfig "$RGNamePROD" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/DomainJoin.ps1" "DomainJoin.ps1"
-        Restart-AzVM -ResourceGroupName $RGNamePROD -Name $VMName | Out-Null    
+        Restart-AzVM -ResourceGroupName $RGNamePROD -Name $VMName | Out-Null
         Write-Log "VM: $VMName - Restarting VM..."
         Start-Sleep -Seconds 120
         #RunVMConfig "$RGNamePROD" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/Build-VM.ps1" "Build-VM.ps1"

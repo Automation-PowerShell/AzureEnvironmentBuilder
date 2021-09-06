@@ -1,4 +1,4 @@
-cd $PSScriptRoot
+Set-Location $PSScriptRoot
 
     # Main Control
 $RequireCreate = $false
@@ -77,7 +77,7 @@ $VMSpecOffer = "Windows-10"
 $VMSpecSKUS = "20h2-ent"
 $VMSpecVersion = "latest"
 $VMShutdown = $true                                         # Specifies if the newly provisioned VM should be shutdown (can save costs)
-$AutoShutdown = $true                                       # Configures Windows 10 VMs to shutdown at a specified time                                             
+$AutoShutdown = $true                                       # Configures Windows 10 VMs to shutdown at a specified time
 
     # Hyper-V VM Count, Name, Spec, and Settings
 $NumberofHyperVVMs = 1                                      # Specify number of VMs to be provisioned

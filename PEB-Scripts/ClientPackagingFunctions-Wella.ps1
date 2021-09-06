@@ -47,7 +47,7 @@ function ConfigureJumpboxVM($VMName) {
     RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/Jumpbox.ps1" "Jumpbox.ps1"
     RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/MECMConsole.ps1" "MECMConsole.ps1"
     RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/DomainJoin.ps1" "DomainJoin.ps1"
-    
+
     if ($VMShutdown) {
         $Stopvm = Stop-AzVM -ResourceGroupName $RGNameDEV -Name $VMName -Force
         if ($Stopvm.Status -eq "Succeeded") {
@@ -81,7 +81,7 @@ function ConfigureBaseVM($VMName) {
     $VMCreate = Get-AzVM -ResourceGroupName $RGNameDEV -Name $VMName
     If ($VMCreate.ProvisioningState -eq "Succeeded") {
         Write-Log "VM: $VMName created successfully"
-        
+
         $NewVm = Get-AzADServicePrincipal -DisplayName $VMName
         #$UserObjectID = (Get-AzADUser -ObjectId ((Get-AzContext -Name "User").Account.Id)).Id
         if ($RequireServicePrincipal) {
@@ -107,7 +107,7 @@ function ConfigureBaseVM($VMName) {
         Restart-AzVM -ResourceGroupName $RGNameDEV -Name $VMName | Out-Null
         Write-Log "VM: $VMName - Restarting VM..."
         Start-Sleep -Seconds 120
-         
+
         if ($AutoShutdown) {
             $ScheduledShutdownResourceId = "/subscriptions/$azSubscription/resourceGroups/$RGNameDEV/providers/microsoft.devtestlab/schedules/shutdown-computevm-$VMName"
 
