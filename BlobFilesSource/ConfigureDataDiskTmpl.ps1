@@ -13,8 +13,8 @@ New-EventLog -LogName $EventlogName -Source $EventlogSource
 Limit-EventLog -OverflowAction OverWriteAsNeeded -MaximumSize 64KB -LogName $EventlogName
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Running $scriptname Script"
 
-$disks = Get-Disk | Where partitionstyle -eq 'raw' | sort number
-$disks | 
+$disks = Get-Disk | Where-Object partitionstyle -eq 'raw' | Sort-Object number
+$disks |
     Initialize-Disk -PartitionStyle MBR -PassThru |
     New-Partition -UseMaximumSize -DriveLetter "F" |
     Format-Volume -FileSystem NTFS -NewFileSystemLabel "data1" -Confirm:$false -Force

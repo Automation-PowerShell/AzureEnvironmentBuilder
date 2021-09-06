@@ -2,7 +2,7 @@ $scriptname = "Prevision.ps1"
 $EventlogName = "Accenture"
 $EventlogSource = "Prevision Script"
 
-cd $PSScriptRoot
+Set-Location $PSScriptRoot
 $source = "X:\EUC Applications\Packaging Environment Build Files\Prevision"
 $modules = "D:\Modules"
 
@@ -29,7 +29,7 @@ Import-Certificate -FilePath "$source\ZscalerRootCertificate-2048-SHA256.crt" -C
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Information -Message "Loading NuGet module"
 Expand-Archive -Path $source\Modules\nuget.zip -DestinationPath "C:\Program Files\PackageManagement\ProviderAssemblies" -Force
 Import-PackageProvider -Name NuGet
-    
+
     # Create Local Repository
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Information -Message "Creating Local Repo"
 if(!(Test-Path -Path D:\Modules)) {
@@ -53,7 +53,7 @@ if(!(Get-Module -Name az.storage)) {
     Import-Module az.storage
 }
 
-Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Information -Message "Attempting to connect to Azure"    
+Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Information -Message "Attempting to connect to Azure"
 Connect-AzAccount -identity -ErrorAction Stop -Subscription sssss
 
     # Copy MapDrv.ps1 to Desktop

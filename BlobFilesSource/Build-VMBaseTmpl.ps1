@@ -1,6 +1,6 @@
 ﻿#region Setup
-cd $PSScriptRoot
-    
+Set-Location $PSScriptRoot
+
 $scriptname = "Build-VMBase.ps1"                                # This file's filename
 $EventlogName = "Accenture"                                     # Event Log Folder Name
 $EventlogSource = "Hyper-V VM Base Build Script"                # Event Log Source Name
@@ -36,8 +36,8 @@ function Delete-VM {
         break
     }
     $VMName = "$VmNamePrefix$VmNumber"
-    $VM = Get-VM -Name $VMName -ErrorAction SilentlyContinue | select *
-    
+    $VM = Get-VM -Name $VMName -ErrorAction SilentlyContinue | Select-Object *
+
     if($VM) {
         Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Removing VM $VMName"
         if($VM.State -eq "Running") {
@@ -58,7 +58,7 @@ function Create-VM {
     }
     $VMName = "$VmNamePrefix$VmNumber"
     Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Creating VM $VMName"
-    
+
     $VM = @{
         Name = $VMName
         MemoryStartupBytes = $VMRamSize
@@ -69,10 +69,10 @@ function Create-VM {
     }
 
     $VMObject = New-VM @VM -NoVHD -Verbose -ErrorAction Stop
-    
+
     New-Item -Path $VMDrive\$VMFolder\$VHDFolder\ -Name $VMName -ItemType Directory -Force -Verbose | Out-null
     Copy-Item -Path $VMDrive\$VMFolder\Media\basedisk.vhdx -Destination $VMDrive\$VMFolder\$VHDFolder\$VMName\$VMName.vhdx -Force -Verbose
-    
+
     $VMObject | Set-VM -ProcessorCount $VMCPUCount
     $VMObject | Set-VM -StaticMemory
     $VMObject | Set-VM -CheckpointType Disabled
@@ -81,7 +81,7 @@ function Create-VM {
 
     $VMObject | Start-VM -Verbose -ErrorAction Stop
     Start-Sleep -Seconds 360
-    
+
         # VM Customisations
     Remove-Variable erroric -ErrorAction SilentlyContinue
     Invoke-Command -VMName $VMName -Credential $LocalAdminCred -ErrorVariable erroric -ScriptBlock {
@@ -102,13 +102,13 @@ function Create-VM {
     if($erroric) {
         Write-Error $error[0]
         Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Error -Message $error[0].Exception
-    }  
+    }
     Start-Sleep -Seconds 90
 
     $MACAddress = $VMObject.NetworkAdapters.MacAddress
-    $IPAddress = (Get-DhcpServerv4Scope | Get-DhcpServerv4Lease | where {($_.ClientId -replace "-") -eq $MACAddress}).IPAddress.IPAddressToString
-    
-    if(!(Get-NetNatStaticMapping -NatName $VMNetNATName -ErrorAction SilentlyContinue | where {$_.ExternalPort -like "*$VMNumber"})) {
+    $IPAddress = (Get-DhcpServerv4Scope | Get-DhcpServerv4Lease | Where-Object {($_.ClientId -replace "-") -eq $MACAddress}).IPAddress.IPAddressToString
+
+    if(!(Get-NetNatStaticMapping -NatName $VMNetNATName -ErrorAction SilentlyContinue | Where-Object {$_.ExternalPort -like "*$VMNumber"})) {
         Add-NetNatStaticMapping -ExternalIPAddress "0.0.0.0" -ExternalPort 50$VMNumber -InternalIPAddress $IPAddress -InternalPort 3389 -NatName $VMNetNATName -Protocol TCP -ErrorAction Stop | Out-Null
     }
     Start-Sleep -Seconds 120
@@ -127,7 +127,7 @@ Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -En
 Install-PackageProvider -Name NuGet -Force -ErrorAction Stop
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Loading Az.Storage module"
 Install-Module -Name Az.Storage -Force -ErrorAction Stop
-Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Attempting to connect to Azure"    
+Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Attempting to connect to Azure"
 Connect-AzAccount -Identity -ErrorAction Stop -Subscription sssss
 
     # Copy files to machine
