@@ -16,7 +16,7 @@ More Info       : https://github.com/satsuk81/PackagingEnvironmentBuilder
 #>
 
 #region Setup
-cd $PSScriptRoot
+Set-Location $PSScriptRoot
 
     # Script Variables
 $root = $PSScriptRoot
@@ -59,14 +59,14 @@ if($RequireCreate) {
         if (!($RGNamePROD -match $RGNamePRODVNET)) {
             $RG = New-AzResourceGroup -Name $RGNamePRODVNET -Location $Location
             if ($RG.ResourceGroupName -eq $RGNamePRODVNET) { Write-Log "PROD VNET Resource Group created successfully" }Else { Write-Log "*** Unable to create PROD VNET Resource Group! ***" -Level Error }
-        } 
+        }
         if (!($RGNamePROD -match $RGNameSTORE) -and $RequireStorageAccount) {
             $RG = New-AzResourceGroup -Name $RGNameSTORE -Location $Location
             if ($RG.ResourceGroupName -eq $RGNameSTORE) { Write-Log "STORE Resource Group created successfully" }Else { Write-Log "*** Unable to create STORE Resource Group! ***" -Level Error }
         }
     }
     if ($UseTerraform) {
-        $TerraformMainTemplate = Get-Content -Path ".\Terraform\Root Template\main.tf" | Set-Content -Path ".\Terraform\main.tf"    
+        $TerraformMainTemplate = Get-Content -Path ".\Terraform\Root Template\main.tf" | Set-Content -Path ".\Terraform\main.tf"
     }
 
         # Environment Script
@@ -81,14 +81,14 @@ if($RequireCreate) {
     }
 
     if($UseTerraform) {
-        cd .\terraform
+        Set-Location .\terraform
         $ARGUinit = "init"
         $ARGUplan = "plan -out .\terraform.tfplan"
         $ARGUapply = "apply -auto-approve .\terraform.tfplan"
         Start-Process -FilePath .\terraform.exe -ArgumentList $ARGUinit -Wait -RedirectStandardOutput .\terraform-init.txt -RedirectStandardError .\terraform-error-init.txt
         Start-Process -FilePath .\terraform.exe -ArgumentList $ARGUplan -Wait -RedirectStandardOutput .\terraform-plan.txt -RedirectStandardError .\terraform-error-plan.txt
         Start-Process -FilePath .\terraform.exe -ArgumentList $ARGUapply -Wait -RedirectStandardOutput .\terraform-apply.txt -RedirectStandardError .\terraform-error-apply.txt
-        cd ..
+        Set-Location ..
     }
 }
 
