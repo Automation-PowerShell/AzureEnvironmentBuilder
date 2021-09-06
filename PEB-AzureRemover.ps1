@@ -16,7 +16,7 @@ More Info       : https://github.com/satsuk81/PackagingEnvironmentBuilder
 #>
 
 #region Setup
-cd $PSScriptRoot
+Set-Location $PSScriptRoot
 
     # Script Variables
 $root = $PSScriptRoot
