@@ -77,7 +77,7 @@ function ConfigureCoreVM($VMName) {
     }
 }
 
-function ConfigureBaseVM {
+function ConfigureBaseVM($VMName) {
     $VMCreate = Get-AzVM -ResourceGroupName $RGNameDEV -Name $VMName
     If ($VMCreate.ProvisioningState -eq "Succeeded") {
         Write-Log "VM: $VMName created successfully"
@@ -94,6 +94,7 @@ function ConfigureBaseVM {
         else {
             New-AzRoleAssignment -ObjectId $NewVm.Id -RoleDefinitionName "Contributor" -Scope "/subscriptions/$azSubscription/resourceGroups/$RGNameSTORE/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" -ErrorAction SilentlyContinue | Out-Null
             Get-AzContext -Name "User" | Select-AzContext | Out-Null
+            Start-Sleep -Seconds 30
             $confirm = Get-AzRoleAssignment -ObjectId $NewVm.Id -Scope "/subscriptions/$azSubscription/resourceGroups/$RGNameSTORE/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" -ErrorAction SilentlyContinue
             if(!$confirm) {
                 Write-Log -String "*** VM: $VMName - Unable to set Storage Account Permission ***" -Level Error
@@ -103,6 +104,7 @@ function ConfigureBaseVM {
         }
         Restart-AzVM -ResourceGroupName $RGNameDEV -Name $VMName | Out-Null
         Write-Log "VM: $VMName - Restarting VM..."
+        Start-Sleep -Seconds 120
              
         if ($AutoShutdown) {
             $ScheduledShutdownResourceId = "/subscriptions/$azSubscription/resourceGroups/$RGNameDEV/providers/microsoft.devtestlab/schedules/shutdown-computevm-$VMName"
