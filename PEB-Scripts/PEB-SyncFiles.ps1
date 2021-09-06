@@ -15,7 +15,7 @@ function SyncFiles {
     $StorageAccount = Get-AzStorageAccount -Name $StorageAccountName -ResourceGroupName $ResourceGroupName
     if(!$Context){$Context = $storageAccount.Context}
     if($ScriptsOnly) {
-        Get-ChildItem -Path $LocalPath\* -File -Include "*.ps1" | Set-AzStorageBlobContent -Container $ContainerName -Context $Context -Force | Out-Null   
+        Get-ChildItem -Path $LocalPath\* -File -Include "*.ps1" | Set-AzStorageBlobContent -Container $ContainerName -Context $Context -Force | Out-Null
     }
     elseif ($Recurse) {
         Get-ChildItem -Path $LocalPath\* -File -Recurse | Set-AzStorageBlobContent -Container $ContainerName -Context $Context -Force | Out-Null
@@ -27,12 +27,12 @@ function SyncFiles {
 Write-Log "Running PEB-SyncFiles.ps1"
 Try {
     switch ($CallFromCreatePackaging) {
-        $True { 
+        $True {
             SyncFiles -LocalPath $BlobFilesDest -ResourceGroupName $RGNameSTORE -ContainerName $ContainerName -StorageAccountName $StorageAccountName }
         $False {
             #SyncFiles -LocalPath $SFLocalPath -ResourceGroupName $SFResourceGroupName -StorageAccountName $SFStorageAccountName -ContainerName $SFContainerName
         }
-    } 
+    }
 } Catch {
     Write-Log "*** An error occured syncing files to the Storage Blob ***" -Level Error
 }
