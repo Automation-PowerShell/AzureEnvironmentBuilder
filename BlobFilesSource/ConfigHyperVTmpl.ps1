@@ -21,7 +21,7 @@ Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -En
 Install-PackageProvider -Name NuGet -Force -ErrorAction Stop
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Information -Message "Loading Az.Storage module"
 Install-Module -Name Az.Storage -Force -ErrorAction Stop
-Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Information -Message "Attempting to connect to Azure"    
+Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Information -Message "Attempting to connect to Azure"
 Connect-AzAccount -identity -ErrorAction Stop -Subscription sssss
 
 # Map Storage Account
@@ -45,7 +45,7 @@ Copy-Item -Path "Z:\en_windows_10_business_editions_version_20h2_updated_dec_202
 # Windows Image Tools
 Install-Module -Name WindowsImageTools -Force -ErrorAction Stop
 Import-Module WindowsImageTools -Force
-$adminPassword = ConvertTo-SecureString "Password1234" -AsPlainText -Force  
+$adminPassword = ConvertTo-SecureString "Password1234" -AsPlainText -Force
 $adminCred = New-Object System.Management.Automation.PSCredential ("administrator", $adminPassword)
 New-UnattendXml -Path F:\Hyper-V\Media\Unattend.xml -AdminPassword $adminCred -logonCount 1 -enableAdministrator
 New-DataVHD -Path F:\Hyper-V\Media\basedisk.vhdx -Size 60GB -DataFormat NTFS -Dynamic

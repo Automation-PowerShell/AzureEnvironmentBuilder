@@ -24,7 +24,7 @@ Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -En
 Install-PackageProvider -Name NuGet -Force -ErrorAction Stop
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Information -Message "Loading Az.Storage module"
 Install-Module -Name Az.Storage -Force -ErrorAction Stop
-Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Information -Message "Attempting to connect to Azure"    
+Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Information -Message "Attempting to connect to Azure"
 Connect-AzAccount -identity -ErrorAction Stop -Subscription sssss
 
 # Copy AdminStudio exe to local drive and install
@@ -32,7 +32,7 @@ Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -En
 $StorAcc = get-azstorageaccount -resourcegroupname rrrrr -name xxxxx
 $Result = Get-AzStorageBlobContent -Container data -Blob "./Media/$filename" -destination "c:\Windows\temp\" -context $StorAcc.context
 If ($Result.Name -eq "Media/$filename") {
-    cd C:\Windows\Temp\Media\
+    Set-Location C:\Windows\Temp\Media\
     Start-Process -FilePath "$exefilename" -ArgumentList $Argument -Wait -ErrorAction Stop
 }
 Else {

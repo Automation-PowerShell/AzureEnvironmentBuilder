@@ -28,7 +28,7 @@ $IPSubnetPrefix = "24"
 $IPGateway = "192.168.0.1"
 $IPDNS = @("10.21.224.10","10.21.224.11","10.21.239.196")
 
-cd $PSScriptRoot
+Set-Location $PSScriptRoot
 #endregion Setup
 
 function Delete-VM {
@@ -39,8 +39,8 @@ function Delete-VM {
         break
     }
     $VMName = "$VmNamePrefix$VmNumber"
-    $VM = Get-VM -Name $VMName -ErrorAction SilentlyContinue | select *
-    
+    $VM = Get-VM -Name $VMName -ErrorAction SilentlyContinue | Select-Object *
+
     if($VM) {
         Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Removing VM $VMName"
         if($VM.State -eq "Running") {
@@ -61,7 +61,7 @@ function Create-VM {
     }
     $VMName = "$VmNamePrefix$VmNumber"
     Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Creating VM $VMName"
-    
+
     $VM = @{
         Name = $VMName
         MemoryStartupBytes = $VMRamSize
@@ -75,16 +75,16 @@ function Create-VM {
 
     $VMObject = New-VM @VM -Verbose -ErrorAction Stop
     #$VMObject = New-VM @VM -NoVHD -Verbose -ErrorAction Stop
-    
+
     #New-Item -Path $VMDrive\Hyper-V\$VHDFolder\ -Name $VMName -ItemType Directory -Force -Verbose | Out-null
     #Copy-Item -Path $VMDrive\Hyper-V\$VHDFolder\Media\Vanilla-Windows10-Base+CERT.vhdx -Destination $VMDrive\Hyper-V\$VHDFolder\$VMName\$VMName.vhdx -Force -Verbose
-    
+
     $VMObject | Set-VM -ProcessorCount $VMCPUCount
     $VMObject | Set-VM -StaticMemory
     $VMObject | Set-VM -AutomaticCheckpointsEnabled $false
     $VMObject | Set-VM -SnapshotFileLocation "$VMDrive\Hyper-V\$VMCheckpointFolder"
     #$VMObject | Add-VMHardDiskDrive -Path $VMDrive\Hyper-V\$VHDFolder\$VMName\$VMName.vhdx
-    
+
     $Date = Get-Date -Format yyyy-MM-dd
     $Time = Get-Date -Format HH:mm
     $VMObject | Checkpoint-VM -SnapshotName "Base Config ($Date - $Time)"
@@ -92,12 +92,12 @@ function Create-VM {
     $VMObject | Start-VM -Verbose -ErrorAction Stop
     Start-Sleep -Seconds 120
 
-    $IPAddress = ($VMListData | where {$_.Name -eq $VMName}).IPAddress
+    $IPAddress = ($VMListData | Where-Object {$_.Name -eq $VMName}).IPAddress
 
         # Pre Domain Join
     Remove-Variable erroric -ErrorAction SilentlyContinue
     Invoke-Command -VMName $VMName -Credential $LocalAdminCred -ErrorVariable erroric -ScriptBlock {
-        $NetAdapter = Get-NetAdapter -Physical | where {$_.Status -eq "Up"}
+        $NetAdapter = Get-NetAdapter -Physical | Where-Object {$_.Status -eq "Up"}
         if (($NetAdapter | Get-NetIPConfiguration).IPv4Address.IPAddress) {
             $NetAdapter | Remove-NetIPAddress -AddressFamily IPv4 -Confirm:$false
         }
@@ -122,7 +122,7 @@ function Create-VM {
     if($erroric) {
         Write-Error $error[0]
         Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Error -Message $error[0].Exception
-    }  
+    }
     Start-Sleep -Seconds 90
     Remove-Variable erroric -ErrorAction SilentlyContinue
     Invoke-Command -VMName $VMName -Credential $LocalAdminCred -ErrorVariable erroric -ScriptBlock {
@@ -134,8 +134,8 @@ function Create-VM {
             $attempts++
             try {
                 Add-Computer -LocalCredential $Using:LocalAdminCred -DomainName $Using:Domain -Credential $Using:DomainJoinCred -Restart -Verbose -ErrorAction Stop -OUPath $Using:OUPath
-                # -NewName $CP -OUPath $OU 
-            } catch {              
+                # -NewName $CP -OUPath $OU
+            } catch {
                 $joined = $false
                 Write-Output $_.Exception.Message
                 if($attempts -eq 20) {
@@ -149,7 +149,7 @@ function Create-VM {
     if($erroric) {
         Write-Error $error[0]
         Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Error -Message $error[0].Exception
-    }    
+    }
         # Post Domain Join - LocalCred wont work anymore.
     Start-Sleep -Seconds 90
     Remove-Variable erroric -ErrorAction SilentlyContinue
@@ -160,7 +160,7 @@ function Create-VM {
         #New-NetFirewallRule -DisplayName "Restrict_RDP_access" -Direction Inbound -Protocol TCP -LocalPort 3389 -RemoteAddress 192.168.1.0/24,192.168.2.100 -Action Allow
         #Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 1
         net localgroup "Remote Desktop Users" /add "Domain Users"
-        
+
             # Autopilot Hardware ID
         New-Item -Type Directory -Path "C:\HWID" -Force
         Set-Location -Path "C:\HWID"
@@ -190,12 +190,12 @@ function Create-VM {
     if($erroric) {
         Write-Error $error[0]
         Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Error -Message $error[0].Exception
-    }  
+    }
     $Date = Get-Date -Format yyyy-MM-dd
     $Time = Get-Date -Format HH:mm
     $VMObject | Checkpoint-VM -SnapshotName "Domain Joined ($Date - $Time)"
     #$VMNumber = $VMName.Trim($VmNamePrefix)
-    if(!(Get-NetNatStaticMapping -NatName $VMNetNATName -ErrorAction SilentlyContinue | where {$_.ExternalPort -like "*$VMNumber"})) {
+    if(!(Get-NetNatStaticMapping -NatName $VMNetNATName -ErrorAction SilentlyContinue | Where-Object {$_.ExternalPort -like "*$VMNumber"})) {
         Add-NetNatStaticMapping -ExternalIPAddress "0.0.0.0" -ExternalPort 50$VMNumber -InternalIPAddress $IPAddress -InternalPort 3389 -NatName $VMNetNATName -Protocol TCP -ErrorAction Stop | Out-Null
     }
 }
@@ -211,7 +211,7 @@ Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -En
 Install-PackageProvider -Name NuGet -Force -ErrorAction Stop
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Loading Az.Storage module"
 Install-Module -Name Az.Storage -Force -ErrorAction Stop
-Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Attempting to connect to Azure"    
+Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Attempting to connect to Azure"
 Connect-AzAccount -Identity -ErrorAction Stop -Subscription sssss
 
 # Copy files to machine
@@ -260,6 +260,6 @@ while ($i -lt $VMCount) {
     Create-VM -VmNumber $VMNumber
     $i++
 }
-Get-NetNatStaticMapping | select StaticMappingID,ExternalIPAddress,ExternalPort,InternalIPAddress,InternalPort | Export-CSV -Path "c:\windows\temp\netnatmapping.csv" -Force -NoTypeInformation
+Get-NetNatStaticMapping | Select-Object StaticMappingID,ExternalIPAddress,ExternalPort,InternalIPAddress,InternalPort | Export-CSV -Path "c:\windows\temp\netnatmapping.csv" -Force -NoTypeInformation
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Information -Message "Completed $scriptname"
 #endregion Main
