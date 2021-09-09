@@ -16,7 +16,7 @@ More Info       : https://github.com/satsuk81/PackagingEnvironmentBuilder
 #>
 
 Param(
-    [Parameter(Mandatory = $false)][string]$VMName = "wleusvanwin117",
+    [Parameter(Mandatory = $false)][string]$VMName = "",
     [Parameter(Mandatory = $false)][ValidateSet("Standard", "AdminStudio", "Jumpbox","Core")][string]$Spec = "Standard"
 )
 
