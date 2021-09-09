@@ -1,5 +1,5 @@
 # PackagingEnvironmentBuilder
 
 ```
-git clone https://github.com/satsuk81/PackagingEnvironmentBuilder.git
+git clone https://github.com/Automation-PowerShell/PackagingEnvironmentBuilder.git
 ```
