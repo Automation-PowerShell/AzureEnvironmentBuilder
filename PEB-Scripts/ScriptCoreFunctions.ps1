@@ -28,17 +28,17 @@ function Write-LogScreen {
     try {
         switch ($Level) {
             "Info" {
-                Write-Output $String
+                Write-Host $String
             }
 
             "Error" {
                 $String = "ERROR: $String"
-                Write-Output $String -ForegroundColor Red
+                Write-Host $String -ForegroundColor Red
             }
 
             "Debug" {
                 $String = "DEBUG: $String"
-                Write-Output $String -ForegroundColor Green
+                Write-Host $String -ForegroundColor Green
             }
         }
     }

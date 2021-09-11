@@ -1,13 +1,12 @@
-function ConfigureStandardVM($VMName) {
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/Prevision.ps1" "Prevision.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/VMConfig.ps1" "VMConfig.ps1"
-    RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/RunOnce.ps1" "RunOnce.ps1"
-    RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/ORCA.ps1" "ORCA.ps1"
-    RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/7-Zip.ps1" "7-Zip.ps1"
-    RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/InstEd.ps1" "InstEd.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/DesktopApps.ps1" "DesktopApps.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/GlassWire.ps1" "GlassWire.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/IntuneWinUtility.ps1" "IntuneWinUtility.ps1"
+function ConfigureVM {
+    Param(
+        [Parameter(Position = 0, Mandatory)][String]$VMName,
+        [Parameter(Position = 1, Mandatory)][String]$VMSpec
+    )
+
+    foreach ($app in $deviceSpecs.$VMSpec.Apps) {
+        RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/$($app.Name)" "$($app.Name)"
+    }
 
     if ($VMShutdown) {
         $Stopvm = Stop-AzVM -ResourceGroupName $RGNameDEV -Name $VMName -Force
@@ -18,6 +17,10 @@ function ConfigureStandardVM($VMName) {
             Write-Log "*** VM: $VMName - Unable to shutdown! ***" -Level Error
         }
     }
+}
+
+function ConfigureStandardVM($VMName) {
+    ConfigureVM -VMName $VMName -VMSpec "Standard"
 }
 
 function ConfigureAdminStudioVM($VMName) {

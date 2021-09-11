@@ -1,0 +1,228 @@
+{
+    "version": "v1",
+    "name": "Device Specs",
+    "SpecList": [
+        {
+            "Name": "Standard"
+        },
+        {
+            "Name": "Packaging"
+        },
+        {
+            "Name": "AdminStudio"
+        },
+        {
+            "Name": "Jumpbox"
+        },
+        {
+            "Name": "Core"
+        },
+        {
+            "Name": "Server"
+        },
+        {
+            "Name": "HyperV-Server"
+        }
+    ],
+    "Standard": [
+        {
+            "PublisherName": "MicrosoftWindowsDesktop",
+            "Offer": "Windows-10",
+            "SKUS": "20h2-ent",
+            "Version": "latest",
+            "Apps": [
+                {
+                    "Name": "7-Zip.ps1"
+                }
+            ],
+            "VMSize": "Standard_B2s"
+        }
+    ],
+    "Packaging": [
+        {
+            "PublisherName": "MicrosoftWindowsDesktop",
+            "Offer": "Windows-10",
+            "SKUS": "20h2-ent",
+            "Version": "latest",
+            "Apps": [
+                {
+                    "Name": "Prevision.ps1"
+                },
+                {
+                    "Name": "VMConfig.ps1"
+                },
+                {
+                    "Name": "RunOnce.ps1"
+                },
+                {
+                    "Name": "ORCA.ps1"
+                },
+                {
+                    "Name": "7-Zip.ps1"
+                },
+                {
+                    "Name": "InstEd.ps1"
+                },
+                {
+                    "Name": "DesktopApps.ps1"
+                },
+                {
+                    "Name": "GlassWire.ps1"
+                },
+                {
+                    "Name": "IntuneWinUtility.ps1"
+                }
+            ],
+            "VMSize": "Standard_B2s"
+        }
+    ],
+    "AdminStudio": [
+        {
+            "PublisherName": "MicrosoftWindowsDesktop",
+            "Offer": "Windows-10",
+            "SKUS": "20h2-ent",
+            "Version": "latest",
+            "Apps": [
+                {
+                    "Name": "Prevision.ps1"
+                },
+                {
+                    "Name": "VMConfig.ps1"
+                },
+                {
+                    "Name": "RunOnce.ps1"
+                },
+                {
+                    "Name": "AdminStudio.ps1"
+                },
+                {
+                    "Name": "ORCA.ps1"
+                },
+                {
+                    "Name": "7-Zip.ps1"
+                },
+                {
+                    "Name": "InstEd.ps1"
+                },
+                {
+                    "Name": "GlassWire.ps1"
+                }
+            ],
+            "VMSize": "Standard_B2s"
+        }
+    ],
+    "Jumpbox": [
+        {
+            "PublisherName": "MicrosoftWindowsDesktop",
+            "Offer": "Windows-10",
+            "SKUS": "20h2-ent",
+            "Version": "latest",
+            "Apps": [
+                {
+                    "Name": "Prevision.ps1"
+                },
+                {
+                    "Name": "RunOnce.ps1"
+                },
+                {
+                    "Name": "Jumpbox.ps1"
+                },
+                {
+                    "Name": "MECMConsole.ps1"
+                },
+                {
+                    "Name": "DomainJoin.ps1"
+                }
+            ],
+            "VMSize": "Standard_B2s"
+        }
+    ],
+    "Core": [
+        {
+            "PublisherName": "MicrosoftWindowsDesktop",
+            "Offer": "Windows-10",
+            "SKUS": "20h2-ent",
+            "Version": "latest",
+            "Apps": [
+                {
+                    "Name": "Prevision.ps1"
+                },
+                {
+                    "Name": "VMConfig.ps1"
+                },
+                {
+                    "Name": "RunOnce.ps1"
+                },
+                {
+                    "Name": "VCPP.ps1"
+                },
+                {
+                    "Name": "Office365.ps1"
+                }
+            ],
+            "VMSize": "Standard_B2s"
+        }
+    ],
+    "Server": [
+        {
+            "PublisherName": "MicrosoftWindowsServer",
+            "Offer": "WindowsServer",
+            "SKUS": "2019-Datacenter",
+            "Version": "latest",
+            "Apps": [
+                {
+                    "Name": "Prevision.ps1"
+                },
+                {
+                    "Name": "RunOnce.ps1"
+                },
+                {
+                    "Name": "ConfigureDataDisk.ps1"
+                }
+            ],
+            "VMSize": "Standard_D2s_v4",
+            "dataDiskTier": "S10",
+            "dataDiskSKU": "Standard_LRS",
+            "dataDiskSize": 128
+
+        }
+    ],
+    "HyperV-Server": [
+        {
+            "PublisherName": "MicrosoftWindowsServer",
+            "Offer": "WindowsServer",
+            "SKUS": "2019-Datacenter",
+            "Version": "latest",
+            "Apps": [
+                {
+                    "Name": "Prevision.ps1"
+                },
+                {
+                    "Name": "RunOnce.ps1"
+                },
+                {
+                    "Name": "ConfigureDataDisk.ps1"
+                },
+                {
+                    "Name": "EnableHyperV.ps1"
+                },
+                {
+                    "Name": "ConfigHyperV.ps1"
+                },
+                {
+                    "Name": "DomainJoin.ps1"
+                },
+                {
+                    "Name": "Build-VMBase.ps1"
+                },
+                {
+                    "Name": "Build-VM.ps1"
+                }
+            ],
+            "VMSize": "Standard_D2s_v4",
+            "dataDiskTier": "S10",
+            "dataDiskSKU": "Standard_LRS",
+            "dataDiskSize": 128
+        }
+    ]
+}
