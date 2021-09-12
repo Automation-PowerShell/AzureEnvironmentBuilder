@@ -32,21 +32,7 @@ function ConfigureJumpboxVM($VMName) {
 }
 
 function ConfigureCoreVM($VMName) {
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/Prevision.ps1" "Prevision.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/VMConfig.ps1" "VMConfig.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/RunOnce.ps1" "RunOnce.ps1"
-    RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/VCPP.ps1" "VCPP.ps1"
-    RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/Office365.ps1" "Office365.ps1"
-
-    if ($VMShutdown) {
-        $Stopvm = Stop-AzVM -ResourceGroupName $RGNameDEV -Name $VMName -Force
-        if ($Stopvm.Status -eq "Succeeded") {
-            Write-Log "VM: $VMName shutdown successfully"
-        }
-        else {
-            Write-Log "*** VM: $VMName - Unable to shutdown! ***" -Level Error
-        }
-    }
+    ConfigureVM -VMName $VMName -VMSpec "Core"
 }
 
 function ConfigureBaseVM($VMName) {
