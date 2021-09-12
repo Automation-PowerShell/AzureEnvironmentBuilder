@@ -24,24 +24,7 @@ function ConfigureStandardVM($VMName) {
 }
 
 function ConfigureAdminStudioVM($VMName) {
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/Prevision.ps1" "Prevision.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/VMConfig.ps1" "VMConfig.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/RunOnce.ps1" "RunOnce.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/AdminStudio.ps1" "AdminStudio.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/ORCA.ps1" "ORCA.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/GlassWire.ps1" "GlassWire.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/7-Zip.ps1" "7-Zip.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/InstEd.ps1" "InstEd.ps1"
-
-    if ($VMShutdown) {
-        $Stopvm = Stop-AzVM -ResourceGroupName $RGNameDEV -Name $VMName -Force
-        if ($Stopvm.Status -eq "Succeeded") {
-            Write-Log "VM: $VMName shutdown successfully"
-        }
-        else {
-            Write-Log "*** VM: $VMName - Unable to shutdown! ***" -Level Error
-        }
-    }
+    ConfigureVM -VMName $VMName -VMSpec "AdminStudio"
 }
 
 function ConfigureJumpboxVM($VMName) {
