@@ -31,9 +31,9 @@ function CreateRBACConfig {
     $ReadOnlyGroup = Get-AzAdGroup -DisplayName $rbacReadOnly
 
     if ($RequireUserGroups -and !$UseTerraform) {
-        if ($OwnerGroup -eq $null){$Owner = New-AzADGroup -DisplayName $rbacOwner -MailNickName "NotSet"}Else{Write-PEBLog "Owner RBAC group already exists" -Level Error;$Owner=$OwnerGroup}
-        if ($ContributorGroup -eq $null){$Contributor = New-AzADGroup -DisplayName $rbacContributor -MailNickName "NotSet"}Else{Write-PEBLog "Contributor RBAC group already exists" -Level Error;$Contributor=$ContributorGroup}
-        if ($ReadOnlyGroup -eq $null){$ReadOnly = New-AzADGroup -DisplayName $rbacReadOnly -MailNickName "NotSet"}Else{Write-PEBLog "ReadOnly RBAC group already exists" -Level Error;$ReadOnly=$ReadOnlyGroup}
+        if (!($OwnerGroup)){$Owner = New-AzADGroup -DisplayName $rbacOwner -MailNickName "NotSet"}Else{Write-PEBLog "Owner RBAC group already exists" -Level Error;$Owner=$OwnerGroup}
+        if (!($ContributorGroup)){$Contributor = New-AzADGroup -DisplayName $rbacContributor -MailNickName "NotSet"}Else{Write-PEBLog "Contributor RBAC group already exists" -Level Error;$Contributor=$ContributorGroup}
+        if (!($ReadOnlyGroup)){$ReadOnly = New-AzADGroup -DisplayName $rbacReadOnly -MailNickName "NotSet"}Else{Write-PEBLog "ReadOnly RBAC group already exists" -Level Error;$ReadOnly=$ReadOnlyGroup}
     }
 }
 
