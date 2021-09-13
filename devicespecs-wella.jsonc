@@ -1,0 +1,207 @@
+{
+    "version": "v1",
+    "name": "Device Specs",
+    "SpecList": [
+        {
+            "Name": "Standard"
+        },
+        {
+            "Name": "Packaging"
+        },
+        {
+            "Name": "AdminStudio"
+        },
+        {
+            "Name": "Jumpbox"
+        },
+        {
+            "Name": "Core"
+        },
+        {
+            "Name": "Server"
+        },
+        {
+            "Name": "HyperV-Server"
+        }
+    ],
+    "Standard": [
+        {
+            "PublisherName": "MicrosoftWindowsDesktop",
+            "Offer": "Windows-10",
+            "SKUS": "20h2-ent",
+            "Version": "latest",
+            "Apps": [
+                {
+                    "Name": "RunOnce"
+                },
+                {
+                    "Name": "7-Zip"
+                }
+            ],
+            "VMSize": "Standard_B2s"
+        }
+    ],
+    "Packaging": [
+        {
+            "PublisherName": "MicrosoftWindowsDesktop",
+            "Offer": "Windows-10",
+            "SKUS": "20h2-ent",
+            "Version": "latest",
+            "Apps": [
+                {
+                    "Name": "VMConfig"
+                },
+                {
+                    "Name": "RunOnce"
+                },
+                {
+                    "Name": "ORCA"
+                },
+                {
+                    "Name": "7-Zip"
+                },
+                {
+                    "Name": "InstEd"
+                },
+                {
+                    "Name": "DesktopApps"
+                }
+            ],
+            "VMSize": "Standard_B2s"
+        }
+    ],
+    "AdminStudio": [
+        {
+            "PublisherName": "MicrosoftWindowsDesktop",
+            "Offer": "Windows-10",
+            "SKUS": "20h2-ent",
+            "Version": "latest",
+            "Apps": [
+                {
+                    "Name": "VMConfig"
+                },
+                {
+                    "Name": "RunOnce"
+                },
+                {
+                    "Name": "AdminStudio"
+                },
+                {
+                    "Name": "ORCA"
+                },
+                {
+                    "Name": "7-Zip"
+                },
+                {
+                    "Name": "InstEd"
+                },
+                {
+                    "Name": "GlassWire"
+                }
+            ],
+            "VMSize": "Standard_B2s"
+        }
+    ],
+    "Jumpbox": [
+        {
+            "PublisherName": "MicrosoftWindowsDesktop",
+            "Offer": "Windows-10",
+            "SKUS": "20h2-ent",
+            "Version": "latest",
+            "Apps": [
+                {
+                    "Name": "RunOnce"
+                },
+                {
+                    "Name": "Jumpbox"
+                },
+                {
+                    "Name": "MECMConsole"
+                },
+                {
+                    "Name": "DomainJoin"
+                }
+            ],
+            "VMSize": "Standard_B2s"
+        }
+    ],
+    "Core": [
+        {
+            "PublisherName": "MicrosoftWindowsDesktop",
+            "Offer": "Windows-10",
+            "SKUS": "20h2-ent",
+            "Version": "latest",
+            "Apps": [
+                {
+                    "Name": "VMConfig"
+                },
+                {
+                    "Name": "RunOnce"
+                },
+                {
+                    "Name": "VCPP"
+                },
+                {
+                    "Name": "Office365"
+                }
+            ],
+            "VMSize": "Standard_B2s"
+        }
+    ],
+    "Server": [
+        {
+            "PublisherName": "MicrosoftWindowsServer",
+            "Offer": "WindowsServer",
+            "SKUS": "2019-Datacenter",
+            "Version": "latest",
+            "Apps": [
+                {
+                    "Name": "RunOnce"
+                },
+                {
+                    "Name": "ConfigureDataDisk"
+                }
+            ],
+            "VMSize": "Standard_D2s_v4",
+            "dataDiskTier": "S10",
+            "dataDiskSKU": "Standard_LRS",
+            "dataDiskSize": 128
+
+        }
+    ],
+    "Server-HyperV": [
+        {
+            "PublisherName": "MicrosoftWindowsServer",
+            "Offer": "WindowsServer",
+            "SKUS": "2019-Datacenter",
+            "Version": "latest",
+            "Apps": [
+                {
+                    "Name": "RunOnce"
+                },
+                {
+                    "Name": "ConfigureDataDisk"
+                },
+                {
+                    "Name": "EnableHyperV"
+                },
+                {
+                    "Name": "ConfigHyperV"
+                },
+                {
+                    "Name": "DomainJoin"
+                },
+                {
+                    "Name": "Build-VMBase"
+                },
+                {
+                    "Name": "Build-VM"
+                }
+            ],
+            "VMSize": "Standard_D2s_v4",
+            "dataDiskTier": "S10",
+            "dataDiskSKU": "Standard_LRS",
+            "dataDiskSize": 128
+        }
+    ]
+}

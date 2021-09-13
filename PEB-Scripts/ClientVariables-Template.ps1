@@ -26,9 +26,22 @@ $RequireVNET = $true
 $RequireNSG = $true
 $RequirePublicIPs = $true
 $RequireStandardVMs = $true
+$RequirePackagingVMs = $true
 $RequireAdminStudioVMs = $true
 $RequireJumpboxVMs = $true
+$RequireCoreVMs = $true
 $RequireHyperV = $true
+
+    # Script Variables
+$ExtraFiles = "$root\ExtraFiles"
+Try {
+    $deviceSpecs = Get-Content $root\devicespecs-template.jsonc | ConvertFrom-Json -ErrorAction Stop
+    $appSpecs = Get-Content $root\appspecs-template.jsonc | ConvertFrom-Json -ErrorAction Stop
+}
+Catch {
+    throw "Error with Device Specs"
+    exit
+}
 
     # Azure Tags
 $tags = @{

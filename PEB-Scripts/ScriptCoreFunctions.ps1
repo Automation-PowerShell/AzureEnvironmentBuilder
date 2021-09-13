@@ -99,7 +99,7 @@ function Write-LogGit {
     $String = "$Date - $Time -- $String"
     $logfile = "c:\temp\PEBgit\PEB.log"
     if(!$gitNotFirstRun) {
-        Remove-Item -Path C:\Temp\PEBgit -Force -Recurse | Out-Null
+        Remove-Item -Path C:\Temp\PEBgit -Force -Recurse -ErrorAction SilentlyContinue | Out-Null
         mkdir -Path C:\Temp -Name "PEBgit" -Force | Out-Null
         Set-Location c:\temp\PEBgit\
         & git init *>&1 | Out-Null

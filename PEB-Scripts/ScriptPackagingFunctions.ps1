@@ -6,10 +6,10 @@ function CreateStandardVM-Script($VMName) {
         $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $RGNameDEV -Location $Location -SubnetId $Subnet.Id -PublicIpAddressId $PIP.Id
     }
     else { $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $RGNameDEV -Location $Location -SubnetId $Subnet.Id }
-    $VirtualMachine = New-AzVMConfig -VMName $VMName -VMSize $VMSizeStandard -IdentityType SystemAssigned -Tags $tags
+    $VirtualMachine = New-AzVMConfig -VMName $VMName -VMSize $deviceSpecs.Standard.VMSize -IdentityType SystemAssigned -Tags $tags
     $VirtualMachine = Set-AzVMOperatingSystem -VM $VirtualMachine -Windows -ComputerName $VMName -Credential $LocalAdminCred #-ProvisionVMAgent -EnableAutoUpdate
     $VirtualMachine = Add-AzVMNetworkInterface -VM $VirtualMachine -Id $NIC.Id
-    $VirtualMachine = Set-AzVMSourceImage -VM $VirtualMachine -PublisherName $VMSpecPublisherName -Offer $VMSpecOffer -Skus $VMSpecSKUS -Version $VMSpecVersion
+    $VirtualMachine = Set-AzVMSourceImage -VM $VirtualMachine -PublisherName $deviceSpecs.Standard.PublisherName -Offer $deviceSpecs.Standard.Offer -Skus $deviceSpecs.Standard.SKUS -Version $deviceSpecs.Standard.Version
     $VirtualMachine = Set-AzVMBootDiagnostic -VM $VirtualMachine -Disable
 
     New-AzVM -ResourceGroupName $RGNameDEV -Location $Location -VM $VirtualMachine -Verbose | Out-Null
@@ -23,10 +23,10 @@ function CreatePackagingVM-Script($VMName) {
         $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $RGNameDEV -Location $Location -SubnetId $Subnet.Id -PublicIpAddressId $PIP.Id
     }
     else { $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $RGNameDEV -Location $Location -SubnetId $Subnet.Id }
-    $VirtualMachine = New-AzVMConfig -VMName $VMName -VMSize $VMSizeStandard -IdentityType SystemAssigned -Tags $tags
+    $VirtualMachine = New-AzVMConfig -VMName $VMName -VMSize $deviceSpecs.Packaging.VMSize -IdentityType SystemAssigned -Tags $tags
     $VirtualMachine = Set-AzVMOperatingSystem -VM $VirtualMachine -Windows -ComputerName $VMName -Credential $LocalAdminCred #-ProvisionVMAgent -EnableAutoUpdate
     $VirtualMachine = Add-AzVMNetworkInterface -VM $VirtualMachine -Id $NIC.Id
-    $VirtualMachine = Set-AzVMSourceImage -VM $VirtualMachine -PublisherName $VMSpecPublisherName -Offer $VMSpecOffer -Skus $VMSpecSKUS -Version $VMSpecVersion
+    $VirtualMachine = Set-AzVMSourceImage -VM $VirtualMachine -PublisherName $deviceSpecs.Packaging.PublisherName -Offer $deviceSpecs.Packaging.Offer -Skus $deviceSpecs.Packaging.SKUS -Version $deviceSpecs.Packaging.Version
     $VirtualMachine = Set-AzVMBootDiagnostic -VM $VirtualMachine -Disable
 
     New-AzVM -ResourceGroupName $RGNameDEV -Location $Location -VM $VirtualMachine -Verbose | Out-Null
@@ -40,10 +40,10 @@ function CreateAdminStudioVM-Script($VMName) {
         $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $RGNameDEV -Location $Location -SubnetId $Subnet.Id -PublicIpAddressId $PIP.Id
     }
     else { $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $RGNameDEV -Location $Location -SubnetId $Subnet.Id }
-    $VirtualMachine = New-AzVMConfig -VMName $VMName -VMSize $VMSizeAdminStudio -IdentityType SystemAssigned -Tags $tags
+    $VirtualMachine = New-AzVMConfig -VMName $VMName -VMSize $deviceSpecs.AdminStudio.VMSize -IdentityType SystemAssigned -Tags $tags
     $VirtualMachine = Set-AzVMOperatingSystem -VM $VirtualMachine -Windows -ComputerName $VMName -Credential $LocalAdminCred #-ProvisionVMAgent -EnableAutoUpdate
     $VirtualMachine = Add-AzVMNetworkInterface -VM $VirtualMachine -Id $NIC.Id
-    $VirtualMachine = Set-AzVMSourceImage -VM $VirtualMachine -PublisherName $VMSpecPublisherName -Offer $VMSpecOffer -Skus $VMSpecSKUS -Version $VMSpecVersion
+    $VirtualMachine = Set-AzVMSourceImage -VM $VirtualMachine -PublisherName $deviceSpecs.AdminStudio.PublisherName -Offer $deviceSpecs.AdminStudio.Offer -Skus $deviceSpecs.AdminStudio.SKUS -Version $deviceSpecs.AdminStudio.Version
     $VirtualMachine = Set-AzVMBootDiagnostic -VM $VirtualMachine -Disable
 
     New-AzVM -ResourceGroupName $RGNameDEV -Location $Location -VM $VirtualMachine -Verbose | Out-Null
@@ -57,10 +57,10 @@ function CreateJumpboxVM-Script($VMName) {
         $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $RGNameDEV -Location $Location -SubnetId $Subnet.Id -PublicIpAddressId $PIP.Id
     }
     else { $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $RGNameDEV -Location $Location -SubnetId $Subnet.Id }
-    $VirtualMachine = New-AzVMConfig -VMName $VMName -VMSize $VMSizeStandard -IdentityType SystemAssigned -Tags $tags
+    $VirtualMachine = New-AzVMConfig -VMName $VMName -VMSize $deviceSpecs.Jumpbox.VMSize -IdentityType SystemAssigned -Tags $tags
     $VirtualMachine = Set-AzVMOperatingSystem -VM $VirtualMachine -Windows -ComputerName $VMName -Credential $LocalAdminCred #-ProvisionVMAgent -EnableAutoUpdate
     $VirtualMachine = Add-AzVMNetworkInterface -VM $VirtualMachine -Id $NIC.Id
-    $VirtualMachine = Set-AzVMSourceImage -VM $VirtualMachine -PublisherName $VMSpecPublisherName -Offer $VMSpecOffer -Skus $VMSpecSKUS -Version $VMSpecVersion
+    $VirtualMachine = Set-AzVMSourceImage -VM $VirtualMachine -PublisherName $deviceSpecs.Jumpbox.PublisherName -Offer $deviceSpecs.Jumpbox.Offer -Skus $deviceSpecs.Jumpbox.SKUS -Version $deviceSpecs.Jumpbox.Version
     $VirtualMachine = Set-AzVMBootDiagnostic -VM $VirtualMachine -Disable
 
     New-AzVM -ResourceGroupName $RGNameDEV -Location $Location -VM $VirtualMachine -Verbose | Out-Null
@@ -74,10 +74,10 @@ function CreateCoreVM-Script($VMName) {
         $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $RGNameDEV -Location $Location -SubnetId $Subnet.Id -PublicIpAddressId $PIP.Id
     }
     else { $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $RGNameDEV -Location $Location -SubnetId $Subnet.Id }
-    $VirtualMachine = New-AzVMConfig -VMName $VMName -VMSize $VMSizeStandard -IdentityType SystemAssigned -Tags $tags
+    $VirtualMachine = New-AzVMConfig -VMName $VMName -VMSize $deviceSpecs.Core.VMSize -IdentityType SystemAssigned -Tags $tags
     $VirtualMachine = Set-AzVMOperatingSystem -VM $VirtualMachine -Windows -ComputerName $VMName -Credential $LocalAdminCred #-ProvisionVMAgent -EnableAutoUpdate
     $VirtualMachine = Add-AzVMNetworkInterface -VM $VirtualMachine -Id $NIC.Id
-    $VirtualMachine = Set-AzVMSourceImage -VM $VirtualMachine -PublisherName $VMSpecPublisherName -Offer $VMSpecOffer -Skus $VMSpecSKUS -Version $VMSpecVersion
+    $VirtualMachine = Set-AzVMSourceImage -VM $VirtualMachine -PublisherName $deviceSpecs.Core.PublisherName -Offer $deviceSpecs.Core.Offer -Skus $deviceSpecs.Core.SKUS -Version $deviceSpecs.Core.Version
     $VirtualMachine = Set-AzVMBootDiagnostic -VM $VirtualMachine -Disable
 
     New-AzVM -ResourceGroupName $RGNameDEV -Location $Location -VM $VirtualMachine -Verbose | Out-Null
@@ -96,6 +96,7 @@ function ConfigureVM {
         Write-PEBLog "VM: $VMName - Installing App: $appName"
         RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/$appPS1" "$appPS1"
         if($appSpec.RebootRequired) {
+            Restart-AzVM -ResourceGroupName $RGNameDEV -Name $VMName | Out-Null
             Write-PEBLog "VM: $VMName - Restarting VM for $($appSpec.RebootSeconds) Seconds..."
             Start-Sleep -Seconds $appSpec.RebootSeconds
         }
@@ -137,9 +138,9 @@ function ConfigureBaseVM($VMName) {
             }
 
         }
-        Restart-AzVM -ResourceGroupName $RGNameDEV -Name $VMName | Out-Null
-        Write-PEBLog "VM: $VMName - Restarting VM for 120 Seconds..."
-        Start-Sleep -Seconds 120
+        #Restart-AzVM -ResourceGroupName $RGNameDEV -Name $VMName | Out-Null
+        #Write-PEBLog "VM: $VMName - Restarting VM for 120 Seconds..."
+        #Start-Sleep -Seconds 120
 
         if ($AutoShutdown) {
             $ScheduledShutdownResourceId = "/subscriptions/$azSubscription/resourceGroups/$RGNameDEV/providers/microsoft.devtestlab/schedules/shutdown-computevm-$VMName"
