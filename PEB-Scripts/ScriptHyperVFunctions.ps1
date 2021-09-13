@@ -27,7 +27,7 @@ function CreateHyperVVM-Script($VMName) {
     $VirtualMachine = New-AzVMConfig -VMName $VMName -VMSize $VmSizeHyperV -IdentityType SystemAssigned -Tags $tags
     $VirtualMachine = Set-AzVMOperatingSystem -VM $VirtualMachine -Windows -ComputerName $VMName -Credential $LocalAdminCred #-ProvisionVMAgent -EnableAutoUpdate
     $VirtualMachine = Add-AzVMNetworkInterface -VM $VirtualMachine -Id $NIC.Id
-    $VirtualMachine = Set-AzVMSourceImage -VM $VirtualMachine -PublisherName 'MicrosoftWindowsServer' -Offer 'WindowsServer' -Skus '2019-Datacenter' -Version latest
+    $VirtualMachine = Set-AzVMSourceImage -VM $VirtualMachine -PublisherName $deviceSpecs.'Server-HyperV'.PublisherName -Offer $deviceSpecs.'Server-HyperV'.Offer -Skus $deviceSpecs.'Server-HyperV'.SKUS -Version $deviceSpecs.'Server-HyperV'.Version
     $VirtualMachine = Set-AzVMBootDiagnostic -VM $VirtualMachine -Disable
 
     New-AzVM -ResourceGroupName $RGNamePROD -Location $Location -VM $VirtualMachine -Verbose | Out-Null

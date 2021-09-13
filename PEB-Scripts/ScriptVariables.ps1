@@ -3,7 +3,8 @@ Set-Location $PSScriptRoot
     # Script Variables
 $ExtraFiles = "$root\ExtraFiles"
 Try {
-    $deviceSpecs = Get-Content $PEBScripts\devicespecs.jsonc | ConvertFrom-Json -ErrorAction Stop
+    $deviceSpecs = Get-Content $root\devicespecs.jsonc | ConvertFrom-Json -ErrorAction Stop
+    $appSpecs = Get-Content $root\appspecs.jsonc | ConvertFrom-Json -ErrorAction Stop
 }
 Catch {
     throw "Error with Device Specs"
