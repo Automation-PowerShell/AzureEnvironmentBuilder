@@ -8,5 +8,5 @@ if ($UseTerraform) {
 else {
     ScriptBuild-Config-VM
 }
-Write-Log "Configure Packaging VM Script Completed"
+Write-PEBLog "Configure Packaging VM Script Completed"
 #endregion Main

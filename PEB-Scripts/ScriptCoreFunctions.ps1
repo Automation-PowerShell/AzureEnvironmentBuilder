@@ -164,7 +164,7 @@ function Write-LogGit {
     Set-Location $root
 }
 
-function Write-Log {
+function Write-PEBLog {
     Param(
         [Parameter(Position = 0, Mandatory)][String]$String,
         [ValidateSet('Info', 'Error', 'Debug')][String]$Level = "Info"

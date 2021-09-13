@@ -39,7 +39,7 @@ function TerraformBuild-HVVM {
         $Count = 1
         $VMNumberStart = $VMHyperVNumberStart
         While ($Count -le $NumberofHyperVVMs) {
-            Write-Log "Creating $Count of $NumberofHyperVVMs VMs"
+            Write-PEBLog "Creating $Count of $NumberofHyperVVMs VMs"
             $VM = $VMHyperVNamePrefix + $VMNumberStart
 
             CreateHyperVVM-Terraform "$VM"
@@ -55,14 +55,14 @@ function ScriptBuild-HVVM {
         $Count = 1
         $VMNumberStart = $VMHyperVNumberStart
         While ($Count -le $NumberofHyperVVMs) {
-            Write-Log "Creating $Count of $NumberofHyperVVMs VMs"
+            Write-PEBLog "Creating $Count of $NumberofHyperVVMs VMs"
             $VM = $VMHyperVNamePrefix + $VMNumberStart
             $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $RGNamePROD -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if (!$VMCheck) {
                 CreateHyperVVM-Script "$VM"
             }
             else {
-                Write-Log "*** VM: $VM already exists! ***" -Level Error
+                Write-PEBLog "*** VM: $VM already exists! ***" -Level Error
                 break
             }
             $Count++
@@ -74,7 +74,7 @@ function ScriptBuild-HVVM {
 function ConfigureHyperVVM($VMName) {
     $VMCreate = Get-AzVM -ResourceGroupName $RGNamePROD -Name $VMName
     If ($VMCreate.ProvisioningState -eq "Succeeded") {
-        Write-Log "VM $VMName created successfully"
+        Write-PEBLog "VM $VMName created successfully"
 
         $NewVm = Get-AzADServicePrincipal -DisplayName $VMName
         if ($RequireServicePrincipal) {
@@ -97,25 +97,25 @@ function ConfigureHyperVVM($VMName) {
         Update-AzVM -VM $VMCreate -ResourceGroupName $RGNamePROD -Verbose | Out-Null
 
         Restart-AzVm -ResourceGroupName $RGNamePROD -Name $VMName | Out-Null
-        Write-Log "VM: $VMName - Restarting VM..."
+        Write-PEBLog "VM: $VMName - Restarting VM..."
         Start-Sleep -Seconds 120
         #RunVMConfig "$RGNamePROD" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/Prevision.ps1" "Prevision.ps1"
         #RunVMConfig "$RGNamePROD" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/RunOnce.ps1" "RunOnce.ps1"
         #RunVMConfig "$RGNamePROD" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/ConfigureDataDisk.ps1" "ConfigureDataDisk.ps1"
         #RunVMConfig "$RGNamePROD" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/EnableHyperV.ps1" "EnableHyperV.ps1"
         Restart-AzVM -ResourceGroupName $RGNamePROD -Name $VMName | Out-Null
-        Write-Log "VM: $VMName - Restarting VM..."
+        Write-PEBLog "VM: $VMName - Restarting VM..."
         Start-Sleep -Seconds 120
         #RunVMConfig "$RGNamePROD" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/ConfigHyperV.ps1" "ConfigHyperV.ps1"
         #RunVMConfig "$RGNamePROD" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/DomainJoin.ps1" "DomainJoin.ps1"
         Restart-AzVM -ResourceGroupName $RGNamePROD -Name $VMName | Out-Null
-        Write-Log "VM: $VMName - Restarting VM..."
+        Write-PEBLog "VM: $VMName - Restarting VM..."
         Start-Sleep -Seconds 120
         #RunVMConfig "$RGNamePROD" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/Build-VM.ps1" "Build-VM.ps1"
         #RunVMConfig "$RGNamePROD" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/Build-VMBase.ps1" "Build-VMBase.ps1"
     }
     Else {
-        Write-Log "*** VM $VMName - Unable to configure Virtual Machine! ***" -Level Error
+        Write-PEBLog "*** VM $VMName - Unable to configure Virtual Machine! ***" -Level Error
     }
 }
 
@@ -125,7 +125,7 @@ function TerraformConfigure-HVVM {
         $Count = 1
         $VMNumberStart = $VmHyperVNumberStart
         While ($Count -le $NumberofHyperVVMs) {
-            Write-Log "Configuring $Count of $NumberofHyperVVMs VMs"
+            Write-PEBLog "Configuring $Count of $NumberofHyperVVMs VMs"
             $VM = $VMHyperVNamePrefix + $VMNumberStart
             ConfigureHyperVVM "$VM"
             $Count++
@@ -140,7 +140,7 @@ function ScriptConfigure-HVVM {
         $Count = 1
         $VMNumberStart = $VmHyperVNumberStart
         While ($Count -le $NumberofHyperVVMs) {
-            Write-Log "Configuring $Count of $NumberofHyperVVMs VMs"
+            Write-PEBLog "Configuring $Count of $NumberofHyperVVMs VMs"
             $VM = $VMHyperVNamePrefix + $VMNumberStart
             ConfigureHyperVVM "$VM"
             $Count++

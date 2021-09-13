@@ -1,6 +1,6 @@
 function UpdateStorage {
     if ($RequireUpdateStorage) {
-        Write-Log "Syncing Files..."
+        Write-PEBLog "Syncing Files..."
         Try {
             if (!(Test-Path -Path $BlobFilesDest)) { New-Item -Path $BlobFilesDest -ItemType "directory" }
             $Key = Get-AzStorageAccountKey -ResourceGroupName $RGNameSTORE -AccountName $StorageAccountName
@@ -20,12 +20,12 @@ function UpdateStorage {
             }
         }
         Catch {
-            Write-Log "*** An error occured trying to create the customised scripts for the Storage Blob ***" -Level Error
+            Write-PEBLog "*** An error occured trying to create the customised scripts for the Storage Blob ***" -Level Error
             Write-Dump
         }
         . $PEBScripts\PEB-SyncFiles.ps1 -CallFromCreatePackaging -Recurse        # Sync Files to Storage Blob
         #. $PEBScripts\PEB-SyncFiles.ps1 -CallFromCreatePackaging                  # Sync Files to Storage Blob
-        Write-Log "Storage Account has been Updated with files"
+        Write-PEBLog "Storage Account has been Updated with files"
     }
 }
 function UpdateRBAC {
@@ -46,5 +46,5 @@ function UpdateRBAC {
         New-AzRoleAssignment -ObjectId $ContributorGroup.Id -RoleDefinitionName "Contributor" -ResourceGroupName $RGNameSTORE -ErrorAction Ignore | Out-Null
         New-AzRoleAssignment -ObjectId $ReadOnlyGroup.Id -RoleDefinitionName "Reader" -ResourceGroupName $RGNameSTORE -ErrorAction Ignore | Out-Null
     }
-    Write-Log "Role Assignments Set"
+    Write-PEBLog "Role Assignments Set"
 }

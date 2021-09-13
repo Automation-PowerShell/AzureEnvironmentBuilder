@@ -11,10 +11,10 @@ function ConfigureVM {
     if ($VMShutdown) {
         $Stopvm = Stop-AzVM -ResourceGroupName $RGNameDEV -Name $VMName -Force
         if ($Stopvm.Status -eq "Succeeded") {
-            Write-Log "VM: $VMName shutdown successfully"
+            Write-PEBLog "VM: $VMName shutdown successfully"
         }
         else {
-            Write-Log "*** VM: $VMName - Unable to shutdown! ***" -Level Error
+            Write-PEBLog "*** VM: $VMName - Unable to shutdown! ***" -Level Error
         }
     }
 }
@@ -38,7 +38,7 @@ function ConfigureCoreVM($VMName) {
 function ConfigureBaseVM($VMName) {
     $VMCreate = Get-AzVM -ResourceGroupName $RGNameDEV -Name $VMName
     If ($VMCreate.ProvisioningState -eq "Succeeded") {
-        Write-Log "VM: $VMName created successfully"
+        Write-PEBLog "VM: $VMName created successfully"
 
         $NewVm = Get-AzADServicePrincipal -DisplayName $VMName
         if ($RequireServicePrincipal) {
@@ -55,13 +55,13 @@ function ConfigureBaseVM($VMName) {
             Start-Sleep -Seconds 30
             $confirm = Get-AzRoleAssignment -ObjectId $NewVm.Id -Scope "/subscriptions/$azSubscription/resourceGroups/$RGNameSTORE/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" -ErrorAction SilentlyContinue
             if(!$confirm) {
-                Write-Log -String "*** VM: $VMName - Unable to set Storage Account Permission ***" -Level Error
+                Write-PEBLog -String "*** VM: $VMName - Unable to set Storage Account Permission ***" -Level Error
                 Write-Dump $VMCreate.Identity.PrincipalId $NewVm.Id
             }
 
         }
         Restart-AzVM -ResourceGroupName $RGNameDEV -Name $VMName | Out-Null
-        Write-Log "VM: $VMName - Restarting VM..."
+        Write-PEBLog "VM: $VMName - Restarting VM..."
         Start-Sleep -Seconds 120
 
         if ($AutoShutdown) {
@@ -75,11 +75,11 @@ function ConfigureBaseVM($VMName) {
             $Properties.Add('notificationSettings', @{status = 'Disabled'; timeInMinutes = 15 })
             $Properties.Add('targetResourceId', $VMCreate.Id)
             New-AzResource -Location $Location -ResourceId $ScheduledShutdownResourceId -Properties $Properties -Force | Out-Null
-            Write-Log "VM: $VMName - Auto Shutdown Enabled for 1800"
+            Write-PEBLog "VM: $VMName - Auto Shutdown Enabled for 1800"
         }
     }
     else {
-        Write-Log "*** VM: $VMName - Unable to configure Virtual Machine! ***" -Level Error
+        Write-PEBLog "*** VM: $VMName - Unable to configure Virtual Machine! ***" -Level Error
         Write-Dump
     }
 }

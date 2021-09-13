@@ -6,5 +6,5 @@ if ($UseTerraform) {
 else {
     ScriptConfigure-HVVM
 }
-Write-Log "Hyper-V Configure Script Completed"
+Write-PEBLog "Hyper-V Configure Script Completed"
 #endregion Main

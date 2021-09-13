@@ -80,10 +80,10 @@ function ConfigureStandardVM($VMName) {
     if ($VMShutdown) {
         $Stopvm = Stop-AzVM -ResourceGroupName $RGNameDEV -Name $VMName -Force
         if ($Stopvm.Status -eq "Succeeded") {
-            Write-Log "VM: $VMName shutdown successfully"
+            Write-PEBLog "VM: $VMName shutdown successfully"
         }
         else {
-            Write-Log "*** VM: $VMName - Unable to shutdown! ***" -Level Error
+            Write-PEBLog "*** VM: $VMName - Unable to shutdown! ***" -Level Error
         }
     }
 }
@@ -101,10 +101,10 @@ function ConfigureAdminStudioVM($VMName) {
     if ($VMShutdown) {
         $Stopvm = Stop-AzVM -ResourceGroupName $RGNameDEV -Name $VMName -Force
         if ($Stopvm.Status -eq "Succeeded") {
-            Write-Log "VM: $VMName shutdown successfully"
+            Write-PEBLog "VM: $VMName shutdown successfully"
         }
         else {
-            Write-Log "*** VM: $VMName - Unable to shutdown! ***" -Level Error
+            Write-PEBLog "*** VM: $VMName - Unable to shutdown! ***" -Level Error
         }
     }
 }
@@ -118,10 +118,10 @@ function ConfigureJumpboxVM($VMName) {
     if ($VMShutdown) {
         $Stopvm = Stop-AzVM -ResourceGroupName $RGNameDEV -Name $VMName -Force
         if ($Stopvm.Status -eq "Succeeded") {
-            Write-Log "VM: $VMName shutdown successfully"
+            Write-PEBLog "VM: $VMName shutdown successfully"
         }
         else {
-            Write-Log "*** VM: $VMName - Unable to shutdown! ***" -Level Error
+            Write-PEBLog "*** VM: $VMName - Unable to shutdown! ***" -Level Error
         }
     }
 }
@@ -136,17 +136,17 @@ function ConfigureCoreVM($VMName) {
     if ($VMShutdown) {
         $Stopvm = Stop-AzVM -ResourceGroupName $RGNameDEV -Name $VMName -Force
         if ($Stopvm.Status -eq "Succeeded") {
-            Write-Log "VM: $VMName shutdown successfully"
+            Write-PEBLog "VM: $VMName shutdown successfully"
         }
         else {
-            Write-Log "*** VM: $VMName - Unable to shutdown! ***" -Level Error
+            Write-PEBLog "*** VM: $VMName - Unable to shutdown! ***" -Level Error
         }
     }
 }
 function ConfigureBaseVM($VMName) {
     $VMCreate = Get-AzVM -ResourceGroupName $RGNameDEV -Name $VMName
     If ($VMCreate.ProvisioningState -eq "Succeeded") {
-        Write-Log "VM: $VMName created successfully"
+        Write-PEBLog "VM: $VMName created successfully"
 
         $NewVm = Get-AzADServicePrincipal -DisplayName $VMName
         if ($RequireServicePrincipal) {
@@ -163,13 +163,13 @@ function ConfigureBaseVM($VMName) {
             Start-Sleep -Seconds 30
             $confirm = Get-AzRoleAssignment -ObjectId $NewVm.Id -Scope "/subscriptions/$azSubscription/resourceGroups/$RGNameSTORE/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" -ErrorAction SilentlyContinue
             if(!$confirm) {
-                Write-Log -String "*** VM: $VMName - Unable to set Storage Account Permission ***" -Level Error
+                Write-PEBLog -String "*** VM: $VMName - Unable to set Storage Account Permission ***" -Level Error
                 Write-Dump $VMCreate.Identity.PrincipalId $NewVm.Id
             }
 
         }
         Restart-AzVM -ResourceGroupName $RGNameDEV -Name $VMName | Out-Null
-        Write-Log "VM: $VMName - Restarting VM..."
+        Write-PEBLog "VM: $VMName - Restarting VM..."
         Start-Sleep -Seconds 120
 
         if ($AutoShutdown) {
@@ -183,11 +183,11 @@ function ConfigureBaseVM($VMName) {
             $Properties.Add('notificationSettings', @{status = 'Disabled'; timeInMinutes = 15 })
             $Properties.Add('targetResourceId', $VMCreate.Id)
             New-AzResource -Location $Location -ResourceId $ScheduledShutdownResourceId -Properties $Properties -Force | Out-Null
-            Write-Log "VM: $VMName - Auto Shutdown Enabled for 1800"
+            Write-PEBLog "VM: $VMName - Auto Shutdown Enabled for 1800"
         }
     }
     else {
-        Write-Log "*** VM: $VMName - Unable to configure Virtual Machine! ***" -Level Error
+        Write-PEBLog "*** VM: $VMName - Unable to configure Virtual Machine! ***" -Level Error
         Write-Dump
     }
 }
@@ -205,7 +205,7 @@ function ScriptRebuild-Create-VM {
                 CreateStandardVM-Script "$VMName"
             }
             else {
-                Write-Log "*** Virtual Machine $VMName doesn't exist! ***" -Level Error
+                Write-PEBLog "*** Virtual Machine $VMName doesn't exist! ***" -Level Error
                 CreateStandardVM-Script "$VMName"
             }
         }
@@ -219,7 +219,7 @@ function ScriptRebuild-Create-VM {
                 CreateAdminStudioVM-Script "$VMName"
             }
             else {
-                Write-Log "*** Virtual Machine $VMName doesn't exist! ***" -Level Error
+                Write-PEBLog "*** Virtual Machine $VMName doesn't exist! ***" -Level Error
                 CreateAdminStudioVM-Script "$VMName"
             }
         }
@@ -233,7 +233,7 @@ function ScriptRebuild-Create-VM {
                 CreateJumpboxVM-Script "$VMName"
             }
             else {
-                Write-Log "*** Virtual Machine $VMName doesn't exist! ***" -Level Error
+                Write-PEBLog "*** Virtual Machine $VMName doesn't exist! ***" -Level Error
                 CreateJumpboxVM-Script "$VMName"
             }
         }
@@ -247,7 +247,7 @@ function ScriptRebuild-Create-VM {
                 CreateCoreVM-Script "$VMName"
             }
             else {
-                Write-Log "*** Virtual Machine $VMName doesn't exist! ***" -Level Error
+                Write-PEBLog "*** Virtual Machine $VMName doesn't exist! ***" -Level Error
                 CreateCoreVM-Script "$VMName"
             }
         }
@@ -279,14 +279,14 @@ function ScriptBuild-Create-VM {
         $Count = 1
         $VMNumberStart = $VMNumberStartStandard
         While ($Count -le $NumberofStandardVMs) {
-           Write-Log "Creating $Count of $NumberofStandardVMs VMs"
+           Write-PEBLog "Creating $Count of $NumberofStandardVMs VMs"
            $VM = $VMNamePrefixStandard + $VMNumberStart
             $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $RGNameDEV -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if (!$VMCheck) {
                 CreateStandardVM-Script "$VM"
             }
             else {
-                Write-Log "*** Virtual Machine $VM already exists! ***" -Level Error
+                Write-PEBLog "*** Virtual Machine $VM already exists! ***" -Level Error
                 break
             }
             $Count++
@@ -299,14 +299,14 @@ function ScriptBuild-Create-VM {
         $Count = 1
         $VMNumberStart = $VMNumberStartAdminStudio
         While ($Count -le $NumberofAdminStudioVMs) {
-            Write-Log "Creating $Count of $NumberofAdminStudioVMs VMs"
+            Write-PEBLog "Creating $Count of $NumberofAdminStudioVMs VMs"
             $VM = $VMNamePrefixAdminStudio + $VMNumberStart
             $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $RGNameDEV -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if (!$VMCheck) {
                 CreateAdminStudioVM-Script "$VM"
             }
             else {
-                Write-Log "*** Virtual Machine $VM already exists! ***" -Level Error
+                Write-PEBLog "*** Virtual Machine $VM already exists! ***" -Level Error
                 break
             }
             $Count++
@@ -319,14 +319,14 @@ function ScriptBuild-Create-VM {
         $Count = 1
         $VMNumberStart = $VMNumberStartJumpbox
         While ($Count -le $NumberofJumpboxVMs) {
-            Write-Log "Creating $Count of $NumberofJumpboxVMs VMs"
+            Write-PEBLog "Creating $Count of $NumberofJumpboxVMs VMs"
             $VM = $VMNamePrefixJumpbox + $VMNumberStart
             $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $RGNameDEV -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if (!$VMCheck) {
                 CreateJumpboxVM-Script "$VM"
             }
             else {
-                Write-Log "*** Virtual Machine $VM already exists! ***" -Level Error
+                Write-PEBLog "*** Virtual Machine $VM already exists! ***" -Level Error
                 break
             }
             $Count++
@@ -339,14 +339,14 @@ function ScriptBuild-Create-VM {
         $Count = 1
         $VMNumberStart = $VMNumberStartCore
         While ($Count -le $NumberofCoreVMs) {
-            Write-Log "Creating $Count of $NumberofCoreVMs VMs"
+            Write-PEBLog "Creating $Count of $NumberofCoreVMs VMs"
             $VM = $VMNamePrefixCore + $VMNumberStart
             $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $RGNameDEV -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if (!$VMCheck) {
                 CreateAdminStudioVM-Script "$VM"
             }
             else {
-                Write-Log "*** Virtual Machine $VM already exists! ***" -Level Error
+                Write-PEBLog "*** Virtual Machine $VM already exists! ***" -Level Error
                 break
             }
             $Count++
@@ -361,7 +361,7 @@ function ScriptBuild-Config-VM {
         $Count = 1
         $VMNumberStart = $VMNumberStartStandard
         While ($Count -le $NumberofStandardVMs) {
-            Write-Log "Configuring $Count of $NumberofStandardVMs VMs"
+            Write-PEBLog "Configuring $Count of $NumberofStandardVMs VMs"
             $VM = $VMNamePrefixStandard + $VMNumberStart
             ConfigureBaseVM "$VM"
             ConfigureStandardVM "$VM"
@@ -375,7 +375,7 @@ function ScriptBuild-Config-VM {
         $Count = 1
         $VMNumberStart = $VMNumberStartAdminStudio
         While ($Count -le $NumberofAdminStudioVMs) {
-            Write-Log "Configuring $Count of $NumberofAdminStudioVMs VMs"
+            Write-PEBLog "Configuring $Count of $NumberofAdminStudioVMs VMs"
             $VM = $VMNamePrefixAdminStudio + $VMNumberStart
             ConfigureBaseVM "$VM"
             ConfigureAdminStudioVM "$VM"
@@ -389,7 +389,7 @@ function ScriptBuild-Config-VM {
         $Count = 1
         $VMNumberStart = $VMNumberStartJumpbox
         While ($Count -le $NumberofJumpboxVMs) {
-            Write-Log "Configuring $Count of $NumberofJumboxVMs VMs"
+            Write-PEBLog "Configuring $Count of $NumberofJumboxVMs VMs"
             $VM = $VMNamePrefixJumpbox + $VMNumberStart
             ConfigureBaseVM "$VM"
             ConfigureJumpboxVM "$VM"
@@ -403,7 +403,7 @@ function ScriptBuild-Config-VM {
         $Count = 1
         $VMNumberStart = $VMNumberStartCore
         While ($Count -le $NumberofCoreVMs) {
-            Write-Log "Configuring $Count of $NumberofCoreVMs VMs"
+            Write-PEBLog "Configuring $Count of $NumberofCoreVMs VMs"
             $VM = $VMNamePrefixCore + $VMNumberStart
             ConfigureBaseVM "$VM"
             ConfigureCoreVM "$VM"
@@ -472,7 +472,7 @@ function TerraformBuild-VM {
         $Count = 1
         $VMNumberStart = $VMNumberStartStandard
         While ($Count -le $NumberofStandardVMs) {
-            Write-Log "Creating $Count of $NumberofStandardVMs VMs"
+            Write-PEBLog "Creating $Count of $NumberofStandardVMs VMs"
             $VM = $VMNamePrefixStandard + $VMNumberStart
 
             CreateStandardVM-Terraform "$VM"
@@ -485,7 +485,7 @@ function TerraformBuild-VM {
         $Count = 1
         $VMNumberStart = $VMNumberStartAdminStudio
         While ($Count -le $NumberofAdminStudioVMs) {
-            Write-Log "Creating $Count of $NumberofAdminStudioVMs VMs"
+            Write-PEBLog "Creating $Count of $NumberofAdminStudioVMs VMs"
             $VM = $VMNamePrefixAdminStudio + $VMNumberStart
 
             CreateAdminStudioVM-Terraform "$VM"
@@ -498,7 +498,7 @@ function TerraformBuild-VM {
         $Count = 1
         $VMNumberStart = $VMNumberStartJumpbox
         While ($Count -le $NumberofJumpboxVMs) {
-            Write-Log "Creating $Count of $NumberofJumpboxVMs VMs"
+            Write-PEBLog "Creating $Count of $NumberofJumpboxVMs VMs"
             $VM = $VMNamePrefixJumpbox + $VMNumberStart
 
             CreateJumpboxVM-Terraform "$VM"
@@ -514,7 +514,7 @@ function TerraformConfigure-VM {
         $Count = 1
         $VMNumberStart = $VMNumberStartStandard
         While ($Count -le $NumberofStandardVMs) {
-            Write-Log "Configuring $Count of $NumberofStandardVMs VMs"
+            Write-PEBLog "Configuring $Count of $NumberofStandardVMs VMs"
             $VM = $VMNamePrefixStandard + $VMNumberStart
             ConfigureStandardVM "$VM"
             $Count++
@@ -527,7 +527,7 @@ function TerraformConfigure-VM {
         $Count = 1
         $VMNumberStart = $VMNumberStartAdminStudio
         While ($Count -le $NumberofAdminStudioVMs) {
-            Write-Log "Configuring $Count of $NumberofAdminStudioVMs VMs"
+            Write-PEBLog "Configuring $Count of $NumberofAdminStudioVMs VMs"
             $VM = $VMNamePrefixStandard + $VMNumberStart
             ConfigureAdminStudioVM "$VM"
             $Count++
@@ -540,7 +540,7 @@ function TerraformConfigure-VM {
         $Count = 1
         $VMNumberStart = $VMNumberStartJumpbox
         While ($Count -le $NumberofJumpboxVMs) {
-            Write-Log "Configuring $Count of $NumberofJumpboxVMs VMs"
+            Write-PEBLog "Configuring $Count of $NumberofJumpboxVMs VMs"
             $VM = $VMNamePrefixJumpbox + $VMNumberStart
             ConfigureJumpboxVM "$VM"
             $Count++
@@ -553,7 +553,7 @@ function TerraformConfigure-VM {
         $Count = 1
         $VMNumberStart = $VMNumberStartCore
         While ($Count -le $NumberofCoreVMs) {
-            Write-Log "Configuring $Count of $NumberofCoreVMs VMs"
+            Write-PEBLog "Configuring $Count of $NumberofCoreVMs VMs"
             $VM = $VMNamePrefixCore + $VMNumberStart
             ConfigureBaseVM "$VM"
             ConfigureCoreVM "$VM"

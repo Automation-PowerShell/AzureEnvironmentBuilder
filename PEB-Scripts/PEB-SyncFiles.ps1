@@ -24,7 +24,7 @@ function SyncFiles {
         Get-ChildItem -Path $LocalPath\* -File | Set-AzStorageBlobContent -Container $ContainerName -Context $Context -Force | Out-Null
     }
 }
-Write-Log "Running PEB-SyncFiles.ps1"
+Write-PEBLog "Running PEB-SyncFiles.ps1"
 Try {
     switch ($CallFromCreatePackaging) {
         $True {
@@ -34,6 +34,6 @@ Try {
         }
     }
 } Catch {
-    Write-Log "*** An error occured syncing files to the Storage Blob ***" -Level Error
+    Write-PEBLog "*** An error occured syncing files to the Storage Blob ***" -Level Error
 }
-Write-Log "Completed PEB-SyncFiles.ps1"
+Write-PEBLog "Completed PEB-SyncFiles.ps1"

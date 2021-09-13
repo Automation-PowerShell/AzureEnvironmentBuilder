@@ -40,29 +40,29 @@ Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"  # Turns off 
 #endregion Setup
 
 #region Main
-Write-Log "Running PEB-AzureBuilder.ps1"
+Write-PEBLog "Running PEB-AzureBuilder.ps1"
 if($isProd) { Write-Warning "Are you sure you want to rebuild the Packaging Environment?  OK to Continue?" -WarningAction Inquire }
 
 if($RequireCreate) {
         # Create Resource Groups
     if($RequireResourceGroups -and !$UseTerraform) {
         $RG = New-AzResourceGroup -Name $RGNamePROD -Location $Location
-        if ($RG.ResourceGroupName -eq $RGNamePROD) {Write-Log "PROD Resource Group created successfully"}Else{Write-Log "*** Unable to create PROD Resource Group! ***" -Level Error }
+        if ($RG.ResourceGroupName -eq $RGNamePROD) {Write-PEBLog "PROD Resource Group created successfully"}Else{Write-PEBLog "*** Unable to create PROD Resource Group! ***" -Level Error }
         if (!($RGNameDEV -match $RGNamePROD)) {
             $RG = New-AzResourceGroup -Name $RGNameDEV -Location $Location
-            if ($RG.ResourceGroupName -eq $RGNameDEV) { Write-Log "DEV Resource Group created successfully" }Else { Write-Log "*** Unable to create DEV Resource Group! ***" -Level Error }
+            if ($RG.ResourceGroupName -eq $RGNameDEV) { Write-PEBLog "DEV Resource Group created successfully" }Else { Write-PEBLog "*** Unable to create DEV Resource Group! ***" -Level Error }
         }
         if (!($RGNameDEV -match $RGNameDEVVNET)) {
             $RG = New-AzResourceGroup -Name $RGNameDEVVNET -Location $Location
-            if ($RG.ResourceGroupName -eq $RGNameDEVVNET) { Write-Log "DEV VNET Resource Group created successfully" }Else { Write-Log "*** Unable to create DEV VNET Resource Group! ***" -Level Error }
+            if ($RG.ResourceGroupName -eq $RGNameDEVVNET) { Write-PEBLog "DEV VNET Resource Group created successfully" }Else { Write-PEBLog "*** Unable to create DEV VNET Resource Group! ***" -Level Error }
         }
         if (!($RGNamePROD -match $RGNamePRODVNET)) {
             $RG = New-AzResourceGroup -Name $RGNamePRODVNET -Location $Location
-            if ($RG.ResourceGroupName -eq $RGNamePRODVNET) { Write-Log "PROD VNET Resource Group created successfully" }Else { Write-Log "*** Unable to create PROD VNET Resource Group! ***" -Level Error }
+            if ($RG.ResourceGroupName -eq $RGNamePRODVNET) { Write-PEBLog "PROD VNET Resource Group created successfully" }Else { Write-PEBLog "*** Unable to create PROD VNET Resource Group! ***" -Level Error }
         }
         if (!($RGNamePROD -match $RGNameSTORE) -and $RequireStorageAccount) {
             $RG = New-AzResourceGroup -Name $RGNameSTORE -Location $Location
-            if ($RG.ResourceGroupName -eq $RGNameSTORE) { Write-Log "STORE Resource Group created successfully" }Else { Write-Log "*** Unable to create STORE Resource Group! ***" -Level Error }
+            if ($RG.ResourceGroupName -eq $RGNameSTORE) { Write-PEBLog "STORE Resource Group created successfully" }Else { Write-PEBLog "*** Unable to create STORE Resource Group! ***" -Level Error }
         }
     }
     if ($UseTerraform) {
@@ -110,6 +110,6 @@ if ($RequireConfigure) {
         . $PEBScripts\PEB-HyperVServer-Configure.ps1
     }
 }
-Write-Log "Completed PEB-AzureBuilder.ps1"
-Write-Log "============================================================================================================="
+Write-PEBLog "Completed PEB-AzureBuilder.ps1"
+Write-PEBLog "============================================================================================================="
 #endregion Main

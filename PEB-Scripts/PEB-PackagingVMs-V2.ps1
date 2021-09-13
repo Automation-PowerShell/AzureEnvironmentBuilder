@@ -7,4 +7,4 @@ if ($UseTerraform) {
 else {
     ScriptBuild-Create-VM
 }
-Write-Log "Packaging VM Script Completed"
+Write-PEBLog "Packaging VM Script Completed"
