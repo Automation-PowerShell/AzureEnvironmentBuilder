@@ -1,86 +1,44 @@
-function ConfigureStandardVM($VMName) {
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/Prevision.ps1" "Prevision.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/VMConfig.ps1" "VMConfig.ps1"
-    RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/RunOnce.ps1" "RunOnce.ps1"
-    RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/ORCA.ps1" "ORCA.ps1"
-    RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/7-Zip.ps1" "7-Zip.ps1"
-    RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/InstEd.ps1" "InstEd.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/DesktopApps.ps1" "DesktopApps.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/GlassWire.ps1" "GlassWire.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/IntuneWinUtility.ps1" "IntuneWinUtility.ps1"
+function ConfigureVM {
+    Param(
+        [Parameter(Position = 0, Mandatory)][String]$VMName,
+        [Parameter(Position = 1, Mandatory)][String]$VMSpec
+    )
+
+    foreach ($app in $deviceSpecs.$VMSpec.Apps) {
+        RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/$($app.Name)" "$($app.Name)"
+    }
 
     if ($VMShutdown) {
         $Stopvm = Stop-AzVM -ResourceGroupName $RGNameDEV -Name $VMName -Force
         if ($Stopvm.Status -eq "Succeeded") {
-            Write-Log "VM: $VMName shutdown successfully"
+            Write-PEBLog "VM: $VMName shutdown successfully"
         }
         else {
-            Write-Log "*** VM: $VMName - Unable to shutdown! ***" -Level Error
+            Write-PEBLog "*** VM: $VMName - Unable to shutdown! ***" -Level Error
         }
     }
+}
+
+function ConfigureStandardVM($VMName) {
+    ConfigureVM -VMName $VMName -VMSpec "Standard"
 }
 
 function ConfigureAdminStudioVM($VMName) {
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/Prevision.ps1" "Prevision.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/VMConfig.ps1" "VMConfig.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/RunOnce.ps1" "RunOnce.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/AdminStudio.ps1" "AdminStudio.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/ORCA.ps1" "ORCA.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/GlassWire.ps1" "GlassWire.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/7-Zip.ps1" "7-Zip.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/InstEd.ps1" "InstEd.ps1"
-
-    if ($VMShutdown) {
-        $Stopvm = Stop-AzVM -ResourceGroupName $RGNameDEV -Name $VMName -Force
-        if ($Stopvm.Status -eq "Succeeded") {
-            Write-Log "VM: $VMName shutdown successfully"
-        }
-        else {
-            Write-Log "*** VM: $VMName - Unable to shutdown! ***" -Level Error
-        }
-    }
+    ConfigureVM -VMName $VMName -VMSpec "AdminStudio"
 }
 
 function ConfigureJumpboxVM($VMName) {
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/Prevision.ps1" "Prevision.ps1"
-    RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/RunOnce.ps1" "RunOnce.ps1"
-    RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/Jumpbox.ps1" "Jumpbox.ps1"
-    RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/MECMConsole.ps1" "MECMConsole.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/DomainJoin.ps1" "DomainJoin.ps1"
-
-    if ($VMShutdown) {
-        $Stopvm = Stop-AzVM -ResourceGroupName $RGNameDEV -Name $VMName -Force
-        if ($Stopvm.Status -eq "Succeeded") {
-            Write-Log "VM: $VMName shutdown successfully"
-        }
-        else {
-            Write-Log "*** VM: $VMName - Unable to shutdown! ***" -Level Error
-        }
-    }
+    ConfigureVM -VMName $VMName -VMSpec "Jumpbox"
 }
 
 function ConfigureCoreVM($VMName) {
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/Prevision.ps1" "Prevision.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/VMConfig.ps1" "VMConfig.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/RunOnce.ps1" "RunOnce.ps1"
-    RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/VCPP.ps1" "VCPP.ps1"
-    RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/Office365.ps1" "Office365.ps1"
-
-    if ($VMShutdown) {
-        $Stopvm = Stop-AzVM -ResourceGroupName $RGNameDEV -Name $VMName -Force
-        if ($Stopvm.Status -eq "Succeeded") {
-            Write-Log "VM: $VMName shutdown successfully"
-        }
-        else {
-            Write-Log "*** VM: $VMName - Unable to shutdown! ***" -Level Error
-        }
-    }
+    ConfigureVM -VMName $VMName -VMSpec "Core"
 }
 
 function ConfigureBaseVM($VMName) {
     $VMCreate = Get-AzVM -ResourceGroupName $RGNameDEV -Name $VMName
     If ($VMCreate.ProvisioningState -eq "Succeeded") {
-        Write-Log "VM: $VMName created successfully"
+        Write-PEBLog "VM: $VMName created successfully"
 
         $NewVm = Get-AzADServicePrincipal -DisplayName $VMName
         if ($RequireServicePrincipal) {
@@ -97,13 +55,13 @@ function ConfigureBaseVM($VMName) {
             Start-Sleep -Seconds 30
             $confirm = Get-AzRoleAssignment -ObjectId $NewVm.Id -Scope "/subscriptions/$azSubscription/resourceGroups/$RGNameSTORE/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" -ErrorAction SilentlyContinue
             if(!$confirm) {
-                Write-Log -String "*** VM: $VMName - Unable to set Storage Account Permission ***" -Level Error
+                Write-PEBLog -String "*** VM: $VMName - Unable to set Storage Account Permission ***" -Level Error
                 Write-Dump $VMCreate.Identity.PrincipalId $NewVm.Id
             }
 
         }
         Restart-AzVM -ResourceGroupName $RGNameDEV -Name $VMName | Out-Null
-        Write-Log "VM: $VMName - Restarting VM..."
+        Write-PEBLog "VM: $VMName - Restarting VM..."
         Start-Sleep -Seconds 120
 
         if ($AutoShutdown) {
@@ -117,11 +75,11 @@ function ConfigureBaseVM($VMName) {
             $Properties.Add('notificationSettings', @{status = 'Disabled'; timeInMinutes = 15 })
             $Properties.Add('targetResourceId', $VMCreate.Id)
             New-AzResource -Location $Location -ResourceId $ScheduledShutdownResourceId -Properties $Properties -Force | Out-Null
-            Write-Log "VM: $VMName - Auto Shutdown Enabled for 1800"
+            Write-PEBLog "VM: $VMName - Auto Shutdown Enabled for 1800"
         }
     }
     else {
-        Write-Log "*** VM: $VMName - Unable to configure Virtual Machine! ***" -Level Error
+        Write-PEBLog "*** VM: $VMName - Unable to configure Virtual Machine! ***" -Level Error
         Write-Dump
     }
 }

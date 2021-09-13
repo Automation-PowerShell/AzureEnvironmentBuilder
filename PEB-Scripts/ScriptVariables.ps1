@@ -1,5 +1,15 @@
 Set-Location $PSScriptRoot
 
+    # Script Variables
+$ExtraFiles = "$root\ExtraFiles"
+Try {
+    $deviceSpecs = Get-Content $PEBScripts\devicespecs.jsonc | ConvertFrom-Json -ErrorAction Stop
+}
+Catch {
+    throw "Error with Device Specs"
+    exit
+}
+
     # Main Control
 $RequireCreate = $false
 $RequireConfigure = $false
@@ -67,15 +77,15 @@ $VMNumberStartStandard = 101                                # Specifies the seco
 $VMNumberStartAdminStudio = 201                             # Specifies the second part of the Admin Studio VM name (usually numeric)
 $VMNumberStartJumpbox = 301                                 # Specifies the second part of the Jumpbox VM name (usually numeric)
 $VMNumberStartCore = 401                                    # Specifies the second part of the Core VM name (usually numeric)
-$VMSizeStandard = "Standard_B2s"                            # Specifies Azure Size to use for the Standard VM
-$VMSizeAdminStudio = "Standard_B2s"                         # Specifies Azure Size to use for the Admin Studio VM
-$VMSizeJumpbox = "Standard_B2s"                             # Specifies Azure Size to use for the Jumpbox VM
-$VMSizeCore = "Standard_B2s"                                # Specifies Azure Size to use for the Core VM
+$VMSizeStandard = $deviceSpecs.Standard.VMSize              # Specifies Azure Size to use for the Standard VM
+$VMSizeAdminStudio = $deviceSpecs.AdminStudio.VMSize        # Specifies Azure Size to use for the Admin Studio VM
+$VMSizeJumpbox = $deviceSpecs.Jumpbox.VMSize                # Specifies Azure Size to use for the Jumpbox VM
+$VMSizeCore = $deviceSpecs.Core.VMSize                      # Specifies Azure Size to use for the Core VM
 
-$VMSpecPublisherName = "MicrosoftWindowsDesktop"
-$VMSpecOffer = "Windows-10"
-$VMSpecSKUS = "20h2-ent"
-$VMSpecVersion = "latest"
+$VMSpecPublisherName = $deviceSpecs.Standard.PublisherName
+$VMSpecOffer = $deviceSpecs.Standard.Offer
+$VMSpecSKUS = $deviceSpecs.Standard.SKUS
+$VMSpecVersion = $deviceSpecs.Standard.Version
 $VMShutdown = $true                                         # Specifies if the newly provisioned VM should be shutdown (can save costs)
 $AutoShutdown = $true                                       # Configures Windows 10 VMs to shutdown at a specified time
 
@@ -83,10 +93,8 @@ $AutoShutdown = $true                                       # Configures Windows
 $NumberofHyperVVMs = 1                                      # Specify number of VMs to be provisioned
 $VMHyperVNamePrefix = "vm-euc-hyprv-0"                      # Specifies the first part of the VM name (usually alphabetic)
 $VmHyperVNumberStart = 1                                    # Specifies the second part of the VM name (usually numeric)
-$VmSizeHyperV = "Standard_D2s_v4"                           # Specifies Azure Size to use for the VM
-$dataDiskTier = "S10"
-$dataDiskSKU = "Standard_LRS"
-$dataDiskSize = 128
+$VmSizeHyperV = $deviceSpecs.'HyperV-Server'.VMSize         # Specifies Azure Size to use for the VM
+$dataDiskTier = $deviceSpecs.'HyperV-Server'.$dataDiskTier
+$dataDiskSKU = $deviceSpecs.'HyperV-Server'.$dataDiskSKU
+$dataDiskSize = $deviceSpecs.'HyperV-Server'.$dataDiskSize
 
-    # Script Variables
- $ExtraFiles = "$root\ExtraFiles"

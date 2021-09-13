@@ -46,7 +46,7 @@ Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"  # Turns off 
 #endregion Setup
 
 #region Main
-Write-Log "Running PEB-RebuildAzureVM.ps1"
+Write-PEBLog "Running PEB-RebuildAzureVM.ps1"
 if($VMName -eq "") {
     $VMList = Get-AzVM -Name * -ResourceGroupName $RGNameDEV -ErrorAction SilentlyContinue
     $VMName = ($VMlist | Where-Object { $_.Name -notin $VMListExclude  } | Select-Object Name | Out-GridView -Title "Select Virtual Machine to Rebuild" -OutputMode Single).Name
@@ -59,9 +59,9 @@ Write-Warning "This Script is about to Rebuild: $VMName with Spec: $Spec.  OK to
     # Update Storage
 UpdateStorage
 
-Write-Log "Rebuilding: $VMName with Spec: $Spec"
+Write-PEBLog "Rebuilding: $VMName with Spec: $Spec"
 ScriptRebuild-Create-VM
 ScriptRebuild-Config-VM
-Write-Log "Completed PEB-RebuildAzureVM.ps1"
-Write-Log "============================================================================================================="
+Write-PEBLog "Completed PEB-RebuildAzureVM.ps1"
+Write-PEBLog "============================================================================================================="
 #endregion Main

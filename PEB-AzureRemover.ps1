@@ -36,7 +36,7 @@ Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"  # Turns off 
 #endregion Setup
 
 #region Main
-Write-Log "Running PEB-AzureRemover.ps1"
+Write-PEBLog "Running PEB-AzureRemover.ps1"
 if($isProd) { Write-Warning "Are you sure you want to delete the Packaging Environment?  OK to Continue?" -WarningAction Inquire }
 
 if(!($isProd) -and $RequireUserGroups) {
@@ -50,6 +50,6 @@ if(!($isProd)) {
     Remove-AzResourceGroup -Name $RGNameDEVVNET -Force -ErrorAction Ignore -Verbose         # Dont want to do this is a Production Environment
     Remove-AzResourceGroup -Name $RGNamePRODVNET -Force -ErrorAction Ignore -Verbose        # Dont want to do this is a Production Environment
 }
-Write-Log "Completed PEB-AzureRemover.ps1"
-Write-Log "============================================================================================================="
+Write-PEBLog "Completed PEB-AzureRemover.ps1"
+Write-PEBLog "============================================================================================================="
 #endregion
