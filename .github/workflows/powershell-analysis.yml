@@ -11,9 +11,9 @@ name: PSScriptAnalyzer
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, Dan ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, Dan ]
   schedule:
     - cron: '28 7 * * 6'
     
@@ -34,7 +34,7 @@ jobs:
           
           # Include your own basic security rules. Removing this option will run all the rules 
           # includeRule: '"PSAvoidGlobalAliases", "PSAvoidUsingConvertToSecureStringWithPlainText"'
-          excludeRule: '"PSUseDeclaredVarsMoreThanAssignments", "PSUseApprovedVerbs"'
+          excludeRule: '"PSUseDeclaredVarsMoreThanAssignments", "PSUseApprovedVerbs", "AvoidUsingWriteHost"'
           output: results.sarif
       
       # Upload the SARIF file generated in the previous step
