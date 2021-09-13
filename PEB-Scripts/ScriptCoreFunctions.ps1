@@ -25,25 +25,18 @@ function Write-LogScreen {
     $Date = Get-Date -Format yyyy-MM-dd
     $Time = Get-Date -Format HH:mm
     $String = "$Date - $Time -- $String"
-    try {
-        switch ($Level) {
-            "Info" {
-                Write-Host $String
-            }
-
-            "Error" {
-                $String = "ERROR: $String"
-                Write-Host $String -ForegroundColor Red
-            }
-
-            "Debug" {
-                $String = "DEBUG: $String"
-                Write-Host $String -ForegroundColor Green
-            }
+    switch ($Level) {
+        "Info" {
+            Write-Host $String
         }
-    }
-    catch {
-
+        "Error" {
+            $String = "ERROR: $String"
+            Write-Host $String -ForegroundColor Red
+        }
+        "Debug" {
+            $String = "DEBUG: $String"
+            Write-Host $String -ForegroundColor Green
+        }
     }
 }
 
@@ -56,26 +49,19 @@ function Write-LogFile {
     $Time = Get-Date -Format HH:mm
     $String = "$Date - $Time -- $String"
     $logfile = "$root\PEB.log"
-    try {
-        switch ($Level) {
-            "Info" {
-                $String = "$String"
-                $string | Out-File -FilePath $logfile -Append -Force -Encoding ascii
-            }
-
-            "Error" {
-                $String = "ERROR: $String"
-                $string | Out-File -FilePath $logfile -Append -Force -Encoding ascii
-            }
-
-            "Debug" {
-                $String = "DEBUG: $String"
-                $string | Out-File -FilePath $logfile -Append -Force -Encoding ascii
-            }
+    switch ($Level) {
+        "Info" {
+            $String = "$String"
+            $string | Out-File -FilePath $logfile -Append -Force -Encoding ascii
         }
-    }
-    catch {
-
+        "Error" {
+            $String = "ERROR: $String"
+            $string | Out-File -FilePath $logfile -Append -Force -Encoding ascii
+        }
+        "Debug" {
+            $String = "DEBUG: $String"
+            $string | Out-File -FilePath $logfile -Append -Force -Encoding ascii
+        }
     }
 }
 
@@ -87,26 +73,19 @@ function Write-LogCMFile {
     $Date = Get-Date -Format MM-dd-yyyy
     $Time = Get-Date -Format HH:mm:ss
     $logfile = "$root\PEB.log"
-    try {
         switch ($Level) {
-            "Info" {
-                $String = "<![LOG[$String]LOG]!><time=`"$Time.000-60`" date=`"$Date`" component=`"$azTenant`" context=`"`" type=`"1`" thread=`"`" file=`"`">"
-                $string | Out-File -FilePath $logfile -Append -Force -Encoding utf8
-            }
-
-            "Error" {
-                $String = "<![LOG[$String]LOG]!><time=`"$Time.000-60`" date=`"$Date`" component=`"$azTenant`" context=`"`" type=`"3`" thread=`"`" file=`"`">"
-                $string | Out-File -FilePath $logfile -Append -Force -Encoding utf8
-            }
-
-            "Debug" {
-                $String = "<![LOG[$String]LOG]!><time=`"$Time.000-60`" date=`"$Date`" component=`"$azTenant`" context=`"`" type=`"2`" thread=`"`" file=`"`">"
-                $string | Out-File -FilePath $logfile -Append -Force -Encoding utf8
-            }
+        "Info" {
+            $String = "<![LOG[$String]LOG]!><time=`"$Time.000-60`" date=`"$Date`" component=`"$azTenant`" context=`"`" type=`"1`" thread=`"`" file=`"`">"
+            $string | Out-File -FilePath $logfile -Append -Force -Encoding utf8
         }
-    }
-    catch {
-
+        "Error" {
+            $String = "<![LOG[$String]LOG]!><time=`"$Time.000-60`" date=`"$Date`" component=`"$azTenant`" context=`"`" type=`"3`" thread=`"`" file=`"`">"
+            $string | Out-File -FilePath $logfile -Append -Force -Encoding utf8
+        }
+        "Debug" {
+            $String = "<![LOG[$String]LOG]!><time=`"$Time.000-60`" date=`"$Date`" component=`"$azTenant`" context=`"`" type=`"2`" thread=`"`" file=`"`">"
+            $string | Out-File -FilePath $logfile -Append -Force -Encoding utf8
+        }
     }
 }
 
@@ -134,32 +113,25 @@ function Write-LogGit {
     }
     Set-Location c:\temp\PEBgit\
     $Script:gitNotFirstRun = $true
-    try {
-        switch ($Level) {
-            "Info" {
-                $String = "$azTenant / $String"
-                $string | Out-File -FilePath $logfile -Append -Force -Encoding ascii
-                & git commit -a -m "$Date" *>&1 | Out-Null
-                & git push -u origin main *>&1 | Out-Null
-            }
-
-            "Error" {
-                $String = "ERROR: $azTenant / $String"
-                $string | Out-File -FilePath $logfile -Append -Force -Encoding ascii
-                & git commit -a -m "$Date" *>&1 | Out-Null
-                & git push -u origin main *>&1 | Out-Null
-            }
-
-            "Debug" {
-                $String = "DEBUG: $azTenant / $String"
-                $string | Out-File -FilePath $logfile -Append -Force -Encoding ascii
-                & git commit -a -m "$Date" *>&1 | Out-Null
-                & git push -u origin main *>&1 | Out-Null
-            }
+    switch ($Level) {
+        "Info" {
+            $String = "$azTenant / $String"
+            $string | Out-File -FilePath $logfile -Append -Force -Encoding ascii
+            & git commit -a -m "$Date" *>&1 | Out-Null
+            & git push -u origin main *>&1 | Out-Null
         }
-    }
-    catch {
-
+        "Error" {
+            $String = "ERROR: $azTenant / $String"
+            $string | Out-File -FilePath $logfile -Append -Force -Encoding ascii
+            & git commit -a -m "$Date" *>&1 | Out-Null
+            & git push -u origin main *>&1 | Out-Null
+        }
+        "Debug" {
+            $String = "DEBUG: $azTenant / $String"
+            $string | Out-File -FilePath $logfile -Append -Force -Encoding ascii
+            & git commit -a -m "$Date" *>&1 | Out-Null
+            & git push -u origin main *>&1 | Out-Null
+        }
     }
     Set-Location $root
 }
@@ -170,18 +142,13 @@ function Write-PEBLog {
         [ValidateSet('Info', 'Error', 'Debug')][String]$Level = "Info"
     )
 
-    try {
-        Write-LogScreen -String $String -Level $Level
-        if(!($isProd)) {
-            Write-LogCMFile -String $String -Level $Level
-            Write-LogGit -String $String -Level $Level
-        }
-        else {
-            Write-LogFile -String $String -Level $Level
-        }
+    Write-LogScreen -String $String -Level $Level
+    if(!($isProd)) {
+        Write-LogCMFile -String $String -Level $Level
+        Write-LogGit -String $String -Level $Level
     }
-    catch {
-
+    else {
+        Write-LogFile -String $String -Level $Level
     }
 }
 
@@ -191,20 +158,16 @@ function Write-DumpLine {
         [Parameter(Position = 1, Mandatory)][String]$varvalue
     )
     $String = "$varname : $varvalue"
-    try {
-        Write-LogScreen -String $String -Level Debug
-        if(!($isProd)) {
-            Write-LogCMFile -String $String -Level Debug
-            Write-LogGit -String $String -Level Debug
-        }
-        else {
-            Write-LogFile -String $String -Level Debug
-        }
+    Write-LogScreen -String $String -Level Debug
+    if(!($isProd)) {
+        Write-LogCMFile -String $String -Level Debug
+        Write-LogGit -String $String -Level Debug
     }
-    catch {
-
+    else {
+        Write-LogFile -String $String -Level Debug
     }
 }
+
 function Write-Dump {
     Param(
         [Parameter(Position = 0)][object]$object1,
@@ -213,7 +176,7 @@ function Write-Dump {
         [Parameter(Position = 3)][object]$object4,
         [Parameter(Position = 4)][object]$object5
     )
-    Write-Log -String "*** Write-Dump ***" -Level Debug
+    Write-PEBLog -String "*** Write-Dump ***" -Level Debug
     Write-DumpLine '$?' $?
     Write-DumpLine '$azSubscription' $azSubscription
     Write-DumpLine '$RGNameSTORE' $RGNameSTORE
@@ -230,7 +193,7 @@ function Write-Dump {
     if($Error[0]){Write-DumpLine '$Error[0]' $Error[0]}
     if($Error[1]){Write-DumpLine '$Error[1]' $Error[1]}
     if($Error[2]){Write-DumpLine '$Error[2]' $Error[2]}
-    Write-Log "=============================================================================================================" -Level Debug
+    Write-PEBLog "=============================================================================================================" -Level Debug
     exit
 }
 
@@ -245,7 +208,7 @@ function ConnectTo-Azure {
     Connect-AzAccount -Tenant $aztenant -Subscription $azSubscription | Out-Null
     $SubscriptionId = (Get-AzContext).Subscription.Id
     if (!($azSubscription -eq $SubscriptionId)) {
-        Write-Log "*** Subscription ID Mismatch!!!! ***" -Level Error
+        Write-PEBLog "*** Subscription ID Mismatch!!!! ***" -Level Error
         exit
     }
     Get-AzContext | Rename-AzContext -TargetName "User" -Force | Out-Null

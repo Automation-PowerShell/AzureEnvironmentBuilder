@@ -22,7 +22,6 @@
             $virtualNetworkDEV | Set-AzVirtualNetwork >> null
             if ($virtualNetworkDEV.ProvisioningState -eq "Succeeded") { Write-PEBLog "DEV Virtual Network created and associated with the Network Security Group successfully" } Else { Write-PEBLog "*** Unable to create the DEV Virtual Network, or associate it to the Network Security Group! ***" -Level Error }
         }
-
     }
 }
 
