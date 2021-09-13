@@ -11,13 +11,13 @@ Written by      : Graham Higginson & Daniel Ames
 Build Version   : 0.1 Alpha
 
 .LINK
-More Info       : https://github.com/satsuk81/PackagingEnvironmentBuilder
+More Info       : https://github.com/Automation-PowerShell/PackagingEnvironmentBuilder
 
 #>
 
 Param(
     [Parameter(Mandatory = $false)][string]$VMName = "",
-    [Parameter(Mandatory = $false)][ValidateSet("Standard", "AdminStudio", "Jumpbox","Core")][string]$Spec = "Standard"
+    [Parameter(Mandatory = $false)][ValidateSet("Standard", "Packaging","AdminStudio", "Jumpbox","Core")][string]$Spec = "Standard"
 )
 
 #region Setup
@@ -51,7 +51,7 @@ if($VMName -eq "") {
     $VMList = Get-AzVM -Name * -ResourceGroupName $RGNameDEV -ErrorAction SilentlyContinue
     $VMName = ($VMlist | Where-Object { $_.Name -notin $VMListExclude  } | Select-Object Name | Out-GridView -Title "Select Virtual Machine to Rebuild" -OutputMode Single).Name
     if (!$VMName) {exit}
-    $VMSpec = @("Standard","AdminStudio","Jumpbox","Core")
+    $VMSpec = @("Standard","Packaging","AdminStudio","Jumpbox","Core")
     $Spec = $VMSpec | Out-GridView -Title "Select Virtual Machine Spec" -OutputMode Single
 }
 Write-Warning "This Script is about to Rebuild: $VMName with Spec: $Spec.  OK to Continue?" -WarningAction Inquire

@@ -65,7 +65,7 @@
     ],
     "Prevision": [
         {
-            "AppVersion": "N/A",
+            "AppVersion": "",
             "PS1": "Prevision.ps1",
             "RebootRequired": false,
             "RebootSeconds": 0
@@ -73,7 +73,7 @@
     ],
     "VMConfig": [
         {
-            "AppVersion": "N/A",
+            "AppVersion": "",
             "PS1": "VMConfig.ps1",
             "RebootRequired": false,
             "RebootSeconds": 0
@@ -81,8 +81,144 @@
     ],
     "RunOnce": [
         {
-            "AppVersion": "N/A",
+            "AppVersion": "",
             "PS1": "RunOnce.ps1",
+            "RebootRequired": false,
+            "RebootSeconds": 0
+        }
+    ],
+    "ORCA": [
+        {
+            "AppVersion": "10.1.19041.1",
+            "PS1": "ORCA.ps1",
+            "RebootRequired": false,
+            "RebootSeconds": 0
+        }
+    ],
+    "7-Zip": [
+        {
+            "AppVersion": "19.00.00.0",
+            "PS1": "7-Zip.ps1",
+            "RebootRequired": false,
+            "RebootSeconds": 0
+        }
+    ],
+    "InstEd": [
+        {
+            "AppVersion": "1.5.15.26",
+            "PS1": "InstEd.ps1",
+            "RebootRequired": false,
+            "RebootSeconds": 0
+        }
+    ],
+    "DesktopApps": [
+        {
+            "AppVersion": "",
+            "PS1": "DesktopApps.ps1",
+            "RebootRequired": false,
+            "RebootSeconds": 0
+        }
+    ],
+    "GlassWire": [
+        {
+            "AppVersion": "",
+            "PS1": "GlassWire.ps1",
+            "RebootRequired": false,
+            "RebootSeconds": 0
+        }
+    ],
+    "IntuneWinUtility": [
+        {
+            "AppVersion": "",
+            "PS1": "IntuneWinUtility.ps1",
+            "RebootRequired": false,
+            "RebootSeconds": 0
+        }
+    ],
+    "AdminStudio": [
+        {
+            "AppVersion": "",
+            "PS1": "AdminStudio.ps1",
+            "RebootRequired": false,
+            "RebootSeconds": 0
+        }
+    ],
+    "Jumpbox": [
+        {
+            "AppVersion": "",
+            "PS1": "Jumpbox.ps1",
+            "RebootRequired": false,
+            "RebootSeconds": 0
+        }
+    ],
+    "MECMConsole": [
+        {
+            "AppVersion": "",
+            "PS1": "MECMConsole.ps1",
+            "RebootRequired": false,
+            "RebootSeconds": 0
+        }
+    ],
+    "DomainJoin": [
+        {
+            "AppVersion": "",
+            "PS1": "DomainJoin.ps1",
+            "RebootRequired": true,
+            "RebootSeconds": 120
+        }
+    ],
+    "VCPP": [
+        {
+            "AppVersion": "",
+            "PS1": "VCPP.ps1",
+            "RebootRequired": false,
+            "RebootSeconds": 0
+        }
+    ],
+    "Office365": [
+        {
+            "AppVersion": "",
+            "PS1": "Office365.ps1",
+            "RebootRequired": false,
+            "RebootSeconds": 0
+        }
+    ],
+    "ConfigureDataDisk": [
+        {
+            "AppVersion": "",
+            "PS1": "ConfigureDataDisk.ps1",
+            "RebootRequired": false,
+            "RebootSeconds": 0
+        }
+    ],
+    "EnableHyperV": [
+        {
+            "AppVersion": "",
+            "PS1": "EnableHyperV.ps1",
+            "RebootRequired": true,
+            "RebootSeconds": 120
+        }
+    ],
+    "ConfigHyperV": [
+        {
+            "AppVersion": "",
+            "PS1": "ConfigHyperV.ps1",
+            "RebootRequired": false,
+            "RebootSeconds": 0
+        }
+    ],
+    "Build-VMBase": [
+        {
+            "AppVersion": "",
+            "PS1": "Build-VMBase.ps1",
+            "RebootRequired": false,
+            "RebootSeconds": 0
+        }
+    ],
+    "Build-VM": [
+        {
+            "AppVersion": "",
+            "PS1": "Build-VM.ps1",
             "RebootRequired": false,
             "RebootSeconds": 0
         }

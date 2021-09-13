@@ -73,11 +73,21 @@ if($RequireCreate) {
     . $PEBScripts\PEB-Env-V2.ps1
 
         # Create Packaging VM Script
-    . $PEBScripts\PEB-PackagingVms-V2.ps1
+    if ($UseTerraform) {
+        TerraformBuild-VM
+    }
+    else {
+        ScriptBuild-Create-VM
+    }
 
         # Create Hyper-V Script
     if ($RequireHyperV) {
-        . $PEBScripts\PEB-HyperVServer-V1.ps1
+        if ($UseTerraform) {
+            TerraformBuild-HVVM
+        }
+        else {
+            ScriptBuild-HVVM
+        }
     }
 
     if($UseTerraform) {
@@ -103,11 +113,21 @@ if ($RequireConfigure) {
     }
 
         # Configure Packaging VM Script
-    . $PEBScripts\PEB-PackagingVms-Configure.ps1
+    if ($UseTerraform) {
+        TerraformConfigure-VM
+    }
+    else {
+        ScriptBuild-Config-VM
+    }
 
         # Configure Hyper-V Script
     if($RequireHyperV) {
-        . $PEBScripts\PEB-HyperVServer-Configure.ps1
+        if ($UseTerraform) {
+            TerraformConfigure-HVVM
+        }
+        else {
+            ScriptConfigure-HVVM
+        }
     }
 }
 Write-PEBLog "Completed PEB-AzureBuilder.ps1"

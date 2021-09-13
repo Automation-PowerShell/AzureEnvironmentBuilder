@@ -32,7 +32,7 @@
             "Version": "latest",
             "Apps": [
                 {
-                    "Name": "7-Zip.ps1"
+                    "Name": "7-Zip"
                 }
             ],
             "VMSize": "Standard_B2s"
@@ -46,31 +46,31 @@
             "Version": "latest",
             "Apps": [
                 {
-                    "Name": "Prevision.ps1"
+                    "Name": "Prevision"
                 },
                 {
-                    "Name": "VMConfig.ps1"
+                    "Name": "VMConfig"
                 },
                 {
-                    "Name": "RunOnce.ps1"
+                    "Name": "RunOnce"
                 },
                 {
-                    "Name": "ORCA.ps1"
+                    "Name": "ORCA"
                 },
                 {
-                    "Name": "7-Zip.ps1"
+                    "Name": "7-Zip"
                 },
                 {
-                    "Name": "InstEd.ps1"
+                    "Name": "InstEd"
                 },
                 {
-                    "Name": "DesktopApps.ps1"
+                    "Name": "DesktopApps"
                 },
                 {
-                    "Name": "GlassWire.ps1"
+                    "Name": "GlassWire"
                 },
                 {
-                    "Name": "IntuneWinUtility.ps1"
+                    "Name": "IntuneWinUtility"
                 }
             ],
             "VMSize": "Standard_B2s"
@@ -84,28 +84,28 @@
             "Version": "latest",
             "Apps": [
                 {
-                    "Name": "Prevision.ps1"
+                    "Name": "Prevision"
                 },
                 {
-                    "Name": "VMConfig.ps1"
+                    "Name": "VMConfig"
                 },
                 {
-                    "Name": "RunOnce.ps1"
+                    "Name": "RunOnce"
                 },
                 {
-                    "Name": "AdminStudio.ps1"
+                    "Name": "AdminStudio"
                 },
                 {
-                    "Name": "ORCA.ps1"
+                    "Name": "ORCA"
                 },
                 {
-                    "Name": "7-Zip.ps1"
+                    "Name": "7-Zip"
                 },
                 {
-                    "Name": "InstEd.ps1"
+                    "Name": "InstEd"
                 },
                 {
-                    "Name": "GlassWire.ps1"
+                    "Name": "GlassWire"
                 }
             ],
             "VMSize": "Standard_B2s"
@@ -119,19 +119,19 @@
             "Version": "latest",
             "Apps": [
                 {
-                    "Name": "Prevision.ps1"
+                    "Name": "Prevision"
                 },
                 {
-                    "Name": "RunOnce.ps1"
+                    "Name": "RunOnce"
                 },
                 {
-                    "Name": "Jumpbox.ps1"
+                    "Name": "Jumpbox"
                 },
                 {
-                    "Name": "MECMConsole.ps1"
+                    "Name": "MECMConsole"
                 },
                 {
-                    "Name": "DomainJoin.ps1"
+                    "Name": "DomainJoin"
                 }
             ],
             "VMSize": "Standard_B2s"
@@ -145,19 +145,19 @@
             "Version": "latest",
             "Apps": [
                 {
-                    "Name": "Prevision.ps1"
+                    "Name": "Prevision"
                 },
                 {
-                    "Name": "VMConfig.ps1"
+                    "Name": "VMConfig"
                 },
                 {
-                    "Name": "RunOnce.ps1"
+                    "Name": "RunOnce"
                 },
                 {
-                    "Name": "VCPP.ps1"
+                    "Name": "VCPP"
                 },
                 {
-                    "Name": "Office365.ps1"
+                    "Name": "Office365"
                 }
             ],
             "VMSize": "Standard_B2s"
@@ -171,13 +171,13 @@
             "Version": "latest",
             "Apps": [
                 {
-                    "Name": "Prevision.ps1"
+                    "Name": "Prevision"
                 },
                 {
-                    "Name": "RunOnce.ps1"
+                    "Name": "RunOnce"
                 },
                 {
-                    "Name": "ConfigureDataDisk.ps1"
+                    "Name": "ConfigureDataDisk"
                 }
             ],
             "VMSize": "Standard_D2s_v4",
@@ -195,28 +195,28 @@
             "Version": "latest",
             "Apps": [
                 {
-                    "Name": "Prevision.ps1"
+                    "Name": "Prevision"
                 },
                 {
-                    "Name": "RunOnce.ps1"
+                    "Name": "RunOnce"
                 },
                 {
-                    "Name": "ConfigureDataDisk.ps1"
+                    "Name": "ConfigureDataDisk"
                 },
                 {
-                    "Name": "EnableHyperV.ps1"
+                    "Name": "EnableHyperV"
                 },
                 {
-                    "Name": "ConfigHyperV.ps1"
+                    "Name": "ConfigHyperV"
                 },
                 {
-                    "Name": "DomainJoin.ps1"
+                    "Name": "DomainJoin"
                 },
                 {
-                    "Name": "Build-VMBase.ps1"
+                    "Name": "Build-VMBase"
                 },
                 {
-                    "Name": "Build-VM.ps1"
+                    "Name": "Build-VM"
                 }
             ],
             "VMSize": "Standard_D2s_v4",

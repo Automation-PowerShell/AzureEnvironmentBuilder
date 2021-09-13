@@ -15,6 +15,23 @@ function CreateStandardVM-Script($VMName) {
     New-AzVM -ResourceGroupName $RGNameDEV -Location $Location -VM $VirtualMachine -Verbose | Out-Null
 }
 
+function CreatePackagingVM-Script($VMName) {
+    $Vnet = Get-AzVirtualNetwork -Name $VNetDEV -ResourceGroupName $RGNameDEVVNET
+    $Subnet = Get-AzVirtualNetworkSubnetConfig -Name $SubnetNameDEV -VirtualNetwork $vnet
+    if ($RequirePublicIPs) {
+        $PIP = New-AzPublicIpAddress -Name "$VMName-pip" -ResourceGroupName $RGNameDEV -Location $Location -AllocationMethod Dynamic -Sku Basic -Tier Regional -IpAddressVersion IPv4
+        $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $RGNameDEV -Location $Location -SubnetId $Subnet.Id -PublicIpAddressId $PIP.Id
+    }
+    else { $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $RGNameDEV -Location $Location -SubnetId $Subnet.Id }
+    $VirtualMachine = New-AzVMConfig -VMName $VMName -VMSize $VMSizeStandard -IdentityType SystemAssigned -Tags $tags
+    $VirtualMachine = Set-AzVMOperatingSystem -VM $VirtualMachine -Windows -ComputerName $VMName -Credential $LocalAdminCred #-ProvisionVMAgent -EnableAutoUpdate
+    $VirtualMachine = Add-AzVMNetworkInterface -VM $VirtualMachine -Id $NIC.Id
+    $VirtualMachine = Set-AzVMSourceImage -VM $VirtualMachine -PublisherName $VMSpecPublisherName -Offer $VMSpecOffer -Skus $VMSpecSKUS -Version $VMSpecVersion
+    $VirtualMachine = Set-AzVMBootDiagnostic -VM $VirtualMachine -Disable
+
+    New-AzVM -ResourceGroupName $RGNameDEV -Location $Location -VM $VirtualMachine -Verbose | Out-Null
+}
+
 function CreateAdminStudioVM-Script($VMName) {
     $Vnet = Get-AzVirtualNetwork -Name $VNetDEV -ResourceGroupName $RGNameDEVVNET
     $Subnet = Get-AzVirtualNetworkSubnetConfig -Name $SubnetNameDEV -VirtualNetwork $vnet
@@ -66,16 +83,23 @@ function CreateCoreVM-Script($VMName) {
     New-AzVM -ResourceGroupName $RGNameDEV -Location $Location -VM $VirtualMachine -Verbose | Out-Null
 }
 
-function ConfigureStandardVM($VMName) {
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/Prevision.ps1" "Prevision.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/VMConfig.ps1" "VMConfig.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/RunOnce.ps1" "RunOnce.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/ORCA.ps1" "ORCA.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/7-Zip.ps1" "7-Zip.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/InstEd.ps1" "InstEd.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/DesktopApps.ps1" "DesktopApps.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/GlassWire.ps1" "GlassWire.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/IntuneWinUtility.ps1" "IntuneWinUtility.ps1"
+function ConfigureVM {
+    Param(
+        [Parameter(Position = 0, Mandatory)][String]$VMName,
+        [Parameter(Position = 1, Mandatory)][String]$VMSpec
+    )
+
+    foreach ($app in $deviceSpecs.$VMSpec.Apps) {
+        $appName = $($app.Name)
+        $global:appSpec = $appSpecs.$appName
+        $appPS1 = $appSpec.PS1
+        Write-PEBLog "VM: $VMName - Installing App: $appName"
+        RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/$appPS1" "$appPS1"
+        if($appSpec.RebootRequired) {
+            Write-PEBLog "VM: $VMName - Restarting VM for $($appSpec.RebootSeconds) Seconds..."
+            Start-Sleep -Seconds $appSpec.RebootSeconds
+        }
+    }
 
     if ($VMShutdown) {
         $Stopvm = Stop-AzVM -ResourceGroupName $RGNameDEV -Name $VMName -Force
@@ -88,61 +112,6 @@ function ConfigureStandardVM($VMName) {
     }
 }
 
-function ConfigureAdminStudioVM($VMName) {
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/Prevision.ps1" "Prevision.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/VMConfig.ps1" "VMConfig.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/RunOnce.ps1" "RunOnce.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/AdminStudio.ps1" "AdminStudio.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/ORCA.ps1" "ORCA.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/GlassWire.ps1" "GlassWire.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/7-Zip.ps1" "7-Zip.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/InstEd.ps1" "InstEd.ps1"
-
-    if ($VMShutdown) {
-        $Stopvm = Stop-AzVM -ResourceGroupName $RGNameDEV -Name $VMName -Force
-        if ($Stopvm.Status -eq "Succeeded") {
-            Write-PEBLog "VM: $VMName shutdown successfully"
-        }
-        else {
-            Write-PEBLog "*** VM: $VMName - Unable to shutdown! ***" -Level Error
-        }
-    }
-}
-function ConfigureJumpboxVM($VMName) {
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/Prevision.ps1" "Prevision.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/RunOnce.ps1" "RunOnce.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/Jumpbox.ps1" "Jumpbox.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/MECMConsole.ps1" "MECMConsole.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/DomainJoin.ps1" "DomainJoin.ps1"
-
-    if ($VMShutdown) {
-        $Stopvm = Stop-AzVM -ResourceGroupName $RGNameDEV -Name $VMName -Force
-        if ($Stopvm.Status -eq "Succeeded") {
-            Write-PEBLog "VM: $VMName shutdown successfully"
-        }
-        else {
-            Write-PEBLog "*** VM: $VMName - Unable to shutdown! ***" -Level Error
-        }
-    }
-}
-
-function ConfigureCoreVM($VMName) {
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/Prevision.ps1" "Prevision.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/VMConfig.ps1" "VMConfig.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/RunOnce.ps1" "RunOnce.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/VCPP.ps1" "VCPP.ps1"
-    #RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/Office365.ps1" "Office365.ps1"
-
-    if ($VMShutdown) {
-        $Stopvm = Stop-AzVM -ResourceGroupName $RGNameDEV -Name $VMName -Force
-        if ($Stopvm.Status -eq "Succeeded") {
-            Write-PEBLog "VM: $VMName shutdown successfully"
-        }
-        else {
-            Write-PEBLog "*** VM: $VMName - Unable to shutdown! ***" -Level Error
-        }
-    }
-}
 function ConfigureBaseVM($VMName) {
     $VMCreate = Get-AzVM -ResourceGroupName $RGNameDEV -Name $VMName
     If ($VMCreate.ProvisioningState -eq "Succeeded") {
@@ -169,7 +138,7 @@ function ConfigureBaseVM($VMName) {
 
         }
         Restart-AzVM -ResourceGroupName $RGNameDEV -Name $VMName | Out-Null
-        Write-PEBLog "VM: $VMName - Restarting VM..."
+        Write-PEBLog "VM: $VMName - Restarting VM for 120 Seconds..."
         Start-Sleep -Seconds 120
 
         if ($AutoShutdown) {
@@ -209,6 +178,20 @@ function ScriptRebuild-Create-VM {
                 CreateStandardVM-Script "$VMName"
             }
         }
+        "Packaging" {
+            $VMCheck = Get-AzVM -Name "$VMName" -ResourceGroup $RGNameDEV -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+            if ($VMCheck) {
+                Remove-AzVM -Name $VMName -ResourceGroupName $RGNameDEV -Force -Verbose | Out-Null
+                Get-AzNetworkInterface -Name $VMName* -ResourceGroupName $RGNameDEV | Remove-AzNetworkInterface -Force -Verbose | Out-Null
+                Get-AzPublicIpAddress -Name $VMName* -ResourceGroupName $RGNameDEV | Remove-AzPublicIpAddress -Force -Verbose | Out-Null
+                Get-AzDisk -Name $VMName* -ResourceGroupName $RGNameDEV | Remove-AzDisk -Force -Verbose | Out-Null
+                CreateStandardVM-Script "$VMName"
+            }
+            else {
+                Write-PEBLog "*** Virtual Machine $VMName doesn't exist! ***" -Level Error
+                CreatePackagingVM-Script "$VMName"
+            }
+        }
         "AdminStudio" {
             $VMCheck = Get-AzVM -Name "$VMName" -ResourceGroup $RGNameDEV -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if ($VMCheck) {
@@ -250,6 +233,9 @@ function ScriptRebuild-Create-VM {
                 Write-PEBLog "*** Virtual Machine $VMName doesn't exist! ***" -Level Error
                 CreateCoreVM-Script "$VMName"
             }
+        }
+        default {
+            Write-Dump
         }
     }
 }
@@ -259,16 +245,22 @@ function ScriptRebuild-Config-VM {
     ConfigureBaseVM "$VMName"
     switch ($Spec) {
         "Standard" {
-            ConfigureStandardVM "$VMName"
+            ConfigureVM -VMName "$VMName" -VMSpec "Standard"
+        }
+        "Packaging" {
+            ConfigureVM -VMName "$VMName" -VMSpec "Packaging"
         }
         "AdminStudio" {
-            ConfigureAdminStudioVM "$VMName"
+            ConfigureVM -VMName "$VMName" -VMSpec "AdminStudio"
         }
         "Jumpbox" {
-            ConfigureJumpboxVM "$VMName"
+            ConfigureVM -VMName "$VMName" -VMSpec "Jumpbox"
         }
         "Core" {
-            ConfigureCoreVM "$VMName"
+            ConfigureVM -VMName "$VMName" -VMSpec "Core"
+        }
+        default {
+            Write-Dump
         }
     }
 }
@@ -284,6 +276,26 @@ function ScriptBuild-Create-VM {
             $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $RGNameDEV -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if (!$VMCheck) {
                 CreateStandardVM-Script "$VM"
+            }
+            else {
+                Write-PEBLog "*** Virtual Machine $VM already exists! ***" -Level Error
+                break
+            }
+            $Count++
+            $VMNumberStart++
+        }
+    }
+
+        # Build Packaging VMs
+    if ($RequirePackagingVMs) {
+        $Count = 1
+        $VMNumberStart = $VMNumberStartPackaging
+        While ($Count -le $NumberofPackagingVMs) {
+            Write-PEBLog "Creating $Count of $NumberofPackagingVMs VMs"
+            $VM = $VMNamePrefixPackaging + $VMNumberStart
+            $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $RGNameDEV -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+            if (!$VMCheck) {
+                CreatePackagingVM-Script "$VM"
             }
             else {
                 Write-PEBLog "*** Virtual Machine $VM already exists! ***" -Level Error
@@ -364,11 +376,25 @@ function ScriptBuild-Config-VM {
             Write-PEBLog "Configuring $Count of $NumberofStandardVMs VMs"
             $VM = $VMNamePrefixStandard + $VMNumberStart
             ConfigureBaseVM "$VM"
-            ConfigureStandardVM "$VM"
+            ConfigureVM -VMName "$VM" -VMSpec "Standard"
             $Count++
             $VMNumberStart++
         }
     }
+
+        #    Configure Packaging VMs
+    if ($RequirePackagingVMs) {
+        $Count = 1
+        $VMNumberStart = $VMNumberStartPackaging
+        While ($Count -le $NumberofPackagingVMs) {
+            Write-PEBLog "Configuring $Count of $NumberofPackagingVMs VMs"
+            $VM = $VMNamePrefixPackaging + $VMNumberStart
+            ConfigureBaseVM "$VM"
+            ConfigureVM -VMName "$VM" -VMSpec "Packaging"
+            $Count++
+            $VMNumberStart++
+            }
+        }
 
         # Configure AdminStudio VMs
     if ($RequireAdminStudioVMs) {
@@ -378,7 +404,7 @@ function ScriptBuild-Config-VM {
             Write-PEBLog "Configuring $Count of $NumberofAdminStudioVMs VMs"
             $VM = $VMNamePrefixAdminStudio + $VMNumberStart
             ConfigureBaseVM "$VM"
-            ConfigureAdminStudioVM "$VM"
+            ConfigureVM -VMName "$VM" -VMSpec "AdminStudio"
             $Count++
             $VMNumberStart++
         }
@@ -392,7 +418,7 @@ function ScriptBuild-Config-VM {
             Write-PEBLog "Configuring $Count of $NumberofJumboxVMs VMs"
             $VM = $VMNamePrefixJumpbox + $VMNumberStart
             ConfigureBaseVM "$VM"
-            ConfigureJumpboxVM "$VM"
+            ConfigureVM -VMName "$VM" -VMSpec "Jumpbox"
             $Count++
             $VMNumberStart++
         }
@@ -406,7 +432,7 @@ function ScriptBuild-Config-VM {
             Write-PEBLog "Configuring $Count of $NumberofCoreVMs VMs"
             $VM = $VMNamePrefixCore + $VMNumberStart
             ConfigureBaseVM "$VM"
-            ConfigureCoreVM "$VM"
+            ConfigureVM -VMName "$VM" -VMSpec "Core"
             $Count++
             $VMNumberStart++
         }
@@ -430,6 +456,7 @@ module "+ [char]34 + $VMName + [char]34 + " {
     $TerraformMain = Get-Content -Path ".\Terraform\main.tf"
     $TerraformText | Add-Content -Path ".\Terraform\main.tf"
 }
+
 function CreateAdminStudioVM-Terraform($VMName) {
     mkdir -Path ".\Terraform\" -Name "$VMName" -Force
     $TerraformVMVariables = (Get-Content -Path ".\Terraform\template-win10\variables.tf").Replace("xxxx", $VMName) | Set-Content -Path ".\Terraform\$VMName\variables.tf"
