@@ -15,7 +15,7 @@ Catch {
 $RequireCreate = $false
 $RequireConfigure = $false
 $UseTerraform = $false
-$RequireUpdateStorage = $false
+$RequireUpdateStorage = $true
 $RequireServicePrincipal = $false
 
     # Required Components
@@ -89,8 +89,4 @@ $AutoShutdown = $true                                       # Configures Windows
 $NumberofHyperVVMs = 1                                      # Specify number of VMs to be provisioned
 $VMHyperVNamePrefix = "vm-euc-hyprv-0"                      # Specifies the first part of the VM name (usually alphabetic)
 $VmHyperVNumberStart = 1                                    # Specifies the second part of the VM name (usually numeric)
-$VmSizeHyperV = $deviceSpecs.'HyperV-Server'.VMSize         # Specifies Azure Size to use for the VM
-$dataDiskTier = $deviceSpecs.'HyperV-Server'.$dataDiskTier
-$dataDiskSKU = $deviceSpecs.'HyperV-Server'.$dataDiskSKU
-$dataDiskSize = $deviceSpecs.'HyperV-Server'.$dataDiskSize
 

@@ -126,16 +126,13 @@
             "Version": "latest",
             "Apps": [
                 {
-                    "Name": "Prevision"
-                },
-                {
                     "Name": "RunOnce"
                 },
                 {
                     "Name": "ConfigureDataDisk"
                 }
             ],
-            "VMSize": "Standard_D2s_v4",
+            "VMSize": "Standard_D4s_v4",
             "dataDiskTier": "S10",
             "dataDiskSKU": "Standard_LRS",
             "dataDiskSize": 128
@@ -150,9 +147,6 @@
             "Version": "latest",
             "Apps": [
                 {
-                    "Name": "Prevision"
-                },
-                {
                     "Name": "RunOnce"
                 },
                 {
@@ -165,16 +159,10 @@
                     "Name": "ConfigHyperV"
                 },
                 {
-                    "Name": "DomainJoin"
-                },
-                {
                     "Name": "Build-VMBase"
-                },
-                {
-                    "Name": "Build-VM"
                 }
             ],
-            "VMSize": "Standard_D2s_v4",
+            "VMSize": "Standard_D4s_v4",
             "dataDiskTier": "S10",
             "dataDiskSKU": "Standard_LRS",
             "dataDiskSize": 128

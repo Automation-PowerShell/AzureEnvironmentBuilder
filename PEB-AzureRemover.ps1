@@ -8,10 +8,10 @@ Wrtitten by Graham Higginson and Daniel Ames.
 
 .NOTES
 Written by      : Graham Higginson & Daniel Ames
-Build Version   : 0.1 Alpha
+Build Version   : v1
 
 .LINK
-More Info       : https://github.com/satsuk81/PackagingEnvironmentBuilder
+More Info       : https://github.com/Automation-PowerShell/PackagingEnvironmentBuilder
 
 #>
 

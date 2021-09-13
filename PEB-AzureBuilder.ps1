@@ -8,7 +8,7 @@ Wrtitten by Graham Higginson and Daniel Ames.
 
 .NOTES
 Written by      : Graham Higginson & Daniel Ames
-Build Version   : 0.1 Alpha
+Build Version   : v1
 
 .LINK
 More Info       : https://github.com/Automation-PowerShell/PackagingEnvironmentBuilder
@@ -31,7 +31,7 @@ $PEBScripts = "$root\PEB-Scripts"
 . $PEBScripts\ScriptEnvironmentFunctions.ps1
 . $PEBScripts\ScriptPackagingFunctions.ps1
 . $PEBScripts\ScriptHyperVFunctions.ps1
-. $PEBScripts\ClientLoadFunctions.ps1
+#. $PEBScripts\ClientLoadFunctions.ps1
 
     # Load Azure Modules and Connect
 ConnectTo-Azure

@@ -86,24 +86,25 @@ function CreateCoreVM-Script($VMName) {
 function ConfigureVM {
     Param(
         [Parameter(Position = 0, Mandatory)][String]$VMName,
-        [Parameter(Position = 1, Mandatory)][String]$VMSpec
+        [Parameter(Position = 1, Mandatory)][String]$VMSpec,
+        [Parameter(Position = 3, Mandatory)][String]$RG
     )
 
     foreach ($app in $deviceSpecs.$VMSpec.Apps) {
         $appName = $($app.Name)
-        $global:appSpec = $appSpecs.$appName
+        $appSpec = $appSpecs.$appName
         $appPS1 = $appSpec.PS1
         Write-PEBLog "VM: $VMName - Installing App: $appName"
-        RunVMConfig "$RGNameDEV" "$VMName" "https://$StorageAccountName.blob.core.windows.net/$ContainerName/$appPS1" "$appPS1"
+        RunVMConfig $RG $VMName "https://$StorageAccountName.blob.core.windows.net/$ContainerName/$appPS1" $appPS1
         if($appSpec.RebootRequired) {
-            Restart-AzVM -ResourceGroupName $RGNameDEV -Name $VMName | Out-Null
+            Restart-AzVM -ResourceGroupName $RG -Name $VMName | Out-Null
             Write-PEBLog "VM: $VMName - Restarting VM for $($appSpec.RebootSeconds) Seconds..."
             Start-Sleep -Seconds $appSpec.RebootSeconds
         }
     }
 
     if ($VMShutdown) {
-        $Stopvm = Stop-AzVM -ResourceGroupName $RGNameDEV -Name $VMName -Force
+        $Stopvm = Stop-AzVM -ResourceGroupName $RG -Name $VMName -Force
         if ($Stopvm.Status -eq "Succeeded") {
             Write-PEBLog "VM: $VMName shutdown successfully"
         }
@@ -246,19 +247,19 @@ function ScriptRebuild-Config-VM {
     ConfigureBaseVM "$VMName"
     switch ($Spec) {
         "Standard" {
-            ConfigureVM -VMName "$VMName" -VMSpec "Standard"
+            ConfigureVM -VMName "$VMName" -VMSpec "Standard" -RG $RGNameDEV
         }
         "Packaging" {
-            ConfigureVM -VMName "$VMName" -VMSpec "Packaging"
+            ConfigureVM -VMName "$VMName" -VMSpec "Packaging" -RG $RGNameDEV
         }
         "AdminStudio" {
-            ConfigureVM -VMName "$VMName" -VMSpec "AdminStudio"
+            ConfigureVM -VMName "$VMName" -VMSpec "AdminStudio" -RG $RGNameDEV
         }
         "Jumpbox" {
-            ConfigureVM -VMName "$VMName" -VMSpec "Jumpbox"
+            ConfigureVM -VMName "$VMName" -VMSpec "Jumpbox" -RG $RGNameDEV
         }
         "Core" {
-            ConfigureVM -VMName "$VMName" -VMSpec "Core"
+            ConfigureVM -VMName "$VMName" -VMSpec "Core" -RG $RGNameDEV
         }
         default {
             Write-Dump
@@ -377,7 +378,7 @@ function ScriptBuild-Config-VM {
             Write-PEBLog "Configuring $Count of $NumberofStandardVMs VMs"
             $VM = $VMNamePrefixStandard + $VMNumberStart
             ConfigureBaseVM "$VM"
-            ConfigureVM -VMName "$VM" -VMSpec "Standard"
+            ConfigureVM -VMName "$VM" -VMSpec "Standard" -RG $RGNameDEV
             $Count++
             $VMNumberStart++
         }
@@ -391,7 +392,7 @@ function ScriptBuild-Config-VM {
             Write-PEBLog "Configuring $Count of $NumberofPackagingVMs VMs"
             $VM = $VMNamePrefixPackaging + $VMNumberStart
             ConfigureBaseVM "$VM"
-            ConfigureVM -VMName "$VM" -VMSpec "Packaging"
+            ConfigureVM -VMName "$VM" -VMSpec "Packaging" -RG $RGNameDEV
             $Count++
             $VMNumberStart++
             }
@@ -405,7 +406,7 @@ function ScriptBuild-Config-VM {
             Write-PEBLog "Configuring $Count of $NumberofAdminStudioVMs VMs"
             $VM = $VMNamePrefixAdminStudio + $VMNumberStart
             ConfigureBaseVM "$VM"
-            ConfigureVM -VMName "$VM" -VMSpec "AdminStudio"
+            ConfigureVM -VMName "$VM" -VMSpec "AdminStudio" -RG $RGNameDEV
             $Count++
             $VMNumberStart++
         }
@@ -419,7 +420,7 @@ function ScriptBuild-Config-VM {
             Write-PEBLog "Configuring $Count of $NumberofJumboxVMs VMs"
             $VM = $VMNamePrefixJumpbox + $VMNumberStart
             ConfigureBaseVM "$VM"
-            ConfigureVM -VMName "$VM" -VMSpec "Jumpbox"
+            ConfigureVM -VMName "$VM" -VMSpec "Jumpbox" -RG $RGNameDEV
             $Count++
             $VMNumberStart++
         }
@@ -433,7 +434,7 @@ function ScriptBuild-Config-VM {
             Write-PEBLog "Configuring $Count of $NumberofCoreVMs VMs"
             $VM = $VMNamePrefixCore + $VMNumberStart
             ConfigureBaseVM "$VM"
-            ConfigureVM -VMName "$VM" -VMSpec "Core"
+            ConfigureVM -VMName "$VM" -VMSpec "Core" -RG $RGNameDEV
             $Count++
             $VMNumberStart++
         }
