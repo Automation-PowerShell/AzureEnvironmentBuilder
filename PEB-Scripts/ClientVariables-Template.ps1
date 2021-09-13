@@ -1,6 +1,7 @@
     # Client Azure Variables
 $azTenant = ""
 $azSubscription = ""
+$gitlog = ""
 
     # Domain Variables
 $Domain = ""

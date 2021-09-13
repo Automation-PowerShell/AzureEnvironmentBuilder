@@ -103,13 +103,13 @@ function Write-LogGit {
         mkdir -Path C:\Temp -Name "PEBgit" -Force | Out-Null
         Set-Locationt-Location c:\temp\PEBgit\
         & git init *>&1 | Out-Null
-        & git pull https://github.com/satsuk81/log.git *>&1 | Out-Null
+        & git pull $gitlog *>&1 | Out-Null
         if(!(Test-Path -Path $logfile)) {
             Write-Output "" | Out-File -FilePath $logfile -Append -Force -Encoding ascii
         }
         & git add PEB.log -f *>&1 | Out-Null
         & git branch -M main *>&1 | Out-Null
-        & git remote add origin https://github.com/satsuk81/log.git *>&1 | Out-Null
+        & git remote add origin $gitlog *>&1 | Out-Null
     }
     Set-Location c:\temp\PEBgit\
     $Script:gitNotFirstRun = $true

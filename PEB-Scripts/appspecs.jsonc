@@ -1,0 +1,90 @@
+{
+    "version": "v1",
+    "name": "App Specs",
+    "SpecList": [
+        {
+            "Name": "Prevision"
+        },
+        {
+            "Name": "VMConfig"
+        },
+        {
+            "Name": "RunOnce"
+        },
+        {
+            "Name": "ORCA"
+        },
+        {
+            "Name": "7-Zip"
+        },
+        {
+            "Name": "InstEd"
+        },
+        {
+            "Name": "DesktopApps"
+        },
+        {
+            "Name": "GlassWire"
+        },
+        {
+            "Name": "IntuneWinUtility"
+        },
+        {
+            "Name": "AdminStudio"
+        },
+        {
+            "Name": "Jumpbox"
+        },
+        {
+            "Name": "MECMConsole"
+        },
+        {
+            "Name": "DomainJoin"
+        },
+        {
+            "Name": "VCPP"
+        },
+        {
+            "Name": "Office365"
+        },
+        {
+            "Name": "ConfigureDataDisk"
+        },
+        {
+            "Name": "EnableHyperV"
+        },
+        {
+            "Name": "ConfigHyperV"
+        },
+        {
+            "Name": "Build-VMBase"
+        },
+        {
+            "Name": "Build-VM"
+        }
+    ],
+    "Prevision": [
+        {
+            "AppVersion": "N/A",
+            "PS1": "Prevision.ps1",
+            "RebootRequired": false,
+            "RebootSeconds": 0
+        }
+    ],
+    "VMConfig": [
+        {
+            "AppVersion": "N/A",
+            "PS1": "VMConfig.ps1",
+            "RebootRequired": false,
+            "RebootSeconds": 0
+        }
+    ],
+    "RunOnce": [
+        {
+            "AppVersion": "N/A",
+            "PS1": "RunOnce.ps1",
+            "RebootRequired": false,
+            "RebootSeconds": 0
+        }
+    ]
+}
