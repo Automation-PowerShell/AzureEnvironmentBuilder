@@ -1,14 +1,38 @@
-function RunVMConfig($ResourceGroup, $VMName, $BlobFilePath, $Blob) {
+<#function RunVMConfig($ResourceGroup, $VMName, $BlobFilePath, $Blob) {
     $Params = @{
-        ResourceGroupName = $ResourceGroup
-        VMName            = $VMName
-        Location          = $Location
-        FileUri           = $BlobFilePath
-        Run               = $Blob
-        Name              = "ConfigureVM"
+        ResourceGroupName   = $ResourceGroup
+        VMName              = $VMName
+        Location            = $Location
+        #StorageAccountName  = $StorageAccountName
+        #StorageAccountKey   = $Keys.value[0]
+        FileUri             = $BlobFilePath
+        Run                 = $Blob
+        Name                = "ConfigureVM"
     }
 
-    $VMConfigure = Set-AzVMCustomScriptExtension @Params -ErrorAction SilentlyContinue
+    $global:VMConfigure = Set-AzVMCustomScriptExtension @Params -ErrorAction SilentlyContinue
+    if ($VMConfigure.IsSuccessStatusCode -eq $True) {
+        Write-PEBLog "VM: $VMName configured with $Blob successfully"
+    }
+    else {
+        Write-PEBLog "*** VM: $VMName - Unable to configure Virtual Machine with $Blob ***" -Level Error
+    }
+}#>
+
+function RunVMConfig($ResourceGroup, $VMName, $BlobFilePath, $Blob) {
+    $Params = @{
+        ContainerName       = $ContainerName
+        ResourceGroupName   = $ResourceGroup
+        VMName              = $VMName
+        Location            = $Location
+        StorageAccountName  = $StorageAccountName
+        StorageAccountKey   = $Keys.value[0]
+        Filename            = $Blob
+        Run                 = $Blob
+        Name                = "ConfigureVM2"
+    }
+
+    $global:VMConfigure = Set-AzVMCustomScriptExtension @Params -ErrorAction SilentlyContinue
     if ($VMConfigure.IsSuccessStatusCode -eq $True) {
         Write-PEBLog "VM: $VMName configured with $Blob successfully"
     }
@@ -217,4 +241,5 @@ function ConnectTo-Azure {
         Get-AzContext | Rename-AzContext -TargetName "StorageSP" -Force | Out-Null
         Get-AzContext -Name "User" | Select-AzContext | Out-Null
     }
+    $script:Keys = Get-AzStorageAccountKey -ResourceGroupName $RGNameSTORE -AccountName $StorageAccountName
 }
