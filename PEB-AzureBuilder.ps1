@@ -8,7 +8,7 @@ Wrtitten by Graham Higginson and Daniel Ames.
 
 .NOTES
 Written by      : Graham Higginson & Daniel Ames
-Build Version   : 0.1 Alpha
+Build Version   : v1
 
 .LINK
 More Info       : https://github.com/Automation-PowerShell/PackagingEnvironmentBuilder
@@ -31,7 +31,7 @@ $PEBScripts = "$root\PEB-Scripts"
 . $PEBScripts\ScriptEnvironmentFunctions.ps1
 . $PEBScripts\ScriptPackagingFunctions.ps1
 . $PEBScripts\ScriptHyperVFunctions.ps1
-. $PEBScripts\ClientLoadFunctions.ps1
+#. $PEBScripts\ClientLoadFunctions.ps1
 
     # Load Azure Modules and Connect
 ConnectTo-Azure
@@ -73,11 +73,21 @@ if($RequireCreate) {
     . $PEBScripts\PEB-Env-V2.ps1
 
         # Create Packaging VM Script
-    . $PEBScripts\PEB-PackagingVms-V2.ps1
+    if ($UseTerraform) {
+        TerraformBuild-VM
+    }
+    else {
+        ScriptBuild-Create-VM
+    }
 
         # Create Hyper-V Script
     if ($RequireHyperV) {
-        . $PEBScripts\PEB-HyperVServer-V1.ps1
+        if ($UseTerraform) {
+            TerraformBuild-HVVM
+        }
+        else {
+            ScriptBuild-HVVM
+        }
     }
 
     if($UseTerraform) {
@@ -103,11 +113,21 @@ if ($RequireConfigure) {
     }
 
         # Configure Packaging VM Script
-    . $PEBScripts\PEB-PackagingVms-Configure.ps1
+    if ($UseTerraform) {
+        TerraformConfigure-VM
+    }
+    else {
+        ScriptBuild-Config-VM
+    }
 
         # Configure Hyper-V Script
     if($RequireHyperV) {
-        . $PEBScripts\PEB-HyperVServer-Configure.ps1
+        if ($UseTerraform) {
+            TerraformConfigure-HVVM
+        }
+        else {
+            ScriptConfigure-HVVM
+        }
     }
 }
 Write-PEBLog "Completed PEB-AzureBuilder.ps1"

@@ -3,7 +3,8 @@ Set-Location $PSScriptRoot
     # Script Variables
 $ExtraFiles = "$root\ExtraFiles"
 Try {
-    $deviceSpecs = Get-Content $PEBScripts\devicespecs.jsonc | ConvertFrom-Json -ErrorAction Stop
+    $deviceSpecs = Get-Content $root\devicespecs-template.jsonc | ConvertFrom-Json -ErrorAction Stop
+    $appSpecs = Get-Content $root\appspecs-template.jsonc | ConvertFrom-Json -ErrorAction Stop
 }
 Catch {
     throw "Error with Device Specs"
@@ -14,7 +15,7 @@ Catch {
 $RequireCreate = $false
 $RequireConfigure = $false
 $UseTerraform = $false
-$RequireUpdateStorage = $false
+$RequireUpdateStorage = $true
 $RequireServicePrincipal = $false
 
     # Required Components
@@ -27,6 +28,7 @@ $RequireVNET = $false
 $RequireNSG = $false
 $RequirePublicIPs = $false
 $RequireStandardVMs = $false
+$RequirePackagingVMs = $false
 $RequireAdminStudioVMs = $false
 $RequireJumpboxVMs = $false
 $RequireCoreVMs = $false
@@ -66,26 +68,20 @@ $BlobFilesDest = "$root\BlobFilesDestination"               # Destination Templa
 
     # Windows 10 VM Count, Name, Spec, and Settings
 $NumberofStandardVMs = 1                                    # Specify number of Standard VMs to be provisioned
+$NumberofPackagingVMs = 1                                   # Specify number of Packaging VMs to be provisioned
 $NumberofAdminStudioVMs = 1                                 # Specify number of AdminStudio VMs to be provisioned
 $NumberofJumpboxVMs = 1                                     # Specify number of Jumpbox VMs to be provisioned
 $NumberofCoreVMs = 1                                        # Specify number of Core VMs to be provisioned
-$VMNamePrefixStandard = "vm-euc-van-"                       # Specifies the first part of the Standard VM name (usually alphabetic) (15 chars max)
-$VMNamePrefixAdminStudio = "vm-euc-as-"                     # Specifies the first part of the Admin Studio VM name (usually alphabetic) (15 chars max)
-$VMNamePrefixJumpbox = "vm-euc-jb-"                         # Specifies the first part of the Jumpbox VM name (usually alphabetic) (15 chars max)
-$VMNamePrefixCore = "vm-euc-core-"                          # Specifies the first part of the Core VM name (usually alphabetic) (15 chars max)
-$VMNumberStartStandard = 101                                # Specifies the second part of the Standard VM name (usually numeric)
-$VMNumberStartAdminStudio = 201                             # Specifies the second part of the Admin Studio VM name (usually numeric)
-$VMNumberStartJumpbox = 301                                 # Specifies the second part of the Jumpbox VM name (usually numeric)
-$VMNumberStartCore = 401                                    # Specifies the second part of the Core VM name (usually numeric)
-$VMSizeStandard = $deviceSpecs.Standard.VMSize              # Specifies Azure Size to use for the Standard VM
-$VMSizeAdminStudio = $deviceSpecs.AdminStudio.VMSize        # Specifies Azure Size to use for the Admin Studio VM
-$VMSizeJumpbox = $deviceSpecs.Jumpbox.VMSize                # Specifies Azure Size to use for the Jumpbox VM
-$VMSizeCore = $deviceSpecs.Core.VMSize                      # Specifies Azure Size to use for the Core VM
-
-$VMSpecPublisherName = $deviceSpecs.Standard.PublisherName
-$VMSpecOffer = $deviceSpecs.Standard.Offer
-$VMSpecSKUS = $deviceSpecs.Standard.SKUS
-$VMSpecVersion = $deviceSpecs.Standard.Version
+$VMNamePrefixStandard = "vm-euc-van-"                       # Specifies the first part of the Standard VM name (15 chars max)
+$VMNamePrefixPackaging = "vm-euc-pkg-"                      # Specifies the first part of the Packaging VM name (15 chars max)
+$VMNamePrefixAdminStudio = "vm-euc-as-"                     # Specifies the first part of the Admin Studio VM name (15 chars max)
+$VMNamePrefixJumpbox = "vm-euc-jb-"                         # Specifies the first part of the Jumpbox VM name (15 chars max)
+$VMNamePrefixCore = "vm-euc-core-"                          # Specifies the first part of the Core VM name (15 chars max)
+$VMNumberStartStandard = 101                                # Specifies the second part of the Standard VM name
+$VMNumberStartPackaging = 101                               # Specifies the second part of the Packaging VM name
+$VMNumberStartAdminStudio = 201                             # Specifies the second part of the Admin Studio VM name
+$VMNumberStartJumpbox = 301                                 # Specifies the second part of the Jumpbox VM name
+$VMNumberStartCore = 401                                    # Specifies the second part of the Core VM name
 $VMShutdown = $true                                         # Specifies if the newly provisioned VM should be shutdown (can save costs)
 $AutoShutdown = $true                                       # Configures Windows 10 VMs to shutdown at a specified time
 
@@ -93,8 +89,4 @@ $AutoShutdown = $true                                       # Configures Windows
 $NumberofHyperVVMs = 1                                      # Specify number of VMs to be provisioned
 $VMHyperVNamePrefix = "vm-euc-hyprv-0"                      # Specifies the first part of the VM name (usually alphabetic)
 $VmHyperVNumberStart = 1                                    # Specifies the second part of the VM name (usually numeric)
-$VmSizeHyperV = $deviceSpecs.'HyperV-Server'.VMSize         # Specifies Azure Size to use for the VM
-$dataDiskTier = $deviceSpecs.'HyperV-Server'.$dataDiskTier
-$dataDiskSKU = $deviceSpecs.'HyperV-Server'.$dataDiskSKU
-$dataDiskSize = $deviceSpecs.'HyperV-Server'.$dataDiskSize
 

@@ -1,0 +1,185 @@
+{
+    "version": "v1",
+    "name": "Device Specs",
+    "SpecList": [
+        {
+            "Name": "Standard"
+        },
+        {
+            "Name": "Packaging"
+        },
+        {
+            "Name": "AdminStudio"
+        },
+        {
+            "Name": "Jumpbox"
+        },
+        {
+            "Name": "Core"
+        },
+        {
+            "Name": "Server"
+        },
+        {
+            "Name": "HyperV-Server"
+        }
+    ],
+    "Standard": [
+        {
+            "PublisherName": "MicrosoftWindowsDesktop",
+            "Offer": "Windows-10",
+            "SKUS": "20h2-ent",
+            "Version": "latest",
+            "Apps": [
+                {
+                    "Name": "RunOnce"
+                },
+                {
+                    "Name": "7-Zip"
+                }
+            ],
+            "VMSize": "Standard_B2s",
+            "AutoShutdownRequired": true,
+            "AutoShutdownTime": 1800
+        }
+    ],
+    "Packaging": [
+        {
+            "PublisherName": "MicrosoftWindowsDesktop",
+            "Offer": "Windows-10",
+            "SKUS": "20h2-ent",
+            "Version": "latest",
+            "Apps": [
+                {
+                    "Name": "RunOnce"
+                },
+                {
+                    "Name": "ORCA"
+                },
+                {
+                    "Name": "7-Zip"
+                },
+                {
+                    "Name": "InstEd"
+                }
+            ],
+            "VMSize": "Standard_B2s",
+            "AutoShutdownRequired": true,
+            "AutoShutdownTime": 1800
+        }
+    ],
+    "AdminStudio": [
+        {
+            "PublisherName": "MicrosoftWindowsDesktop",
+            "Offer": "Windows-10",
+            "SKUS": "20h2-ent",
+            "Version": "latest",
+            "Apps": [
+                {
+                    "Name": "RunOnce"
+                }
+            ],
+            "VMSize": "Standard_B2s",
+            "AutoShutdownRequired": true,
+            "AutoShutdownTime": 1800
+        }
+    ],
+    "Jumpbox": [
+        {
+            "PublisherName": "MicrosoftWindowsDesktop",
+            "Offer": "Windows-10",
+            "SKUS": "20h2-ent",
+            "Version": "latest",
+            "Apps": [
+                {
+                    "Name": "RunOnce"
+                },
+                {
+                    "Name": "Jumpbox"
+                },
+                {
+                    "Name": "MECMConsole"
+                }
+            ],
+            "VMSize": "Standard_B2s",
+            "AutoShutdownRequired": false,
+            "AutoShutdownTime": 0
+        }
+    ],
+    "Core": [
+        {
+            "PublisherName": "MicrosoftWindowsDesktop",
+            "Offer": "Windows-10",
+            "SKUS": "20h2-ent",
+            "Version": "latest",
+            "Apps": [
+                {
+                    "Name": "RunOnce"
+                },
+                {
+                    "Name": "VCPP"
+                },
+                {
+                    "Name": "Office365"
+                }
+            ],
+            "VMSize": "Standard_B2s",
+            "AutoShutdownRequired": true,
+            "AutoShutdownTime": 1800
+        }
+    ],
+    "Server": [
+        {
+            "PublisherName": "MicrosoftWindowsServer",
+            "Offer": "WindowsServer",
+            "SKUS": "2019-Datacenter",
+            "Version": "latest",
+            "Apps": [
+                {
+                    "Name": "RunOnce"
+                },
+                {
+                    "Name": "ConfigureDataDisk"
+                }
+            ],
+            "VMSize": "Standard_D4s_v4",
+            "dataDiskTier": "S10",
+            "dataDiskSKU": "Standard_LRS",
+            "dataDiskSize": 128,
+            "AutoShutdownRequired": false,
+            "AutoShutdownTime": 0
+
+        }
+    ],
+    "Server-HyperV": [
+        {
+            "PublisherName": "MicrosoftWindowsServer",
+            "Offer": "WindowsServer",
+            "SKUS": "2019-Datacenter",
+            "Version": "latest",
+            "Apps": [
+                {
+                    "Name": "RunOnce"
+                },
+                {
+                    "Name": "ConfigureDataDisk"
+                },
+                {
+                    "Name": "EnableHyperV"
+                },
+                {
+                    "Name": "ConfigHyperV"
+                },
+                {
+                    "Name": "Build-VMBase"
+                }
+            ],
+            "VMSize": "Standard_D4s_v4",
+            "dataDiskTier": "S10",
+            "dataDiskSKU": "Standard_LRS",
+            "dataDiskSize": 128,
+            "AutoShutdownRequired": false,
+            "AutoShutdownTime": 0
+        }
+    ]
+}

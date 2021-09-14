@@ -8,16 +8,16 @@ Wrtitten by Graham Higginson and Daniel Ames.
 
 .NOTES
 Written by      : Graham Higginson & Daniel Ames
-Build Version   : 0.1 Alpha
+Build Version   : v1
 
 .LINK
-More Info       : https://github.com/satsuk81/PackagingEnvironmentBuilder
+More Info       : https://github.com/Automation-PowerShell/PackagingEnvironmentBuilder
 
 #>
 
 Param(
     [Parameter(Mandatory = $false)][string]$VMName = "",
-    [Parameter(Mandatory = $false)][ValidateSet("Standard", "AdminStudio", "Jumpbox","Core")][string]$Spec = "Standard"
+    [Parameter(Mandatory = $false)][ValidateSet("Standard", "Packaging","AdminStudio", "Jumpbox","Core")][string]$Spec = "Standard"
 )
 
 #region Setup
@@ -37,7 +37,7 @@ $PEBScripts = "$root\PEB-Scripts"
 . $PEBScripts\ScriptEnvironmentFunctions.ps1
 . $PEBScripts\ScriptPackagingFunctions.ps1
 . $PEBScripts\ScriptHyperVFunctions.ps1
-. $PEBScripts\ClientLoadFunctions.ps1
+#. $PEBScripts\ClientLoadFunctions.ps1
 
     # Load Azure Modules and Connect
 ConnectTo-Azure
@@ -51,7 +51,7 @@ if($VMName -eq "") {
     $VMList = Get-AzVM -Name * -ResourceGroupName $RGNameDEV -ErrorAction SilentlyContinue
     $VMName = ($VMlist | Where-Object { $_.Name -notin $VMListExclude  } | Select-Object Name | Out-GridView -Title "Select Virtual Machine to Rebuild" -OutputMode Single).Name
     if (!$VMName) {exit}
-    $VMSpec = @("Standard","AdminStudio","Jumpbox","Core")
+    $VMSpec = @("Standard","Packaging","AdminStudio","Jumpbox","Core")
     $Spec = $VMSpec | Out-GridView -Title "Select Virtual Machine Spec" -OutputMode Single
 }
 Write-Warning "This Script is about to Rebuild: $VMName with Spec: $Spec.  OK to Continue?" -WarningAction Inquire

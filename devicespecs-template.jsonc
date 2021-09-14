@@ -1,0 +1,248 @@
+{
+    "version": "v1",
+    "name": "Device Specs",
+    "SpecList": [
+        {
+            "Name": "Standard"
+        },
+        {
+            "Name": "Packaging"
+        },
+        {
+            "Name": "AdminStudio"
+        },
+        {
+            "Name": "Jumpbox"
+        },
+        {
+            "Name": "Core"
+        },
+        {
+            "Name": "Server"
+        },
+        {
+            "Name": "HyperV-Server"
+        }
+    ],
+    "Standard": [
+        {
+            "PublisherName": "MicrosoftWindowsDesktop",
+            "Offer": "Windows-10",
+            "SKUS": "20h2-ent",
+            "Version": "latest",
+            "Apps": [
+                {
+                    "Name": "Prevision"
+                },
+                {
+                    "Name": "RunOnce"
+                },
+                {
+                    "Name": "7-Zip"
+                }
+            ],
+            "VMSize": "Standard_B2s",
+            "AutoShutdownRequired": true,
+            "AutoShutdownTime": 1800
+        }
+    ],
+    "Packaging": [
+        {
+            "PublisherName": "MicrosoftWindowsDesktop",
+            "Offer": "Windows-10",
+            "SKUS": "20h2-ent",
+            "Version": "latest",
+            "Apps": [
+                {
+                    "Name": "Prevision"
+                },
+                {
+                    "Name": "VMConfig"
+                },
+                {
+                    "Name": "RunOnce"
+                },
+                {
+                    "Name": "ORCA"
+                },
+                {
+                    "Name": "7-Zip"
+                },
+                {
+                    "Name": "InstEd"
+                },
+                {
+                    "Name": "DesktopApps"
+                },
+                {
+                    "Name": "GlassWire"
+                },
+                {
+                    "Name": "IntuneWinUtility"
+                }
+            ],
+            "VMSize": "Standard_B2s",
+            "AutoShutdownRequired": true,
+            "AutoShutdownTime": 1800
+        }
+    ],
+    "AdminStudio": [
+        {
+            "PublisherName": "MicrosoftWindowsDesktop",
+            "Offer": "Windows-10",
+            "SKUS": "20h2-ent",
+            "Version": "latest",
+            "Apps": [
+                {
+                    "Name": "Prevision"
+                },
+                {
+                    "Name": "VMConfig"
+                },
+                {
+                    "Name": "RunOnce"
+                },
+                {
+                    "Name": "AdminStudio"
+                },
+                {
+                    "Name": "ORCA"
+                },
+                {
+                    "Name": "7-Zip"
+                },
+                {
+                    "Name": "InstEd"
+                },
+                {
+                    "Name": "GlassWire"
+                }
+            ],
+            "VMSize": "Standard_B2s",
+            "AutoShutdownRequired": true,
+            "AutoShutdownTime": 1800
+        }
+    ],
+    "Jumpbox": [
+        {
+            "PublisherName": "MicrosoftWindowsDesktop",
+            "Offer": "Windows-10",
+            "SKUS": "20h2-ent",
+            "Version": "latest",
+            "Apps": [
+                {
+                    "Name": "Prevision"
+                },
+                {
+                    "Name": "RunOnce"
+                },
+                {
+                    "Name": "Jumpbox"
+                },
+                {
+                    "Name": "MECMConsole"
+                },
+                {
+                    "Name": "DomainJoin"
+                }
+            ],
+            "VMSize": "Standard_B2s",
+            "AutoShutdownRequired": true,
+            "AutoShutdownTime": 1800
+        }
+    ],
+    "Core": [
+        {
+            "PublisherName": "MicrosoftWindowsDesktop",
+            "Offer": "Windows-10",
+            "SKUS": "20h2-ent",
+            "Version": "latest",
+            "Apps": [
+                {
+                    "Name": "Prevision"
+                },
+                {
+                    "Name": "VMConfig"
+                },
+                {
+                    "Name": "RunOnce"
+                },
+                {
+                    "Name": "VCPP"
+                },
+                {
+                    "Name": "Office365"
+                }
+            ],
+            "VMSize": "Standard_B2s",
+            "AutoShutdownRequired": true,
+            "AutoShutdownTime": 1800
+        }
+    ],
+    "Server": [
+        {
+            "PublisherName": "MicrosoftWindowsServer",
+            "Offer": "WindowsServer",
+            "SKUS": "2019-Datacenter",
+            "Version": "latest",
+            "Apps": [
+                {
+                    "Name": "Prevision"
+                },
+                {
+                    "Name": "RunOnce"
+                },
+                {
+                    "Name": "ConfigureDataDisk"
+                }
+            ],
+            "VMSize": "Standard_D4s_v4",
+            "dataDiskTier": "S10",
+            "dataDiskSKU": "Standard_LRS",
+            "dataDiskSize": 128,
+            "AutoShutdownRequired": false,
+            "AutoShutdownTime": 0
+
+        }
+    ],
+    "Server-HyperV": [
+        {
+            "PublisherName": "MicrosoftWindowsServer",
+            "Offer": "WindowsServer",
+            "SKUS": "2019-Datacenter",
+            "Version": "latest",
+            "Apps": [
+                {
+                    "Name": "Prevision"
+                },
+                {
+                    "Name": "RunOnce"
+                },
+                {
+                    "Name": "ConfigureDataDisk"
+                },
+                {
+                    "Name": "EnableHyperV"
+                },
+                {
+                    "Name": "ConfigHyperV"
+                },
+                {
+                    "Name": "DomainJoin"
+                },
+                {
+                    "Name": "Build-VMBase"
+                },
+                {
+                    "Name": "Build-VM"
+                }
+            ],
+            "VMSize": "Standard_D4s_v4",
+            "dataDiskTier": "S10",
+            "dataDiskSKU": "Standard_LRS",
+            "dataDiskSize": 128,
+            "AutoShutdownRequired": false,
+            "AutoShutdownTime": 0
+        }
+    ]
+}

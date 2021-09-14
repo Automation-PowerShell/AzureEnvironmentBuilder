@@ -32,10 +32,15 @@
             "Version": "latest",
             "Apps": [
                 {
-                    "Name": "7-Zip.ps1"
+                    "Name": "RunOnce"
+                },
+                {
+                    "Name": "7-Zip"
                 }
             ],
-            "VMSize": "Standard_B2s"
+            "VMSize": "Standard_B2s",
+            "AutoShutdownRequired": true,
+            "AutoShutdownTime": 1800
         }
     ],
     "Packaging": [
@@ -46,34 +51,27 @@
             "Version": "latest",
             "Apps": [
                 {
-                    "Name": "Prevision.ps1"
+                    "Name": "VMConfig"
                 },
                 {
-                    "Name": "VMConfig.ps1"
+                    "Name": "RunOnce"
                 },
                 {
-                    "Name": "RunOnce.ps1"
+                    "Name": "ORCA"
                 },
                 {
-                    "Name": "ORCA.ps1"
+                    "Name": "7-Zip"
                 },
                 {
-                    "Name": "7-Zip.ps1"
+                    "Name": "InstEd"
                 },
                 {
-                    "Name": "InstEd.ps1"
-                },
-                {
-                    "Name": "DesktopApps.ps1"
-                },
-                {
-                    "Name": "GlassWire.ps1"
-                },
-                {
-                    "Name": "IntuneWinUtility.ps1"
+                    "Name": "DesktopApps"
                 }
             ],
-            "VMSize": "Standard_B2s"
+            "VMSize": "Standard_B2s",
+            "AutoShutdownRequired": true,
+            "AutoShutdownTime": 1800
         }
     ],
     "AdminStudio": [
@@ -84,31 +82,30 @@
             "Version": "latest",
             "Apps": [
                 {
-                    "Name": "Prevision.ps1"
+                    "Name": "VMConfig"
                 },
                 {
-                    "Name": "VMConfig.ps1"
+                    "Name": "RunOnce"
                 },
                 {
-                    "Name": "RunOnce.ps1"
+                    "Name": "AdminStudio"
                 },
                 {
-                    "Name": "AdminStudio.ps1"
+                    "Name": "ORCA"
                 },
                 {
-                    "Name": "ORCA.ps1"
+                    "Name": "7-Zip"
                 },
                 {
-                    "Name": "7-Zip.ps1"
+                    "Name": "InstEd"
                 },
                 {
-                    "Name": "InstEd.ps1"
-                },
-                {
-                    "Name": "GlassWire.ps1"
+                    "Name": "GlassWire"
                 }
             ],
-            "VMSize": "Standard_B2s"
+            "VMSize": "Standard_B2s",
+            "AutoShutdownRequired": true,
+            "AutoShutdownTime": 1800
         }
     ],
     "Jumpbox": [
@@ -119,22 +116,21 @@
             "Version": "latest",
             "Apps": [
                 {
-                    "Name": "Prevision.ps1"
+                    "Name": "RunOnce"
                 },
                 {
-                    "Name": "RunOnce.ps1"
+                    "Name": "Jumpbox"
                 },
                 {
-                    "Name": "Jumpbox.ps1"
+                    "Name": "MECMConsole"
                 },
                 {
-                    "Name": "MECMConsole.ps1"
-                },
-                {
-                    "Name": "DomainJoin.ps1"
+                    "Name": "DomainJoin"
                 }
             ],
-            "VMSize": "Standard_B2s"
+            "VMSize": "Standard_B2s",
+            "AutoShutdownRequired": true,
+            "AutoShutdownTime": 1800
         }
     ],
     "Core": [
@@ -145,22 +141,21 @@
             "Version": "latest",
             "Apps": [
                 {
-                    "Name": "Prevision.ps1"
+                    "Name": "VMConfig"
                 },
                 {
-                    "Name": "VMConfig.ps1"
+                    "Name": "RunOnce"
                 },
                 {
-                    "Name": "RunOnce.ps1"
+                    "Name": "VCPP"
                 },
                 {
-                    "Name": "VCPP.ps1"
-                },
-                {
-                    "Name": "Office365.ps1"
+                    "Name": "Office365"
                 }
             ],
-            "VMSize": "Standard_B2s"
+            "VMSize": "Standard_B2s",
+            "AutoShutdownRequired": true,
+            "AutoShutdownTime": 1800
         }
     ],
     "Server": [
@@ -171,23 +166,22 @@
             "Version": "latest",
             "Apps": [
                 {
-                    "Name": "Prevision.ps1"
+                    "Name": "RunOnce"
                 },
                 {
-                    "Name": "RunOnce.ps1"
-                },
-                {
-                    "Name": "ConfigureDataDisk.ps1"
+                    "Name": "ConfigureDataDisk"
                 }
             ],
-            "VMSize": "Standard_D2s_v4",
+            "VMSize": "Standard_D4s_v4",
             "dataDiskTier": "S10",
             "dataDiskSKU": "Standard_LRS",
-            "dataDiskSize": 128
+            "dataDiskSize": 128,
+            "AutoShutdownRequired": false,
+            "AutoShutdownTime": 0
 
         }
     ],
-    "HyperV-Server": [
+    "Server-HyperV": [
         {
             "PublisherName": "MicrosoftWindowsServer",
             "Offer": "WindowsServer",
@@ -195,34 +189,33 @@
             "Version": "latest",
             "Apps": [
                 {
-                    "Name": "Prevision.ps1"
+                    "Name": "RunOnce"
                 },
                 {
-                    "Name": "RunOnce.ps1"
+                    "Name": "ConfigureDataDisk"
                 },
                 {
-                    "Name": "ConfigureDataDisk.ps1"
+                    "Name": "EnableHyperV"
                 },
                 {
-                    "Name": "EnableHyperV.ps1"
+                    "Name": "ConfigHyperV"
                 },
                 {
-                    "Name": "ConfigHyperV.ps1"
+                    "Name": "DomainJoin"
                 },
                 {
-                    "Name": "DomainJoin.ps1"
+                    "Name": "Build-VMBase"
                 },
                 {
-                    "Name": "Build-VMBase.ps1"
-                },
-                {
-                    "Name": "Build-VM.ps1"
+                    "Name": "Build-VM"
                 }
             ],
-            "VMSize": "Standard_D2s_v4",
+            "VMSize": "Standard_D4s_v4",
             "dataDiskTier": "S10",
             "dataDiskSKU": "Standard_LRS",
-            "dataDiskSize": 128
+            "dataDiskSize": 128,
+            "AutoShutdownRequired": false,
+            "AutoShutdownTime": 0
         }
     ]
 }
