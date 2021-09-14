@@ -69,8 +69,14 @@ if($RequireCreate) {
         $TerraformMainTemplate = Get-Content -Path ".\Terraform\Root Template\main.tf" | Set-Content -Path ".\Terraform\main.tf"
     }
 
-        # Environment Script
-    . $PEBScripts\PEB-Env-V2.ps1
+        # Create RBAC groups and assignments
+    CreateRBACConfig
+
+        # Create VNet, NSG and rules
+    ConfigureNetwork
+
+        # Create Storage Account
+    CreateStorageAccount
 
         # Create Packaging VM Script
     if ($UseTerraform) {
