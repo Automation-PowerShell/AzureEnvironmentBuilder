@@ -114,8 +114,14 @@ function ConfigureVM {
     }
 }
 
-function ConfigureBaseVM($VMName) {
-    $VMCreate = Get-AzVM -ResourceGroupName $RGNameDEV -Name $VMName
+function ConfigureBaseVM {
+    Param(
+        [Parameter(Position = 0, Mandatory)][String]$VMName,
+        [Parameter(Position = 1, Mandatory)][String]$VMSpec,
+        [Parameter(Position = 3, Mandatory)][String]$RG
+    )
+
+    $VMCreate = Get-AzVM -ResourceGroupName $RG -Name $VMName
     If ($VMCreate.ProvisioningState -eq "Succeeded") {
         Write-PEBLog "VM: $VMName created successfully"
 
@@ -143,18 +149,19 @@ function ConfigureBaseVM($VMName) {
         #Write-PEBLog "VM: $VMName - Restarting VM for 120 Seconds..."
         #Start-Sleep -Seconds 120
 
-        if ($AutoShutdown) {
-            $ScheduledShutdownResourceId = "/subscriptions/$azSubscription/resourceGroups/$RGNameDEV/providers/microsoft.devtestlab/schedules/shutdown-computevm-$VMName"
+        if ($deviceSpecs.$VMSpec.AutoShutdownRequired) {
+        #if ($AutoShutdown) {
+            $ScheduledShutdownResourceId = "/subscriptions/$azSubscription/resourceGroups/$RG/providers/microsoft.devtestlab/schedules/shutdown-computevm-$VMName"
 
             $Properties = @{}
             $Properties.Add('status', 'Enabled')
             $Properties.Add('taskType', 'ComputeVmShutdownTask')
-            $Properties.Add('dailyRecurrence', @{'time' = 1800})
+            $Properties.Add('dailyRecurrence', @{'time' = $($deviceSpecs.$VMSpec.AutoShutdownTime)})
             $Properties.Add('timeZoneId', "GMT Standard Time")
             $Properties.Add('notificationSettings', @{status = 'Disabled'; timeInMinutes = 15 })
             $Properties.Add('targetResourceId', $VMCreate.Id)
             New-AzResource -Location $Location -ResourceId $ScheduledShutdownResourceId -Properties $Properties -Force | Out-Null
-            Write-PEBLog "VM: $VMName - Auto Shutdown Enabled for 1800"
+            Write-PEBLog "VM: $VMName - Auto Shutdown Enabled for $($deviceSpecs.$VMSpec.AutoShutdownTime)"
         }
     }
     else {
@@ -243,22 +250,26 @@ function ScriptRebuild-Create-VM {
 }
 
 function ScriptRebuild-Config-VM {
-    Get-AzContext -Name "User" | Select-AzContext | Out-Null
-    ConfigureBaseVM "$VMName"
+    Get-AzContext -Name "User" | Select-AzContext | Out-Null 
     switch ($Spec) {
         "Standard" {
+            ConfigureBaseVM -VMName "$VMName" -VMSpec "Standard" -RG $RGNameDEV
             ConfigureVM -VMName "$VMName" -VMSpec "Standard" -RG $RGNameDEV
         }
         "Packaging" {
+            ConfigureBaseVM -VMName "$VMName" -VMSpec "Packaging" -RG $RGNameDEV
             ConfigureVM -VMName "$VMName" -VMSpec "Packaging" -RG $RGNameDEV
         }
         "AdminStudio" {
+            ConfigureBaseVM -VMName "$VMName" -VMSpec "AdminStudio" -RG $RGNameDEV
             ConfigureVM -VMName "$VMName" -VMSpec "AdminStudio" -RG $RGNameDEV
         }
         "Jumpbox" {
+            ConfigureBaseVM -VMName "$VMName" -VMSpec "Jumpbox" -RG $RGNameDEV
             ConfigureVM -VMName "$VMName" -VMSpec "Jumpbox" -RG $RGNameDEV
         }
         "Core" {
+            ConfigureBaseVM -VMName "$VMName" -VMSpec "Core" -RG $RGNameDEV
             ConfigureVM -VMName "$VMName" -VMSpec "Core" -RG $RGNameDEV
         }
         default {
@@ -377,7 +388,7 @@ function ScriptBuild-Config-VM {
         While ($Count -le $NumberofStandardVMs) {
             Write-PEBLog "Configuring $Count of $NumberofStandardVMs VMs"
             $VM = $VMNamePrefixStandard + $VMNumberStart
-            ConfigureBaseVM "$VM"
+            ConfigureBaseVM -VMName "$VM" -VMSpec "Standard" -RG $RGNameDEV
             ConfigureVM -VMName "$VM" -VMSpec "Standard" -RG $RGNameDEV
             $Count++
             $VMNumberStart++
@@ -391,7 +402,7 @@ function ScriptBuild-Config-VM {
         While ($Count -le $NumberofPackagingVMs) {
             Write-PEBLog "Configuring $Count of $NumberofPackagingVMs VMs"
             $VM = $VMNamePrefixPackaging + $VMNumberStart
-            ConfigureBaseVM "$VM"
+            ConfigureBaseVM -VMName "$VM" -VMSpec "Packaging" -RG $RGNameDEV
             ConfigureVM -VMName "$VM" -VMSpec "Packaging" -RG $RGNameDEV
             $Count++
             $VMNumberStart++
@@ -405,7 +416,7 @@ function ScriptBuild-Config-VM {
         While ($Count -le $NumberofAdminStudioVMs) {
             Write-PEBLog "Configuring $Count of $NumberofAdminStudioVMs VMs"
             $VM = $VMNamePrefixAdminStudio + $VMNumberStart
-            ConfigureBaseVM "$VM"
+            ConfigureBaseVM -VMName "$VM" -VMSpec "AdminStudio" -RG $RGNameDEV
             ConfigureVM -VMName "$VM" -VMSpec "AdminStudio" -RG $RGNameDEV
             $Count++
             $VMNumberStart++
@@ -419,7 +430,7 @@ function ScriptBuild-Config-VM {
         While ($Count -le $NumberofJumpboxVMs) {
             Write-PEBLog "Configuring $Count of $NumberofJumboxVMs VMs"
             $VM = $VMNamePrefixJumpbox + $VMNumberStart
-            ConfigureBaseVM "$VM"
+            ConfigureBaseVM -VMName "$VM" -VMSpec "Jumpbox" -RG $RGNameDEV
             ConfigureVM -VMName "$VM" -VMSpec "Jumpbox" -RG $RGNameDEV
             $Count++
             $VMNumberStart++
@@ -433,7 +444,7 @@ function ScriptBuild-Config-VM {
         While ($Count -le $NumberofCoreVMs) {
             Write-PEBLog "Configuring $Count of $NumberofCoreVMs VMs"
             $VM = $VMNamePrefixCore + $VMNumberStart
-            ConfigureBaseVM "$VM"
+            ConfigureBaseVM -VMName "$VM" -VMSpec "Core" -RG $RGNameDEV
             ConfigureVM -VMName "$VM" -VMSpec "Core" -RG $RGNameDEV
             $Count++
             $VMNumberStart++

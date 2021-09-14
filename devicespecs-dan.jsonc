@@ -38,7 +38,9 @@
                     "Name": "7-Zip"
                 }
             ],
-            "VMSize": "Standard_B2s"
+            "VMSize": "Standard_B2s",
+            "AutoShutdownRequired": true,
+            "AutoShutdownTime": 1800
         }
     ],
     "Packaging": [
@@ -61,7 +63,9 @@
                     "Name": "InstEd"
                 }
             ],
-            "VMSize": "Standard_B2s"
+            "VMSize": "Standard_B2s",
+            "AutoShutdownRequired": true,
+            "AutoShutdownTime": 1800
         }
     ],
     "AdminStudio": [
@@ -75,7 +79,9 @@
                     "Name": "RunOnce"
                 }
             ],
-            "VMSize": "Standard_B2s"
+            "VMSize": "Standard_B2s",
+            "AutoShutdownRequired": true,
+            "AutoShutdownTime": 1800
         }
     ],
     "Jumpbox": [
@@ -95,7 +101,9 @@
                     "Name": "MECMConsole"
                 }
             ],
-            "VMSize": "Standard_B2s"
+            "VMSize": "Standard_B2s",
+            "AutoShutdownRequired": false,
+            "AutoShutdownTime": 0
         }
     ],
     "Core": [
@@ -115,7 +123,9 @@
                     "Name": "Office365"
                 }
             ],
-            "VMSize": "Standard_B2s"
+            "VMSize": "Standard_B2s",
+            "AutoShutdownRequired": true,
+            "AutoShutdownTime": 1800
         }
     ],
     "Server": [
@@ -135,7 +145,9 @@
             "VMSize": "Standard_D4s_v4",
             "dataDiskTier": "S10",
             "dataDiskSKU": "Standard_LRS",
-            "dataDiskSize": 128
+            "dataDiskSize": 128,
+            "AutoShutdownRequired": false,
+            "AutoShutdownTime": 0
 
         }
     ],
@@ -165,7 +177,9 @@
             "VMSize": "Standard_D4s_v4",
             "dataDiskTier": "S10",
             "dataDiskSKU": "Standard_LRS",
-            "dataDiskSize": 128
+            "dataDiskSize": 128,
+            "AutoShutdownRequired": false,
+            "AutoShutdownTime": 0
         }
     ]
 }

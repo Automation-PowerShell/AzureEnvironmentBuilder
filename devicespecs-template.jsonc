@@ -32,10 +32,18 @@
             "Version": "latest",
             "Apps": [
                 {
+                    "Name": "Prevision"
+                },
+                {
+                    "Name": "RunOnce"
+                },
+                {
                     "Name": "7-Zip"
                 }
             ],
-            "VMSize": "Standard_B2s"
+            "VMSize": "Standard_B2s",
+            "AutoShutdownRequired": true,
+            "AutoShutdownTime": 1800
         }
     ],
     "Packaging": [
@@ -73,7 +81,9 @@
                     "Name": "IntuneWinUtility"
                 }
             ],
-            "VMSize": "Standard_B2s"
+            "VMSize": "Standard_B2s",
+            "AutoShutdownRequired": true,
+            "AutoShutdownTime": 1800
         }
     ],
     "AdminStudio": [
@@ -108,7 +118,9 @@
                     "Name": "GlassWire"
                 }
             ],
-            "VMSize": "Standard_B2s"
+            "VMSize": "Standard_B2s",
+            "AutoShutdownRequired": true,
+            "AutoShutdownTime": 1800
         }
     ],
     "Jumpbox": [
@@ -134,7 +146,9 @@
                     "Name": "DomainJoin"
                 }
             ],
-            "VMSize": "Standard_B2s"
+            "VMSize": "Standard_B2s",
+            "AutoShutdownRequired": true,
+            "AutoShutdownTime": 1800
         }
     ],
     "Core": [
@@ -160,7 +174,9 @@
                     "Name": "Office365"
                 }
             ],
-            "VMSize": "Standard_B2s"
+            "VMSize": "Standard_B2s",
+            "AutoShutdownRequired": true,
+            "AutoShutdownTime": 1800
         }
     ],
     "Server": [
@@ -180,10 +196,12 @@
                     "Name": "ConfigureDataDisk"
                 }
             ],
-            "VMSize": "Standard_D2s_v4",
+            "VMSize": "Standard_D4s_v4",
             "dataDiskTier": "S10",
             "dataDiskSKU": "Standard_LRS",
-            "dataDiskSize": 128
+            "dataDiskSize": 128,
+            "AutoShutdownRequired": false,
+            "AutoShutdownTime": 0
 
         }
     ],
@@ -219,10 +237,12 @@
                     "Name": "Build-VM"
                 }
             ],
-            "VMSize": "Standard_D2s_v4",
+            "VMSize": "Standard_D4s_v4",
             "dataDiskTier": "S10",
             "dataDiskSKU": "Standard_LRS",
-            "dataDiskSize": 128
+            "dataDiskSize": 128,
+            "AutoShutdownRequired": false,
+            "AutoShutdownTime": 0
         }
     ]
 }
