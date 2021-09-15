@@ -1,7 +1,5 @@
 function CreateStandardVM-Script($VMName) {
-    $tags = @{
-        ""=""
-    }
+    $tags = @{}
     foreach ($tag in $deviceSpecs.Standard.Tags) {
         $Name = $tag | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
         $Value = $tag.$Name
@@ -25,9 +23,7 @@ function CreateStandardVM-Script($VMName) {
 }
 
 function CreatePackagingVM-Script($VMName) {
-    $tags = @{
-        ""=""
-    }
+    $tags = @{}
     foreach ($tag in $deviceSpecs.Packaging.Tags) {
         $Name = $tag | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
         $Value = $tag.$Name
@@ -51,9 +47,7 @@ function CreatePackagingVM-Script($VMName) {
 }
 
 function CreateAdminStudioVM-Script($VMName) {
-    $tags = @{
-        ""=""
-    }
+    $tags = @{}
     foreach ($tag in $deviceSpecs.AdminStudio.Tags) {
         $Name = $tag | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
         $Value = $tag.$Name
@@ -77,9 +71,7 @@ function CreateAdminStudioVM-Script($VMName) {
 }
 
 function CreateJumpboxVM-Script($VMName) {
-    $tags = @{
-        ""=""
-    }
+    $tags = @{}
     foreach ($tag in $deviceSpecs.Jumpbox.Tags) {
         $Name = $tag | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
         $Value = $tag.$Name
@@ -103,9 +95,7 @@ function CreateJumpboxVM-Script($VMName) {
 }
 
 function CreateCoreVM-Script($VMName) {
-    $tags = @{
-        ""=""
-    }
+    $tags = @{}
     foreach ($tag in $deviceSpecs.Core.Tags) {
         $Name = $tag | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
         $Value = $tag.$Name

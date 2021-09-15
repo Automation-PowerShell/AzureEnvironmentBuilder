@@ -17,9 +17,7 @@ module " + [char]34 + $VMName + [char]34 + " {
 }
 
 function CreateHyperVVM-Script($VMName) {
-    $tags = @{
-        ""=""
-    }
+    $tags = @{}
     foreach ($tag in $deviceSpecs.'Server-HyperV'.Tags) {
         $Name = $tag | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
         $Value = $tag.$Name
