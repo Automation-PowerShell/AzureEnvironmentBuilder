@@ -103,9 +103,11 @@ function CreateStorageAccount {
         $Share = New-AzStorageShare -Name $FileShareName -Context $ctx
         if ($Share.Name -eq $FileShareName) {
             Write-PEBLog "Storage Share created successfully"
+            $script:Keys = Get-AzStorageAccountKey -ResourceGroupName $RGNameSTORE -AccountName $StorageAccountName
         }
         else {
             Write-PEBLog "*** Unable to create the Storage Share! ***" -Level Error
+            Write-Dump
         }
     }
     else {

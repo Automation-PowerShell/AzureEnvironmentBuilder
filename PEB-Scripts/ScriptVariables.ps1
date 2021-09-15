@@ -54,7 +54,7 @@ $rbacContributor = "euc-rbac-contributor"
 $rbacReadOnly = "euc-rbac-readonly"
 
     # Storage Account and Container Names
-$StorageAccountName = "storageeucpackaging01"               # Storage account name (if used) (24 chars maximum)
+$StorageAccountName = "default"                             # Storage account name (if used) (24 chars maximum)
 $ContainerName = "data"                                     # Storage container name (if used) (do not change from 'data')
 $FileShareName = "pkgazfiles01"                             # Storage FileShare name (if used) (do not change from 'pkgazfiles01')
 $BlobFilesSource = "$root\BlobFilesSource"                  # Source Template Folder for CustomScriptExtension
