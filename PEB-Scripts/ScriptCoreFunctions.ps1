@@ -32,7 +32,7 @@ function RunVMConfig($ResourceGroup, $VMName, $BlobFilePath, $Blob) {
         Name                = "ConfigureVM2"
     }
 
-    $global:VMConfigure = Set-AzVMCustomScriptExtension @Params -ErrorAction SilentlyContinue
+    $VMConfigure = Set-AzVMCustomScriptExtension @Params -ErrorAction SilentlyContinue
     if ($VMConfigure.IsSuccessStatusCode -eq $True) {
         Write-PEBLog "VM: $VMName configured with $Blob successfully"
     }
@@ -118,46 +118,49 @@ function Write-LogGit {
         [Parameter(Position = 0, Mandatory)][String]$String,
         [Parameter(Position = 1, Mandatory)][ValidateSet('Info', 'Error', 'Debug')][String]$Level
     )
-    $Date = Get-Date -Format yyyy-MM-dd
-    $Time = Get-Date -Format HH:mm
-    $String = "$Date - $Time -- $String"
-    $logfile = "c:\temp\PEBgit\PEB.log"
-    if(!$gitNotFirstRun) {
-        Remove-Item -Path C:\Temp\PEBgit -Force -Recurse -ErrorAction SilentlyContinue | Out-Null
-        mkdir -Path C:\Temp -Name "PEBgit" -Force | Out-Null
+    if($gitlog -ne "") {
+        $Date = Get-Date -Format yyyy-MM-dd
+        $Time = Get-Date -Format HH:mm
+        $String = "$Date - $Time -- $String"
+        $filename = "PEB-$Date.log"
+        $logfile = "c:\temp\PEBgit\$filename"
+        if(!$gitNotFirstRun) {
+            Remove-Item -Path C:\Temp\PEBgit -Force -Recurse -ErrorAction SilentlyContinue | Out-Null
+            mkdir -Path C:\Temp -Name "PEBgit" -Force | Out-Null
+            Set-Location c:\temp\PEBgit\
+            & git init *>&1 | Out-Null
+            & git pull $gitlog *>&1 | Out-Null
+            if(!(Test-Path -Path $logfile)) {
+                Write-Output "" | Out-File -FilePath $logfile -Append -Force -Encoding ascii
+            }
+            & git add $filename -f *>&1 | Out-Null
+            & git branch -M main *>&1 | Out-Null
+            & git remote add origin $gitlog *>&1 | Out-Null
+        }
         Set-Location c:\temp\PEBgit\
-        & git init *>&1 | Out-Null
-        & git pull $gitlog *>&1 | Out-Null
-        if(!(Test-Path -Path $logfile)) {
-            Write-Output "" | Out-File -FilePath $logfile -Append -Force -Encoding ascii
+        $Script:gitNotFirstRun = $true
+        switch ($Level) {
+            "Info" {
+                $String = "$azTenant / $String"
+                $string | Out-File -FilePath $logfile -Append -Force -Encoding ascii
+                & git commit -a -m "$Date" *>&1 | Out-Null
+                & git push -u origin main *>&1 | Out-Null
+            }
+            "Error" {
+                $String = "ERROR: $azTenant / $String"
+                $string | Out-File -FilePath $logfile -Append -Force -Encoding ascii
+                & git commit -a -m "$Date" *>&1 | Out-Null
+                & git push -u origin main *>&1 | Out-Null
+            }
+            "Debug" {
+                $String = "DEBUG: $azTenant / $String"
+                $string | Out-File -FilePath $logfile -Append -Force -Encoding ascii
+                & git commit -a -m "$Date" *>&1 | Out-Null
+                & git push -u origin main *>&1 | Out-Null
+            }
         }
-        & git add PEB.log -f *>&1 | Out-Null
-        & git branch -M main *>&1 | Out-Null
-        & git remote add origin $gitlog *>&1 | Out-Null
+        Set-Location $root
     }
-    Set-Location c:\temp\PEBgit\
-    $Script:gitNotFirstRun = $true
-    switch ($Level) {
-        "Info" {
-            $String = "$azTenant / $String"
-            $string | Out-File -FilePath $logfile -Append -Force -Encoding ascii
-            & git commit -a -m "$Date" *>&1 | Out-Null
-            & git push -u origin main *>&1 | Out-Null
-        }
-        "Error" {
-            $String = "ERROR: $azTenant / $String"
-            $string | Out-File -FilePath $logfile -Append -Force -Encoding ascii
-            & git commit -a -m "$Date" *>&1 | Out-Null
-            & git push -u origin main *>&1 | Out-Null
-        }
-        "Debug" {
-            $String = "DEBUG: $azTenant / $String"
-            $string | Out-File -FilePath $logfile -Append -Force -Encoding ascii
-            & git commit -a -m "$Date" *>&1 | Out-Null
-            & git push -u origin main *>&1 | Out-Null
-        }
-    }
-    Set-Location $root
 }
 
 function Write-PEBLog {
