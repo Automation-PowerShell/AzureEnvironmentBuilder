@@ -43,7 +43,15 @@
             ],
             "VMSize": "Standard_B2s",
             "AutoShutdownRequired": true,
-            "AutoShutdownTime": 1800
+            "AutoShutdownTime": 1800,
+            "Tags": [
+                {
+                    "Application": "Desktop-Standard"
+                },
+                {
+                    "Environment": "Dev"
+                }
+            ]
         }
     ],
     "Packaging": [
@@ -83,7 +91,15 @@
             ],
             "VMSize": "Standard_B2s",
             "AutoShutdownRequired": true,
-            "AutoShutdownTime": 1800
+            "AutoShutdownTime": 1800,
+            "Tags": [
+                {
+                    "Application": "Desktop-Packaging"
+                },
+                {
+                    "Environment": "Dev"
+                }
+            ]
         }
     ],
     "AdminStudio": [
@@ -120,7 +136,15 @@
             ],
             "VMSize": "Standard_B2s",
             "AutoShutdownRequired": true,
-            "AutoShutdownTime": 1800
+            "AutoShutdownTime": 1800,
+            "Tags": [
+                {
+                    "Application": "Desktop-AdminStudio"
+                },
+                {
+                    "Environment": "Dev"
+                }
+            ]
         }
     ],
     "Jumpbox": [
@@ -148,7 +172,15 @@
             ],
             "VMSize": "Standard_B2s",
             "AutoShutdownRequired": true,
-            "AutoShutdownTime": 1800
+            "AutoShutdownTime": 1800,
+            "Tags": [
+                {
+                    "Application": "Desktop-Jumpbox"
+                },
+                {
+                    "Environment": "Dev"
+                }
+            ]
         }
     ],
     "Core": [
@@ -176,7 +208,15 @@
             ],
             "VMSize": "Standard_B2s",
             "AutoShutdownRequired": true,
-            "AutoShutdownTime": 1800
+            "AutoShutdownTime": 1800,
+            "Tags": [
+                {
+                    "Application": "Desktop-Core"
+                },
+                {
+                    "Environment": "Dev"
+                }
+            ]
         }
     ],
     "Server": [
@@ -201,8 +241,15 @@
             "dataDiskSKU": "Standard_LRS",
             "dataDiskSize": 128,
             "AutoShutdownRequired": false,
-            "AutoShutdownTime": 0
-
+            "AutoShutdownTime": 0,
+            "Tags": [
+                {
+                    "Application": "Server-Standard"
+                },
+                {
+                    "Environment": "Prod"
+                }
+            ]
         }
     ],
     "Server-HyperV": [
@@ -242,7 +289,15 @@
             "dataDiskSKU": "Standard_LRS",
             "dataDiskSize": 128,
             "AutoShutdownRequired": false,
-            "AutoShutdownTime": 0
+            "AutoShutdownTime": 0,
+            "Tags": [
+                {
+                    "Application": "Server-HyperV"
+                },
+                {
+                    "Environment": "Prod"
+                }
+            ]
         }
     ]
 }

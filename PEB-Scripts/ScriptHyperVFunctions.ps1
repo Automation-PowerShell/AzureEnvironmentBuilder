@@ -17,6 +17,13 @@ module " + [char]34 + $VMName + [char]34 + " {
 }
 
 function CreateHyperVVM-Script($VMName) {
+    $tags = @{}
+    foreach ($tag in $deviceSpecs.'Server-HyperV'.Tags) {
+        $Name = $tag | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
+        $Value = $tag.$Name
+        $tags.Add($Name,$Value)
+    }
+
     $Vnet = Get-AzVirtualNetwork -Name $VNetPROD -ResourceGroupName $RGNamePRODVNET
     $Subnet = Get-AzVirtualNetworkSubnetConfig -Name $SubnetNamePROD -VirtualNetwork $vnet
     if ($RequirePublicIPs) {

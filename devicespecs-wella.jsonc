@@ -40,7 +40,30 @@
             ],
             "VMSize": "Standard_B2s",
             "AutoShutdownRequired": true,
-            "AutoShutdownTime": 1800
+            "AutoShutdownTime": 1800,
+            "Tags": [
+                {
+                    "Application":  "App Packaging"
+                },
+                {
+                    "Compliance": "General"
+                },
+                {
+                    "CostCentre": "5400200015"
+                },
+                {
+                    "Criticality": "Mission Critical"
+                },
+                {
+                    "Data Classification": "General Business"
+                },
+                {
+                    "Disaster Recovery": "None"
+                },
+                {
+                    "Environment": "Prod"
+                }
+            ]
         }
     ],
     "Packaging": [
@@ -71,7 +94,30 @@
             ],
             "VMSize": "Standard_B2s",
             "AutoShutdownRequired": true,
-            "AutoShutdownTime": 1800
+            "AutoShutdownTime": 1800,
+            "Tags": [
+                {
+                    "Application":  "App Packaging"
+                },
+                {
+                    "Compliance": "General"
+                },
+                {
+                    "CostCentre": "5400200015"
+                },
+                {
+                    "Criticality": "Mission Critical"
+                },
+                {
+                    "Data Classification": "General Business"
+                },
+                {
+                    "Disaster Recovery": "None"
+                },
+                {
+                    "Environment": "Prod"
+                }
+            ]
         }
     ],
     "AdminStudio": [
@@ -105,7 +151,30 @@
             ],
             "VMSize": "Standard_B2s",
             "AutoShutdownRequired": true,
-            "AutoShutdownTime": 1800
+            "AutoShutdownTime": 1800,
+            "Tags": [
+                {
+                    "Application":  "App Packaging"
+                },
+                {
+                    "Compliance": "General"
+                },
+                {
+                    "CostCentre": "5400200015"
+                },
+                {
+                    "Criticality": "Mission Critical"
+                },
+                {
+                    "Data Classification": "General Business"
+                },
+                {
+                    "Disaster Recovery": "None"
+                },
+                {
+                    "Environment": "Prod"
+                }
+            ]
         }
     ],
     "Jumpbox": [
@@ -130,7 +199,30 @@
             ],
             "VMSize": "Standard_B2s",
             "AutoShutdownRequired": true,
-            "AutoShutdownTime": 1800
+            "AutoShutdownTime": 1800,
+            "Tags": [
+                {
+                    "Application":  "App Packaging"
+                },
+                {
+                    "Compliance": "General"
+                },
+                {
+                    "CostCentre": "5400200015"
+                },
+                {
+                    "Criticality": "Mission Critical"
+                },
+                {
+                    "Data Classification": "General Business"
+                },
+                {
+                    "Disaster Recovery": "None"
+                },
+                {
+                    "Environment": "Prod"
+                }
+            ]
         }
     ],
     "Core": [
@@ -155,7 +247,30 @@
             ],
             "VMSize": "Standard_B2s",
             "AutoShutdownRequired": true,
-            "AutoShutdownTime": 1800
+            "AutoShutdownTime": 1800,
+            "Tags": [
+                {
+                    "Application":  "App Packaging"
+                },
+                {
+                    "Compliance": "General"
+                },
+                {
+                    "CostCentre": "5400200015"
+                },
+                {
+                    "Criticality": "Mission Critical"
+                },
+                {
+                    "Data Classification": "General Business"
+                },
+                {
+                    "Disaster Recovery": "None"
+                },
+                {
+                    "Environment": "Prod"
+                }
+            ]
         }
     ],
     "Server": [
@@ -177,7 +292,30 @@
             "dataDiskSKU": "Standard_LRS",
             "dataDiskSize": 128,
             "AutoShutdownRequired": false,
-            "AutoShutdownTime": 0
+            "AutoShutdownTime": 0,
+            "Tags": [
+                {
+                    "Application":  "App Packaging"
+                },
+                {
+                    "Compliance": "General"
+                },
+                {
+                    "CostCentre": "5400200015"
+                },
+                {
+                    "Criticality": "Mission Critical"
+                },
+                {
+                    "Data Classification": "General Business"
+                },
+                {
+                    "Disaster Recovery": "None"
+                },
+                {
+                    "Environment": "Prod"
+                }
+            ]
 
         }
     ],
@@ -215,7 +353,30 @@
             "dataDiskSKU": "Standard_LRS",
             "dataDiskSize": 128,
             "AutoShutdownRequired": false,
-            "AutoShutdownTime": 0
+            "AutoShutdownTime": 0,
+            "Tags": [
+                {
+                    "Application":  "App Packaging"
+                },
+                {
+                    "Compliance": "General"
+                },
+                {
+                    "CostCentre": "5400200015"
+                },
+                {
+                    "Criticality": "Mission Critical"
+                },
+                {
+                    "Data Classification": "General Business"
+                },
+                {
+                    "Disaster Recovery": "None"
+                },
+                {
+                    "Environment": "Prod"
+                }
+            ]
         }
     ]
 }

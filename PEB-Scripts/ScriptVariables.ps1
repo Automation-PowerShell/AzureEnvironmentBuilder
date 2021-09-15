@@ -37,7 +37,7 @@ $RequireHyperV = $false
     # Azure Tags
 $tags = @{
     "Application"         = "EUC App Packaging"
-    "Envrionment"         = "Production"
+    "Environment"         = "Production"
 }
 
     # General Config Variables

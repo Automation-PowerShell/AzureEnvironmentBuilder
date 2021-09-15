@@ -1,4 +1,11 @@
 function CreateStandardVM-Script($VMName) {
+    $tags = @{}
+    foreach ($tag in $deviceSpecs.Standard.Tags) {
+        $Name = $tag | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
+        $Value = $tag.$Name
+        $tags.Add($Name,$Value)
+    }
+
     $Vnet = Get-AzVirtualNetwork -Name $VNetDEV -ResourceGroupName $RGNameDEVVNET
     $Subnet = Get-AzVirtualNetworkSubnetConfig -Name $SubnetNameDEV -VirtualNetwork $vnet
     if ($RequirePublicIPs) {
@@ -16,6 +23,13 @@ function CreateStandardVM-Script($VMName) {
 }
 
 function CreatePackagingVM-Script($VMName) {
+    $tags = @{}
+    foreach ($tag in $deviceSpecs.Packaging.Tags) {
+        $Name = $tag | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
+        $Value = $tag.$Name
+        $tags.Add($Name,$Value)
+    }
+
     $Vnet = Get-AzVirtualNetwork -Name $VNetDEV -ResourceGroupName $RGNameDEVVNET
     $Subnet = Get-AzVirtualNetworkSubnetConfig -Name $SubnetNameDEV -VirtualNetwork $vnet
     if ($RequirePublicIPs) {
@@ -33,6 +47,13 @@ function CreatePackagingVM-Script($VMName) {
 }
 
 function CreateAdminStudioVM-Script($VMName) {
+    $tags = @{}
+    foreach ($tag in $deviceSpecs.AdminStudio.Tags) {
+        $Name = $tag | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
+        $Value = $tag.$Name
+        $tags.Add($Name,$Value)
+    }
+
     $Vnet = Get-AzVirtualNetwork -Name $VNetDEV -ResourceGroupName $RGNameDEVVNET
     $Subnet = Get-AzVirtualNetworkSubnetConfig -Name $SubnetNameDEV -VirtualNetwork $vnet
     if ($RequirePublicIPs) {
@@ -50,6 +71,13 @@ function CreateAdminStudioVM-Script($VMName) {
 }
 
 function CreateJumpboxVM-Script($VMName) {
+    $tags = @{}
+    foreach ($tag in $deviceSpecs.Jumpbox.Tags) {
+        $Name = $tag | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
+        $Value = $tag.$Name
+        $tags.Add($Name,$Value)
+    }
+
     $Vnet = Get-AzVirtualNetwork -Name $VNetDEV -ResourceGroupName $RGNameDEVVNET
     $Subnet = Get-AzVirtualNetworkSubnetConfig -Name $SubnetNameDEV -VirtualNetwork $vnet
     if ($RequirePublicIPs) {
@@ -67,6 +95,13 @@ function CreateJumpboxVM-Script($VMName) {
 }
 
 function CreateCoreVM-Script($VMName) {
+    $tags = @{}
+    foreach ($tag in $deviceSpecs.Core.Tags) {
+        $Name = $tag | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
+        $Value = $tag.$Name
+        $tags.Add($Name,$Value)
+    }
+
     $Vnet = Get-AzVirtualNetwork -Name $VNetDEV -ResourceGroupName $RGNameDEVVNET
     $Subnet = Get-AzVirtualNetworkSubnetConfig -Name $SubnetNameDEV -VirtualNetwork $vnet
     if ($RequirePublicIPs) {
@@ -250,7 +285,7 @@ function ScriptRebuild-Create-VM {
 }
 
 function ScriptRebuild-Config-VM {
-    Get-AzContext -Name "User" | Select-AzContext | Out-Null 
+    Get-AzContext -Name "User" | Select-AzContext | Out-Null
     switch ($Spec) {
         "Standard" {
             ConfigureBaseVM -VMName "$VMName" -VMSpec "Standard" -RG $RGNameDEV
