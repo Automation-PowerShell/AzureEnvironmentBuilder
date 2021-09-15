@@ -18,6 +18,7 @@ $RequireUpdateStorage = $false
 $RequireServicePrincipal = $false
 
     # Required Components
+$isProd = $true
 $RequireUserGroups = $true
 $RequireRBAC = $true
 $RequireResourceGroups = $true
@@ -41,12 +42,6 @@ Try {
 Catch {
     throw "Error with Device Specs"
     exit
-}
-
-    # Azure Tags
-$tags = @{
-    "Application"         = "EUC App Packaging"
-    "Envrionment"         = "Production"
 }
 
     # Secure Key

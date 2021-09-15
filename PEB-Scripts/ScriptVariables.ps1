@@ -34,12 +34,6 @@ $RequireJumpboxVMs = $false
 $RequireCoreVMs = $false
 $RequireHyperV = $false
 
-    # Azure Tags
-$tags = @{
-    "Application"         = "EUC App Packaging"
-    "Environment"         = "Production"
-}
-
     # General Config Variables
 $location = "uksouth"                                       # Azure Region for resources to be built into
 $RGNameSTORE = "rg-euc-packaging-store"                     # Storage Account Resource Group name
