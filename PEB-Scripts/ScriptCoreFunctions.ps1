@@ -244,5 +244,5 @@ function ConnectTo-Azure {
         Get-AzContext | Rename-AzContext -TargetName "StorageSP" -Force | Out-Null
         Get-AzContext -Name "User" | Select-AzContext | Out-Null
     }
-    $script:Keys = Get-AzStorageAccountKey -ResourceGroupName $RGNameSTORE -AccountName $StorageAccountName
+    $script:Keys = Get-AzStorageAccountKey -ResourceGroupName $RGNameSTORE -AccountName $StorageAccountName -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
 }
