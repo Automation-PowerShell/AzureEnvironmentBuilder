@@ -43,24 +43,12 @@
             "AutoShutdownTime": 1800,
             "Tags": [
                 {
-                    "Application":  "App Packaging"
-                },
-                {
-                    "Compliance": "General"
-                },
-                {
-                    "CostCentre": "5400200015"
-                },
-                {
-                    "Criticality": "Mission Critical"
-                },
-                {
-                    "Data Classification": "General Business"
-                },
-                {
-                    "Disaster Recovery": "None"
-                },
-                {
+                    "Application":  "App Packaging",
+                    "Compliance": "General",
+                    "CostCentre": "5400200015",
+                    "Criticality": "Mission Critical",
+                    "Data Classification": "General Business",
+                    "Disaster Recovery": "None",
                     "Environment": "Prod"
                 }
             ]
@@ -97,24 +85,12 @@
             "AutoShutdownTime": 1800,
             "Tags": [
                 {
-                    "Application":  "App Packaging"
-                },
-                {
-                    "Compliance": "General"
-                },
-                {
-                    "CostCentre": "5400200015"
-                },
-                {
-                    "Criticality": "Mission Critical"
-                },
-                {
-                    "Data Classification": "General Business"
-                },
-                {
-                    "Disaster Recovery": "None"
-                },
-                {
+                    "Application":  "App Packaging",
+                    "Compliance": "General",
+                    "CostCentre": "5400200015",
+                    "Criticality": "Mission Critical",
+                    "Data Classification": "General Business",
+                    "Disaster Recovery": "None",
                     "Environment": "Prod"
                 }
             ]
@@ -154,24 +130,12 @@
             "AutoShutdownTime": 1800,
             "Tags": [
                 {
-                    "Application":  "App Packaging"
-                },
-                {
-                    "Compliance": "General"
-                },
-                {
-                    "CostCentre": "5400200015"
-                },
-                {
-                    "Criticality": "Mission Critical"
-                },
-                {
-                    "Data Classification": "General Business"
-                },
-                {
-                    "Disaster Recovery": "None"
-                },
-                {
+                    "Application":  "App Packaging",
+                    "Compliance": "General",
+                    "CostCentre": "5400200015",
+                    "Criticality": "Mission Critical",
+                    "Data Classification": "General Business",
+                    "Disaster Recovery": "None",
                     "Environment": "Prod"
                 }
             ]
@@ -202,24 +166,12 @@
             "AutoShutdownTime": 1800,
             "Tags": [
                 {
-                    "Application":  "App Packaging"
-                },
-                {
-                    "Compliance": "General"
-                },
-                {
-                    "CostCentre": "5400200015"
-                },
-                {
-                    "Criticality": "Mission Critical"
-                },
-                {
-                    "Data Classification": "General Business"
-                },
-                {
-                    "Disaster Recovery": "None"
-                },
-                {
+                    "Application":  "App Packaging",
+                    "Compliance": "General",
+                    "CostCentre": "5400200015",
+                    "Criticality": "Mission Critical",
+                    "Data Classification": "General Business",
+                    "Disaster Recovery": "None",
                     "Environment": "Prod"
                 }
             ]
@@ -250,24 +202,12 @@
             "AutoShutdownTime": 1800,
             "Tags": [
                 {
-                    "Application":  "App Packaging"
-                },
-                {
-                    "Compliance": "General"
-                },
-                {
-                    "CostCentre": "5400200015"
-                },
-                {
-                    "Criticality": "Mission Critical"
-                },
-                {
-                    "Data Classification": "General Business"
-                },
-                {
-                    "Disaster Recovery": "None"
-                },
-                {
+                    "Application":  "App Packaging",
+                    "Compliance": "General",
+                    "CostCentre": "5400200015",
+                    "Criticality": "Mission Critical",
+                    "Data Classification": "General Business",
+                    "Disaster Recovery": "None",
                     "Environment": "Prod"
                 }
             ]
@@ -295,24 +235,12 @@
             "AutoShutdownTime": 0,
             "Tags": [
                 {
-                    "Application":  "App Packaging"
-                },
-                {
-                    "Compliance": "General"
-                },
-                {
-                    "CostCentre": "5400200015"
-                },
-                {
-                    "Criticality": "Mission Critical"
-                },
-                {
-                    "Data Classification": "General Business"
-                },
-                {
-                    "Disaster Recovery": "None"
-                },
-                {
+                    "Application":  "App Packaging",
+                    "Compliance": "General",
+                    "CostCentre": "5400200015",
+                    "Criticality": "Mission Critical",
+                    "Data Classification": "General Business",
+                    "Disaster Recovery": "None",
                     "Environment": "Prod"
                 }
             ]
@@ -356,24 +284,12 @@
             "AutoShutdownTime": 0,
             "Tags": [
                 {
-                    "Application":  "App Packaging"
-                },
-                {
-                    "Compliance": "General"
-                },
-                {
-                    "CostCentre": "5400200015"
-                },
-                {
-                    "Criticality": "Mission Critical"
-                },
-                {
-                    "Data Classification": "General Business"
-                },
-                {
-                    "Disaster Recovery": "None"
-                },
-                {
+                    "Application":  "App Packaging",
+                    "Compliance": "General",
+                    "CostCentre": "5400200015",
+                    "Criticality": "Mission Critical",
+                    "Data Classification": "General Business",
+                    "Disaster Recovery": "None",
                     "Environment": "Prod"
                 }
             ]

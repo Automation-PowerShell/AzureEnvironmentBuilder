@@ -43,9 +43,7 @@
             "AutoShutdownTime": 1800,
             "Tags": [
                 {
-                    "Application": "Desktop-Standard"
-                },
-                {
+                    "Application": "Desktop-Standard",
                     "Environment": "Dev"
                 }
             ]
@@ -76,9 +74,7 @@
             "AutoShutdownTime": 1800,
             "Tags": [
                 {
-                    "Application": "Desktop-Packaging"
-                },
-                {
+                    "Application": "Desktop-Packaging",
                     "Environment": "Dev"
                 }
             ]
@@ -100,9 +96,7 @@
             "AutoShutdownTime": 1800,
             "Tags": [
                 {
-                    "Application": "Desktop-AdminStudio"
-                },
-                {
+                    "Application": "Desktop-AdminStudio",
                     "Environment": "Dev"
                 }
             ]
@@ -130,9 +124,7 @@
             "AutoShutdownTime": 0,
             "Tags": [
                 {
-                    "Application": "Desktop-Jumpbox"
-                },
-                {
+                    "Application": "Desktop-Jumpbox",
                     "Environment": "Dev"
                 }
             ]
@@ -160,9 +152,7 @@
             "AutoShutdownTime": 1800,
             "Tags": [
                 {
-                    "Application": "Desktop-Core"
-                },
-                {
+                    "Application": "Desktop-Core",
                     "Environment": "Dev"
                 }
             ]
@@ -190,9 +180,7 @@
             "AutoShutdownTime": 0,
             "Tags": [
                 {
-                    "Application": "Server-Standard"
-                },
-                {
+                    "Application": "Server-Standard",
                     "Environment": "Prod"
                 }
             ]
@@ -230,9 +218,7 @@
             "AutoShutdownTime": 0,
             "Tags": [
                 {
-                    "Application": "Server-HyperV"
-                },
-                {
+                    "Application": "Server-HyperV",
                     "Environment": "Prod"
                 }
             ]

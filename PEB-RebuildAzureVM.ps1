@@ -27,6 +27,7 @@ Set-Location $PSScriptRoot
 $root = $PSScriptRoot
 #$root = $pwd
 $PEBScripts = "$root\PEB-Scripts"
+$ExtraFiles = "$root\ExtraFiles"
 
     # Dot Source Variables
 . $PEBScripts\ScriptVariables.ps1
