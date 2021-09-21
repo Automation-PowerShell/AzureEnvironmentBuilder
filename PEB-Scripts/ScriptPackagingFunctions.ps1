@@ -166,6 +166,10 @@ function ConfigureBaseVM {
         }
         if ($RequireRBAC) {
             $Group = Get-AzADGroup -searchstring $rbacContributor
+            $groupmember = Get-AzADGroupMember -GroupObjectId $Group.Id | where {$_.DisplayName -eq $VMName}
+            if($groupmember.DisplayName -eq $VMName) {
+                Remove-AzADGroupMember -GroupObjectId $Group.Id -MemberObjectId $groupmember.Id
+            }
             Add-AzADGroupMember -TargetGroupObjectId $Group.Id -MemberObjectId $NewVm.Id -Verbose | Out-Null
             Get-AzContext -Name "User" | Select-AzContext | Out-Null
         }

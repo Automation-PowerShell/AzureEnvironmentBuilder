@@ -61,6 +61,21 @@
         },
         {
             "Name": "Build-VM"
+        },
+        {
+            "Name": "chocolatey"
+        },
+        {
+            "Name": "choco-coreapps"
+        },
+        {
+            "Name": "App-ClickShareExension"
+        },
+        {
+            "Name": "App-WellaZscaler"
+        },
+        {
+            "Name": "App-XeroxAgent"
         }
     ],
     "Prevision": [
@@ -219,6 +234,46 @@
         {
             "AppVersion": "",
             "PS1": "Build-VM.ps1",
+            "RebootRequired": false,
+            "RebootSeconds": 0
+        }
+    ],
+    "chocolatey": [
+        {
+            "AppVersion": "",
+            "PS1": "chocolatey.ps1",
+            "RebootRequired": false,
+            "RebootSeconds": 0
+        }
+    ],
+    "choco-coreapps": [
+        {
+            "AppVersion": "",
+            "PS1": "choco-coreapps.ps1",
+            "RebootRequired": false,
+            "RebootSeconds": 0
+        }
+    ],
+    "App-ClickShareExension": [
+        {
+            "AppVersion": "",
+            "PS1": "App-ClickShareExension.ps1",
+            "RebootRequired": false,
+            "RebootSeconds": 0
+        }
+    ],
+    "App-WellaZscaler": [
+        {
+            "AppVersion": "",
+            "PS1": "App-WellaZscaler.ps1",
+            "RebootRequired": false,
+            "RebootSeconds": 0
+        }
+    ],
+    "App-XeroxAgent": [
+        {
+            "AppVersion": "",
+            "PS1": "App-XeroxAgent.ps1",
             "RebootRequired": false,
             "RebootSeconds": 0
         }

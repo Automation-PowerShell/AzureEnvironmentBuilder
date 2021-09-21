@@ -192,10 +192,22 @@
                     "Name": "RunOnce"
                 },
                 {
-                    "Name": "VCPP"
+                    "Name": "chocolatey"
+                },
+                {
+                    "Name": "choco-coreapps"
                 },
                 {
                     "Name": "Office365"
+                },
+                {
+                    "Name": "App-ClickShareExension"
+                },
+                {
+                    "Name": "App-WellaZscaler"
+                },
+                {
+                    "Name": "App-XeroxAgent"
                 }
             ],
             "VMSize": "Standard_B2s",
