@@ -18,10 +18,10 @@ module " + [char]34 + $VMName + [char]34 + " {
 
 function CreateHyperVVM-Script($VMName) {
     $tags = @{}
-    foreach ($tag in $deviceSpecs.'Server-HyperV'.Tags) {
-        $Name = $tag | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
-        $Value = $tag.$Name
-        $tags.Add($Name,$Value)
+    $names = $deviceSpecs.Standard.Tags | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
+    foreach ($name in $names) {
+        $value = $deviceSpecs.Standard.Tags.$name
+        $tags.Add($name,$value)
     }
 
     $Vnet = Get-AzVirtualNetwork -Name $VNetPROD -ResourceGroupName $RGNamePRODVNET

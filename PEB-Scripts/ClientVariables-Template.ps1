@@ -41,7 +41,6 @@ $RequireCoreVMs = $true
 $RequireHyperV = $true
 
     # Script Variables
-$ExtraFiles = "$root\ExtraFiles"
 Try {
     $deviceSpecs = Get-Content $root\devicespecs-template.jsonc | ConvertFrom-Json -ErrorAction Stop
     $appSpecs = Get-Content $root\appspecs-template.jsonc | ConvertFrom-Json -ErrorAction Stop

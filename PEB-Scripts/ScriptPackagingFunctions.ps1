@@ -1,9 +1,9 @@
 function CreateStandardVM-Script($VMName) {
     $tags = @{}
-    foreach ($tag in $deviceSpecs.Standard.Tags) {
-        $Name = $tag | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
-        $Value = $tag.$Name
-        $tags.Add($Name,$Value)
+    $names = $deviceSpecs.Standard.Tags | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
+    foreach ($name in $names) {
+        $value = $deviceSpecs.Standard.Tags.$name
+        $tags.Add($name,$value)
     }
 
     $Vnet = Get-AzVirtualNetwork -Name $VNetDEV -ResourceGroupName $RGNameDEVVNET
@@ -24,10 +24,10 @@ function CreateStandardVM-Script($VMName) {
 
 function CreatePackagingVM-Script($VMName) {
     $tags = @{}
-    foreach ($tag in $deviceSpecs.Packaging.Tags) {
-        $Name = $tag | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
-        $Value = $tag.$Name
-        $tags.Add($Name,$Value)
+    $names = $deviceSpecs.Standard.Tags | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
+    foreach ($name in $names) {
+        $value = $deviceSpecs.Standard.Tags.$name
+        $tags.Add($name,$value)
     }
 
     $Vnet = Get-AzVirtualNetwork -Name $VNetDEV -ResourceGroupName $RGNameDEVVNET
@@ -48,10 +48,10 @@ function CreatePackagingVM-Script($VMName) {
 
 function CreateAdminStudioVM-Script($VMName) {
     $tags = @{}
-    foreach ($tag in $deviceSpecs.AdminStudio.Tags) {
-        $Name = $tag | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
-        $Value = $tag.$Name
-        $tags.Add($Name,$Value)
+    $names = $deviceSpecs.Standard.Tags | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
+    foreach ($name in $names) {
+        $value = $deviceSpecs.Standard.Tags.$name
+        $tags.Add($name,$value)
     }
 
     $Vnet = Get-AzVirtualNetwork -Name $VNetDEV -ResourceGroupName $RGNameDEVVNET
@@ -72,10 +72,10 @@ function CreateAdminStudioVM-Script($VMName) {
 
 function CreateJumpboxVM-Script($VMName) {
     $tags = @{}
-    foreach ($tag in $deviceSpecs.Jumpbox.Tags) {
-        $Name = $tag | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
-        $Value = $tag.$Name
-        $tags.Add($Name,$Value)
+    $names = $deviceSpecs.Standard.Tags | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
+    foreach ($name in $names) {
+        $value = $deviceSpecs.Standard.Tags.$name
+        $tags.Add($name,$value)
     }
 
     $Vnet = Get-AzVirtualNetwork -Name $VNetDEV -ResourceGroupName $RGNameDEVVNET
@@ -96,10 +96,10 @@ function CreateJumpboxVM-Script($VMName) {
 
 function CreateCoreVM-Script($VMName) {
     $tags = @{}
-    foreach ($tag in $deviceSpecs.Core.Tags) {
-        $Name = $tag | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
-        $Value = $tag.$Name
-        $tags.Add($Name,$Value)
+    $names = $deviceSpecs.Standard.Tags | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
+    foreach ($name in $names) {
+        $value = $deviceSpecs.Standard.Tags.$name
+        $tags.Add($name,$value)
     }
 
     $Vnet = Get-AzVirtualNetwork -Name $VNetDEV -ResourceGroupName $RGNameDEVVNET
@@ -166,6 +166,10 @@ function ConfigureBaseVM {
         }
         if ($RequireRBAC) {
             $Group = Get-AzADGroup -searchstring $rbacContributor
+            $groupmember = Get-AzADGroupMember -GroupObjectId $Group.Id | where {$_.DisplayName -eq $VMName}
+            if($groupmember.DisplayName -eq $VMName) {
+                Remove-AzADGroupMember -GroupObjectId $Group.Id -MemberObjectId $groupmember.Id
+            }
             Add-AzADGroupMember -TargetGroupObjectId $Group.Id -MemberObjectId $NewVm.Id -Verbose | Out-Null
             Get-AzContext -Name "User" | Select-AzContext | Out-Null
         }
