@@ -11,7 +11,6 @@
 *.xml
 *.key
 *.csv
-PEB.log
 ClientVariables-Dan.ps1
 ClientVariables-Wella.ps1
 ClientVariables-NHS.ps1
@@ -24,4 +23,5 @@ ClientLoadVariables.ps1
 /Old Files/
 /PackagingFactoryConfig-main/
 null
-PEB-Scripts/ClientVariables-Test.ps1
+AEB.log
+PEB.log
