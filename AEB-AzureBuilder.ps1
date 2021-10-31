@@ -3,7 +3,7 @@
 AEB-AzureBuilder.ps1
 
 .DESCRIPTION
-Packaging Environment Builder - Azure Builder.
+Azure Environment Builder - Azure Builder.
 Wrtitten by Graham Higginson and Daniel Ames.
 
 .NOTES
@@ -11,7 +11,7 @@ Written by      : Graham Higginson & Daniel Ames
 Build Version   : v1
 
 .LINK
-More Info       : https://github.com/Automation-PowerShell/PackagingEnvironmentBuilder
+More Info       : https://github.com/Automation-PowerShell/AzureEnvironmentBuilder
 
 #>
 
@@ -43,7 +43,7 @@ Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"  # Turns off 
 
 #region Main
 Write-AEBLog "Running AEB-AzureBuilder.ps1"
-if($isProd) { Write-Warning "Are you sure you want to rebuild the Packaging Environment?  OK to Continue?" -WarningAction Inquire }
+if($isProd) { Write-Warning "Are you sure you want to rebuild the Azure Environment?  OK to Continue?" -WarningAction Inquire }
 
 if($RequireCreate) {
         # Create Resource Groups
@@ -80,7 +80,7 @@ if($RequireCreate) {
         # Create Storage Account
     CreateStorageAccount
 
-        # Create Packaging VM Script
+        # Create Desktop VM Script
     if ($UseTerraform) {
         TerraformBuild-VM
     }
@@ -88,7 +88,7 @@ if($RequireCreate) {
         ScriptBuild-Create-VM
     }
 
-        # Create Hyper-V Script
+        # Create Server Script
     if ($RequireHyperV) {
         if ($UseTerraform) {
             TerraformBuild-HVVM
@@ -120,7 +120,7 @@ if ($RequireConfigure) {
         UpdateRBAC
     }
 
-        # Configure Packaging VM Script
+        # Configure Desktop VM Script
     if ($UseTerraform) {
         TerraformConfigure-VM
     }
@@ -128,7 +128,7 @@ if ($RequireConfigure) {
         ScriptBuild-Config-VM
     }
 
-        # Configure Hyper-V Script
+        # Configure Server Script
     if($RequireHyperV) {
         if ($UseTerraform) {
             TerraformConfigure-HVVM

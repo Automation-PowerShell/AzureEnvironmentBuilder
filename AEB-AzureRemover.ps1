@@ -3,7 +3,7 @@
 AEB-AzureRemiver.ps1
 
 .DESCRIPTION
-Packaging Environment Builder - Azure Remover.
+Azure Environment Builder - Azure Remover.
 Wrtitten by Graham Higginson and Daniel Ames.
 
 .NOTES
@@ -11,7 +11,7 @@ Written by      : Graham Higginson & Daniel Ames
 Build Version   : v1
 
 .LINK
-More Info       : https://github.com/Automation-PowerShell/PackagingEnvironmentBuilder
+More Info       : https://github.com/Automation-PowerShell/AzureEnvironmentBuilder
 
 #>
 
@@ -38,7 +38,7 @@ Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"  # Turns off 
 
 #region Main
 Write-AEBLog "Running AEB-AzureRemover.ps1"
-if($isProd) { Write-Warning "Are you sure you want to delete the Packaging Environment?  OK to Continue?" -WarningAction Inquire }
+if($isProd) { Write-Warning "Are you sure you want to delete the Azure Environment?  OK to Continue?" -WarningAction Inquire }
 
 if(!($isProd) -and $RequireUserGroups) {
     Remove-AzAdGroup -DisplayName $rbacOwner -ErrorAction Ignore  -Force -Verbose
