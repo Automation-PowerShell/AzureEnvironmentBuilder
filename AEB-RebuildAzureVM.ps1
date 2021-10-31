@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-PEB-RebuildAzureVM.ps1
+AEB-RebuildAzureVM.ps1
 
 .DESCRIPTION
 Packaging Environment Builder - Rebuild Azure VM.
@@ -26,19 +26,19 @@ Set-Location $PSScriptRoot
     # Script Variables
 $root = $PSScriptRoot
 #$root = $pwd
-$PEBScripts = "$root\PEB-Scripts"
+$AEBScripts = "$root\AEB-Scripts"
 $ExtraFiles = "$root\ExtraFiles"
 
     # Dot Source Variables
-. $PEBScripts\ScriptVariables.ps1
-. $PEBScripts\ClientLoadVariables.ps1
+. $AEBScripts\ScriptVariables.ps1
+. $AEBScripts\ClientLoadVariables.ps1
 
     # Dot Source Functions
-. $PEBScripts\ScriptCoreFunctions.ps1
-. $PEBScripts\ScriptEnvironmentFunctions.ps1
-. $PEBScripts\ScriptPackagingFunctions.ps1
-. $PEBScripts\ScriptHyperVFunctions.ps1
-#. $PEBScripts\ClientLoadFunctions.ps1
+. $AEBScripts\ScriptCoreFunctions.ps1
+. $AEBScripts\ScriptEnvironmentFunctions.ps1
+. $AEBScripts\ScriptDesktopFunctions.ps1
+. $AEBScripts\ScriptServerFunctions.ps1
+#. $AEBScripts\ClientLoadFunctions.ps1
 
     # Load Azure Modules and Connect
 ConnectTo-Azure
@@ -47,7 +47,7 @@ Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"  # Turns off 
 #endregion Setup
 
 #region Main
-Write-PEBLog "Running PEB-RebuildAzureVM.ps1"
+Write-AEBLog "Running AEB-RebuildAzureVM.ps1"
 if($VMName -eq "") {
     $VMList = Get-AzVM -Name * -ResourceGroupName $RGNameDEV -ErrorAction SilentlyContinue
     $VMName = ($VMlist | Where-Object { $_.Name -notin $VMListExclude  } | Select-Object Name | Out-GridView -Title "Select Virtual Machine to Rebuild" -OutputMode Single).Name
@@ -60,9 +60,9 @@ Write-Warning "This Script is about to Rebuild: $VMName with Spec: $Spec.  OK to
     # Update Storage
 UpdateStorage
 
-Write-PEBLog "Rebuilding: $VMName with Spec: $Spec"
+Write-AEBLog "Rebuilding: $VMName with Spec: $Spec"
 ScriptRebuild-Create-VM
 ScriptRebuild-Config-VM
-Write-PEBLog "Completed PEB-RebuildAzureVM.ps1"
-Write-PEBLog "============================================================================================================="
+Write-AEBLog "Completed AEB-RebuildAzureVM.ps1"
+Write-AEBLog "============================================================================================================="
 #endregion Main

@@ -1,6 +1,6 @@
 ﻿<#
 .SYNOPSIS
-PEB-AzureRemiver.ps1
+AEB-AzureRemiver.ps1
 
 .DESCRIPTION
 Packaging Environment Builder - Azure Remover.
@@ -20,15 +20,15 @@ Set-Location $PSScriptRoot
 
     # Script Variables
 $root = $PSScriptRoot
-$PEBScripts = "$root\PEB-Scripts"
+$AEBScripts = "$root\AEB-Scripts"
 $ExtraFiles = "$root\ExtraFiles"
 
     # Dot Source Variables
-. $PEBScripts\ScriptVariables.ps1
-. $PEBScripts\ClientLoadVariables.ps1
+. $AEBScripts\ScriptVariables.ps1
+. $AEBScripts\ClientLoadVariables.ps1
 
     # Dot Source Functions
-. $PEBScripts\ScriptCoreFunctions.ps1
+. $AEBScripts\ScriptCoreFunctions.ps1
 
     # Load Azure Modules and Connect
 ConnectTo-Azure
@@ -37,7 +37,7 @@ Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"  # Turns off 
 #endregion Setup
 
 #region Main
-Write-PEBLog "Running PEB-AzureRemover.ps1"
+Write-AEBLog "Running AEB-AzureRemover.ps1"
 if($isProd) { Write-Warning "Are you sure you want to delete the Packaging Environment?  OK to Continue?" -WarningAction Inquire }
 
 if(!($isProd) -and $RequireUserGroups) {
@@ -51,6 +51,6 @@ if(!($isProd)) {
     Remove-AzResourceGroup -Name $RGNameDEVVNET -Force -ErrorAction Ignore -Verbose         # Dont want to do this is a Production Environment
     Remove-AzResourceGroup -Name $RGNamePRODVNET -Force -ErrorAction Ignore -Verbose        # Dont want to do this is a Production Environment
 }
-Write-PEBLog "Completed PEB-AzureRemover.ps1"
-Write-PEBLog "============================================================================================================="
+Write-AEBLog "Completed AEB-AzureRemover.ps1"
+Write-AEBLog "============================================================================================================="
 #endregion

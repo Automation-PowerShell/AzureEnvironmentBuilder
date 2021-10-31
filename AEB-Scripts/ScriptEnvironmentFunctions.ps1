@@ -1,6 +1,6 @@
 function UpdateStorage {
     if ($RequireUpdateStorage) {
-        Write-PEBLog "Syncing Files..."
+        Write-AEBLog "Syncing Files..."
         Try {
             if (!(Test-Path -Path $BlobFilesDest)) { New-Item -Path $BlobFilesDest -ItemType "directory" }
             $templates = Get-ChildItem -Path $BlobFilesSource -Filter *tmpl* -File
@@ -19,12 +19,12 @@ function UpdateStorage {
             }
         }
         Catch {
-            Write-PEBLog "*** An error occured trying to create the customised scripts for the Storage Blob ***" -Level Error
+            Write-AEBLog "*** An error occured trying to create the customised scripts for the Storage Blob ***" -Level Error
             Write-Dump
         }
-        . $PEBScripts\PEB-SyncFiles.ps1 -CallFromCreatePackaging -Recurse        # Sync Files to Storage Blob
-        #. $PEBScripts\PEB-SyncFiles.ps1 -CallFromCreatePackaging                  # Sync Files to Storage Blob
-        Write-PEBLog "Storage Account has been Updated with files"
+        . $AEBScripts\AEB-SyncFiles.ps1 -CallFromCreatePackaging -Recurse        # Sync Files to Storage Blob
+        #. $AEBScripts\AEB-SyncFiles.ps1 -CallFromCreatePackaging                  # Sync Files to Storage Blob
+        Write-AEBLog "Storage Account has been Updated with files"
     }
 }
 
@@ -46,7 +46,7 @@ function UpdateRBAC {
         New-AzRoleAssignment -ObjectId $ContributorGroup.Id -RoleDefinitionName "Contributor" -ResourceGroupName $RGNameSTORE -ErrorAction Ignore | Out-Null
         New-AzRoleAssignment -ObjectId $ReadOnlyGroup.Id -RoleDefinitionName "Reader" -ResourceGroupName $RGNameSTORE -ErrorAction Ignore | Out-Null
     }
-    Write-PEBLog "Role Assignments Set"
+    Write-AEBLog "Role Assignments Set"
 }
 
 function ConfigureNetwork {
@@ -62,16 +62,16 @@ function ConfigureNetwork {
         $rule2 = New-AzNetworkSecurityRuleConfig -Name smb-rule -Description "Allow SMB" -Access Allow -Protocol Tcp -Direction Outbound -Priority 100 -SourceAddressPrefix * -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange 445
 
         $nsgPROD = New-AzNetworkSecurityGroup -ResourceGroupName $RGNamePRODVNET -Location $location -Name $NsgNamePROD -SecurityRules $rule1, $rule2     # $Rule1, $Rule2 etc.
-        if ($nsgPROD.ProvisioningState -eq "Succeeded") { Write-PEBLog "PROD Network Security Group created successfully"} Else { Write-PEBLog "*** Unable to create or configure PROD Network Security Group! ***" -Level Error}
+        if ($nsgPROD.ProvisioningState -eq "Succeeded") { Write-AEBLog "PROD Network Security Group created successfully"} Else { Write-AEBLog "*** Unable to create or configure PROD Network Security Group! ***" -Level Error}
         $VnscPROD = Set-AzVirtualNetworkSubnetConfig -Name default -VirtualNetwork $virtualNetworkPROD -AddressPrefix "10.0.1.0/24" -NetworkSecurityGroup $nsgPROD
         $virtualNetworkPROD | Set-AzVirtualNetwork >> null
-        if ($virtualNetworkPROD.ProvisioningState -eq "Succeeded") { Write-PEBLog "PROD Virtual Network created and associated with the Network Security Group successfully" } Else { Write-PEBLog "*** Unable to create the PROD Virtual Network, or associate it to the Network Security Group! ***" -Level Error }
+        if ($virtualNetworkPROD.ProvisioningState -eq "Succeeded") { Write-AEBLog "PROD Virtual Network created and associated with the Network Security Group successfully" } Else { Write-AEBLog "*** Unable to create the PROD Virtual Network, or associate it to the Network Security Group! ***" -Level Error }
         if (!($RGNameDEVVNET -match $RGNamePRODVNET)) {
             $nsgDEV = New-AzNetworkSecurityGroup -ResourceGroupName $RGNameDEVVNET -Location $location -Name $NsgNameDEV -SecurityRules $rule1, $rule2     # $Rule1, $Rule2 etc.
-            if ($nsgDEV.ProvisioningState -eq "Succeeded") { Write-PEBLog "DEV Network Security Group created successfully" }Else { Write-PEBLog "*** Unable to create or configure DEV Network Security Group! ***" }
+            if ($nsgDEV.ProvisioningState -eq "Succeeded") { Write-AEBLog "DEV Network Security Group created successfully" }Else { Write-AEBLog "*** Unable to create or configure DEV Network Security Group! ***" }
             $VnscDEV = Set-AzVirtualNetworkSubnetConfig -Name default -VirtualNetwork $virtualNetworkDEV -AddressPrefix "10.0.1.0/24" -NetworkSecurityGroup $nsgDEV
             $virtualNetworkDEV | Set-AzVirtualNetwork >> null
-            if ($virtualNetworkDEV.ProvisioningState -eq "Succeeded") { Write-PEBLog "DEV Virtual Network created and associated with the Network Security Group successfully" } Else { Write-PEBLog "*** Unable to create the DEV Virtual Network, or associate it to the Network Security Group! ***" -Level Error }
+            if ($virtualNetworkDEV.ProvisioningState -eq "Succeeded") { Write-AEBLog "DEV Virtual Network created and associated with the Network Security Group successfully" } Else { Write-AEBLog "*** Unable to create the DEV Virtual Network, or associate it to the Network Security Group! ***" -Level Error }
         }
     }
 }
@@ -82,9 +82,9 @@ function CreateRBACConfig {
     $ReadOnlyGroup = Get-AzAdGroup -DisplayName $rbacReadOnly
 
     if ($RequireUserGroups -and !$UseTerraform) {
-        if (!($OwnerGroup)){$Owner = New-AzADGroup -DisplayName $rbacOwner -MailNickName "NotSet"}Else{Write-PEBLog "Owner RBAC group already exists" -Level Error;$Owner=$OwnerGroup}
-        if (!($ContributorGroup)){$Contributor = New-AzADGroup -DisplayName $rbacContributor -MailNickName "NotSet"}Else{Write-PEBLog "Contributor RBAC group already exists" -Level Error;$Contributor=$ContributorGroup}
-        if (!($ReadOnlyGroup)){$ReadOnly = New-AzADGroup -DisplayName $rbacReadOnly -MailNickName "NotSet"}Else{Write-PEBLog "ReadOnly RBAC group already exists" -Level Error;$ReadOnly=$ReadOnlyGroup}
+        if (!($OwnerGroup)){$Owner = New-AzADGroup -DisplayName $rbacOwner -MailNickName "NotSet"}Else{Write-AEBLog "Owner RBAC group already exists" -Level Error;$Owner=$OwnerGroup}
+        if (!($ContributorGroup)){$Contributor = New-AzADGroup -DisplayName $rbacContributor -MailNickName "NotSet"}Else{Write-AEBLog "Contributor RBAC group already exists" -Level Error;$Contributor=$ContributorGroup}
+        if (!($ReadOnlyGroup)){$ReadOnly = New-AzADGroup -DisplayName $rbacReadOnly -MailNickName "NotSet"}Else{Write-AEBLog "ReadOnly RBAC group already exists" -Level Error;$ReadOnly=$ReadOnlyGroup}
     }
 }
 
@@ -95,22 +95,22 @@ function CreateStorageAccount {
         $ctx = $storageAccount.Context
         $Container = New-AzStorageContainer -Name $ContainerName -Context $ctx -Permission Blob
         if ($storageAccount.StorageAccountName -eq $StorageAccountName -and $Container.Name -eq $ContainerName) {
-            Write-PEBLog "Storage Account and container created successfully"
+            Write-AEBLog "Storage Account and container created successfully"
         }
         else {
-            Write-PEBLog "*** Unable to create the Storage Account or container! ***" -Level Error
+            Write-AEBLog "*** Unable to create the Storage Account or container! ***" -Level Error
         }
         $Share = New-AzStorageShare -Name $FileShareName -Context $ctx
         if ($Share.Name -eq $FileShareName) {
-            Write-PEBLog "Storage Share created successfully"
+            Write-AEBLog "Storage Share created successfully"
             $script:Keys = Get-AzStorageAccountKey -ResourceGroupName $RGNameSTORE -AccountName $StorageAccountName
         }
         else {
-            Write-PEBLog "*** Unable to create the Storage Share! ***" -Level Error
+            Write-AEBLog "*** Unable to create the Storage Share! ***" -Level Error
             Write-Dump
         }
     }
     else {
-        Write-PEBLog "Creation of Storage Account and Storage Container not required"
+        Write-AEBLog "Creation of Storage Account and Storage Container not required"
     }
 }
