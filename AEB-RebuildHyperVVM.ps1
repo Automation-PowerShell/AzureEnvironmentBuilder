@@ -3,7 +3,7 @@
 AEB-RebuildHyperVVM.ps1
 
 .DESCRIPTION
-Packaging Environment Builder - Rebuild HyperV VM.
+Azure Environment Builder - Rebuild HyperV VM.
 Wrtitten by Graham Higginson and Daniel Ames.
 
 .NOTES
@@ -11,7 +11,7 @@ Written by      : Graham Higginson & Daniel Ames
 Build Version   : v2
 
 .LINK
-More Info       : https://github.com/Automation-PowerShell/PackagingEnvironmentBuilder
+More Info       : https://github.com/Automation-PowerShell/AzureEnvironmentBuilder
 
 #>
 
