@@ -1,5 +1,5 @@
 ﻿$app = "choco-coreapps"
-$args = "install vcredist2013 vcredist140 adobereader 7zip.install googlechrome dotnet3.5 laps choco install azure-information-protection-unified-labeling-client choco install clickshare-desktop --limitoutput"
+$args = "install vcredist2013 vcredist140 adobereader 7zip.install googlechrome dotnet3.5 laps azure-information-protection-unified-labeling-client clickshare-desktop --limitoutput"
 
 $EventLogName = "Accenture"
 $EventLogSource = "$app Install Script"

@@ -47,7 +47,7 @@ function Write-LogScreen {
         [Parameter(Position = 1, Mandatory)][ValidateSet('Info', 'Error', 'Debug')][String]$Level
     )
     $Date = Get-Date -Format yyyy-MM-dd
-    $Time = Get-Date -Format HH:mm
+    $Time = Get-Date -Format HH:mm:ss
     $String = "$Date - $Time -- $String"
     switch ($Level) {
         "Info" {
@@ -70,7 +70,7 @@ function Write-LogFile {
         [Parameter(Position = 1, Mandatory)][ValidateSet('Info', 'Error', 'Debug')][String]$Level
     )
     $Date = Get-Date -Format yyyy-MM-dd
-    $Time = Get-Date -Format HH:mm
+    $Time = Get-Date -Format HH:mm:ss
     $String = "$Date - $Time -- $String"
     $logfile = "$root\PEB.log"
     switch ($Level) {
@@ -113,6 +113,47 @@ function Write-LogCMFile {
     }
 }
 
+function Write-LogStorageAccount {
+    Param(
+        [Parameter(Position = 0, Mandatory)][String]$String,
+        [Parameter(Position = 1, Mandatory)][ValidateSet('Info', 'Error', 'Debug')][String]$Level
+    )
+
+    $Date = Get-Date -Format yyyy-MM-dd
+    $Time = Get-Date -Format HH:mm:ss
+    $String = "$Date - $Time -- $String"
+    $filename = "PEB-$Date.log"
+    $logfile = "c:\temp\PEBSA\$filename"
+
+    if(!$saNotFirstRun) {
+        Remove-Item -Path C:\Temp\PEBSA -Force -Recurse -ErrorAction SilentlyContinue | Out-Null
+        mkdir -Path C:\Temp -Name "PEBSA" -Force | Out-Null
+        $Script:StorageAccount = Get-AzStorageAccount -Name $StorageAccountName -ResourceGroupName $RGNameSTORE
+        $Script:Context = $storageAccount.Context
+        #$Script:FileShareContainer = Get-AzStorageShare -Name $FileShareName -Context $Context
+    }
+    Set-Location c:\temp\PEBSA\
+    $Script:saNotFirstRun = $true
+    switch ($Level) {
+        "Info" {
+            $String = "$azTenant / $String"
+            $string | Out-File -FilePath $logfile -Append -Force -Encoding ascii
+            Set-AzStorageFileContent -ShareName $FileShareName -Source $logfile -Path "Logs/" -Context $Context -Force
+        }
+        "Error" {
+            $String = "ERROR: $azTenant / $String"
+            $string | Out-File -FilePath $logfile -Append -Force -Encoding ascii
+            Set-AzStorageFileContent -ShareName $FileShareName -Source $logfile -Path "Logs/" -Context $Context -Force
+        }
+        "Debug" {
+            $String = "DEBUG: $azTenant / $String"
+            $string | Out-File -FilePath $logfile -Append -Force -Encoding ascii
+            Set-AzStorageFileContent -ShareName $FileShareName -Source $logfile -Path "Logs/$filename" -Context $Context -Force
+        }
+    }
+    Set-Location $root
+}
+
 function Write-LogGit {
     Param(
         [Parameter(Position = 0, Mandatory)][String]$String,
@@ -120,7 +161,7 @@ function Write-LogGit {
     )
     if($gitlog -ne "") {
         $Date = Get-Date -Format yyyy-MM-dd
-        $Time = Get-Date -Format HH:mm
+        $Time = Get-Date -Format HH:mm:ss
         $String = "$Date - $Time -- $String"
         $filename = "PEB-$Date.log"
         $logfile = "c:\temp\PEBgit\$filename"
@@ -173,6 +214,7 @@ function Write-PEBLog {
     if(!($isProd)) {
         Write-LogCMFile -String $String -Level $Level
         Write-LogGit -String $String -Level $Level
+        Write-LogStorageAccount -String $String -Level $Level
     }
     else {
         Write-LogFile -String $String -Level $Level
