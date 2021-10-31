@@ -22,8 +22,8 @@ function UpdateStorage {
             Write-AEBLog "*** An error occured trying to create the customised scripts for the Storage Blob ***" -Level Error
             Write-Dump
         }
-        . $AEBScripts\AEB-SyncFiles.ps1 -CallFromCreatePackaging -Recurse        # Sync Files to Storage Blob
-        #. $AEBScripts\AEB-SyncFiles.ps1 -CallFromCreatePackaging                  # Sync Files to Storage Blob
+        . $AEBScripts\SyncFiles.ps1 -CallFromCreatePackaging -Recurse        # Sync Files to Storage Blob
+        #. $AEBScripts\SyncFiles.ps1 -CallFromCreatePackaging                  # Sync Files to Storage Blob
         Write-AEBLog "Storage Account has been Updated with files"
     }
 }
