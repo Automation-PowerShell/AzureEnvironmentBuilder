@@ -12,10 +12,10 @@
 
     $global:VMConfigure = Set-AzVMCustomScriptExtension @Params -ErrorAction SilentlyContinue
     if ($VMConfigure.IsSuccessStatusCode -eq $True) {
-        Write-PEBLog "VM: $VMName configured with $Blob successfully"
+        Write-AEBLog "VM: $VMName configured with $Blob successfully"
     }
     else {
-        Write-PEBLog "*** VM: $VMName - Unable to configure Virtual Machine with $Blob ***" -Level Error
+        Write-AEBLog "*** VM: $VMName - Unable to configure Virtual Machine with $Blob ***" -Level Error
     }
 }#>
 
@@ -34,10 +34,10 @@ function RunVMConfig($ResourceGroup, $VMName, $BlobFilePath, $Blob) {
 
     $VMConfigure = Set-AzVMCustomScriptExtension @Params -ErrorAction SilentlyContinue
     if ($VMConfigure.IsSuccessStatusCode -eq $True) {
-        Write-PEBLog "VM: $VMName configured with $Blob successfully"
+        Write-AEBLog "VM: $VMName configured with $Blob successfully"
     }
     else {
-        Write-PEBLog "*** VM: $VMName - Unable to configure Virtual Machine with $Blob ***" -Level Error
+        Write-AEBLog "*** VM: $VMName - Unable to configure Virtual Machine with $Blob ***" -Level Error
     }
 }
 
@@ -72,7 +72,7 @@ function Write-LogFile {
     $Date = Get-Date -Format yyyy-MM-dd
     $Time = Get-Date -Format HH:mm:ss
     $String = "$Date - $Time -- $String"
-    $logfile = "$root\PEB.log"
+    $logfile = "$root\AEB.log"
     switch ($Level) {
         "Info" {
             $String = "$String"
@@ -96,7 +96,7 @@ function Write-LogCMFile {
     )
     $Date = Get-Date -Format MM-dd-yyyy
     $Time = Get-Date -Format HH:mm:ss
-    $logfile = "$root\PEB.log"
+    $logfile = "$root\AEB.log"
         switch ($Level) {
         "Info" {
             $String = "<![LOG[$String]LOG]!><time=`"$Time.000-60`" date=`"$Date`" component=`"$azTenant`" context=`"`" type=`"1`" thread=`"`" file=`"`">"
@@ -122,17 +122,17 @@ function Write-LogStorageAccount {
     $Date = Get-Date -Format yyyy-MM-dd
     $Time = Get-Date -Format HH:mm:ss
     $String = "$Date - $Time -- $String"
-    $filename = "PEB-$Date.log"
-    $logfile = "c:\temp\PEBSA\$filename"
+    $filename = "AEB-$Date.log"
+    $logfile = "c:\temp\AEBSA\$filename"
 
     if(!$saNotFirstRun) {
-        Remove-Item -Path C:\Temp\PEBSA -Force -Recurse -ErrorAction SilentlyContinue | Out-Null
-        mkdir -Path C:\Temp -Name "PEBSA" -Force | Out-Null
+        Remove-Item -Path C:\Temp\AEBSA -Force -Recurse -ErrorAction SilentlyContinue | Out-Null
+        mkdir -Path C:\Temp -Name "AEBSA" -Force | Out-Null
         $Script:StorageAccount = Get-AzStorageAccount -Name $StorageAccountName -ResourceGroupName $RGNameSTORE
         $Script:Context = $storageAccount.Context
         #$Script:FileShareContainer = Get-AzStorageShare -Name $FileShareName -Context $Context
     }
-    Set-Location c:\temp\PEBSA\
+    Set-Location c:\temp\AEBSA\
     $Script:saNotFirstRun = $true
     switch ($Level) {
         "Info" {
@@ -163,12 +163,12 @@ function Write-LogGit {
         $Date = Get-Date -Format yyyy-MM-dd
         $Time = Get-Date -Format HH:mm:ss
         $String = "$Date - $Time -- $String"
-        $filename = "PEB-$Date.log"
-        $logfile = "c:\temp\PEBgit\$filename"
+        $filename = "AEB-$Date.log"
+        $logfile = "c:\temp\AEBgit\$filename"
         if(!$gitNotFirstRun) {
-            Remove-Item -Path C:\Temp\PEBgit -Force -Recurse -ErrorAction SilentlyContinue | Out-Null
-            mkdir -Path C:\Temp -Name "PEBgit" -Force | Out-Null
-            Set-Location c:\temp\PEBgit\
+            Remove-Item -Path C:\Temp\AEBgit -Force -Recurse -ErrorAction SilentlyContinue | Out-Null
+            mkdir -Path C:\Temp -Name "AEBgit" -Force | Out-Null
+            Set-Location c:\temp\AEBgit\
             & git init *>&1 | Out-Null
             & git pull $gitlog *>&1 | Out-Null
             if(!(Test-Path -Path $logfile)) {
@@ -178,7 +178,7 @@ function Write-LogGit {
             & git branch -M main *>&1 | Out-Null
             & git remote add origin $gitlog *>&1 | Out-Null
         }
-        Set-Location c:\temp\PEBgit\
+        Set-Location c:\temp\AEBgit\
         $Script:gitNotFirstRun = $true
         switch ($Level) {
             "Info" {
@@ -204,7 +204,7 @@ function Write-LogGit {
     }
 }
 
-function Write-PEBLog {
+function Write-AEBLog {
     Param(
         [Parameter(Position = 0, Mandatory)][String]$String,
         [ValidateSet('Info', 'Error', 'Debug')][String]$Level = "Info"
@@ -245,7 +245,7 @@ function Write-Dump {
         [Parameter(Position = 3)][object]$object4,
         [Parameter(Position = 4)][object]$object5
     )
-    Write-PEBLog -String "*** Write-Dump ***" -Level Debug
+    Write-AEBLog -String "*** Write-Dump ***" -Level Debug
     Write-DumpLine '$?' $?
     Write-DumpLine '$azSubscription' $azSubscription
     Write-DumpLine '$RGNameSTORE' $RGNameSTORE
@@ -262,7 +262,7 @@ function Write-Dump {
     if($Error[0]){Write-DumpLine '$Error[0]' $Error[0]}
     if($Error[1]){Write-DumpLine '$Error[1]' $Error[1]}
     if($Error[2]){Write-DumpLine '$Error[2]' $Error[2]}
-    Write-PEBLog "=============================================================================================================" -Level Debug
+    Write-AEBLog "=============================================================================================================" -Level Debug
     exit
 }
 
@@ -277,7 +277,7 @@ function ConnectTo-Azure {
     Connect-AzAccount -Tenant $aztenant -Subscription $azSubscription | Out-Null
     $SubscriptionId = (Get-AzContext).Subscription.Id
     if (!($azSubscription -eq $SubscriptionId)) {
-        Write-PEBLog "*** Subscription ID Mismatch!!!! ***" -Level Error
+        Write-AEBLog "*** Subscription ID Mismatch!!!! ***" -Level Error
         exit
     }
     Get-AzContext | Rename-AzContext -TargetName "User" -Force | Out-Null

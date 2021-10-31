@@ -1,6 +1,6 @@
 ﻿<#
 .SYNOPSIS
-PEB-AzureBuilder.ps1
+AEB-AzureBuilder.ps1
 
 .DESCRIPTION
 Packaging Environment Builder - Azure Builder.
@@ -21,19 +21,19 @@ Set-Location $PSScriptRoot
     # Script Variables
 $root = $PSScriptRoot
 #$root = $pwd
-$PEBScripts = "$root\PEB-Scripts"
+$AEBScripts = "$root\AEB-Scripts"
 $ExtraFiles = "$root\ExtraFiles"
 
     # Dot Source Variables
-. $PEBScripts\ScriptVariables.ps1
-. $PEBScripts\ClientLoadVariables.ps1
+. $AEBScripts\ScriptVariables.ps1
+. $AEBScripts\ClientLoadVariables.ps1
 
     # Dot Source Functions
-. $PEBScripts\ScriptCoreFunctions.ps1
-. $PEBScripts\ScriptEnvironmentFunctions.ps1
-. $PEBScripts\ScriptPackagingFunctions.ps1
-. $PEBScripts\ScriptHyperVFunctions.ps1
-#. $PEBScripts\ClientLoadFunctions.ps1
+. $AEBScripts\ScriptCoreFunctions.ps1
+. $AEBScripts\ScriptEnvironmentFunctions.ps1
+. $AEBScripts\ScriptDesktopFunctions.ps1
+. $AEBScripts\ScriptServerFunctions.ps1
+#. $AEBScripts\ClientLoadFunctions.ps1
 
     # Load Azure Modules and Connect
 ConnectTo-Azure
@@ -42,29 +42,29 @@ Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"  # Turns off 
 #endregion Setup
 
 #region Main
-Write-PEBLog "Running PEB-AzureBuilder.ps1"
+Write-AEBLog "Running AEB-AzureBuilder.ps1"
 if($isProd) { Write-Warning "Are you sure you want to rebuild the Packaging Environment?  OK to Continue?" -WarningAction Inquire }
 
 if($RequireCreate) {
         # Create Resource Groups
     if($RequireResourceGroups -and !$UseTerraform) {
         $RG = New-AzResourceGroup -Name $RGNamePROD -Location $Location
-        if ($RG.ResourceGroupName -eq $RGNamePROD) {Write-PEBLog "PROD Resource Group created successfully"}Else{Write-PEBLog "*** Unable to create PROD Resource Group! ***" -Level Error }
+        if ($RG.ResourceGroupName -eq $RGNamePROD) {Write-AEBLog "PROD Resource Group created successfully"}Else{Write-AEBLog "*** Unable to create PROD Resource Group! ***" -Level Error }
         if (!($RGNameDEV -match $RGNamePROD)) {
             $RG = New-AzResourceGroup -Name $RGNameDEV -Location $Location
-            if ($RG.ResourceGroupName -eq $RGNameDEV) { Write-PEBLog "DEV Resource Group created successfully" }Else { Write-PEBLog "*** Unable to create DEV Resource Group! ***" -Level Error }
+            if ($RG.ResourceGroupName -eq $RGNameDEV) { Write-AEBLog "DEV Resource Group created successfully" }Else { Write-AEBLog "*** Unable to create DEV Resource Group! ***" -Level Error }
         }
         if (!($RGNameDEV -match $RGNameDEVVNET)) {
             $RG = New-AzResourceGroup -Name $RGNameDEVVNET -Location $Location
-            if ($RG.ResourceGroupName -eq $RGNameDEVVNET) { Write-PEBLog "DEV VNET Resource Group created successfully" }Else { Write-PEBLog "*** Unable to create DEV VNET Resource Group! ***" -Level Error }
+            if ($RG.ResourceGroupName -eq $RGNameDEVVNET) { Write-AEBLog "DEV VNET Resource Group created successfully" }Else { Write-AEBLog "*** Unable to create DEV VNET Resource Group! ***" -Level Error }
         }
         if (!($RGNamePROD -match $RGNamePRODVNET)) {
             $RG = New-AzResourceGroup -Name $RGNamePRODVNET -Location $Location
-            if ($RG.ResourceGroupName -eq $RGNamePRODVNET) { Write-PEBLog "PROD VNET Resource Group created successfully" }Else { Write-PEBLog "*** Unable to create PROD VNET Resource Group! ***" -Level Error }
+            if ($RG.ResourceGroupName -eq $RGNamePRODVNET) { Write-AEBLog "PROD VNET Resource Group created successfully" }Else { Write-AEBLog "*** Unable to create PROD VNET Resource Group! ***" -Level Error }
         }
         if (!($RGNamePROD -match $RGNameSTORE) -and $RequireStorageAccount) {
             $RG = New-AzResourceGroup -Name $RGNameSTORE -Location $Location
-            if ($RG.ResourceGroupName -eq $RGNameSTORE) { Write-PEBLog "STORE Resource Group created successfully" }Else { Write-PEBLog "*** Unable to create STORE Resource Group! ***" -Level Error }
+            if ($RG.ResourceGroupName -eq $RGNameSTORE) { Write-AEBLog "STORE Resource Group created successfully" }Else { Write-AEBLog "*** Unable to create STORE Resource Group! ***" -Level Error }
         }
     }
     if ($UseTerraform) {
@@ -138,6 +138,6 @@ if ($RequireConfigure) {
         }
     }
 }
-Write-PEBLog "Completed PEB-AzureBuilder.ps1"
-Write-PEBLog "============================================================================================================="
+Write-AEBLog "Completed AEB-AzureBuilder.ps1"
+Write-AEBLog "============================================================================================================="
 #endregion Main

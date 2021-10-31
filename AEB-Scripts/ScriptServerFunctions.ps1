@@ -46,7 +46,7 @@ function TerraformBuild-HVVM {
         $Count = 1
         $VMNumberStart = $VMHyperVNumberStart
         While ($Count -le $NumberofHyperVVMs) {
-            Write-PEBLog "Creating $Count of $NumberofHyperVVMs VMs"
+            Write-AEBLog "Creating $Count of $NumberofHyperVVMs VMs"
             $VM = $VMHyperVNamePrefix + $VMNumberStart
 
             CreateHyperVVM-Terraform "$VM"
@@ -62,14 +62,14 @@ function ScriptBuild-HVVM {
         $Count = 1
         $VMNumberStart = $VMHyperVNumberStart
         While ($Count -le $NumberofHyperVVMs) {
-            Write-PEBLog "Creating $Count of $NumberofHyperVVMs VMs"
+            Write-AEBLog "Creating $Count of $NumberofHyperVVMs VMs"
             $VM = $VMHyperVNamePrefix + $VMNumberStart
             $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $RGNamePROD -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if (!$VMCheck) {
                 CreateHyperVVM-Script "$VM"
             }
             else {
-                Write-PEBLog "*** VM: $VM already exists! ***" -Level Error
+                Write-AEBLog "*** VM: $VM already exists! ***" -Level Error
                 break
             }
             $Count++
@@ -81,7 +81,7 @@ function ScriptBuild-HVVM {
 function ConfigureHyperVVM($VMName) {
     $VMCreate = Get-AzVM -ResourceGroupName $RGNamePROD -Name $VMName
     If ($VMCreate.ProvisioningState -eq "Succeeded") {
-        Write-PEBLog "VM: $VMName created successfully"
+        Write-AEBLog "VM: $VMName created successfully"
 
         $NewVm = Get-AzADServicePrincipal -DisplayName $VMName
         if ($RequireServicePrincipal) {
@@ -104,13 +104,13 @@ function ConfigureHyperVVM($VMName) {
         Update-AzVM -VM $VMCreate -ResourceGroupName $RGNamePROD -Verbose | Out-Null
 
         Restart-AzVm -ResourceGroupName $RGNamePROD -Name $VMName | Out-Null
-        Write-PEBLog "VM: $VMName - Restarting VM for 120 Seconds..."
+        Write-AEBLog "VM: $VMName - Restarting VM for 120 Seconds..."
         Start-Sleep -Seconds 120
 
         ConfigureVM -VMName $VMName -VMSpec "Server-HyperV" -RG $RGNamePROD
     }
     Else {
-        Write-PEBLog "*** VM: $VMName - Unable to configure Virtual Machine! ***" -Level Error
+        Write-AEBLog "*** VM: $VMName - Unable to configure Virtual Machine! ***" -Level Error
     }
 }
 
@@ -120,7 +120,7 @@ function TerraformConfigure-HVVM {
         $Count = 1
         $VMNumberStart = $VmHyperVNumberStart
         While ($Count -le $NumberofHyperVVMs) {
-            Write-PEBLog "Configuring $Count of $NumberofHyperVVMs VMs"
+            Write-AEBLog "Configuring $Count of $NumberofHyperVVMs VMs"
             $VM = $VMHyperVNamePrefix + $VMNumberStart
             ConfigureHyperVVM "$VM"
             $Count++
@@ -135,7 +135,7 @@ function ScriptConfigure-HVVM {
         $Count = 1
         $VMNumberStart = $VmHyperVNumberStart
         While ($Count -le $NumberofHyperVVMs) {
-            Write-PEBLog "Configuring $Count of $NumberofHyperVVMs VMs"
+            Write-AEBLog "Configuring $Count of $NumberofHyperVVMs VMs"
             $VM = $VMHyperVNamePrefix + $VMNumberStart
             ConfigureHyperVVM "$VM"
             $Count++

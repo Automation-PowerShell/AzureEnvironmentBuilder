@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-PEB-RebuildHyperVVM.ps1
+AEB-RebuildHyperVVM.ps1
 
 .DESCRIPTION
 Packaging Environment Builder - Rebuild HyperV VM.
@@ -236,7 +236,7 @@ function Create-VM {
 }
 
 #region Main
-Write-Output "Running PEB-RebuildHyperVVM.ps1"
+Write-Output "Running AEB-RebuildHyperVVM.ps1"
 
 if($RVMVMName -eq "") {
     #$VMList = Get-VM -Name *
@@ -250,5 +250,5 @@ Delete-VM -VMName $RVMVMName
 Create-VM -VMName $RVMVMName
 #Get-NetNatStaticMapping | select StaticMappingID,ExternalIPAddress,ExternalPort,InternalIPAddress,InternalPort | ConvertTo-JSON | Out-File -FilePath ".\netnatmapping.json"-Force
 Get-NetNatStaticMapping | Select-Object StaticMappingID,ExternalIPAddress,ExternalPort,InternalIPAddress,InternalPort | Export-CSV -Path ".\netnatmapping.csv" -Force -NoTypeInformation
-Write-Output "Completed PEB-RebuildHyperVVM.ps1"
+Write-Output "Completed AEB-RebuildHyperVVM.ps1"
 #endregion Main
