@@ -1,5 +1,5 @@
 ﻿$app = "choco-coreapps"
-$args = "install vcredist2013 vcredist140 adobereader 7zip.install googlechrome dotnet3.5 laps azure-information-protection-unified-labeling-client clickshare-desktop --limitoutput"
+$chocoargs = "install vcredist2013 vcredist140 adobereader 7zip.install googlechrome dotnet3.5 laps azure-information-protection-unified-labeling-client clickshare-desktop --limitoutput"
 
 $EventLogName = "Accenture"
 $EventLogSource = "$app Install Script"
@@ -18,6 +18,6 @@ Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -En
 
 # Install Process
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Information -Message "Installing Apps"
-Start-Process -FilePath "C:\ProgramData\chocolatey\bin\choco.exe" -ArgumentList $args -Wait
+Start-Process -FilePath "C:\ProgramData\chocolatey\bin\choco.exe" -ArgumentList $chocoargs -Wait
 
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Completed $app Install Script"

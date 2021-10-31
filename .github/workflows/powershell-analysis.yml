@@ -34,7 +34,7 @@ jobs:
           
           # Include your own basic security rules. Removing this option will run all the rules 
           # includeRule: '"PSAvoidGlobalAliases", "PSAvoidUsingConvertToSecureStringWithPlainText"'
-          excludeRule: '"PSUseDeclaredVarsMoreThanAssignments", "PSUseApprovedVerbs", "PSAvoidUsingWriteHost"'
+          excludeRule: '"PSUseDeclaredVarsMoreThanAssignments", "PSUseApprovedVerbs", "PSAvoidUsingWriteHost", "PSAvoidUsingInvokeExpression"'
           output: results.sarif
       
       # Upload the SARIF file generated in the previous step
