@@ -213,8 +213,8 @@ function Write-AEBLog {
     Write-LogScreen -String $String -Level $Level
     if(!($isProd)) {
         Write-LogCMFile -String $String -Level $Level
-        Write-LogGit -String $String -Level $Level
-        Write-LogStorageAccount -String $String -Level $Level
+        if($LogToGit) { Write-LogGit -String $String -Level $Level }
+        if($LogToSA) { Write-LogStorageAccount -String $String -Level $Level }
     }
     else {
         Write-LogFile -String $String -Level $Level
@@ -222,15 +222,16 @@ function Write-AEBLog {
 }
 
 function Write-DumpLine {
+    #[CmdletBinding()]
     Param(
         [Parameter(Position = 0, Mandatory)][String]$varname,
-        [Parameter(Position = 1, Mandatory)][String]$varvalue
+        [Parameter(Position = 1)][String]$varvalue = ""
     )
     $String = "$varname : $varvalue"
     Write-LogScreen -String $String -Level Debug
     if(!($isProd)) {
         Write-LogCMFile -String $String -Level Debug
-        Write-LogGit -String $String -Level Debug
+        if($LogToGit) { Write-LogGit -String $String -Level Debug }
     }
     else {
         Write-LogFile -String $String -Level Debug

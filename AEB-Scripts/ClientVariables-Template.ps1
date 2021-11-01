@@ -26,6 +26,8 @@ $RequireServicePrincipal = $false
 
     # Required Components
 $isProd = $false
+$LogToGit = $false
+$LogToSA = $false
 $RequireUserGroups = $true
 $RequireRBAC = $true
 $RequireResourceGroups = $true
@@ -34,11 +36,11 @@ $RequireVNET = $true
 $RequireNSG = $true
 $RequirePublicIPs = $true
 $RequireStandardVMs = $true
-$RequirePackagingVMs = $true
-$RequireAdminStudioVMs = $true
-$RequireJumpboxVMs = $true
-$RequireCoreVMs = $true
-$RequireHyperV = $true
+$RequirePackagingVMs = $false
+$RequireAdminStudioVMs = $false
+$RequireJumpboxVMs = $false
+$RequireCoreVMs = $false
+$RequireHyperV = $false
 
     # Script Variables
 Try {

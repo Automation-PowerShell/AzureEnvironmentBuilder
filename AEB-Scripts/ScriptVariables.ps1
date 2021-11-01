@@ -1,7 +1,6 @@
 Set-Location $PSScriptRoot
 
     # Script Variables
-$ExtraFiles = "$root\ExtraFiles"
 Try {
     $deviceSpecs = Get-Content $root\devicespecs-template.jsonc | ConvertFrom-Json -ErrorAction Stop
     $appSpecs = Get-Content $root\appspecs-template.jsonc | ConvertFrom-Json -ErrorAction Stop
@@ -20,6 +19,8 @@ $RequireServicePrincipal = $false
 
     # Required Components
 $isProd = $false                                            # Are we building a DEV or Prod Environment?
+$LogToGit = $false
+$LogToSA = $false
 $RequireUserGroups = $false
 $RequireRBAC = $false
 $RequireResourceGroups = $false
