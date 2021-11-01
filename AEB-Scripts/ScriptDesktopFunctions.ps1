@@ -24,9 +24,9 @@ function CreateStandardVM-Script($VMName) {
 
 function CreatePackagingVM-Script($VMName) {
     $tags = @{}
-    $names = $deviceSpecs.Standard.Tags | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
+    $names = $deviceSpecs.Packaging.Tags | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
     foreach ($name in $names) {
-        $value = $deviceSpecs.Standard.Tags.$name
+        $value = $deviceSpecs.Packaging.Tags.$name
         $tags.Add($name,$value)
     }
 
@@ -48,9 +48,9 @@ function CreatePackagingVM-Script($VMName) {
 
 function CreateAdminStudioVM-Script($VMName) {
     $tags = @{}
-    $names = $deviceSpecs.Standard.Tags | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
+    $names = $deviceSpecs.AdminStudio.Tags | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
     foreach ($name in $names) {
-        $value = $deviceSpecs.Standard.Tags.$name
+        $value = $deviceSpecs.AdminStudio.Tags.$name
         $tags.Add($name,$value)
     }
 
@@ -72,9 +72,9 @@ function CreateAdminStudioVM-Script($VMName) {
 
 function CreateJumpboxVM-Script($VMName) {
     $tags = @{}
-    $names = $deviceSpecs.Standard.Tags | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
+    $names = $deviceSpecs.Jumpbox.Tags | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
     foreach ($name in $names) {
-        $value = $deviceSpecs.Standard.Tags.$name
+        $value = $deviceSpecs.Jumpbox.Tags.$name
         $tags.Add($name,$value)
     }
 
@@ -96,9 +96,9 @@ function CreateJumpboxVM-Script($VMName) {
 
 function CreateCoreVM-Script($VMName) {
     $tags = @{}
-    $names = $deviceSpecs.Standard.Tags | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
+    $names = $deviceSpecs.Core.Tags | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
     foreach ($name in $names) {
-        $value = $deviceSpecs.Standard.Tags.$name
+        $value = $deviceSpecs.Core.Tags.$name
         $tags.Add($name,$value)
     }
 
@@ -233,7 +233,7 @@ function ScriptRebuild-Create-VM {
                 Get-AzNetworkInterface -Name $VMName* -ResourceGroupName $RGNameDEV | Remove-AzNetworkInterface -Force -Verbose | Out-Null
                 Get-AzPublicIpAddress -Name $VMName* -ResourceGroupName $RGNameDEV | Remove-AzPublicIpAddress -Force -Verbose | Out-Null
                 Get-AzDisk -Name $VMName* -ResourceGroupName $RGNameDEV | Remove-AzDisk -Force -Verbose | Out-Null
-                CreateStandardVM-Script "$VMName"
+                CreatePackagingVM-Script "$VMName"
             }
             else {
                 Write-AEBLog "*** Virtual Machine $VMName doesn't exist! ***" -Level Error
@@ -407,7 +407,7 @@ function ScriptBuild-Create-VM {
             $VM = $VMNamePrefixCore + $VMNumberStart
             $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $RGNameDEV -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if (!$VMCheck) {
-                CreateAdminStudioVM-Script "$VM"
+                CreateCoreVM-Script "$VM"
             }
             else {
                 Write-AEBLog "*** Virtual Machine $VM already exists! ***" -Level Error
@@ -467,7 +467,7 @@ function ScriptBuild-Config-VM {
         $Count = 1
         $VMNumberStart = $VMNumberStartJumpbox
         While ($Count -le $NumberofJumpboxVMs) {
-            Write-AEBLog "Configuring $Count of $NumberofJumboxVMs VMs"
+            Write-AEBLog "Configuring $Count of $NumberofJumpboxVMs VMs"
             $VM = $VMNamePrefixJumpbox + $VMNumberStart
             ConfigureBaseVM -VMName "$VM" -VMSpec "Jumpbox" -RG $RGNameDEV
             ConfigureVM -VMName "$VM" -VMSpec "Jumpbox" -RG $RGNameDEV
