@@ -64,13 +64,13 @@ function ConfigureNetwork {
         $nsgPROD = New-AzNetworkSecurityGroup -ResourceGroupName $RGNamePRODVNET -Location $location -Name $NsgNamePROD -SecurityRules $rule1, $rule2     # $Rule1, $Rule2 etc.
         if ($nsgPROD.ProvisioningState -eq "Succeeded") { Write-AEBLog "PROD Network Security Group created successfully"} Else { Write-AEBLog "*** Unable to create or configure PROD Network Security Group! ***" -Level Error}
         $VnscPROD = Set-AzVirtualNetworkSubnetConfig -Name default -VirtualNetwork $virtualNetworkPROD -AddressPrefix "10.0.1.0/24" -NetworkSecurityGroup $nsgPROD
-        $virtualNetworkPROD | Set-AzVirtualNetwork >> null
+        $virtualNetworkPROD | Set-AzVirtualNetwork | Out-Null
         if ($virtualNetworkPROD.ProvisioningState -eq "Succeeded") { Write-AEBLog "PROD Virtual Network created and associated with the Network Security Group successfully" } Else { Write-AEBLog "*** Unable to create the PROD Virtual Network, or associate it to the Network Security Group! ***" -Level Error }
         if (!($RGNameDEVVNET -match $RGNamePRODVNET)) {
             $nsgDEV = New-AzNetworkSecurityGroup -ResourceGroupName $RGNameDEVVNET -Location $location -Name $NsgNameDEV -SecurityRules $rule1, $rule2     # $Rule1, $Rule2 etc.
             if ($nsgDEV.ProvisioningState -eq "Succeeded") { Write-AEBLog "DEV Network Security Group created successfully" }Else { Write-AEBLog "*** Unable to create or configure DEV Network Security Group! ***" }
             $VnscDEV = Set-AzVirtualNetworkSubnetConfig -Name default -VirtualNetwork $virtualNetworkDEV -AddressPrefix "10.0.1.0/24" -NetworkSecurityGroup $nsgDEV
-            $virtualNetworkDEV | Set-AzVirtualNetwork >> null
+            $virtualNetworkDEV | Set-AzVirtualNetwork | Out-Null
             if ($virtualNetworkDEV.ProvisioningState -eq "Succeeded") { Write-AEBLog "DEV Virtual Network created and associated with the Network Security Group successfully" } Else { Write-AEBLog "*** Unable to create the DEV Virtual Network, or associate it to the Network Security Group! ***" -Level Error }
         }
     }
@@ -90,6 +90,11 @@ function CreateRBACConfig {
 
 function CreateStorageAccount {
     if ($RequireStorageAccount -and !$UseTerraform) {
+        $storageAccount = Get-AzStorageAccount -ResourceGroupName $RGNameSTORE -AccountName $StorageAccountName -ErrorAction SilentlyContinue
+        if($storageAccount) {
+            Write-AEBLog "*** Storage Account already exists ***" -Level Error
+            return
+        }
         $storageAccount = New-AzStorageAccount -ResourceGroupName $RGNameSTORE -AccountName $StorageAccountName -Location $location -SkuName Standard_LRS
         Start-Sleep -Seconds 10
         $ctx = $storageAccount.Context
@@ -99,6 +104,7 @@ function CreateStorageAccount {
         }
         else {
             Write-AEBLog "*** Unable to create the Storage Account or container! ***" -Level Error
+            Write-Dump
         }
         $Share = New-AzStorageShare -Name $FileShareName -Context $ctx
         if ($Share.Name -eq $FileShareName) {

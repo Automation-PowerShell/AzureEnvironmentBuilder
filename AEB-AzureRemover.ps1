@@ -1,6 +1,6 @@
 ﻿<#
 .SYNOPSIS
-AEB-AzureRemiver.ps1
+AEB-AzureRemover.ps1
 
 .DESCRIPTION
 Azure Environment Builder - Azure Remover.
