@@ -158,6 +158,9 @@
                     "Name": "MECMConsole"
                 },
                 {
+                    "Name": "App-MDATP"
+                },
+                {
                     "Name": "DomainJoin"
                 }
             ],

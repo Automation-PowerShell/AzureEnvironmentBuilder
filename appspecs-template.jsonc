@@ -76,6 +76,9 @@
         },
         {
             "Name": "App-XeroxAgent"
+        },
+        {
+            "Name": "App-MDATP"
         }
     ],
     "Prevision": [
@@ -274,6 +277,14 @@
         {
             "AppVersion": "",
             "PS1": "App-XeroxAgent.ps1",
+            "RebootRequired": false,
+            "RebootSeconds": 0
+        }
+    ],
+    "App-MDATP": [
+        {
+            "AppVersion": "",
+            "PS1": "App-MDATP.ps1",
             "RebootRequired": false,
             "RebootSeconds": 0
         }
