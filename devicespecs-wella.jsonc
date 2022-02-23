@@ -78,6 +78,9 @@
                 },
                 {
                     "Name": "DesktopApps"
+                },
+                {
+                    "Name": "App-BeyondCompare"
                 }
             ],
             "VMSize": "Standard_B2s",
@@ -156,6 +159,9 @@
                 },
                 {
                     "Name": "MECMConsole"
+                },
+                {
+                    "Name": "App-MDATP"
                 },
                 {
                     "Name": "DomainJoin"

@@ -24,7 +24,7 @@ function SyncFiles {
         Get-ChildItem -Path $LocalPath\* -File | Set-AzStorageBlobContent -Container $ContainerName -Context $Context -Force | Out-Null
     }
 }
-Write-AEBLog "Running yncFiles.ps1"
+Write-AEBLog "Running SyncFiles.ps1"
 Try {
     switch ($CallFromCreatePackaging) {
         $True {
