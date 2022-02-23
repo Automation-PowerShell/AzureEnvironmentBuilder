@@ -294,10 +294,10 @@
                     "Name": "Build-VM"
                 }
             ],
-            "VMSize": "Standard_D4s_v4",
-            "dataDiskTier": "S10",
-            "dataDiskSKU": "Standard_LRS",
-            "dataDiskSize": 128,
+            "VMSize": "Standard_D16s_v4",
+            "dataDiskTier": "P50",
+            "dataDiskSKU": "Premium_LRS",
+            "dataDiskSize": 4096,
             "AutoShutdownRequired": false,
             "AutoShutdownTime": 0,
             "Tags": [
