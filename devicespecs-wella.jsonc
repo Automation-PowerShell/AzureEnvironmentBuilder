@@ -78,6 +78,9 @@
                 },
                 {
                     "Name": "DesktopApps"
+                },
+                {
+                    "Name": "App-BeyondCompare"
                 }
             ],
             "VMSize": "Standard_B2s",

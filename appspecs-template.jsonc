@@ -79,6 +79,9 @@
         },
         {
             "Name": "App-MDATP"
+        },
+        {
+            "Name": "App-BeyondCompare"
         }
     ],
     "Prevision": [
@@ -285,6 +288,14 @@
         {
             "AppVersion": "",
             "PS1": "App-MDATP.ps1",
+            "RebootRequired": false,
+            "RebootSeconds": 0
+        }
+    ],
+    "App-BeyondCompare": [
+        {
+            "AppVersion": "4.4.1.26165",
+            "PS1": "App-BeyondCompare.ps1",
             "RebootRequired": false,
             "RebootSeconds": 0
         }
