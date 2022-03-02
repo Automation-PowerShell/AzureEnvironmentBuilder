@@ -50,12 +50,12 @@ $IPDNS = @("10.21.224.10","10.21.224.11","10.21.239.196")
 Set-Location $PSScriptRoot
 $VMListData = Import-Csv .\hyperv-vms.csv
 
-if($LocalCred) {Remove-Variable LocalCred;$LocalCred = Get-Credential -Credential $LocalCredUser;$LocalCred | Export-CliXml -Path .\LocalCred.xml} else{$LocalCred = Get-Credential -Credential $LocalCredUser;$LocalCred | Export-CliXml -Path .\LocalCred.xml}
-if($DomainCred) {Remove-Variable DomainCred;$DomainCred = Get-Credential -Credential $DomainCredUser;$DomainCred | Export-CliXml -Path .\DomainCred.xml} else{$DomainCred = Get-Credential -Credential $DomainCredUser;$DomainCred | Export-CliXml -Path .\DomainCred.xml}
-if($DomainJoinCred) {Remove-Variable DomainJoinCred;$DomainJoinCred = Get-Credential -Credential $DomainJoinUser;$DomainJoinCred | Export-CliXml -Path .\DomainJoinCred.xml} else{$DomainJoinCred = Get-Credential -Credential $DomainJoinUser;$DomainJoinCred | Export-CliXml -Path .\DomainJoinCred.xml}
-#$LocalCred = Import-CliXml -Path .\LocalCred.xml
-#$DomainCred = Import-CliXml -Path .\DomainCred.xml
-#$DomainJoinCred = Import-CliXml -Path .\DomainJoinCred.xml
+if($LocalCred) {Remove-Variable LocalCred;$LocalCred = Get-Credential -Credential $LocalCredUser;$LocalCred | Export-CliXml -Path .\HyperVLocalAdmin.xml} else{$LocalCred = Get-Credential -Credential $LocalCredUser;$LocalCred | Export-CliXml -Path .\HyperVLocalAdmin.xml}
+if($DomainCred) {Remove-Variable DomainCred;$DomainCred = Get-Credential -Credential $DomainCredUser;$DomainCred | Export-CliXml -Path .\DomainUser.xml} else{$DomainCred = Get-Credential -Credential $DomainCredUser;$DomainCred | Export-CliXml -Path .\DomainUser.xml}
+if($DomainJoinCred) {Remove-Variable DomainJoinCred;$DomainJoinCred = Get-Credential -Credential $DomainJoinUser;$DomainJoinCred | Export-CliXml -Path .\DomainJoin.xml} else{$DomainJoinCred = Get-Credential -Credential $DomainJoinUser;$DomainJoinCred | Export-CliXml -Path .\DomainJoin.xml}
+#$LocalCred = Import-CliXml -Path .\HyperVLocalAdmin.xml
+#$DomainCred = Import-CliXml -Path .\DomainUser.xml
+#$DomainJoinCred = Import-CliXml -Path .\DomainJoin.xml
 
 if(!$DomainCred) {
     exit

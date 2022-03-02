@@ -184,12 +184,8 @@ function ConfigureBaseVM {
             }
 
         }
-        #Restart-AzVM -ResourceGroupName $RGNameDEV -Name $VMName | Out-Null
-        #Write-AEBLog "VM: $VMName - Restarting VM for 120 Seconds..."
-        #Start-Sleep -Seconds 120
 
         if ($deviceSpecs.$VMSpec.AutoShutdownRequired) {
-        #if ($AutoShutdown) {
             $ScheduledShutdownResourceId = "/subscriptions/$azSubscription/resourceGroups/$RG/providers/microsoft.devtestlab/schedules/shutdown-computevm-$VMName"
 
             $Properties = @{}
@@ -420,7 +416,7 @@ function ScriptBuild-Create-VM {
 }
 
 function ScriptBuild-Config-VM {
-        #    Configure Standard VMs
+        # Configure Standard VMs
     if ($RequireStandardVMs) {
         $Count = 1
         $VMNumberStart = $VMNumberStartStandard
@@ -434,7 +430,7 @@ function ScriptBuild-Config-VM {
         }
     }
 
-        #    Configure Packaging VMs
+        # Configure Packaging VMs
     if ($RequirePackagingVMs) {
         $Count = 1
         $VMNumberStart = $VMNumberStartPackaging

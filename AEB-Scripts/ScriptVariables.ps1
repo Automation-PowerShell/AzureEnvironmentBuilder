@@ -78,7 +78,6 @@ $VMNumberStartAdminStudio = 201                             # Specifies the seco
 $VMNumberStartJumpbox = 301                                 # Specifies the second part of the Jumpbox VM name
 $VMNumberStartCore = 401                                    # Specifies the second part of the Core VM name
 $VMShutdown = $true                                         # Specifies if the newly provisioned VM should be shutdown (can save costs)
-$AutoShutdown = $true                                       # Configures Windows 10 VMs to shutdown at a specified time
 
     # Hyper-V VM Count, Name, Spec, and Settings
 $NumberofHyperVVMs = 1                                      # Specify number of VMs to be provisioned
