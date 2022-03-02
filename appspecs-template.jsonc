@@ -3,70 +3,70 @@
     "name": "App Specs",
     "SpecList": [
         {
-            "Name": "Prevision"
+            "Name": "Conf-Prevision"
         },
         {
-            "Name": "VMConfig"
+            "Name": "Conf-VMConfig"
         },
         {
-            "Name": "RunOnce"
+            "Name": "Conf-RunOnce"
         },
         {
-            "Name": "ORCA"
+            "Name": "App-ORCA"
         },
         {
-            "Name": "7-Zip"
+            "Name": "App-7-Zip"
         },
         {
-            "Name": "InstEd"
+            "Name": "App-InstEd"
         },
         {
-            "Name": "DesktopApps"
+            "Name": "App-DesktopApps"
         },
         {
-            "Name": "GlassWire"
+            "Name": "App-GlassWire"
         },
         {
-            "Name": "IntuneWinUtility"
+            "Name": "App-IntuneWinUtility"
         },
         {
-            "Name": "AdminStudio"
+            "Name": "App-AdminStudio"
         },
         {
-            "Name": "Jumpbox"
+            "Name": "Conf-Jumpbox"
         },
         {
-            "Name": "MECMConsole"
+            "Name": "App-MECMConsole"
         },
         {
-            "Name": "DomainJoin"
+            "Name": "Conf-DomainJoin"
         },
         {
-            "Name": "VCPP"
+            "Name": "App-VCPP"
         },
         {
-            "Name": "Office365"
+            "Name": "App-Office365"
         },
         {
-            "Name": "ConfigureDataDisk"
+            "Name": "Conf-ConfigureDataDisk"
         },
         {
-            "Name": "EnableHyperV"
+            "Name": "Conf-EnableHyperV"
         },
         {
-            "Name": "ConfigHyperV"
+            "Name": "Conf-ConfigHyperV"
         },
         {
-            "Name": "Build-VMBase"
+            "Name": "Conf-Build-VMBase"
         },
         {
-            "Name": "Build-VM"
+            "Name": "Conf-Build-VM"
         },
         {
-            "Name": "chocolatey"
+            "Name": "App-chocolatey"
         },
         {
-            "Name": "choco-coreapps"
+            "Name": "App-choco-coreapps"
         },
         {
             "Name": "App-ClickShareExension"
@@ -78,13 +78,13 @@
             "Name": "App-XeroxAgent"
         },
         {
-            "Name": "App-MDATP"
+            "Name": "Conf-MDATP"
         },
         {
             "Name": "App-BeyondCompare"
         }
     ],
-    "Prevision": [
+    "Conf-Prevision": [
         {
             "AppVersion": "",
             "PS1": "Prevision.ps1",
@@ -92,7 +92,7 @@
             "RebootSeconds": 0
         }
     ],
-    "VMConfig": [
+    "Conf-VMConfig": [
         {
             "AppVersion": "",
             "PS1": "VMConfig.ps1",
@@ -100,7 +100,7 @@
             "RebootSeconds": 0
         }
     ],
-    "RunOnce": [
+    "Conf-RunOnce": [
         {
             "AppVersion": "",
             "PS1": "RunOnce.ps1",
@@ -108,7 +108,7 @@
             "RebootSeconds": 0
         }
     ],
-    "ORCA": [
+    "App-ORCA": [
         {
             "AppVersion": "10.1.19041.1",
             "PS1": "ORCA.ps1",
@@ -116,7 +116,7 @@
             "RebootSeconds": 0
         }
     ],
-    "7-Zip": [
+    "App-7-Zip": [
         {
             "AppVersion": "19.00.00.0",
             "PS1": "7-Zip.ps1",
@@ -124,7 +124,7 @@
             "RebootSeconds": 0
         }
     ],
-    "InstEd": [
+    "App-InstEd": [
         {
             "AppVersion": "1.5.15.26",
             "PS1": "InstEd.ps1",
@@ -132,7 +132,7 @@
             "RebootSeconds": 0
         }
     ],
-    "DesktopApps": [
+    "App-DesktopApps": [
         {
             "AppVersion": "",
             "PS1": "DesktopApps.ps1",
@@ -140,7 +140,7 @@
             "RebootSeconds": 0
         }
     ],
-    "GlassWire": [
+    "App-GlassWire": [
         {
             "AppVersion": "",
             "PS1": "GlassWire.ps1",
@@ -148,7 +148,7 @@
             "RebootSeconds": 0
         }
     ],
-    "IntuneWinUtility": [
+    "App-IntuneWinUtility": [
         {
             "AppVersion": "",
             "PS1": "IntuneWinUtility.ps1",
@@ -156,7 +156,7 @@
             "RebootSeconds": 0
         }
     ],
-    "AdminStudio": [
+    "App-AdminStudio": [
         {
             "AppVersion": "",
             "PS1": "AdminStudio.ps1",
@@ -164,7 +164,7 @@
             "RebootSeconds": 0
         }
     ],
-    "Jumpbox": [
+    "Conf-Jumpbox": [
         {
             "AppVersion": "",
             "PS1": "Jumpbox.ps1",
@@ -172,7 +172,7 @@
             "RebootSeconds": 0
         }
     ],
-    "MECMConsole": [
+    "App-MECMConsole": [
         {
             "AppVersion": "",
             "PS1": "MECMConsole.ps1",
@@ -180,7 +180,7 @@
             "RebootSeconds": 0
         }
     ],
-    "DomainJoin": [
+    "Conf-DomainJoin": [
         {
             "AppVersion": "",
             "PS1": "DomainJoin.ps1",
@@ -188,7 +188,7 @@
             "RebootSeconds": 120
         }
     ],
-    "VCPP": [
+    "App-VCPP": [
         {
             "AppVersion": "",
             "PS1": "VCPP.ps1",
@@ -196,7 +196,7 @@
             "RebootSeconds": 0
         }
     ],
-    "Office365": [
+    "App-Office365": [
         {
             "AppVersion": "",
             "PS1": "Office365.ps1",
@@ -204,7 +204,7 @@
             "RebootSeconds": 0
         }
     ],
-    "ConfigureDataDisk": [
+    "Conf-ConfigureDataDisk": [
         {
             "AppVersion": "",
             "PS1": "ConfigureDataDisk.ps1",
@@ -212,7 +212,7 @@
             "RebootSeconds": 0
         }
     ],
-    "EnableHyperV": [
+    "Conf-EnableHyperV": [
         {
             "AppVersion": "",
             "PS1": "EnableHyperV.ps1",
@@ -220,7 +220,7 @@
             "RebootSeconds": 120
         }
     ],
-    "ConfigHyperV": [
+    "Conf-ConfigHyperV": [
         {
             "AppVersion": "",
             "PS1": "ConfigHyperV.ps1",
@@ -228,7 +228,7 @@
             "RebootSeconds": 0
         }
     ],
-    "Build-VMBase": [
+    "Conf-Build-VMBase": [
         {
             "AppVersion": "",
             "PS1": "Build-VMBase.ps1",
@@ -236,7 +236,7 @@
             "RebootSeconds": 0
         }
     ],
-    "Build-VM": [
+    "Conf-Build-VM": [
         {
             "AppVersion": "",
             "PS1": "Build-VM.ps1",
@@ -244,7 +244,7 @@
             "RebootSeconds": 0
         }
     ],
-    "chocolatey": [
+    "App-chocolatey": [
         {
             "AppVersion": "",
             "PS1": "chocolatey.ps1",
@@ -252,7 +252,7 @@
             "RebootSeconds": 0
         }
     ],
-    "choco-coreapps": [
+    "App-choco-coreapps": [
         {
             "AppVersion": "",
             "PS1": "choco-coreapps.ps1",
