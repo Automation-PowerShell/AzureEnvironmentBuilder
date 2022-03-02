@@ -28,7 +28,7 @@
         {
             "PublisherName": "MicrosoftWindowsDesktop",
             "Offer": "Windows-10",
-            "SKUS": "21h2-ent",
+            "SKUS": "win10-21h2-ent",
             "Version": "latest",
             "Apps": [
                 {
@@ -44,7 +44,8 @@
             "Tags": [
                 {
                     "Application": "Desktop-Standard",
-                    "Environment": "Dev"
+                    "Environment": "Dev",
+                    "SKU": "win10-21h2-ent"
                 }
             ]
         }
@@ -53,7 +54,7 @@
         {
             "PublisherName": "MicrosoftWindowsDesktop",
             "Offer": "Windows-10",
-            "SKUS": "21h2-ent",
+            "SKUS": "20h2-ent",
             "Version": "latest",
             "Apps": [
                 {
@@ -84,7 +85,7 @@
         {
             "PublisherName": "MicrosoftWindowsDesktop",
             "Offer": "Windows-10",
-            "SKUS": "21h2-ent",
+            "SKUS": "20h2-ent",
             "Version": "latest",
             "Apps": [
                 {
@@ -106,7 +107,7 @@
         {
             "PublisherName": "MicrosoftWindowsDesktop",
             "Offer": "Windows-10",
-            "SKUS": "21h2-ent",
+            "SKUS": "20h2-ent",
             "Version": "latest",
             "Apps": [
                 {
@@ -134,7 +135,7 @@
         {
             "PublisherName": "MicrosoftWindowsDesktop",
             "Offer": "Windows-10",
-            "SKUS": "21h2-ent",
+            "SKUS": "20h2-ent",
             "Version": "latest",
             "Apps": [
                 {

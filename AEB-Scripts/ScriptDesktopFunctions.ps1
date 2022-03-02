@@ -1,8 +1,8 @@
 function CreateStandardVM-Script($VMName) {
     $tags = @{}
-    $names = $deviceSpecs.Standard.Tags | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
+    $names = $deviceSpecs.'Desktop-Standard'.Tags | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
     foreach ($name in $names) {
-        $value = $deviceSpecs.Standard.Tags.$name
+        $value = $deviceSpecs.'Desktop-Standard'.Tags.$name
         $tags.Add($name,$value)
     }
 
@@ -13,10 +13,10 @@ function CreateStandardVM-Script($VMName) {
         $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $RGNameDEV -Location $Location -SubnetId $Subnet.Id -PublicIpAddressId $PIP.Id
     }
     else { $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $RGNameDEV -Location $Location -SubnetId $Subnet.Id }
-    $VirtualMachine = New-AzVMConfig -VMName $VMName -VMSize $deviceSpecs.Standard.VMSize -IdentityType SystemAssigned -Tags $tags
+    $VirtualMachine = New-AzVMConfig -VMName $VMName -VMSize $deviceSpecs.'Desktop-Standard'.VMSize -IdentityType SystemAssigned -Tags $tags
     $VirtualMachine = Set-AzVMOperatingSystem -VM $VirtualMachine -Windows -ComputerName $VMName -Credential $LocalAdminCred #-ProvisionVMAgent -EnableAutoUpdate
     $VirtualMachine = Add-AzVMNetworkInterface -VM $VirtualMachine -Id $NIC.Id
-    $VirtualMachine = Set-AzVMSourceImage -VM $VirtualMachine -PublisherName $deviceSpecs.Standard.PublisherName -Offer $deviceSpecs.Standard.Offer -Skus $deviceSpecs.Standard.SKUS -Version $deviceSpecs.Standard.Version
+    $VirtualMachine = Set-AzVMSourceImage -VM $VirtualMachine -PublisherName $deviceSpecs.'Desktop-Standard'.PublisherName -Offer $deviceSpecs.'Desktop-Standard'.Offer -Skus $deviceSpecs.'Desktop-Standard'.SKUS -Version $deviceSpecs.'Desktop-Standard'.Version
     $VirtualMachine = Set-AzVMBootDiagnostic -VM $VirtualMachine -Disable
 
     New-AzVM -ResourceGroupName $RGNameDEV -Location $Location -VM $VirtualMachine -Verbose | Out-Null
@@ -24,9 +24,9 @@ function CreateStandardVM-Script($VMName) {
 
 function CreatePackagingVM-Script($VMName) {
     $tags = @{}
-    $names = $deviceSpecs.Packaging.Tags | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
+    $names = $deviceSpecs.'Desktop-Packaging'.Tags | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
     foreach ($name in $names) {
-        $value = $deviceSpecs.Packaging.Tags.$name
+        $value = $deviceSpecs.'Desktop-Packaging'.Tags.$name
         $tags.Add($name,$value)
     }
 
@@ -37,10 +37,10 @@ function CreatePackagingVM-Script($VMName) {
         $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $RGNameDEV -Location $Location -SubnetId $Subnet.Id -PublicIpAddressId $PIP.Id
     }
     else { $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $RGNameDEV -Location $Location -SubnetId $Subnet.Id }
-    $VirtualMachine = New-AzVMConfig -VMName $VMName -VMSize $deviceSpecs.Packaging.VMSize -IdentityType SystemAssigned -Tags $tags
+    $VirtualMachine = New-AzVMConfig -VMName $VMName -VMSize $deviceSpecs.'Desktop-Packaging'.VMSize -IdentityType SystemAssigned -Tags $tags
     $VirtualMachine = Set-AzVMOperatingSystem -VM $VirtualMachine -Windows -ComputerName $VMName -Credential $LocalAdminCred #-ProvisionVMAgent -EnableAutoUpdate
     $VirtualMachine = Add-AzVMNetworkInterface -VM $VirtualMachine -Id $NIC.Id
-    $VirtualMachine = Set-AzVMSourceImage -VM $VirtualMachine -PublisherName $deviceSpecs.Packaging.PublisherName -Offer $deviceSpecs.Packaging.Offer -Skus $deviceSpecs.Packaging.SKUS -Version $deviceSpecs.Packaging.Version
+    $VirtualMachine = Set-AzVMSourceImage -VM $VirtualMachine -PublisherName $deviceSpecs.'Desktop-Packaging'.PublisherName -Offer $deviceSpecs.'Desktop-Packaging'.Offer -Skus $deviceSpecs.'Desktop-Packaging'.SKUS -Version $deviceSpecs.'Desktop-Packaging'.Version
     $VirtualMachine = Set-AzVMBootDiagnostic -VM $VirtualMachine -Disable
 
     New-AzVM -ResourceGroupName $RGNameDEV -Location $Location -VM $VirtualMachine -Verbose | Out-Null
@@ -48,9 +48,9 @@ function CreatePackagingVM-Script($VMName) {
 
 function CreateAdminStudioVM-Script($VMName) {
     $tags = @{}
-    $names = $deviceSpecs.AdminStudio.Tags | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
+    $names = $deviceSpecs.'Desktop-AdminStudio'.Tags | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
     foreach ($name in $names) {
-        $value = $deviceSpecs.AdminStudio.Tags.$name
+        $value = $deviceSpecs.'Desktop-AdminStudio'.Tags.$name
         $tags.Add($name,$value)
     }
 
@@ -61,10 +61,10 @@ function CreateAdminStudioVM-Script($VMName) {
         $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $RGNameDEV -Location $Location -SubnetId $Subnet.Id -PublicIpAddressId $PIP.Id
     }
     else { $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $RGNameDEV -Location $Location -SubnetId $Subnet.Id }
-    $VirtualMachine = New-AzVMConfig -VMName $VMName -VMSize $deviceSpecs.AdminStudio.VMSize -IdentityType SystemAssigned -Tags $tags
+    $VirtualMachine = New-AzVMConfig -VMName $VMName -VMSize $deviceSpecs.'Desktop-AdminStudio'.VMSize -IdentityType SystemAssigned -Tags $tags
     $VirtualMachine = Set-AzVMOperatingSystem -VM $VirtualMachine -Windows -ComputerName $VMName -Credential $LocalAdminCred #-ProvisionVMAgent -EnableAutoUpdate
     $VirtualMachine = Add-AzVMNetworkInterface -VM $VirtualMachine -Id $NIC.Id
-    $VirtualMachine = Set-AzVMSourceImage -VM $VirtualMachine -PublisherName $deviceSpecs.AdminStudio.PublisherName -Offer $deviceSpecs.AdminStudio.Offer -Skus $deviceSpecs.AdminStudio.SKUS -Version $deviceSpecs.AdminStudio.Version
+    $VirtualMachine = Set-AzVMSourceImage -VM $VirtualMachine -PublisherName $deviceSpecs.'Desktop-AdminStudio'.PublisherName -Offer $deviceSpecs.'Desktop-AdminStudio'.Offer -Skus $deviceSpecs.'Desktop-AdminStudio'.SKUS -Version $deviceSpecs.'Desktop-AdminStudio'.Version
     $VirtualMachine = Set-AzVMBootDiagnostic -VM $VirtualMachine -Disable
 
     New-AzVM -ResourceGroupName $RGNameDEV -Location $Location -VM $VirtualMachine -Verbose | Out-Null
@@ -72,9 +72,9 @@ function CreateAdminStudioVM-Script($VMName) {
 
 function CreateJumpboxVM-Script($VMName) {
     $tags = @{}
-    $names = $deviceSpecs.Jumpbox.Tags | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
+    $names = $deviceSpecs.'Desktop-Jumpbox'.Tags | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
     foreach ($name in $names) {
-        $value = $deviceSpecs.Jumpbox.Tags.$name
+        $value = $deviceSpecs.'Desktop-Jumpbox'.Tags.$name
         $tags.Add($name,$value)
     }
 
@@ -85,10 +85,10 @@ function CreateJumpboxVM-Script($VMName) {
         $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $RGNameDEV -Location $Location -SubnetId $Subnet.Id -PublicIpAddressId $PIP.Id
     }
     else { $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $RGNameDEV -Location $Location -SubnetId $Subnet.Id }
-    $VirtualMachine = New-AzVMConfig -VMName $VMName -VMSize $deviceSpecs.Jumpbox.VMSize -IdentityType SystemAssigned -Tags $tags
+    $VirtualMachine = New-AzVMConfig -VMName $VMName -VMSize $deviceSpecs.'Desktop-Jumpbox'.VMSize -IdentityType SystemAssigned -Tags $tags
     $VirtualMachine = Set-AzVMOperatingSystem -VM $VirtualMachine -Windows -ComputerName $VMName -Credential $LocalAdminCred #-ProvisionVMAgent -EnableAutoUpdate
     $VirtualMachine = Add-AzVMNetworkInterface -VM $VirtualMachine -Id $NIC.Id
-    $VirtualMachine = Set-AzVMSourceImage -VM $VirtualMachine -PublisherName $deviceSpecs.Jumpbox.PublisherName -Offer $deviceSpecs.Jumpbox.Offer -Skus $deviceSpecs.Jumpbox.SKUS -Version $deviceSpecs.Jumpbox.Version
+    $VirtualMachine = Set-AzVMSourceImage -VM $VirtualMachine -PublisherName $deviceSpecs.'Desktop-Jumpbox'.PublisherName -Offer $deviceSpecs.'Desktop-Jumpbox'.Offer -Skus $deviceSpecs.'Desktop-Jumpbox'.SKUS -Version $deviceSpecs.'Desktop-Jumpbox'.Version
     $VirtualMachine = Set-AzVMBootDiagnostic -VM $VirtualMachine -Disable
 
     New-AzVM -ResourceGroupName $RGNameDEV -Location $Location -VM $VirtualMachine -Verbose | Out-Null
@@ -96,9 +96,9 @@ function CreateJumpboxVM-Script($VMName) {
 
 function CreateCoreVM-Script($VMName) {
     $tags = @{}
-    $names = $deviceSpecs.Core.Tags | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
+    $names = $deviceSpecs.'Desktop-Core'.Tags | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
     foreach ($name in $names) {
-        $value = $deviceSpecs.Core.Tags.$name
+        $value = $deviceSpecs.'Desktop-Core'.Tags.$name
         $tags.Add($name,$value)
     }
 
@@ -109,10 +109,10 @@ function CreateCoreVM-Script($VMName) {
         $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $RGNameDEV -Location $Location -SubnetId $Subnet.Id -PublicIpAddressId $PIP.Id
     }
     else { $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $RGNameDEV -Location $Location -SubnetId $Subnet.Id }
-    $VirtualMachine = New-AzVMConfig -VMName $VMName -VMSize $deviceSpecs.Core.VMSize -IdentityType SystemAssigned -Tags $tags
+    $VirtualMachine = New-AzVMConfig -VMName $VMName -VMSize $deviceSpecs.'Desktop-Core'.VMSize -IdentityType SystemAssigned -Tags $tags
     $VirtualMachine = Set-AzVMOperatingSystem -VM $VirtualMachine -Windows -ComputerName $VMName -Credential $LocalAdminCred #-ProvisionVMAgent -EnableAutoUpdate
     $VirtualMachine = Add-AzVMNetworkInterface -VM $VirtualMachine -Id $NIC.Id
-    $VirtualMachine = Set-AzVMSourceImage -VM $VirtualMachine -PublisherName $deviceSpecs.Core.PublisherName -Offer $deviceSpecs.Core.Offer -Skus $deviceSpecs.Core.SKUS -Version $deviceSpecs.Core.Version
+    $VirtualMachine = Set-AzVMSourceImage -VM $VirtualMachine -PublisherName $deviceSpecs.'Desktop-Core'.PublisherName -Offer $deviceSpecs.'Desktop-Core'.Offer -Skus $deviceSpecs.'Desktop-Core'.SKUS -Version $deviceSpecs.'Desktop-Core'.Version
     $VirtualMachine = Set-AzVMBootDiagnostic -VM $VirtualMachine -Disable
 
     New-AzVM -ResourceGroupName $RGNameDEV -Location $Location -VM $VirtualMachine -Verbose | Out-Null
