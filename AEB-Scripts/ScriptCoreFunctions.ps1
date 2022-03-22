@@ -273,8 +273,9 @@ function ConnectTo-Azure {
     Install-Module Az.Accounts,Az.Compute,Az.Storage,Az.Network,Az.Resources -Repository PSGallery -Scope CurrentUser -Force
         Import-Module Az.Accounts,AZ.Compute,Az.Storage,Az.Network,Az.Resources
     }
-
     Clear-AzContext -Force
+    #Update-Module Az.Accounts,AZ.Compute,Az.Storage,Az.Network,Az.Resources -Force
+
     Connect-AzAccount -Tenant $aztenant -Subscription $azSubscription | Out-Null
     $SubscriptionId = (Get-AzContext).Subscription.Id
     if (!($azSubscription -eq $SubscriptionId)) {

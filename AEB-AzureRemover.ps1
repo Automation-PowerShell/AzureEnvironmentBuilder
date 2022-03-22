@@ -1,6 +1,6 @@
 ﻿<#
 .SYNOPSIS
-AEB-AzureRemiver.ps1
+AEB-AzureRemover.ps1
 
 .DESCRIPTION
 Azure Environment Builder - Azure Remover.
@@ -41,9 +41,9 @@ Write-AEBLog "Running AEB-AzureRemover.ps1"
 if($isProd) { Write-Warning "Are you sure you want to delete the Azure Environment?  OK to Continue?" -WarningAction Inquire }
 
 if(!($isProd) -and $RequireUserGroups) {
-    Remove-AzAdGroup -DisplayName $rbacOwner -ErrorAction Ignore  -Force -Verbose
-    Remove-AzAdGroup -DisplayName $rbacContributor -ErrorAction Ignore  -Force -Verbose
-    Remove-AzAdGroup -DisplayName $rbacReadOnly -ErrorAction Ignore  -Force -Verbose
+    Remove-AzAdGroup -DisplayName $rbacOwner -ErrorAction Ignore -Verbose
+    Remove-AzAdGroup -DisplayName $rbacContributor -ErrorAction Ignore -Verbose
+    Remove-AzAdGroup -DisplayName $rbacReadOnly -ErrorAction Ignore -Verbose
 }
 Remove-AzResourceGroup -Name $RGNameDEV -Force -ErrorAction Ignore -Verbose
 Remove-AzResourceGroup -Name $RGNamePROD -Force -ErrorAction Ignore -Verbose

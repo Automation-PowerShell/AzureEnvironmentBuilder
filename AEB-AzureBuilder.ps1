@@ -24,6 +24,12 @@ $root = $PSScriptRoot
 $AEBScripts = "$root\AEB-Scripts"
 $ExtraFiles = "$root\ExtraFiles"
 
+if(!(Test-Path $ExtraFiles)) {
+    $output = "AEBScripts\ClientVariables-Template.ps1"
+    ". $" | Out-File $AEBScripts\ClientLoadVariables.ps1 -NoNewline
+    $output | Out-File $AEBScripts\ClientLoadVariables.ps1 -Append
+}
+
     # Dot Source Variables
 . $AEBScripts\ScriptVariables.ps1
 . $AEBScripts\ClientLoadVariables.ps1
@@ -63,8 +69,21 @@ if($RequireCreate) {
             if ($RG.ResourceGroupName -eq $RGNamePRODVNET) { Write-AEBLog "PROD VNET Resource Group created successfully" }Else { Write-AEBLog "*** Unable to create PROD VNET Resource Group! ***" -Level Error }
         }
         if (!($RGNamePROD -match $RGNameSTORE) -and $RequireStorageAccount) {
-            $RG = New-AzResourceGroup -Name $RGNameSTORE -Location $Location
-            if ($RG.ResourceGroupName -eq $RGNameSTORE) { Write-AEBLog "STORE Resource Group created successfully" }Else { Write-AEBLog "*** Unable to create STORE Resource Group! ***" -Level Error }
+            $RG = Get-AzResourceGroup -Name $RGNameSTORE -ErrorAction SilentlyContinue
+            if(!$RG) {
+                $RG = New-AzResourceGroup -Name $RGNameSTORE -Location $Location
+                if ($RG.ResourceGroupName -eq $RGNameSTORE) { Write-AEBLog "STORE Resource Group created successfully" }Else { Write-AEBLog "*** Unable to create STORE Resource Group! ***" -Level Error }
+            }
+            else {
+                Write-AEBLog "STORE Resource Group already exists"
+            }
+        }
+    }
+    else {
+        $RG = Get-AzResourceGroup -Name $RGNamePROD -ErrorAction SilentlyContinue
+        if(!$RG) {
+            Write-AEBLog "*** Resouce Groups are missing ***" -Level Error
+            Write-Dump
         }
     }
     if ($UseTerraform) {

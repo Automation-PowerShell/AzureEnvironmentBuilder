@@ -3,28 +3,28 @@
     "name": "Device Specs",
     "SpecList": [
         {
-            "Name": "Standard"
+            "Name": "Desktop-Standard"
         },
         {
-            "Name": "Packaging"
+            "Name": "Desktop-Packaging"
         },
         {
-            "Name": "AdminStudio"
+            "Name": "Desktop-AdminStudio"
         },
         {
-            "Name": "Jumpbox"
+            "Name": "Desktop-Jumpbox"
         },
         {
-            "Name": "Core"
+            "Name": "Desktop-Core"
         },
         {
-            "Name": "Server"
+            "Name": "Server-Standard"
         },
         {
-            "Name": "HyperV-Server"
+            "Name": "Server-HyperV"
         }
     ],
-    "Standard": [
+    "Desktop-Standard": [
         {
             "PublisherName": "MicrosoftWindowsDesktop",
             "Offer": "Windows-10",
@@ -32,10 +32,10 @@
             "Version": "latest",
             "Apps": [
                 {
-                    "Name": "RunOnce"
+                    "Name": "Conf-RunOnce"
                 },
                 {
-                    "Name": "7-Zip"
+                    "Name": "App-7-Zip"
                 }
             ],
             "VMSize": "Standard_B2s",
@@ -54,7 +54,7 @@
             ]
         }
     ],
-    "Packaging": [
+    "Desktop-Packaging": [
         {
             "PublisherName": "MicrosoftWindowsDesktop",
             "Offer": "Windows-10",
@@ -62,22 +62,22 @@
             "Version": "latest",
             "Apps": [
                 {
-                    "Name": "VMConfig"
+                    "Name": "Conf-VMConfig"
                 },
                 {
-                    "Name": "RunOnce"
+                    "Name": "Conf-RunOnce"
                 },
                 {
-                    "Name": "ORCA"
+                    "Name": "App-ORCA"
                 },
                 {
-                    "Name": "7-Zip"
+                    "Name": "App-7-Zip"
                 },
                 {
-                    "Name": "InstEd"
+                    "Name": "App-InstEd"
                 },
                 {
-                    "Name": "DesktopApps"
+                    "Name": "App-DesktopApps"
                 },
                 {
                     "Name": "App-BeyondCompare"
@@ -99,7 +99,7 @@
             ]
         }
     ],
-    "AdminStudio": [
+    "Desktop-AdminStudio": [
         {
             "PublisherName": "MicrosoftWindowsDesktop",
             "Offer": "Windows-10",
@@ -107,25 +107,25 @@
             "Version": "latest",
             "Apps": [
                 {
-                    "Name": "VMConfig"
+                    "Name": "Conf-VMConfig"
                 },
                 {
-                    "Name": "RunOnce"
+                    "Name": "Conf-RunOnce"
                 },
                 {
-                    "Name": "AdminStudio"
+                    "Name": "App-AdminStudio"
                 },
                 {
-                    "Name": "ORCA"
+                    "Name": "App-ORCA"
                 },
                 {
-                    "Name": "7-Zip"
+                    "Name": "App-7-Zip"
                 },
                 {
-                    "Name": "InstEd"
+                    "Name": "App-InstEd"
                 },
                 {
-                    "Name": "GlassWire"
+                    "Name": "App-GlassWire"
                 }
             ],
             "VMSize": "Standard_B2s",
@@ -144,7 +144,7 @@
             ]
         }
     ],
-    "Jumpbox": [
+    "Desktop-Jumpbox": [
         {
             "PublisherName": "MicrosoftWindowsDesktop",
             "Offer": "Windows-10",
@@ -152,19 +152,19 @@
             "Version": "latest",
             "Apps": [
                 {
-                    "Name": "RunOnce"
+                    "Name": "Conf-RunOnce"
                 },
                 {
-                    "Name": "Jumpbox"
+                    "Name": "Conf-Jumpbox"
                 },
                 {
-                    "Name": "MECMConsole"
+                    "Name": "App-MECMConsole"
                 },
                 {
-                    "Name": "App-MDATP"
+                    "Name": "Conf-MDATP"
                 },
                 {
-                    "Name": "DomainJoin"
+                    "Name": "Conf-DomainJoin"
                 }
             ],
             "VMSize": "Standard_B2s",
@@ -183,7 +183,7 @@
             ]
         }
     ],
-    "Core": [
+    "Desktop-Core": [
         {
             "PublisherName": "MicrosoftWindowsDesktop",
             "Offer": "Windows-10",
@@ -191,19 +191,19 @@
             "Version": "latest",
             "Apps": [
                 {
-                    "Name": "VMConfig"
+                    "Name": "Conf-VMConfig"
                 },
                 {
-                    "Name": "RunOnce"
+                    "Name": "Conf-RunOnce"
                 },
                 {
-                    "Name": "chocolatey"
+                    "Name": "App-chocolatey"
                 },
                 {
-                    "Name": "choco-coreapps"
+                    "Name": "App-choco-coreapps"
                 },
                 {
-                    "Name": "Office365"
+                    "Name": "App-Office365"
                 },
                 {
                     "Name": "App-ClickShareExension"
@@ -231,7 +231,7 @@
             ]
         }
     ],
-    "Server": [
+    "Server-Standard": [
         {
             "PublisherName": "MicrosoftWindowsServer",
             "Offer": "WindowsServer",
@@ -239,10 +239,10 @@
             "Version": "latest",
             "Apps": [
                 {
-                    "Name": "RunOnce"
+                    "Name": "Conf-RunOnce"
                 },
                 {
-                    "Name": "ConfigureDataDisk"
+                    "Name": "Conf-ConfigureDataDisk"
                 }
             ],
             "VMSize": "Standard_D4s_v4",
@@ -273,25 +273,22 @@
             "Version": "latest",
             "Apps": [
                 {
-                    "Name": "RunOnce"
+                    "Name": "Conf-RunOnce"
                 },
                 {
-                    "Name": "ConfigureDataDisk"
+                    "Name": "Conf-ConfigureDataDisk"
                 },
                 {
-                    "Name": "EnableHyperV"
+                    "Name": "Conf-EnableHyperV"
                 },
                 {
-                    "Name": "ConfigHyperV"
+                    "Name": "Conf-ConfigHyperV"
                 },
                 {
-                    "Name": "DomainJoin"
+                    "Name": "Conf-Build-VMBase"
                 },
                 {
-                    "Name": "Build-VMBase"
-                },
-                {
-                    "Name": "Build-VM"
+                    "Name": "Conf-Build-VM"
                 }
             ],
             "VMSize": "Standard_D16s_v4",

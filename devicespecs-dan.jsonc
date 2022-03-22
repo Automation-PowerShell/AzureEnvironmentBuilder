@@ -3,39 +3,39 @@
     "name": "Device Specs",
     "SpecList": [
         {
-            "Name": "Standard"
+            "Name": "Desktop-Standard"
         },
         {
-            "Name": "Packaging"
+            "Name": "Desktop-Packaging"
         },
         {
-            "Name": "AdminStudio"
+            "Name": "Desktop-AdminStudio"
         },
         {
-            "Name": "Jumpbox"
+            "Name": "Desktop-Jumpbox"
         },
         {
-            "Name": "Core"
+            "Name": "Desktop-Core"
         },
         {
-            "Name": "Server"
+            "Name": "Server-Standard"
         },
         {
-            "Name": "HyperV-Server"
+            "Name": "Server-HyperV"
         }
     ],
-    "Standard": [
+    "Desktop-Standard": [
         {
             "PublisherName": "MicrosoftWindowsDesktop",
             "Offer": "Windows-10",
-            "SKUS": "20h2-ent",
+            "SKUS": "win10-21h2-ent",
             "Version": "latest",
             "Apps": [
                 {
-                    "Name": "RunOnce"
+                    "Name": "Conf-RunOnce"
                 },
                 {
-                    "Name": "7-Zip"
+                    "Name": "App-7-Zip"
                 }
             ],
             "VMSize": "Standard_B2s",
@@ -44,12 +44,13 @@
             "Tags": [
                 {
                     "Application": "Desktop-Standard",
-                    "Environment": "Dev"
+                    "Environment": "Dev",
+                    "SKU": "win10-21h2-ent"
                 }
             ]
         }
     ],
-    "Packaging": [
+    "Desktop-Packaging": [
         {
             "PublisherName": "MicrosoftWindowsDesktop",
             "Offer": "Windows-10",
@@ -57,16 +58,16 @@
             "Version": "latest",
             "Apps": [
                 {
-                    "Name": "RunOnce"
+                    "Name": "Conf-RunOnce"
                 },
                 {
-                    "Name": "ORCA"
+                    "Name": "App-ORCA"
                 },
                 {
-                    "Name": "7-Zip"
+                    "Name": "App-7-Zip"
                 },
                 {
-                    "Name": "InstEd"
+                    "Name": "App-InstEd"
                 }
             ],
             "VMSize": "Standard_B2s",
@@ -80,7 +81,7 @@
             ]
         }
     ],
-    "AdminStudio": [
+    "Desktop-AdminStudio": [
         {
             "PublisherName": "MicrosoftWindowsDesktop",
             "Offer": "Windows-10",
@@ -88,7 +89,7 @@
             "Version": "latest",
             "Apps": [
                 {
-                    "Name": "RunOnce"
+                    "Name": "Conf-RunOnce"
                 }
             ],
             "VMSize": "Standard_B2s",
@@ -102,7 +103,7 @@
             ]
         }
     ],
-    "Jumpbox": [
+    "Desktop-Jumpbox": [
         {
             "PublisherName": "MicrosoftWindowsDesktop",
             "Offer": "Windows-10",
@@ -110,13 +111,13 @@
             "Version": "latest",
             "Apps": [
                 {
-                    "Name": "RunOnce"
+                    "Name": "Conf-RunOnce"
                 },
                 {
-                    "Name": "Jumpbox"
+                    "Name": "Conf-Jumpbox"
                 },
                 {
-                    "Name": "MECMConsole"
+                    "Name": "App-MECMConsole"
                 }
             ],
             "VMSize": "Standard_B2s",
@@ -130,7 +131,7 @@
             ]
         }
     ],
-    "Core": [
+    "Desktop-Core": [
         {
             "PublisherName": "MicrosoftWindowsDesktop",
             "Offer": "Windows-10",
@@ -138,16 +139,16 @@
             "Version": "latest",
             "Apps": [
                 {
-                    "Name": "RunOnce"
+                    "Name": "Conf-RunOnce"
                 },
                 {
-                    "Name": "chocolatey"
+                    "Name": "App-chocolatey"
                 },
                 {
-                    "Name": "choco-coreapps"
+                    "Name": "App-choco-coreapps"
                 },
                 {
-                    "Name": "Office365"
+                    "Name": "App-Office365"
                 },
                 {
                     "Name": "App-ClickShareExension"
@@ -170,7 +171,7 @@
             ]
         }
     ],
-    "Server": [
+    "Server-Standard": [
         {
             "PublisherName": "MicrosoftWindowsServer",
             "Offer": "WindowsServer",
@@ -178,10 +179,10 @@
             "Version": "latest",
             "Apps": [
                 {
-                    "Name": "RunOnce"
+                    "Name": "Conf-RunOnce"
                 },
                 {
-                    "Name": "ConfigureDataDisk"
+                    "Name": "Conf-ConfigureDataDisk"
                 }
             ],
             "VMSize": "Standard_D4s_v4",
@@ -207,19 +208,19 @@
             "Version": "latest",
             "Apps": [
                 {
-                    "Name": "RunOnce"
+                    "Name": "Conf-RunOnce"
                 },
                 {
-                    "Name": "ConfigureDataDisk"
+                    "Name": "Conf-ConfigureDataDisk"
                 },
                 {
-                    "Name": "EnableHyperV"
+                    "Name": "Conf-EnableHyperV"
                 },
                 {
-                    "Name": "ConfigHyperV"
+                    "Name": "Conf-ConfigHyperV"
                 },
                 {
-                    "Name": "Build-VMBase"
+                    "Name": "Conf-Build-VMBase"
                 }
             ],
             "VMSize": "Standard_D4s_v4",

@@ -73,10 +73,10 @@ $VMNamePrefixAdminStudio = "vm-euc-as-"                     # Specifies the firs
 $VMNamePrefixJumpbox = "vm-euc-jb-"                         # Specifies the first part of the Jumpbox VM name (15 chars max)
 $VMNamePrefixCore = "vm-euc-core-"                          # Specifies the first part of the Core VM name (15 chars max)
 $VMNumberStartStandard = 101                                # Specifies the second part of the Standard VM name
-$VMNumberStartPackaging = 101                               # Specifies the second part of the Packaging VM name
-$VMNumberStartAdminStudio = 201                             # Specifies the second part of the Admin Studio VM name
-$VMNumberStartJumpbox = 301                                 # Specifies the second part of the Jumpbox VM name
-$VMNumberStartCore = 401                                    # Specifies the second part of the Core VM name
+$VMNumberStartPackaging = 201                               # Specifies the second part of the Packaging VM name
+$VMNumberStartAdminStudio = 301                             # Specifies the second part of the Admin Studio VM name
+$VMNumberStartJumpbox = 401                                 # Specifies the second part of the Jumpbox VM name
+$VMNumberStartCore = 501                                    # Specifies the second part of the Core VM name
 $VMShutdown = $true                                         # Specifies if the newly provisioned VM should be shutdown (can save costs)
 
     # Hyper-V VM Count, Name, Spec, and Settings
