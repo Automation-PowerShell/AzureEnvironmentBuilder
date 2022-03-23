@@ -42,6 +42,8 @@
                 }
             ],
             "VMSize": "Standard_B2s",
+            "VMNamePrefix": "vm-euc-van-",
+            "VMNumberStart": "101",
             "AutoShutdownRequired": true,
             "AutoShutdownTime": 1800,
             "Tags": [
@@ -88,6 +90,8 @@
                 }
             ],
             "VMSize": "Standard_B2s",
+            "VMNamePrefix": "vm-euc-pkg-",
+            "VMNumberStart": "201",
             "AutoShutdownRequired": true,
             "AutoShutdownTime": 1800,
             "Tags": [
@@ -131,6 +135,8 @@
                 }
             ],
             "VMSize": "Standard_B2s",
+            "VMNamePrefix": "vm-euc-as-",
+            "VMNumberStart": "301",
             "AutoShutdownRequired": true,
             "AutoShutdownTime": 1800,
             "Tags": [
@@ -158,13 +164,15 @@
                     "Name": "Conf-Jumpbox"
                 },
                 {
-                    "Name": "Conf-MECMConsole"
+                    "Name": "App-MECMConsole"
                 },
                 {
                     "Name": "Conf-DomainJoin"
                 }
             ],
             "VMSize": "Standard_B2s",
+            "VMNamePrefix": "vm-euc-jb-",
+            "VMNumberStart": "401",
             "AutoShutdownRequired": true,
             "AutoShutdownTime": 1800,
             "Tags": [
@@ -211,6 +219,8 @@
                 }
             ],
             "VMSize": "Standard_B2s",
+            "VMNamePrefix": "vm-euc-core-",
+            "VMNumberStart": "501",
             "AutoShutdownRequired": true,
             "AutoShutdownTime": 1800,
             "Tags": [
@@ -239,6 +249,8 @@
                 }
             ],
             "VMSize": "Standard_D4s_v4",
+            "VMNamePrefix": "vm-euc-srv-0",
+            "VMNumberStart": "1",
             "dataDiskTier": "S10",
             "dataDiskSKU": "Standard_LRS",
             "dataDiskSize": 128,
@@ -285,6 +297,8 @@
                 }
             ],
             "VMSize": "Standard_D4s_v4",
+            "VMNamePrefix": "vm-euc-hyprv-0",
+            "VMNumberStart": "1",
             "dataDiskTier": "S10",
             "dataDiskSKU": "Standard_LRS",
             "dataDiskSize": 128,

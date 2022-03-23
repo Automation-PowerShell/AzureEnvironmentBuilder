@@ -288,24 +288,24 @@ function ScriptRebuild-Config-VM {
     Get-AzContext -Name "User" | Select-AzContext | Out-Null
     switch ($Spec) {
         "Standard" {
-            ConfigureBaseVM -VMName "$VMName" -VMSpec "Standard" -RG $RGNameDEV
-            ConfigureVM -VMName "$VMName" -VMSpec "Standard" -RG $RGNameDEV
+            ConfigureBaseVM -VMName "$VMName" -VMSpec "Desktop-Standard" -RG $RGNameDEV
+            ConfigureVM -VMName "$VMName" -VMSpec "Desktop-Standard" -RG $RGNameDEV
         }
         "Packaging" {
-            ConfigureBaseVM -VMName "$VMName" -VMSpec "Packaging" -RG $RGNameDEV
-            ConfigureVM -VMName "$VMName" -VMSpec "Packaging" -RG $RGNameDEV
+            ConfigureBaseVM -VMName "$VMName" -VMSpec "Desktop-Packaging" -RG $RGNameDEV
+            ConfigureVM -VMName "$VMName" -VMSpec "Desktop-Packaging" -RG $RGNameDEV
         }
         "AdminStudio" {
-            ConfigureBaseVM -VMName "$VMName" -VMSpec "AdminStudio" -RG $RGNameDEV
-            ConfigureVM -VMName "$VMName" -VMSpec "AdminStudio" -RG $RGNameDEV
+            ConfigureBaseVM -VMName "$VMName" -VMSpec "Desktop-AdminStudio" -RG $RGNameDEV
+            ConfigureVM -VMName "$VMName" -VMSpec "Desktop-AdminStudio" -RG $RGNameDEV
         }
         "Jumpbox" {
-            ConfigureBaseVM -VMName "$VMName" -VMSpec "Jumpbox" -RG $RGNameDEV
-            ConfigureVM -VMName "$VMName" -VMSpec "Jumpbox" -RG $RGNameDEV
+            ConfigureBaseVM -VMName "$VMName" -VMSpec "Desktop-Jumpbox" -RG $RGNameDEV
+            ConfigureVM -VMName "$VMName" -VMSpec "Desktop-Jumpbox" -RG $RGNameDEV
         }
         "Core" {
-            ConfigureBaseVM -VMName "$VMName" -VMSpec "Core" -RG $RGNameDEV
-            ConfigureVM -VMName "$VMName" -VMSpec "Core" -RG $RGNameDEV
+            ConfigureBaseVM -VMName "$VMName" -VMSpec "Desktop-Core" -RG $RGNameDEV
+            ConfigureVM -VMName "$VMName" -VMSpec "Desktop-Core" -RG $RGNameDEV
         }
         default {
             Write-Dump
@@ -317,10 +317,10 @@ function ScriptBuild-Create-VM {
         # Build Standard VMs
     if ($RequireStandardVMs) {
         $Count = 1
-        $VMNumberStart = $VMNumberStartStandard
+        [int]$VMNumberStart = $deviceSpecs.'Desktop-Standard'.VMNumberStart
         While ($Count -le $NumberofStandardVMs) {
            Write-AEBLog "Creating $Count of $NumberofStandardVMs VMs"
-           $VM = $VMNamePrefixStandard + $VMNumberStart
+           $VM = $deviceSpecs.'Desktop-Standard'.VMNamePrefix + $VMNumberStart
             $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $RGNameDEV -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if (!$VMCheck) {
                 CreateStandardVM-Script "$VM"
@@ -337,10 +337,10 @@ function ScriptBuild-Create-VM {
         # Build Packaging VMs
     if ($RequirePackagingVMs) {
         $Count = 1
-        $VMNumberStart = $VMNumberStartPackaging
+        [int]$VMNumberStart = $deviceSpecs.'Desktop-Packaging'.VMNumberStart
         While ($Count -le $NumberofPackagingVMs) {
             Write-AEBLog "Creating $Count of $NumberofPackagingVMs VMs"
-            $VM = $VMNamePrefixPackaging + $VMNumberStart
+            $VM = $deviceSpecs.'Desktop-Packaging'.VMNamePrefix + $VMNumberStart
             $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $RGNameDEV -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if (!$VMCheck) {
                 CreatePackagingVM-Script "$VM"
@@ -357,10 +357,10 @@ function ScriptBuild-Create-VM {
         # Build AdminStudio VMs
     if ($RequireAdminStudioVMs) {
         $Count = 1
-        $VMNumberStart = $VMNumberStartAdminStudio
+        [int]$VMNumberStart = $deviceSpecs.'Desktop-AdminStudio'.VMNumberStart
         While ($Count -le $NumberofAdminStudioVMs) {
             Write-AEBLog "Creating $Count of $NumberofAdminStudioVMs VMs"
-            $VM = $VMNamePrefixAdminStudio + $VMNumberStart
+            $VM = $deviceSpecs.'Desktop-AdminStudio'.VMNamePrefix + $VMNumberStart
             $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $RGNameDEV -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if (!$VMCheck) {
                 CreateAdminStudioVM-Script "$VM"
@@ -377,10 +377,10 @@ function ScriptBuild-Create-VM {
         # Build Jumpbox VMs
     if ($RequireJumpboxVMs) {
         $Count = 1
-        $VMNumberStart = $VMNumberStartJumpbox
+        [int]$VMNumberStart = $deviceSpecs.'Desktop-Jumpbox'.VMNumberStart
         While ($Count -le $NumberofJumpboxVMs) {
             Write-AEBLog "Creating $Count of $NumberofJumpboxVMs VMs"
-            $VM = $VMNamePrefixJumpbox + $VMNumberStart
+            $VM = $deviceSpecs.'Desktop-Jumpbox'.VMNamePrefix + $VMNumberStart
             $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $RGNameDEV -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if (!$VMCheck) {
                 CreateJumpboxVM-Script "$VM"
@@ -397,10 +397,10 @@ function ScriptBuild-Create-VM {
         # Build Core VMs
     if ($RequireCoreVMs) {
         $Count = 1
-        $VMNumberStart = $VMNumberStartCore
+        [int]$VMNumberStart = $deviceSpecs.'Desktop-Core'.VMNumberStart
         While ($Count -le $NumberofCoreVMs) {
             Write-AEBLog "Creating $Count of $NumberofCoreVMs VMs"
-            $VM = $VMNamePrefixCore + $VMNumberStart
+            $VM = $deviceSpecs.'Desktop-Core'.VMNamePrefix + $VMNumberStart
             $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $RGNameDEV -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if (!$VMCheck) {
                 CreateCoreVM-Script "$VM"
@@ -419,12 +419,12 @@ function ScriptBuild-Config-VM {
         # Configure Standard VMs
     if ($RequireStandardVMs) {
         $Count = 1
-        $VMNumberStart = $VMNumberStartStandard
+        [int]$VMNumberStart = $deviceSpecs.'Desktop-Standard'.VMNumberStart
         While ($Count -le $NumberofStandardVMs) {
             Write-AEBLog "Configuring $Count of $NumberofStandardVMs VMs"
-            $VM = $VMNamePrefixStandard + $VMNumberStart
-            ConfigureBaseVM -VMName "$VM" -VMSpec "Standard" -RG $RGNameDEV
-            ConfigureVM -VMName "$VM" -VMSpec "Standard" -RG $RGNameDEV
+            $VM = $deviceSpecs.'Desktop-Standard'.VMNamePrefix + $VMNumberStart
+            ConfigureBaseVM -VMName "$VM" -VMSpec "Desktop-Standard" -RG $RGNameDEV
+            ConfigureVM -VMName "$VM" -VMSpec "Desktop-Standard" -RG $RGNameDEV
             $Count++
             $VMNumberStart++
         }
@@ -433,12 +433,12 @@ function ScriptBuild-Config-VM {
         # Configure Packaging VMs
     if ($RequirePackagingVMs) {
         $Count = 1
-        $VMNumberStart = $VMNumberStartPackaging
+        [int]$VMNumberStart = $deviceSpecs.'Desktop-Packaging'.VMNumberStart
         While ($Count -le $NumberofPackagingVMs) {
             Write-AEBLog "Configuring $Count of $NumberofPackagingVMs VMs"
-            $VM = $VMNamePrefixPackaging + $VMNumberStart
-            ConfigureBaseVM -VMName "$VM" -VMSpec "Packaging" -RG $RGNameDEV
-            ConfigureVM -VMName "$VM" -VMSpec "Packaging" -RG $RGNameDEV
+            $VM = $deviceSpecs.'Desktop-Packaging'.VMNamePrefix + $VMNumberStart
+            ConfigureBaseVM -VMName "$VM" -VMSpec "Desktop-Packaging" -RG $RGNameDEV
+            ConfigureVM -VMName "$VM" -VMSpec "Desktop-Packaging" -RG $RGNameDEV
             $Count++
             $VMNumberStart++
             }
@@ -447,12 +447,12 @@ function ScriptBuild-Config-VM {
         # Configure AdminStudio VMs
     if ($RequireAdminStudioVMs) {
         $Count = 1
-        $VMNumberStart = $VMNumberStartAdminStudio
+        [int]$VMNumberStart = $deviceSpecs.'Desktop-AdminStudio'.VMNumberStart
         While ($Count -le $NumberofAdminStudioVMs) {
             Write-AEBLog "Configuring $Count of $NumberofAdminStudioVMs VMs"
-            $VM = $VMNamePrefixAdminStudio + $VMNumberStart
-            ConfigureBaseVM -VMName "$VM" -VMSpec "AdminStudio" -RG $RGNameDEV
-            ConfigureVM -VMName "$VM" -VMSpec "AdminStudio" -RG $RGNameDEV
+            $VM = $deviceSpecs.'Desktop-AdminStudio'.VMNamePrefix + $VMNumberStart
+            ConfigureBaseVM -VMName "$VM" -VMSpec "Desktop-AdminStudio" -RG $RGNameDEV
+            ConfigureVM -VMName "$VM" -VMSpec "Desktop-AdminStudio" -RG $RGNameDEV
             $Count++
             $VMNumberStart++
         }
@@ -461,12 +461,12 @@ function ScriptBuild-Config-VM {
         # Configure Jumpbox VMs
     if ($RequireJumpboxVMs) {
         $Count = 1
-        $VMNumberStart = $VMNumberStartJumpbox
+        [int]$VMNumberStart = $deviceSpecs.'Desktop-Jumpbox'.VMNumberStart
         While ($Count -le $NumberofJumpboxVMs) {
             Write-AEBLog "Configuring $Count of $NumberofJumpboxVMs VMs"
-            $VM = $VMNamePrefixJumpbox + $VMNumberStart
-            ConfigureBaseVM -VMName "$VM" -VMSpec "Jumpbox" -RG $RGNameDEV
-            ConfigureVM -VMName "$VM" -VMSpec "Jumpbox" -RG $RGNameDEV
+            $VM = $deviceSpecs.'Desktop-Jumpbox'.VMNamePrefix + $VMNumberStart
+            ConfigureBaseVM -VMName "$VM" -VMSpec "Desktop-Jumpbox" -RG $RGNameDEV
+            ConfigureVM -VMName "$VM" -VMSpec "Desktop-Jumpbox" -RG $RGNameDEV
             $Count++
             $VMNumberStart++
         }
@@ -475,12 +475,12 @@ function ScriptBuild-Config-VM {
         # Configure Core VMs
     if ($RequireCoreVMs) {
         $Count = 1
-        $VMNumberStart = $VMNumberStartCore
+        [int]$VMNumberStart = $deviceSpecs.'Desktop-Core'.VMNumberStart
         While ($Count -le $NumberofCoreVMs) {
             Write-AEBLog "Configuring $Count of $NumberofCoreVMs VMs"
-            $VM = $VMNamePrefixCore + $VMNumberStart
-            ConfigureBaseVM -VMName "$VM" -VMSpec "Core" -RG $RGNameDEV
-            ConfigureVM -VMName "$VM" -VMSpec "Core" -RG $RGNameDEV
+            $VM = $deviceSpecs.'Desktop-Core'.VMNamePrefix + $VMNumberStart
+            ConfigureBaseVM -VMName "$VM" -VMSpec "Desktop-Core" -RG $RGNameDEV
+            ConfigureVM -VMName "$VM" -VMSpec "Desktop-Core" -RG $RGNameDEV
             $Count++
             $VMNumberStart++
         }

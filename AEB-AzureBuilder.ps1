@@ -108,13 +108,11 @@ if($RequireCreate) {
     }
 
         # Create Server Script
-    if ($RequireHyperV) {
-        if ($UseTerraform) {
-            TerraformBuild-HVVM
-        }
-        else {
-            ScriptBuild-HVVM
-        }
+    if ($UseTerraform) {
+        TerraformBuild-HVVM
+    }
+    else {
+        ScriptBuild-Create-Server
     }
 
     if($UseTerraform) {
@@ -148,13 +146,11 @@ if ($RequireConfigure) {
     }
 
         # Configure Server Script
-    if($RequireHyperV) {
-        if ($UseTerraform) {
-            TerraformConfigure-HVVM
-        }
-        else {
-            ScriptConfigure-HVVM
-        }
+    if ($UseTerraform) {
+        TerraformConfigure-HVVM
+    }
+    else {
+        ScriptBuild-Config-Server
     }
 }
 Write-AEBLog "Completed AEB-AzureBuilder.ps1"

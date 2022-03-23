@@ -71,7 +71,8 @@ function Create-VM {
     $VMObject = New-VM @VM -NoVHD -Verbose -ErrorAction Stop
 
     New-Item -Path $VMDrive\$VMFolder\$VHDFolder\ -Name $VMName -ItemType Directory -Force -Verbose | Out-null
-    Copy-Item -Path $VMDrive\$VMFolder\Media\basedisk.vhdx -Destination $VMDrive\$VMFolder\$VHDFolder\$VMName\$VMName.vhdx -Force -Verbose
+    #Copy-Item -Path $VMDrive\$VMFolder\Media\basedisk.vhdx -Destination $VMDrive\$VMFolder\$VHDFolder\$VMName\$VMName.vhdx -Force -Verbose
+    Convert-VHD -Path $VMDrive\$VMFolder\Media\basedisk.vhdx -DestinationPath $VMDrive\$VMFolder\$VHDFolder\$VMName\$VMName.vhdx -VHDType Dynamic -Verbose
 
     $VMObject | Set-VM -ProcessorCount $VMCPUCount
     $VMObject | Set-VM -StaticMemory
@@ -80,7 +81,7 @@ function Create-VM {
     $VMObject | Add-VMHardDiskDrive -Path $VMDrive\$VMFolder\$VHDFolder\$VMName\$VMName.vhdx
 
     $VMObject | Start-VM -Verbose -ErrorAction Stop
-    Start-Sleep -Seconds 360
+    Start-Sleep -Seconds 720
 
         # VM Customisations
     Remove-Variable erroric -ErrorAction SilentlyContinue
@@ -90,7 +91,7 @@ function Create-VM {
         Rename-Computer -NewName $Using:VMName -LocalCredential $Using:LocalAdminCred -Restart -Verbose
 
             # Disable IPV6
-        Disable-NetAdapterBinding -Name "*" -ComponentID ms_tcpip6
+        #Disable-NetAdapterBinding -Name "*" -ComponentID ms_tcpip6
 
             # Add Windows Capibilities Back In
         Add-WindowsCapability -Online -Name Microsoft.Windows.PowerShell.ISE~~~~0.0.1.0
@@ -103,17 +104,19 @@ function Create-VM {
         Write-Error $error[0]
         Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Error -Message $error[0].Exception
     }
-    Start-Sleep -Seconds 90
 
+    Start-Sleep -Seconds 30
     $MACAddress = $VMObject.NetworkAdapters.MacAddress
     $IPAddress = (Get-DhcpServerv4Scope | Get-DhcpServerv4Lease | Where-Object {($_.ClientId -replace "-") -eq $MACAddress}).IPAddress.IPAddressToString
-
     if(!(Get-NetNatStaticMapping -NatName $VMNetNATName -ErrorAction SilentlyContinue | Where-Object {$_.ExternalPort -like "*$VMNumber"})) {
         Add-NetNatStaticMapping -ExternalIPAddress "0.0.0.0" -ExternalPort 50$VMNumber -InternalIPAddress $IPAddress -InternalPort 3389 -NatName $VMNetNATName -Protocol TCP -ErrorAction Stop | Out-Null
     }
-    Start-Sleep -Seconds 120
-    $VMObject | Stop-VM -Force -TurnOff -Verbose -ErrorAction Stop
-    Convert-VHD -Path $VMDrive\$VMFolder\$VHDFolder\$VMName\$VMName.vhdx -DestinationPath $VMDrive\$VMFolder\Media\$VMName.vhdx -VHDType Dynamic -Verbose
+
+#    Start-Sleep -Seconds 30
+#    $VMObject | Stop-VM -Force -TurnOff -Verbose -ErrorAction Stop
+
+#    Start-Sleep -Seconds 30
+#    Convert-VHD -Path $VMDrive\$VMFolder\$VHDFolder\$VMName\$VMName.vhdx -DestinationPath $VMDrive\$VMFolder\Media\$VMName.vhdx -VHDType Dynamic -Verbose
 }
 
 #region Main
