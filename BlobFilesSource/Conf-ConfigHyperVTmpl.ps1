@@ -56,7 +56,7 @@ Install-WindowsFromWim -DiskNumber 2 -DiskLayout BIOS -NoRecoveryTools -Unattend
 Dismount-VHD -Path F:\Hyper-V\Media\basedisk.vhdx
 
 # Get Files from Blob
-$StorAcc = Get-AzStorageAccount -ResourceGroupName rrrrr -Name xxxxx
+<#$StorAcc = Get-AzStorageAccount -ResourceGroupName rrrrr -Name xxxxx
 $Result1 = Get-AzStorageBlobContent -Container data -Blob "./Media/en_windows_10_business_editions_version_20h2_updated_dec_2020_x64_dvd_2af15d50.iso" -Destination "F:\Hyper-V\" -Context $StorAcc.context -Force
 If ($Result1.Name -eq "Media/en_windows_10_business_editions_version_20h2_updated_dec_2020_x64_dvd_2af15d50.iso") {
     Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Successfully downloaded iso file"
@@ -64,5 +64,5 @@ If ($Result1.Name -eq "Media/en_windows_10_business_editions_version_20h2_update
 Else {
     Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Error -Message "Failed to download iso file"
 }
-
+#>
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Completed $scriptname"
