@@ -96,7 +96,7 @@ function CreateRBACConfig {
     if ($RequireUserGroups -and !$UseTerraform) {
         if (!($OwnerGroup)){New-AzADGroup -DisplayName $rbacOwner -MailNickName "NotSet"}Else{Write-AEBLog "Owner RBAC group already exists" -Level Error;Write-Dump}
         if (!($ContributorGroup)){New-AzADGroup -DisplayName $rbacContributor -MailNickName "NotSet"}Else{Write-AEBLog "Contributor RBAC group already exists" -Level Error;Write-Dump}
-        if (!($ReadOnlyGroup)){New-AzADGroup -DisplayName $rbacReadOnly -MailNickName "NotSet"}Else{Write-AEBLog "ReadOnly RBAC group already exists" -Level Error;$ReadOnly=Write-Dump}
+        if (!($ReadOnlyGroup)){New-AzADGroup -DisplayName $rbacReadOnly -MailNickName "NotSet"}Else{Write-AEBLog "ReadOnly RBAC group already exists" -Level Error;Write-Dump}
     }
 }
 
