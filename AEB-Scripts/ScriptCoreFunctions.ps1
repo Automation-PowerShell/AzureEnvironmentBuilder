@@ -268,10 +268,10 @@ function Write-Dump {
 }
 
 function ConnectTo-Azure {
-    Import-Module Az.Accounts,Az.Compute,Az.Storage,Az.Network,Az.Resources -ErrorAction SilentlyContinue
-    if (!((Get-Module Az.Accounts) -and (Get-Module Az.Compute) -and (Get-Module Az.Storage) -and (Get-Module Az.Network) -and (Get-Module Az.Resources))) {
-    Install-Module Az.Accounts,Az.Compute,Az.Storage,Az.Network,Az.Resources -Repository PSGallery -Scope CurrentUser -Force
-        Import-Module Az.Accounts,AZ.Compute,Az.Storage,Az.Network,Az.Resources
+    Import-Module Az.Accounts,Az.Compute,Az.Storage,Az.Network,Az.Resources,Az.KeyVault -ErrorAction SilentlyContinue
+    if (!((Get-Module Az.Accounts) -and (Get-Module Az.Compute) -and (Get-Module Az.Storage) -and (Get-Module Az.Network) -and (Get-Module Az.Resources) -and (Get-Module Az.KeyVault))) {
+    Install-Module Az.Accounts,Az.Compute,Az.Storage,Az.Network,Az.Resources,Az.KeyVault -Repository PSGallery -Scope CurrentUser -Force
+        Import-Module Az.Accounts,AZ.Compute,Az.Storage,Az.Network,Az.Resources,Az.KeyVault
     }
     Clear-AzContext -Force
     #Update-Module Az.Accounts,AZ.Compute,Az.Storage,Az.Network,Az.Resources -Force

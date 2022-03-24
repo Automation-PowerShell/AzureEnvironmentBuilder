@@ -3,6 +3,7 @@ $azTenant = ""
 $azSubscription = ""
 $gitlog = ""
 $StorageAccountName = ""
+$keyVaultName = ""
 
 $ServicePrincipalUser = "default"
 $LocalAdminUser = "default"
@@ -35,12 +36,24 @@ $RequireStorageAccount = $true
 $RequireVNET = $true
 $RequireNSG = $true
 $RequirePublicIPs = $true
+$RequireKeyVault = $true
+
 $RequireStandardVMs = $true
 $RequirePackagingVMs = $false
 $RequireAdminStudioVMs = $false
 $RequireJumpboxVMs = $false
 $RequireCoreVMs = $false
 $RequireHyperV = $false
+
+$VMShutdown = $false                                        # Specifies if the newly provisioned VM should be shutdown (can save costs)
+
+$NumberofStandardVMs = 0                                    # Specify number of Standard VMs to be provisioned
+$NumberofPackagingVMs = 0                                   # Specify number of Packaging VMs to be provisioned
+$NumberofAdminStudioVMs = 0                                 # Specify number of AdminStudio VMs to be provisioned
+$NumberofJumpboxVMs = 0                                     # Specify number of Jumpbox VMs to be provisioned
+$NumberofCoreVMs = 0                                        # Specify number of Core VMs to be provisioned
+$NumberofStdSrvVMs = 0                                      # Specify number of Standard Server VMs to be provisioned
+$NumberofHyperVVMs = 0                                      # Specify number of HyperV Server VMs to be provisioned
 
     # Script Variables
 Try {

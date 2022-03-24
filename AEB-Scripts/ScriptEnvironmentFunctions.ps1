@@ -52,24 +52,36 @@ function UpdateRBAC {
 function ConfigureNetwork {
     if ($RequireVNET -and !$UseTerraform) {
         $virtualNetworkPROD = New-AzVirtualNetwork -ResourceGroupName $RGNamePRODVNET -Location $Location -Name $VNetPROD -AddressPrefix 10.0.0.0/16
-        $subnetConfigPROD = Add-AzVirtualNetworkSubnetConfig -Name $SubnetNamePROD -AddressPrefix 10.0.0.0/24 -VirtualNetwork $virtualNetworkPROD
+        $subnetConfigPROD = Add-AzVirtualNetworkSubnetConfig -Name $SubnetNamePROD -AddressPrefix "10.0.1.0/24" -VirtualNetwork $virtualNetworkPROD
         if (!($RGNameDEVVNET -match $RGNamePRODVNET)) {
             $virtualNetworkDEV = New-AzVirtualNetwork -ResourceGroupName $RGNameDEVVNET -Location $Location -Name $VNetDEV -AddressPrefix 10.0.0.0/16
-            $subnetConfigDEV = Add-AzVirtualNetworkSubnetConfig -Name $SubnetNameDEV -AddressPrefix 10.0.0.0/24 -VirtualNetwork $virtualNetworkDEV
+            $subnetConfigDEV = Add-AzVirtualNetworkSubnetConfig -Name $SubnetNameDEV -AddressPrefix "10.0.1.0/24" -VirtualNetwork $virtualNetworkDEV
         }
 
         $rule1 = New-AzNetworkSecurityRuleConfig -Name rdp-rule -Description "Allow RDP" -Access Allow -Protocol Tcp -Direction Inbound -Priority 100 -SourceAddressPrefix * -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange 3389
         $rule2 = New-AzNetworkSecurityRuleConfig -Name smb-rule -Description "Allow SMB" -Access Allow -Protocol Tcp -Direction Outbound -Priority 100 -SourceAddressPrefix * -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange 445
 
-        $nsgPROD = New-AzNetworkSecurityGroup -ResourceGroupName $RGNamePRODVNET -Location $location -Name $NsgNamePROD -SecurityRules $rule1, $rule2     # $Rule1, $Rule2 etc.
-        if ($nsgPROD.ProvisioningState -eq "Succeeded") { Write-AEBLog "PROD Network Security Group created successfully"} Else { Write-AEBLog "*** Unable to create or configure PROD Network Security Group! ***" -Level Error}
-        $VnscPROD = Set-AzVirtualNetworkSubnetConfig -Name default -VirtualNetwork $virtualNetworkPROD -AddressPrefix "10.0.1.0/24" -NetworkSecurityGroup $nsgPROD
+        if($RequireNSG) {
+            $nsgPROD = New-AzNetworkSecurityGroup -ResourceGroupName $RGNamePRODVNET -Location $location -Name $NsgNamePROD -SecurityRules $rule1, $rule2     # $Rule1, $Rule2 etc.
+            if ($nsgPROD.ProvisioningState -eq "Succeeded") { Write-AEBLog "PROD Network Security Group created successfully"} Else { Write-AEBLog "*** Unable to create or configure PROD Network Security Group! ***" -Level Error}
+            Set-AzVirtualNetworkSubnetConfig -Name $SubnetNamePROD -VirtualNetwork $virtualNetworkPROD -AddressPrefix "10.0.1.0/24" -NetworkSecurityGroup $nsgPROD | Out-Null
+        }
+        if($RequireKeyVault) {
+            Set-AzVirtualNetworkSubnetConfig -Name $SubnetNamePROD -VirtualNetwork $virtualNetworkPROD -AddressPrefix "10.0.1.0/24" -ServiceEndpoint "Microsoft.KeyVault" | Out-Null
+            Write-AEBLog "PROD KeyVault Service Endpoint created"
+        }
         $virtualNetworkPROD | Set-AzVirtualNetwork | Out-Null
         if ($virtualNetworkPROD.ProvisioningState -eq "Succeeded") { Write-AEBLog "PROD Virtual Network created and associated with the Network Security Group successfully" } Else { Write-AEBLog "*** Unable to create the PROD Virtual Network, or associate it to the Network Security Group! ***" -Level Error }
         if (!($RGNameDEVVNET -match $RGNamePRODVNET)) {
-            $nsgDEV = New-AzNetworkSecurityGroup -ResourceGroupName $RGNameDEVVNET -Location $location -Name $NsgNameDEV -SecurityRules $rule1, $rule2     # $Rule1, $Rule2 etc.
-            if ($nsgDEV.ProvisioningState -eq "Succeeded") { Write-AEBLog "DEV Network Security Group created successfully" }Else { Write-AEBLog "*** Unable to create or configure DEV Network Security Group! ***" }
-            $VnscDEV = Set-AzVirtualNetworkSubnetConfig -Name default -VirtualNetwork $virtualNetworkDEV -AddressPrefix "10.0.1.0/24" -NetworkSecurityGroup $nsgDEV
+            if($RequireNSG) {
+                $nsgDEV = New-AzNetworkSecurityGroup -ResourceGroupName $RGNameDEVVNET -Location $location -Name $NsgNameDEV -SecurityRules $rule1, $rule2     # $Rule1, $Rule2 etc.
+                if ($nsgDEV.ProvisioningState -eq "Succeeded") { Write-AEBLog "DEV Network Security Group created successfully" }Else { Write-AEBLog "*** Unable to create or configure DEV Network Security Group! ***" }
+                Set-AzVirtualNetworkSubnetConfig -Name $SubnetNameDEV -VirtualNetwork $virtualNetworkDEV -AddressPrefix "10.0.1.0/24" -NetworkSecurityGroup $nsgDEV | Out-Null
+            }
+            if($RequireKeyVault) {
+                Set-AzVirtualNetworkSubnetConfig -Name $SubnetNameDEV -VirtualNetwork $virtualNetworkDEV -AddressPrefix "10.0.1.0/24" -ServiceEndpoint "Microsoft.KeyVault" | Out-Null
+                Write-AEBLog "DEV KeyVault Service Endpoint created"
+            }
             $virtualNetworkDEV | Set-AzVirtualNetwork | Out-Null
             if ($virtualNetworkDEV.ProvisioningState -eq "Succeeded") { Write-AEBLog "DEV Virtual Network created and associated with the Network Security Group successfully" } Else { Write-AEBLog "*** Unable to create the DEV Virtual Network, or associate it to the Network Security Group! ***" -Level Error }
         }
@@ -118,5 +130,25 @@ function CreateStorageAccount {
     }
     else {
         Write-AEBLog "Creation of Storage Account and Storage Container not required"
+    }
+}
+
+function CreateKeyVault {
+    if($RequireKeyVault -and !$UseTerraform) {
+        $vnetDEVID = (Get-AzVirtualNetwork -ResourceGroupName $RGNameDEVVNET).Subnets[0].Id
+        $vnetPRODID = (Get-AzVirtualNetwork -ResourceGroupName $RGNamePRODVNET).Subnets[0].Id
+        $myPublicIP = (Invoke-WebRequest ifconfig.me/ip).Content
+
+        New-AzKeyVault -VaultName $keyVaultName -ResourceGroupName $RGNameSTORE -Location $Location -EnabledForDeployment #-EnableRbacAuthorization
+        Update-AzKeyVaultNetworkRuleSet -DefaultAction Deny -VaultName $keyVaultName
+        Add-AzKeyVaultNetworkRule -VaultName $keyVaultName -VirtualNetworkResourceId $vnetDEVID
+        Add-AzKeyVaultNetworkRule -VaultName $keyVaultName -VirtualNetworkResourceId $vnetPRODID
+        Add-AzKeyVaultNetworkRule -VaultName $keyVaultName -IpAddressRange $myPublicIP
+
+        Set-AzKeyVaultSecret -VaultName $keyVaultName -Name "ServicePrincipal" -SecretValue $ServicePrincipalPassword | Out-Null
+        Set-AzKeyVaultSecret -VaultName $keyVaultName -Name "LocalAdmin" -SecretValue $LocalAdminPassword | Out-Null
+        Set-AzKeyVaultSecret -VaultName $keyVaultName -Name "HyperVLocalAdmin" -SecretValue $HyperVLocalAdminPassword | Out-Null
+        Set-AzKeyVaultSecret -VaultName $keyVaultName -Name "DomainJoin" -SecretValue $DomainJoinPassword | Out-Null
+        Set-AzKeyVaultSecret -VaultName $keyVaultName -Name "DomainUser" -SecretValue $DomainUserPassword | Out-Null
     }
 }
