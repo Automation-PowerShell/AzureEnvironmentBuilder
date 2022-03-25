@@ -45,12 +45,8 @@ Copy-Item -Path "Z:\en_windows_10_business_editions_version_20h2_updated_dec_202
 # Windows Image Tools
 Install-Module -Name WindowsImageTools -Force -ErrorAction Stop
 Import-Module WindowsImageTools -Force
-#$adminPassword = ConvertTo-SecureString "Password1234" -AsPlainText -Force
 $adminPassword = (Get-AzKeyVaultSecret -VaultName "kkkkk" -Name "HyperVLocalAdmin").SecretValue
 $adminCred = New-Object System.Management.Automation.PSCredential ("administrator", $adminPassword)
-
-$adminPasswordPlainText = Get-AzKeyVaultSecret -VaultName "kkkkk" -Name "HyperVLocalAdmin" -AsPlainText
-Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "HyperV Admin Password = $adminPasswordPlainText"
 
 New-UnattendXml -Path F:\Hyper-V\Media\Unattend.xml -AdminPassword $adminCred -logonCount 1 -enableAdministrator
 New-DataVHD -Path F:\Hyper-V\Media\basedisk.vhdx -Size 60GB -DataFormat NTFS -Dynamic
