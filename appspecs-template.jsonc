@@ -82,6 +82,9 @@
         },
         {
             "Name": "App-BeyondCompare"
+        },
+        {
+            "Name": "App-ErrorCheck"
         }
     ],
     "Conf-Prevision": [
@@ -296,6 +299,14 @@
         {
             "AppVersion": "4.4.1.26165",
             "PS1": "App-BeyondCompare.ps1",
+            "RebootRequired": false,
+            "RebootSeconds": 0
+        }
+    ],
+    "App-ErrorCheck": [
+        {
+            "AppVersion": "",
+            "PS1": "App-ErrorCheck.ps1",
             "RebootRequired": false,
             "RebootSeconds": 0
         }

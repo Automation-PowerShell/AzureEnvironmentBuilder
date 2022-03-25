@@ -13,6 +13,7 @@ function UpdateStorage {
                 $content = $content.replace("ooooo", $OUPath)
                 $content = $content.replace("rrrrr", $RGNameSTORE)
                 $content = $content.replace("fffff", $FileShareName)
+                $content = $content.replace("kkkkk", $keyVaultName)
                 $contentName = $template.Basename -replace "Tmpl"
                 $contentName = $contentName + ".ps1"
                 $content | Set-Content -Path "$BlobFilesDest\$contentName" -ErrorAction stop

@@ -36,6 +36,9 @@
                 },
                 {
                     "Name": "App-7-Zip"
+                },
+                {
+                    "Name": "App-ErrorCheck"
                 }
             ],
             "VMSize": "Standard_B2s",

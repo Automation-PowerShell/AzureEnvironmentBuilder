@@ -161,6 +161,7 @@ function ConfigureBaseVM {
         Write-AEBLog "VM: $VMName created successfully"
 
         $NewVm = Get-AzADServicePrincipal -DisplayName $VMName
+        Start-Sleep -Seconds 30
         if ($RequireServicePrincipal) {
             Get-AzContext -Name "StorageSP" | Select-AzContext | Out-Null
         }
@@ -184,6 +185,7 @@ function ConfigureBaseVM {
             }
 
         }
+        Set-AzKeyVaultAccessPolicy -ObjectId $NewVm.Id -VaultName $keyVaultName -PermissionsToSecrets Get
 
         if ($deviceSpecs.$VMSpec.AutoShutdownRequired) {
             $ScheduledShutdownResourceId = "/subscriptions/$azSubscription/resourceGroups/$RG/providers/microsoft.devtestlab/schedules/shutdown-computevm-$VMName"
