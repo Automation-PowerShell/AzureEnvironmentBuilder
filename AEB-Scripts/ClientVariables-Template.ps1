@@ -1,49 +1,49 @@
     # Client Azure Variables
-$azTenant = ""
-$azSubscription = ""
-$gitlog = ""
-$StorageAccountName = ""
+$azTenant = ""                                  # Azure Tenant ID
+$azSubscription = ""                            # Subscription ID
+$gitlog = ""                                    # Path to GitLog location (if enabled on line 29)
+$StorageAccountName = ""                        # Storage Account name to use
 $keyVaultName = ""
 
-$ServicePrincipalUser = "default"
-$LocalAdminUser = "default"
-$HyperVLocalAdminUser = "default"
-$DomainJoinUser = "domain\default"
-$DomainUserUser = "domain\default"
+$ServicePrincipalUser = "default"               # Service Principal name if enabled on line 25 (used for ???)
+$LocalAdminUser = "default"                     # Local Admin UserName to create (will be used for VMs)
+$HyperVLocalAdminUser = "default"               # Local Admin username to create for Hyper-V server
+$DomainJoinUser = "domain\default"              # Domain User with Domain Join rights (needs to exist in the domain)
+$DomainUserUser = "domain\default"              # ??? (needs to exist in the domain)
 
     # Domain Variables
-$Domain = ""
-$OUPath = ""
+$Domain = ""                                    # Name of the AD Domain
+$OUPath = ""                                    # Name of the AD OU where computer objects will be created
 
     # Script Customisations
-$VMListExclude = @()                    # Exclusion list for rebuilding Azure VMs
+$VMListExclude = @()                            # Exclusion list for rebuilding Azure VMs
 
     # Main Control
-$RequireCreate = $false
-$RequireConfigure = $false
-$UseTerraform = $false
-$RequireUpdateStorage = $false
-$RequireServicePrincipal = $false
+$RequireCreate = $false                         # ???
+$RequireConfigure = $false                      # ???
+$UseTerraform = $false                          # Use Terraform Templates
+$RequireUpdateStorage = $false                  # ???
+$RequireServicePrincipal = $false               # Enable use of Service Principal
 
     # Required Components
-$isProd = $false
-$LogToGit = $false
-$LogToSA = $false
-$RequireUserGroups = $true
-$RequireRBAC = $true
-$RequireResourceGroups = $true
-$RequireStorageAccount = $true
-$RequireVNET = $true
-$RequireNSG = $true
-$RequirePublicIPs = $true
+$isProd = $false                                # Will this build be used for production?
+$LogToGit = $false                              # Should the script log to GIT?
+$LogToSA = $false                               # Should the script log to the Storage Account?
+$RequireUserGroups = $true                      # Do User groups need creating?
+$RequireRBAC = $true                            # Is RBAC required???
+$RequireResourceGroups = $true                  # Should a Resource Group be created? (or use existing)
+$RequireStorageAccount = $true                  # Should a Storage Account be created (or use existing)
+$RequireVNET = $true                            # Should a VNET be created (or use existing)
+$RequireNSG = $true                             # Should an NSG be created (or use existing)
+$RequirePublicIPs = $true                       # Should Public IPs be used
 $RequireKeyVault = $true
 
-$RequireStandardVMs = $true
-$RequirePackagingVMs = $false
-$RequireAdminStudioVMs = $false
-$RequireJumpboxVMs = $false
-$RequireCoreVMs = $false
-$RequireHyperV = $false
+$RequireStandardVMs = $true                     # Should standard VMs be created?
+$RequirePackagingVMs = $false                   # Should Packaging VMs be created?
+$RequireAdminStudioVMs = $false                 # Should AdminStudio VMs be created?
+$RequireJumpboxVMs = $false                     # Should Jumpbox VMs be created?
+$RequireCoreVMs = $false                        # Should Core VMs be created???
+$RequireHyperV = $false                         # Should a Hyper-V VM be created?
 
 $VMShutdown = $false                                        # Specifies if the newly provisioned VM should be shutdown (can save costs)
 
