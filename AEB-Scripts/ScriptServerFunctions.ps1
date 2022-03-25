@@ -37,6 +37,7 @@ function ConfigStdSrv-Script($VMName) {
         else {
             New-AzRoleAssignment -ObjectId $NewVm.Id -RoleDefinitionName "Contributor" -Scope "/subscriptions/$azSubscription/resourceGroups/$RGNameSTORE/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" -Verbose -ErrorAction SilentlyContinue | Out-Null
         }
+        Set-AzKeyVaultAccessPolicy -ObjectId $NewVm.Id -VaultName $keyVaultName -PermissionsToSecrets Get
         Get-AzContext -Name "User" | Select-AzContext | Out-Null
 
             # Add Data disk to Server

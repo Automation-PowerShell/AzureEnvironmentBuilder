@@ -3,6 +3,7 @@ $azTenant = ""                                  # Azure Tenant ID
 $azSubscription = ""                            # Subscription ID
 $gitlog = ""                                    # Path to GitLog location (if enabled on line 29)
 $StorageAccountName = ""                        # Storage Account name to use
+$keyVaultName = ""
 
 $ServicePrincipalUser = "default"               # Service Principal name if enabled on line 25 (used for ???)
 $LocalAdminUser = "default"                     # Local Admin UserName to create (will be used for VMs)
@@ -34,13 +35,25 @@ $RequireResourceGroups = $true                  # Should a Resource Group be cre
 $RequireStorageAccount = $true                  # Should a Storage Account be created (or use existing)
 $RequireVNET = $true                            # Should a VNET be created (or use existing)
 $RequireNSG = $true                             # Should an NSG be created (or use existing)
-$RequirePublicIPs = $true                       # Should Public IPs be used 
+$RequirePublicIPs = $true                       # Should Public IPs be used
+$RequireKeyVault = $true
+
 $RequireStandardVMs = $true                     # Should standard VMs be created?
 $RequirePackagingVMs = $false                   # Should Packaging VMs be created?
 $RequireAdminStudioVMs = $false                 # Should AdminStudio VMs be created?
 $RequireJumpboxVMs = $false                     # Should Jumpbox VMs be created?
 $RequireCoreVMs = $false                        # Should Core VMs be created???
 $RequireHyperV = $false                         # Should a Hyper-V VM be created?
+
+$VMShutdown = $false                                        # Specifies if the newly provisioned VM should be shutdown (can save costs)
+
+$NumberofStandardVMs = 0                                    # Specify number of Standard VMs to be provisioned
+$NumberofPackagingVMs = 0                                   # Specify number of Packaging VMs to be provisioned
+$NumberofAdminStudioVMs = 0                                 # Specify number of AdminStudio VMs to be provisioned
+$NumberofJumpboxVMs = 0                                     # Specify number of Jumpbox VMs to be provisioned
+$NumberofCoreVMs = 0                                        # Specify number of Core VMs to be provisioned
+$NumberofStdSrvVMs = 0                                      # Specify number of Standard Server VMs to be provisioned
+$NumberofHyperVVMs = 0                                      # Specify number of HyperV Server VMs to be provisioned
 
     # Script Variables
 Try {

@@ -99,6 +99,9 @@ if($RequireCreate) {
         # Create Storage Account
     CreateStorageAccount
 
+        # Create Key Vault
+    CreateKeyVault
+
         # Create Desktop VM Script
     if ($UseTerraform) {
         TerraformBuild-VM
