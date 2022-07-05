@@ -112,11 +112,11 @@ function Create-VM {
         Add-NetNatStaticMapping -ExternalIPAddress "0.0.0.0" -ExternalPort 50$VMNumber -InternalIPAddress $IPAddress -InternalPort 3389 -NatName $VMNetNATName -Protocol TCP -ErrorAction Stop | Out-Null
     }
 
-#    Start-Sleep -Seconds 30
-#    $VMObject | Stop-VM -Force -TurnOff -Verbose -ErrorAction Stop
+    Start-Sleep -Seconds 30
+    $VMObject | Stop-VM -Force -TurnOff -Verbose -ErrorAction Stop
 
-#    Start-Sleep -Seconds 30
-#    Convert-VHD -Path $VMDrive\$VMFolder\$VHDFolder\$VMName\$VMName.vhdx -DestinationPath $VMDrive\$VMFolder\Media\$VMName.vhdx -VHDType Dynamic -Verbose
+    Start-Sleep -Seconds 30
+    Convert-VHD -Path $VMDrive\$VMFolder\$VHDFolder\$VMName\$VMName.vhdx -DestinationPath $VMDrive\$VMFolder\Media\$VMName.vhdx -VHDType Dynamic -Verbose
 }
 
 #region Main
