@@ -28,6 +28,9 @@ if(!(Test-Path $ExtraFiles)) {
     $output = "AEBScripts\ClientVariables-Template.ps1"
     ". $" | Out-File $AEBScripts\ClientLoadVariables.ps1 -NoNewline
     $output | Out-File $AEBScripts\ClientLoadVariables.ps1 -Append
+    New-Item -Path $ExtraFiles -ItemType Directory -Force
+    Write-Host "New Run Detected.  Please review ClientVariable file is correct within ClientLoadVariables.ps1"
+    exit
 }
 
     # Dot Source Variables

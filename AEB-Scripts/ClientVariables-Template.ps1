@@ -2,8 +2,6 @@
 $azTenant = ""                                  # Azure Tenant ID
 $azSubscription = ""                            # Subscription ID
 $gitlog = ""                                    # Path to GitLog location (if enabled on line 29)
-$StorageAccountName = ""                        # Storage Account name to use
-$keyVaultName = ""
 
 $ServicePrincipalUser = "default"               # Service Principal name if enabled on line 25 (used for ???)
 $LocalAdminUser = "default"                     # Local Admin UserName to create (will be used for VMs)
@@ -19,18 +17,18 @@ $OUPath = ""                                    # Name of the AD OU where comput
 $VMListExclude = @()                            # Exclusion list for rebuilding Azure VMs
 
     # Main Control
-$RequireCreate = $false                         # ???
-$RequireConfigure = $false                      # ???
+$RequireCreate = $true                          # ???
+$RequireConfigure = $true                       # ???
 $UseTerraform = $false                          # Use Terraform Templates
-$RequireUpdateStorage = $false                  # ???
+$RequireUpdateStorage = $true                   # ???
 $RequireServicePrincipal = $false               # Enable use of Service Principal
 
     # Required Components
 $isProd = $false                                # Will this build be used for production?
 $LogToGit = $false                              # Should the script log to GIT?
 $LogToSA = $false                               # Should the script log to the Storage Account?
-$RequireUserGroups = $true                      # Do User groups need creating?
-$RequireRBAC = $true                            # Is RBAC required???
+$RequireUserGroups = $false                     # Do User groups need creating?
+$RequireRBAC = $false                           # Is RBAC required???
 $RequireResourceGroups = $true                  # Should a Resource Group be created? (or use existing)
 $RequireStorageAccount = $true                  # Should a Storage Account be created (or use existing)
 $RequireVNET = $true                            # Should a VNET be created (or use existing)
@@ -46,11 +44,11 @@ $RequireCoreVMs = $false                        # Should Core VMs be created???
 $RequireStdSrv = $false
 $RequireHyperV = $false                         # Should a Hyper-V VM be created?
 
-$NumberofStandardVMs = 0                                    # Specify number of Standard VMs to be provisioned
-$NumberofPackagingVMs = 0                                   # Specify number of Packaging VMs to be provisioned
-$NumberofAdminStudioVMs = 0                                 # Specify number of AdminStudio VMs to be provisioned
-$NumberofJumpboxVMs = 0                                     # Specify number of Jumpbox VMs to be provisioned
-$NumberofCoreVMs = 0                                        # Specify number of Core VMs to be provisioned
+$NumberofStandardVMs = 1                                    # Specify number of Standard VMs to be provisioned
+$NumberofPackagingVMs = 1                                   # Specify number of Packaging VMs to be provisioned
+$NumberofAdminStudioVMs = 1                                 # Specify number of AdminStudio VMs to be provisioned
+$NumberofJumpboxVMs = 1                                     # Specify number of Jumpbox VMs to be provisioned
+$NumberofCoreVMs = 1                                        # Specify number of Core VMs to be provisioned
 $VMNamePrefixStandard = "vm-euc-van-"                       # Specifies the first part of the Standard VM name (15 chars max)
 $VMNamePrefixPackaging = "vm-euc-pkg-"                      # Specifies the first part of the Packaging VM name (15 chars max)
 $VMNamePrefixAdminStudio = "vm-euc-as-"                     # Specifies the first part of the Admin Studio VM name (15 chars max)
@@ -95,6 +93,7 @@ $ContainerName = "data"                                     # Storage container 
 $FileShareName = "pkgazfiles01"                             # Storage FileShare name (if used) (do not change from 'pkgazfiles01')
 $BlobFilesSource = "$root\BlobFilesSource"                  # Source Template Folder for CustomScriptExtension
 $BlobFilesDest = "$root\BlobFilesDestination"               # Destination Template Folder for CustomScriptExtension
+$keyVaultName = "default"
 
     # Load Spec Files
 Try {
@@ -108,11 +107,11 @@ Catch {
 
     # New Client Setup and Key File Load
 function setSecurePasswords {
-    (Get-Credential -Message "Service Principal").Password | ConvertFrom-SecureString -Key $myKey | Export-Clixml -Path $ExtraFiles\ServicePrincipal.xml
-    (Get-Credential -Message "Local Admin").Password | ConvertFrom-SecureString -Key $myKey | Export-Clixml -Path $ExtraFiles\LocalAdmin.xml
-    (Get-Credential -Message "Hyper-V Local Admin").Password | ConvertFrom-SecureString -Key $myKey | Export-Clixml -Path $ExtraFiles\HyperVLocalAdmin.xml
-    (Get-Credential -Message "Domain Join").Password | ConvertFrom-SecureString -Key $myKey | Export-Clixml -Path $ExtraFiles\DomainJoin.xml
-    (Get-Credential -Message "Domain User").Password | ConvertFrom-SecureString -Key $myKey | Export-Clixml -Path $ExtraFiles\DomainUser.xml
+    (Get-Credential -Message "Service Principal" -UserName $ServicePrincipalUser).Password | ConvertFrom-SecureString -Key $myKey | Export-Clixml -Path $ExtraFiles\ServicePrincipal.xml
+    (Get-Credential -Message "Local Admin" -UserName $LocalAdminUser).Password | ConvertFrom-SecureString -Key $myKey | Export-Clixml -Path $ExtraFiles\LocalAdmin.xml
+    (Get-Credential -Message "Hyper-V Local Admin" -UserName $HyperVLocalAdminUser).Password | ConvertFrom-SecureString -Key $myKey | Export-Clixml -Path $ExtraFiles\HyperVLocalAdmin.xml
+    (Get-Credential -Message "Domain Join" -UserName  $DomainJoinUser).Password | ConvertFrom-SecureString -Key $myKey | Export-Clixml -Path $ExtraFiles\DomainJoin.xml
+    (Get-Credential -Message "Domain User" -UserName $DomainUserUser).Password | ConvertFrom-SecureString -Key $myKey | Export-Clixml -Path $ExtraFiles\DomainUser.xml
 }
 
 function createNewKey {
