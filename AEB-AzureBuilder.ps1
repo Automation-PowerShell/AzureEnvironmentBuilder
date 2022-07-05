@@ -31,7 +31,7 @@ if(!(Test-Path $ExtraFiles)) {
 }
 
     # Dot Source Variables
-. $AEBScripts\ScriptVariables.ps1
+#. $AEBScripts\ScriptVariables.ps1
 . $AEBScripts\ClientLoadVariables.ps1
 
     # Dot Source Functions

@@ -23,7 +23,7 @@ Param(
 Set-Location $PSScriptRoot
 
     # Dot Source Variables
-. .\ScriptVariables.ps1
+#. .\ScriptVariables.ps1
 . .\ClientLoadVariables.ps1
 
 $scriptname = "RebuildHyperVVM.ps1"                             # This file's filename
