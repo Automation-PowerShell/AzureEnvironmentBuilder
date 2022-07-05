@@ -27,6 +27,7 @@ function ConfigStdSrv-Script($VMName) {
         Write-AEBLog "VM: $VMName created successfully"
 
         $NewVm = Get-AzADServicePrincipal -DisplayName $VMName
+        Start-Sleep -Seconds 30
         if ($RequireServicePrincipal) {
             Get-AzContext -Name "StorageSP" | Select-AzContext | Out-Null
         }
@@ -37,8 +38,8 @@ function ConfigStdSrv-Script($VMName) {
         else {
             New-AzRoleAssignment -ObjectId $NewVm.Id -RoleDefinitionName "Contributor" -Scope "/subscriptions/$azSubscription/resourceGroups/$RGNameSTORE/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" -Verbose -ErrorAction SilentlyContinue | Out-Null
         }
-        Set-AzKeyVaultAccessPolicy -ObjectId $NewVm.Id -VaultName $keyVaultName -PermissionsToSecrets Get
         Get-AzContext -Name "User" | Select-AzContext | Out-Null
+        Set-AzKeyVaultAccessPolicy -ObjectId $NewVm.Id -VaultName $keyVaultName -PermissionsToSecrets Get
 
             # Add Data disk to Server
         $dataDiskName = $VMName + '_datadisk1'
@@ -87,6 +88,7 @@ function ConfigHyperVVM-Script($VMName) {
         Write-AEBLog "VM: $VMName created successfully"
 
         $NewVm = Get-AzADServicePrincipal -DisplayName $VMName
+        Start-Sleep -Seconds 30
         if ($RequireServicePrincipal) {
             Get-AzContext -Name "StorageSP" | Select-AzContext | Out-Null
         }
@@ -98,6 +100,7 @@ function ConfigHyperVVM-Script($VMName) {
             New-AzRoleAssignment -ObjectId $NewVm.Id -RoleDefinitionName "Contributor" -Scope "/subscriptions/$azSubscription/resourceGroups/$RGNameSTORE/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" -Verbose -ErrorAction SilentlyContinue | Out-Null
         }
         Get-AzContext -Name "User" | Select-AzContext | Out-Null
+        Set-AzKeyVaultAccessPolicy -ObjectId $NewVm.Id -VaultName $keyVaultName -PermissionsToSecrets Get
 
             # Add Data disk to Hyper-V server
         $dataDiskName = $VMName + '_datadisk1'
