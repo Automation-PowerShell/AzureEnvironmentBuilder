@@ -121,8 +121,8 @@ function createNewKey {
     $myKey | Out-File $KeyFile
 }
 
-if(!(Test-Path $ExtraFiles)){
-    New-Item -Path $ExtraFiles -ItemType Directory -Force
+if(!(Test-Path "$ExtraFiles\my.key")){
+    #New-Item -Path $ExtraFiles -ItemType Directory -Force
     createNewKey
     $KeyFile = "$ExtraFiles\my.key"
     $myKey = Get-Content $KeyFile
