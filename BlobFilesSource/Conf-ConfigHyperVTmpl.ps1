@@ -40,7 +40,8 @@ Set-DhcpServerv4OptionValue -Router 192.168.0.1
 mkdir -Path "F:\" -Name "Hyper-V" -Force
 mkdir -Path "F:\Hyper-V" -Name "Virtual Hard Disks" -Force
 mkdir -Path "F:\Hyper-V" -Name "Media" -Force
-Copy-Item -Path "Z:\en_windows_10_business_editions_version_20h2_updated_dec_2020_x64_dvd_2af15d50.iso" -Destination "F:\Hyper-V\Media" -Force -Verbose
+#Copy-Item -Path "Z:\en_windows_10_business_editions_version_20h2_updated_dec_2020_x64_dvd_2af15d50.iso" -Destination "F:\Hyper-V\Media" -Force -Verbose
+Copy-Item -Path "Z:\wwwww" -Destination "F:\Hyper-V\Media" -Force -Verbose
 
 # Windows Image Tools
 Install-Module -Name WindowsImageTools -Force -ErrorAction Stop
@@ -53,7 +54,7 @@ New-DataVHD -Path F:\Hyper-V\Media\basedisk.vhdx -Size 60GB -DataFormat NTFS -Dy
 #Mount-VHD -Path F:\Hyper-V\Media\basedisk.vhdx -PassThru | Get-Disk | Get-Partition | Get-Volume
 Mount-VHD -Path F:\Hyper-V\Media\basedisk.vhdx -NoDriveLetter
 #Install-WindowsFromWim -DiskNumber 0 -Index 3 -NoRecoveryTools -DiskLayout UEFI -WimPath "F:\Hyper-V\Media\en_windows_10_business_editions_version_20h2_updated_dec_2020_x64_dvd_2af15d50.iso"
-Install-WindowsFromWim -DiskNumber 2 -DiskLayout BIOS -NoRecoveryTools -Unattend F:\Hyper-V\Media\unattend.xml -SourcePath "F:\Hyper-V\Media\en_windows_10_business_editions_version_20h2_updated_dec_2020_x64_dvd_2af15d50.iso"
+Install-WindowsFromWim -DiskNumber 2 -DiskLayout BIOS -NoRecoveryTools -Unattend F:\Hyper-V\Media\unattend.xml -SourcePath "F:\Hyper-V\Media\wwwww"
 Dismount-VHD -Path F:\Hyper-V\Media\basedisk.vhdx
 
 # Get Files from Blob
