@@ -8,7 +8,7 @@ $VMFolder = "Hyper-V"                                           # Specify the ro
 $VMMachineFolder = "Virtual Machines"                           # Specify the folder to store the VM data
 $VHDFolder = "Virtual Hard Disks"                               # Specify the folder to store the VHDs
 $VMCheckpointFolder = "Checkpoints"                             # Specify the folder to store the Checkpoints
-$VMCount = 12                                                    # Specify number of VMs to be provisioned
+$VMCount = 1                                                    # Specify number of VMs to be provisioned
 $VmNamePrefix = "EUC-UAT-"                                      # Specifies the first part of the VM name (usually alphabetic)
 $VmNumberStart = 101                                            # Specifies the second part of the VM name (usually numeric)
 $VMRamSize = 4GB
@@ -196,6 +196,8 @@ function Create-VM {
     $Time = Get-Date -Format HH:mm
     $VMObject | Checkpoint-VM -SnapshotName "Domain Joined ($Date - $Time)"
     #$VMNumber = $VMName.Trim($VmNamePrefix)
+    $MACAddress = $VMObject.NetworkAdapters.MacAddress
+    $IPAddress = (Get-DhcpServerv4Scope | Get-DhcpServerv4Lease | Where-Object {($_.ClientId -replace "-") -eq $MACAddress}).IPAddress.IPAddressToString
     if(!(Get-NetNatStaticMapping -NatName $VMNetNATName -ErrorAction SilentlyContinue | Where-Object {$_.ExternalPort -like "*$VMNumber"})) {
         Add-NetNatStaticMapping -ExternalIPAddress "0.0.0.0" -ExternalPort 50$VMNumber -InternalIPAddress $IPAddress -InternalPort 3389 -NatName $VMNetNATName -Protocol TCP -ErrorAction Stop | Out-Null
     }

@@ -48,8 +48,8 @@ if(!($isProd) -and $RequireUserGroups) {
 Remove-AzResourceGroup -Name $RGNameDEV -Force -ErrorAction Ignore -Verbose
 Remove-AzResourceGroup -Name $RGNamePROD -Force -ErrorAction Ignore -Verbose
 if(!($isProd)) {
-    Remove-AzResourceGroup -Name $RGNameDEVVNET -Force -ErrorAction Ignore -Verbose         # Dont want to do this is a Production Environment
-    Remove-AzResourceGroup -Name $RGNamePRODVNET -Force -ErrorAction Ignore -Verbose        # Dont want to do this is a Production Environment
+    #Remove-AzResourceGroup -Name $RGNameDEVVNET -Force -ErrorAction Ignore -Verbose         # Dont want to do this is a Production Environment
+    #Remove-AzResourceGroup -Name $RGNamePRODVNET -Force -ErrorAction Ignore -Verbose        # Dont want to do this is a Production Environment
 }
 Write-AEBLog "Completed AEB-AzureRemover.ps1"
 Write-AEBLog "============================================================================================================="

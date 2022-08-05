@@ -86,19 +86,19 @@ function Create-VM {
         # VM Customisations
     Remove-Variable erroric -ErrorAction SilentlyContinue
     Invoke-Command -VMName $VMName -Credential $LocalAdminCred -ErrorVariable erroric -ScriptBlock {
-            # Cleanup and Rename Host
-        Get-AppxPackage -Name Microsoft.MicrosoftOfficeHub | Remove-AppxPackage
-        Rename-Computer -NewName $Using:VMName -LocalCredential $Using:LocalAdminCred -Restart -Verbose
-
-            # Disable IPV6
-        #Disable-NetAdapterBinding -Name "*" -ComponentID ms_tcpip6
-
             # Add Windows Capibilities Back In
         Add-WindowsCapability -Online -Name Microsoft.Windows.PowerShell.ISE~~~~0.0.1.0
         Add-WindowsCapability -Online -Name App.StepsRecorder~~~~0.0.1.0
         Add-WindowsCapability -Online -Name Microsoft.Windows.Notepad~~~~0.0.1.0
         Add-WindowsCapability -Online -Name Microsoft.Windows.MSPaint~~~~0.0.1.0
         Add-WindowsCapability -Online -Name Microsoft.Windows.WordPad~~~~0.0.1.0
+
+            # Disable IPV6
+        #Disable-NetAdapterBinding -Name "*" -ComponentID ms_tcpip6
+
+            # Cleanup and Rename Host
+        Get-AppxPackage -Name Microsoft.MicrosoftOfficeHub | Remove-AppxPackage
+        Rename-Computer -NewName $Using:VMName -LocalCredential $Using:LocalAdminCred -Restart -Verbose
     }
     if($erroric) {
         Write-Error $error[0]
