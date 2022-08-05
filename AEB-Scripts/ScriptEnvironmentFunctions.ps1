@@ -138,7 +138,7 @@ function CreateKeyVault {
     if($RequireKeyVault -and !$UseTerraform) {
         $vnetDEVID = (Get-AzVirtualNetwork -ResourceGroupName $RGNameDEVVNET).Subnets[0].Id
         $vnetPRODID = (Get-AzVirtualNetwork -ResourceGroupName $RGNamePRODVNET).Subnets[0].Id
-        $myPublicIP = (Invoke-WebRequest ifconfig.me/ip).Content
+        $myPublicIP = (Invoke-WebRequest ifconfig.me/ip -UseBasicParsing).Content
 
         New-AzKeyVault -VaultName $keyVaultName -ResourceGroupName $RGNameSTORE -Location $Location -EnabledForDeployment #-EnableRbacAuthorization
         Update-AzKeyVaultNetworkRuleSet -DefaultAction Deny -VaultName $keyVaultName
