@@ -4,7 +4,8 @@ $EventlogName = "Accenture"                                     # Event Log Fold
 $EventlogSource = "Hyper-V VM Build Script"                     # Event Log Source Name
 
 $VMDrive = "F:"                                                 # Specify the root disk drive to use
-$VMFolder = "Virtual Machines"                                  # Specify the folder to store the VM data
+$VMFolder = "Hyper-V"                                           # Specify the root folder to use
+$VMMachineFolder = "Virtual Machines"                           # Specify the folder to store the VM data
 $VHDFolder = "Virtual Hard Disks"                               # Specify the folder to store the VHDs
 $VMCheckpointFolder = "Checkpoints"                             # Specify the folder to store the Checkpoints
 $VMCount = 12                                                    # Specify number of VMs to be provisioned
@@ -47,8 +48,8 @@ function Delete-VM {
             Stop-VM -Name $VMName -Force -TurnOff -Verbose -ErrorAction Stop
         }
         Remove-VM -Name $VMName -Force -Verbose -ErrorAction Stop
-        Remove-Item -Path "$VMDrive\Hyper-V\$VMFolder\$VMName" -Recurse -Force
-        Remove-Item -Path "$VMDrive\Hyper-V\$VHDFolder\$VMName" -Recurse -Force
+        Remove-Item -Path "$VMDrive\$VMFolder\$VMMachineFolder\$VMName" -Recurse -Force
+        Remove-Item -Path "$VMDrive\$VMFolder\$VHDFolder\$VMName" -Recurse -Force
     }
 }
 
@@ -66,24 +67,24 @@ function Create-VM {
         Name = $VMName
         MemoryStartupBytes = $VMRamSize
         Generation = 1
-        NewVHDPath = "$VMDrive\Hyper-V\$VHDFolder\$VMName\$VMName.vhdx"
+        NewVHDPath = "$VMDrive\$VMFolder\$VHDFolder\$VMName\$VMName.vhdx"
         NewVHDSizeBytes = $VMVHDSize
         BootDevice = "VHD"
-        Path = "$VMDrive\Hyper-V\$VMFolder\$VMName"
+        Path = "$VMDrive\$VMFolder\$VMMachineFolder\$VMName"
         SwitchName = (Get-VMSwitch -Name $VMSwitchName).Name
     }
 
     #$VMObject = New-VM @VM -Verbose -ErrorAction Stop
     $VMObject = New-VM @VM -NoVHD -Verbose -ErrorAction Stop
 
-    #New-Item -Path $VMDrive\Hyper-V\$VHDFolder\ -Name $VMName -ItemType Directory -Force -Verbose | Out-null
-    Copy-Item -Path $VMDrive\$VMFolder\Media\base-100.vhdx -Destination $VMDrive\Hyper-V\$VHDFolder\$VMName\$VMName.vhdx -Force -Verbose
+    #New-Item -Path $VMDrive\$VMFolder\$VHDFolder\ -Name $VMName -ItemType Directory -Force -Verbose | Out-null
+    Copy-Item -Path $VMDrive\$VMFolder\Media\base-100.vhdx -Destination $VMDrive\$VMFolder\$VHDFolder\$VMName\$VMName.vhdx -Force -Verbose
 
     $VMObject | Set-VM -ProcessorCount $VMCPUCount
     $VMObject | Set-VM -StaticMemory
     $VMObject | Set-VM -AutomaticCheckpointsEnabled $false
-    $VMObject | Set-VM -SnapshotFileLocation "$VMDrive\Hyper-V\$VMCheckpointFolder"
-    #$VMObject | Add-VMHardDiskDrive -Path $VMDrive\Hyper-V\$VHDFolder\$VMName\$VMName.vhdx
+    $VMObject | Set-VM -SnapshotFileLocation "$VMDrive\$VMFolder\$VMCheckpointFolder"
+    #$VMObject | Add-VMHardDiskDrive -Path $VMDrive\$VMFolder\$VHDFolder\$VMName\$VMName.vhdx
 
     $Date = Get-Date -Format yyyy-MM-dd
     $Time = Get-Date -Format HH:mm
