@@ -73,11 +73,11 @@ function Create-VM {
         SwitchName = (Get-VMSwitch -Name $VMSwitchName).Name
     }
 
-    $VMObject = New-VM @VM -Verbose -ErrorAction Stop
-    #$VMObject = New-VM @VM -NoVHD -Verbose -ErrorAction Stop
+    #$VMObject = New-VM @VM -Verbose -ErrorAction Stop
+    $VMObject = New-VM @VM -NoVHD -Verbose -ErrorAction Stop
 
     #New-Item -Path $VMDrive\Hyper-V\$VHDFolder\ -Name $VMName -ItemType Directory -Force -Verbose | Out-null
-    #Copy-Item -Path $VMDrive\Hyper-V\$VHDFolder\Media\Vanilla-Windows10-Base+CERT.vhdx -Destination $VMDrive\Hyper-V\$VHDFolder\$VMName\$VMName.vhdx -Force -Verbose
+    Copy-Item -Path $VMDrive\$VMFolder\Media\base-100.vhdx -Destination $VMDrive\Hyper-V\$VHDFolder\$VMName\$VMName.vhdx -Force -Verbose
 
     $VMObject | Set-VM -ProcessorCount $VMCPUCount
     $VMObject | Set-VM -StaticMemory
@@ -90,7 +90,7 @@ function Create-VM {
     $VMObject | Checkpoint-VM -SnapshotName "Base Config ($Date - $Time)"
 
     $VMObject | Start-VM -Verbose -ErrorAction Stop
-    Start-Sleep -Seconds 120
+    Start-Sleep -Seconds 720
 
     $IPAddress = ($VMListData | Where-Object {$_.Name -eq $VMName}).IPAddress
 
