@@ -246,13 +246,13 @@ Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -En
 Import-Module Hyper-V -Force -ErrorAction Stop
 
 # Create Switch
-Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Creating VM Switch"
-$VMSwitch = Get-VMSwitch -Name $VMSwitchName
-if(!$VMSwitch) {
-    New-VMSwitch -Name $VMSwitchName -SwitchType Internal -ErrorAction Stop
-}
-New-NetNat -Name $VMNetNATName -InternalIPInterfaceAddressPrefix $VMNetNATPrefix
-Get-NetAdapter "vEthernet ($VMSwitchName)" | New-NetIPAddress -IPAddress $VMNetNATHost -AddressFamily IPv4 -PrefixLength $VMNetNATPrefixLength
+#Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Creating VM Switch"
+#$VMSwitch = Get-VMSwitch -Name $VMSwitchName
+#if(!$VMSwitch) {
+#    New-VMSwitch -Name $VMSwitchName -SwitchType Internal -ErrorAction Stop
+#}
+#New-NetNat -Name $VMNetNATName -InternalIPInterfaceAddressPrefix $VMNetNATPrefix
+#Get-NetAdapter "vEthernet ($VMSwitchName)" | New-NetIPAddress -IPAddress $VMNetNATHost -AddressFamily IPv4 -PrefixLength $VMNetNATPrefixLength
 
 # Create VMs
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Creating VMs"

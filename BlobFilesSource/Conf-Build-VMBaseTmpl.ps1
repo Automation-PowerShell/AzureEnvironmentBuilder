@@ -21,7 +21,7 @@ $VMNetNATName = "LocalNAT"
 $VMNetNATPrefix = "192.168.0.0/24"
 $VMNetNATHost = "192.168.0.1"
 $VMNetNATPrefixLength = 24
-$VMHostIP = (Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias "Ethernet 2").IPAddress
+$VMHostIP = (Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias "Ethernet").IPAddress
 
 $Domain = "ddddd"
 $OUPath = "ooooo"
@@ -87,11 +87,11 @@ function Create-VM {
     Remove-Variable erroric -ErrorAction SilentlyContinue
     Invoke-Command -VMName $VMName -Credential $LocalAdminCred -ErrorVariable erroric -ScriptBlock {
             # Add Windows Capibilities Back In
-        Add-WindowsCapability -Online -Name Microsoft.Windows.PowerShell.ISE~~~~0.0.1.0
-        Add-WindowsCapability -Online -Name App.StepsRecorder~~~~0.0.1.0
-        Add-WindowsCapability -Online -Name Microsoft.Windows.Notepad~~~~0.0.1.0
-        Add-WindowsCapability -Online -Name Microsoft.Windows.MSPaint~~~~0.0.1.0
-        Add-WindowsCapability -Online -Name Microsoft.Windows.WordPad~~~~0.0.1.0
+        #Add-WindowsCapability -Online -Name Microsoft.Windows.PowerShell.ISE~~~~0.0.1.0
+        #Add-WindowsCapability -Online -Name App.StepsRecorder~~~~0.0.1.0
+        #Add-WindowsCapability -Online -Name Microsoft.Windows.Notepad~~~~0.0.1.0
+        #Add-WindowsCapability -Online -Name Microsoft.Windows.MSPaint~~~~0.0.1.0
+        #Add-WindowsCapability -Online -Name Microsoft.Windows.WordPad~~~~0.0.1.0
 
             # Disable IPV6
         #Disable-NetAdapterBinding -Name "*" -ComponentID ms_tcpip6
@@ -105,14 +105,12 @@ function Create-VM {
         Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Error -Message $error[0].Exception
     }
 
-    Start-Sleep -Seconds 30
+    Start-Sleep -Seconds 120
     $MACAddress = $VMObject.NetworkAdapters.MacAddress
     $IPAddress = (Get-DhcpServerv4Scope | Get-DhcpServerv4Lease | Where-Object {($_.ClientId -replace "-") -eq $MACAddress}).IPAddress.IPAddressToString
     if(!(Get-NetNatStaticMapping -NatName $VMNetNATName -ErrorAction SilentlyContinue | Where-Object {$_.ExternalPort -like "*$VMNumber"})) {
-        Add-NetNatStaticMapping -ExternalIPAddress "0.0.0.0" -ExternalPort 50$VMNumber -InternalIPAddress $IPAddress -InternalPort 3389 -NatName $VMNetNATName -Protocol TCP -ErrorAction Stop | Out-Null
+        Add-NetNatStaticMapping -ExternalIPAddress "0.0.0.0" -ExternalPort 50$VMNumber -InternalIPAddress $IPAddress -InternalPort 3389 -NatName $VMNetNATName -Protocol TCP -ErrorAction Continue | Out-Null
     }
-
-    Start-Sleep -Seconds 30
     $VMObject | Stop-VM -Force -TurnOff -Verbose -ErrorAction Stop
 
     Start-Sleep -Seconds 120

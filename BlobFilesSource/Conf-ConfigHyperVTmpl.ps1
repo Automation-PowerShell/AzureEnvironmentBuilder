@@ -31,7 +31,7 @@ New-PSDrive -Name Z -PSProvider FileSystem -Root "\\xxxxx.file.core.windows.net\
 # Configure DHCP
 Import-Module DHCPServer -Force -ErrorAction Stop
 Add-DhcpServerv4Scope -StartRange 192.168.0.100 -EndRange 192.168.0.199 -Name "UAT Scope" -State Active -SubnetMask 255.255.254.0
-$DNSserver = (Get-DnsClientServerAddress -InterfaceAlias "Ethernet 2" -AddressFamily IPv4).ServerAddresses
+$DNSserver = (Get-DnsClientServerAddress -InterfaceAlias "Ethernet" -AddressFamily IPv4).ServerAddresses
 Set-DhcpServerv4OptionValue -DnsServer $DNSserver
 Set-DhcpServerv4OptionValue -DnsDomain $Domain
 Set-DhcpServerv4OptionValue -Router 192.168.0.1
