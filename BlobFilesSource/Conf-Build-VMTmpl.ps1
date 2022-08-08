@@ -1,24 +1,27 @@
-﻿#region Setup
+#region Setup
 $scriptname = "Build-VM.ps1"                                    # This file's filename
 $EventlogName = "Accenture"                                     # Event Log Folder Name
 $EventlogSource = "Hyper-V VM Build Script"                     # Event Log Source Name
 
 $VMDrive = "F:"                                                 # Specify the root disk drive to use
-$VMFolder = "Virtual Machines"                                  # Specify the folder to store the VM data
+$VMFolder = "Hyper-V"
+$VMMachineFolder = "Virtual Machines"                                   # Specify the folder to store the VM data
 $VHDFolder = "Virtual Hard Disks"                               # Specify the folder to store the VHDs
 $VMCheckpointFolder = "Checkpoints"                             # Specify the folder to store the Checkpoints
-$VMCount = 12                                                    # Specify number of VMs to be provisioned
+$VMCount = 2                                                    # Specify number of VMs to be provisioned
 $VmNamePrefix = "EUC-UAT-"                                      # Specifies the first part of the VM name (usually alphabetic)
 $VmNumberStart = 101                                            # Specifies the second part of the VM name (usually numeric)
 $VMRamSize = 4GB
 $VMVHDSize = 100GB
-$VMCPUCount = 4
+$VMCPUCount = 2
 $VMSwitchName = "Packaging Switch"
 $VMNetNATName = "LocalNAT"
 $VMNetNATPrefix = "192.168.0.0/24"
 $VMNetNATHost = "192.168.0.1"
 $VMNetNATPrefixLength = 24
-$VMHostIP = (Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias "Ethernet").IPAddress
+
+Try {$VMHostIP = (Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias "Ethernet").IPAddress}
+Catch {$VMHostIP = (Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias "Ethernet 2").IPAddress}
 
 $Domain = "ddddd"
 $OUPath = "ooooo"
@@ -77,7 +80,7 @@ function Create-VM {
     #$VMObject = New-VM @VM -NoVHD -Verbose -ErrorAction Stop
 
     #New-Item -Path $VMDrive\Hyper-V\$VHDFolder\ -Name $VMName -ItemType Directory -Force -Verbose | Out-null
-    #Copy-Item -Path $VMDrive\Hyper-V\$VHDFolder\Media\Vanilla-Windows10-Base+CERT.vhdx -Destination $VMDrive\Hyper-V\$VHDFolder\$VMName\$VMName.vhdx -Force -Verbose
+    Copy-Item -Path $VMDrive\$VMFolder\Media\Base-100.vhdx -Destination $VMDrive\$VMFolder\$VHDFolder\$VMName\$VMName.vhdx -Force -Verbose
 
     $VMObject | Set-VM -ProcessorCount $VMCPUCount
     $VMObject | Set-VM -StaticMemory
@@ -181,11 +184,11 @@ function Create-VM {
         Copy-Item -Path "C:\HWID\AutoPilotHWID.csv" -Destination "X:\EUC Applications\Packaging Environment Build Files\Autpilot IDs\$env:COMPUTERNAME" -Force
 
             # Add Windows Capibilities Back In
-        Add-WindowsCapability -Online -Name Microsoft.Windows.PowerShell.ISE~~~~0.0.1.0
-        Add-WindowsCapability -Online -Name App.StepsRecorder~~~~0.0.1.0
-        Add-WindowsCapability -Online -Name Microsoft.Windows.Notepad~~~~0.0.1.0
-        Add-WindowsCapability -Online -Name Microsoft.Windows.MSPaint~~~~0.0.1.0
-        Add-WindowsCapability -Online -Name Microsoft.Windows.WordPad~~~~0.0.1.0
+        #Add-WindowsCapability -Online -Name Microsoft.Windows.PowerShell.ISE~~~~0.0.1.0
+        #Add-WindowsCapability -Online -Name App.StepsRecorder~~~~0.0.1.0
+        #Add-WindowsCapability -Online -Name Microsoft.Windows.Notepad~~~~0.0.1.0
+        #Add-WindowsCapability -Online -Name Microsoft.Windows.MSPaint~~~~0.0.1.0
+        #Add-WindowsCapability -Online -Name Microsoft.Windows.WordPad~~~~0.0.1.0
     }
     if($erroric) {
         Write-Error $error[0]
@@ -195,6 +198,8 @@ function Create-VM {
     $Time = Get-Date -Format HH:mm
     $VMObject | Checkpoint-VM -SnapshotName "Domain Joined ($Date - $Time)"
     #$VMNumber = $VMName.Trim($VmNamePrefix)
+    $MACAddress = $VMObject.NetworkAdapters.MacAddress
+    $IPAddress = (Get-DhcpServerv4Scope | Get-DhcpServerv4Lease | Where-Object {($_.ClientId -replace "-") -eq $MACAddress}).IPAddress.IPAddressToString
     if(!(Get-NetNatStaticMapping -NatName $VMNetNATName -ErrorAction SilentlyContinue | Where-Object {$_.ExternalPort -like "*$VMNumber"})) {
         Add-NetNatStaticMapping -ExternalIPAddress "0.0.0.0" -ExternalPort 50$VMNumber -InternalIPAddress $IPAddress -InternalPort 3389 -NatName $VMNetNATName -Protocol TCP -ErrorAction Stop | Out-Null
     }
@@ -215,51 +220,78 @@ Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -En
 Connect-AzAccount -Identity -ErrorAction Stop -Subscription sssss
 
 # Copy files to machine
-Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Atempting to download DomainJoin.xml from Azure storage account to C:\Windows\Temp"
-$StorAcc = Get-AzStorageAccount -ResourceGroupName rrrrr -Name xxxxx
-$passwordFile1 = Get-AzStorageBlobContent -Container data -Blob "./HyperVLocalAdmin.xml" -Destination "c:\Windows\temp\" -Context $StorAcc.context
-$passwordFile2 = Get-AzStorageBlobContent -Container data -Blob "./DomainJoin.xml" -Destination "c:\Windows\temp\" -Context $StorAcc.context
-$passwordFile3 = Get-AzStorageBlobContent -Container data -Blob "./DomainUser.xml" -Destination "c:\Windows\temp\" -Context $StorAcc.context
-$hypervFile = Get-AzStorageBlobContent -Container data -Blob "./hyperv-vms.xml" -Destination "c:\Windows\temp\" -Context $StorAcc.context
-$VMListData = Import-Csv c:\windows\temp\hyperv-vms.csv
-$keyFile = Get-AzStorageBlobContent -Container data -Blob "./my.key" -Destination "c:\Windows\temp\" -Context $StorAcc.context
-$myKey = Get-Content "c:\Windows\Temp\my.key"
+Try {
+    Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Atempting to download DomainJoin.xml from Azure storage account to C:\Windows\Temp"
+    $StorAcc = Get-AzStorageAccount -ResourceGroupName rrrrr -Name xxxxx
+    $passwordFile1 = Get-AzStorageBlobContent -Container data -Blob "./HyperVLocalAdmin.xml" -Destination "c:\Windows\temp\" -Context $StorAcc.context
+    $passwordFile2 = Get-AzStorageBlobContent -Container data -Blob "./DomainJoin.xml" -Destination "c:\Windows\temp\" -Context $StorAcc.context
+    $passwordFile3 = Get-AzStorageBlobContent -Container data -Blob "./DomainUser.xml" -Destination "c:\Windows\temp\" -Context $StorAcc.context
+    #$hypervFile = Get-AzStorageBlobContent -Container data -Blob "./hyperv-vms.xml" -Destination "c:\Windows\temp\" -Context $StorAcc.context
+    #$VMListData = Import-Csv c:\windows\temp\hyperv-vms.csv
+    $keyFile = Get-AzStorageBlobContent -Container data -Blob "./my.key" -Destination "c:\Windows\temp\" -Context $StorAcc.context
+    $myKey = Get-Content "c:\Windows\Temp\my.key"
+}
+Catch {
+    Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Error downloading files from Storage Account"
+}
 
 # Create Credential
+Try {
+Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Configuring Credentials"
 $LocalAdminUser = "DESKTOP-7O8HROP\admin"
 $LocalAdminPassword = Import-Clixml c:\Windows\temp\DomainJoin.xml | ConvertTo-SecureString -Key $myKey
 $LocalAdminCred = New-Object System.Management.Automation.PSCredential ($LocalAdminUser, $LocalAdminPassword)
 
-$DomainUserUser = "wella\T1-Daniel.Ames"
+$DomainUserUser = "ds\uitghi"
 $DomainUserPassword = Import-Clixml c:\Windows\temp\DomainJoin.xml | ConvertTo-SecureString -Key $myKey
 $DomainUserCred = New-Object System.Management.Automation.PSCredential ($DomainUserUser, $DomainUserPassword)
 
-$DomainJoinUser = "wella\svc_PackagingDJ"
+$DomainJoinUser = "ds\uitghi"
 $DomainJoinPassword = Import-Clixml c:\Windows\temp\DomainJoin.xml | ConvertTo-SecureString -Key $myKey
 $DomainJoinCred = New-Object System.Management.Automation.PSCredential ($DomainJoinUser, $DomainJoinPassword)
+}
+Catch {
+    Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Error configuring Credentials"
+}
 
 # Import Hyper-V Module
-Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Importing Hyper-V Module"
-Import-Module Hyper-V -Force -ErrorAction Stop
+Try {
+    Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Importing Hyper-V Module"
+    Import-Module Hyper-V -Force -ErrorAction Stop
+}
+Catch {
+    Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Error Importing Hyper-V Module"
+}
 
 # Create Switch
-Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Creating VM Switch"
-$VMSwitch = Get-VMSwitch -Name $VMSwitchName
-if(!$VMSwitch) {
+Try {
+    Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Creating VM Switch"
+    $VMSwitch = Get-VMSwitch -Name $VMSwitchName
+    if(!$VMSwitch) {
     New-VMSwitch -Name $VMSwitchName -SwitchType Internal -ErrorAction Stop
+    }
+    New-NetNat -Name $VMNetNATName -InternalIPInterfaceAddressPrefix $VMNetNATPrefix
+    Get-NetAdapter "vEthernet ($VMSwitchName)" | New-NetIPAddress -IPAddress $VMNetNATHost -AddressFamily IPv4 -PrefixLength $VMNetNATPrefixLength
 }
-New-NetNat -Name $VMNetNATName -InternalIPInterfaceAddressPrefix $VMNetNATPrefix
-Get-NetAdapter "vEthernet ($VMSwitchName)" | New-NetIPAddress -IPAddress $VMNetNATHost -AddressFamily IPv4 -PrefixLength $VMNetNATPrefixLength
+Catch {
+    Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Error creating VM switch"
+}
 
 # Create VMs
-Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Creating VMs"
-$i=0
-while ($i -lt $VMCount) {
-    $VMNumber = $VmNumberStart+$i
-    Delete-VM -VmNumber $VMNumber
-    Create-VM -VmNumber $VMNumber
-    $i++
-}
+Try {
+    Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Creating VMs"
+    $i=0
+    while ($i -lt $VMCount) {
+        $VMNumber = $VmNumberStart+$i
+        Delete-VM -VmNumber $VMNumber
+        Create-VM -VmNumber $VMNumber
+        $i++
+        }
+
 Get-NetNatStaticMapping | Select-Object StaticMappingID,ExternalIPAddress,ExternalPort,InternalIPAddress,InternalPort | Export-CSV -Path "c:\windows\temp\netnatmapping.csv" -Force -NoTypeInformation
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Information -Message "Completed $scriptname"
+}
+Catch {
+    Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Error creating VMs"
+}
 #endregion Main
