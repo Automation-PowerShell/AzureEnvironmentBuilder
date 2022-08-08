@@ -21,7 +21,7 @@ $VMNetNATName = "LocalNAT"
 $VMNetNATPrefix = "192.168.0.0/24"
 $VMNetNATHost = "192.168.0.1"
 $VMNetNATPrefixLength = 24
-$VMHostIP = (Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias "Ethernet 2").IPAddress
+$VMHostIP = (Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias "Ethernet").IPAddress
 
 $Domain = "ddddd"
 $OUPath = "ooooo"
@@ -94,11 +94,11 @@ function Create-VM {
         #Disable-NetAdapterBinding -Name "*" -ComponentID ms_tcpip6
 
             # Add Windows Capibilities Back In
-        Add-WindowsCapability -Online -Name Microsoft.Windows.PowerShell.ISE~~~~0.0.1.0
-        Add-WindowsCapability -Online -Name App.StepsRecorder~~~~0.0.1.0
-        Add-WindowsCapability -Online -Name Microsoft.Windows.Notepad~~~~0.0.1.0
-        Add-WindowsCapability -Online -Name Microsoft.Windows.MSPaint~~~~0.0.1.0
-        Add-WindowsCapability -Online -Name Microsoft.Windows.WordPad~~~~0.0.1.0
+        #Add-WindowsCapability -Online -Name Microsoft.Windows.PowerShell.ISE~~~~0.0.1.0
+        #Add-WindowsCapability -Online -Name App.StepsRecorder~~~~0.0.1.0
+        #Add-WindowsCapability -Online -Name Microsoft.Windows.Notepad~~~~0.0.1.0
+        #Add-WindowsCapability -Online -Name Microsoft.Windows.MSPaint~~~~0.0.1.0
+        #Add-WindowsCapability -Online -Name Microsoft.Windows.WordPad~~~~0.0.1.0
     }
     if($erroric) {
         Write-Error $error[0]
@@ -115,7 +115,7 @@ function Create-VM {
     Start-Sleep -Seconds 30
     $VMObject | Stop-VM -Force -TurnOff -Verbose -ErrorAction Stop
 
-    Start-Sleep -Seconds 30
+    Start-Sleep -Seconds 180
     Convert-VHD -Path $VMDrive\$VMFolder\$VHDFolder\$VMName\$VMName.vhdx -DestinationPath $VMDrive\$VMFolder\Media\$VMName.vhdx -VHDType Dynamic -Verbose
 }
 
