@@ -127,11 +127,19 @@ Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -En
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Loading NuGet module"
 Install-PackageProvider -Name NuGet -Force -ErrorAction Stop
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Loading Az.Storage module"
-Install-Module -Name Az.Storage -Force -ErrorAction Stop
+Install-Module -Name Az.Storage,Az.KeyVault -Force -ErrorAction Stop
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Attempting to connect to Azure"
 Connect-AzAccount -Identity -ErrorAction Stop -Subscription sssss
 
-    # Copy files to machine
+# Get Passwords from KeyVault
+$LocalAdminPassword = (Get-AzKeyVaultSecret -VaultName "kkkkk" -Name "HyperVLocalAdmin").SecretValue
+$LocalAdminCred = New-Object System.Management.Automation.PSCredential ("aaaaa", $LocalAdminPassword)
+$DomainJoinPassword = (Get-AzKeyVaultSecret -VaultName "kkkkk" -Name "DomainJoin").SecretValue
+$DomainJoinCred = New-Object System.Management.Automation.PSCredential ("jjjjj", $DomainJoinPassword)
+$DomainUserPassword = (Get-AzKeyVaultSecret -VaultName "kkkkk" -Name "DomainUser").SecretValue
+$DomainUserCred = New-Object System.Management.Automation.PSCredential ("uuuuu", $DomainUserPassword)
+
+<#    # Copy files to machine
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Atempting to download DomainJoin.xml from Azure storage account to $TempFileStore"
 $StorAcc = Get-AzStorageAccount -ResourceGroupName rrrrr -Name xxxxx
 Get-AzStorageBlobContent -Container data -Blob "./HyperVLocalAdmin.xml" -Destination "$TempFileStore" -Context $StorAcc.context
@@ -142,7 +150,7 @@ $myKey = Get-Content "$TempFileStore\my.key"
 $LocalAdminUser = "DESKTOP-7O8HROP\administrator"
 $LocalAdminPassword = Import-Clixml $TempFileStore\HyperVLocalAdmin.xml | ConvertTo-SecureString -Key $myKey
 $LocalAdminCred = New-Object System.Management.Automation.PSCredential ($LocalAdminUser, $LocalAdminPassword)
-
+#>
     # Import Hyper-V Module
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Importing Hyper-V Module"
 Import-Module Hyper-V -Force -ErrorAction Stop
