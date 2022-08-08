@@ -113,7 +113,7 @@ function Create-VM {
     }
     $VMObject | Stop-VM -Force -TurnOff -Verbose -ErrorAction Stop
 
-    Start-Sleep -Seconds 120
+    Start-Sleep -Seconds 180
     Convert-VHD -Path $VMDrive\$VMFolder\$VHDFolder\$VMName\$VMName.vhdx -DestinationPath $VMDrive\$VMFolder\Media\$VMName.vhdx -VHDType Dynamic -Verbose
 }
 

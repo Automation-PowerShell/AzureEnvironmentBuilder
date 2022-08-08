@@ -14,6 +14,7 @@ function UpdateStorage {
                 $content = $content.replace("rrrrr", $RGNameSTORE)
                 $content = $content.replace("fffff", $FileShareName)
                 $content = $content.replace("kkkkk", $keyVaultName)
+                $content = $content.replace("wwwww", $HyperVVMIsoImagePath)
                 $contentName = $template.Basename -replace "Tmpl"
                 $contentName = $contentName + ".ps1"
                 $content | Set-Content -Path "$BlobFilesDest\$contentName" -ErrorAction stop
@@ -138,6 +139,7 @@ function CreateKeyVault {
     if($RequireKeyVault -and !$UseTerraform) {
         $vnetDEVID = (Get-AzVirtualNetwork -ResourceGroupName $RGNameDEVVNET).Subnets[0].Id
         $vnetPRODID = (Get-AzVirtualNetwork -ResourceGroupName $RGNamePRODVNET).Subnets[0].Id
+
         $myPublicIP = (Invoke-WebRequest ifconfig.me/ip -UseBasicParsing).Content
 
         New-AzKeyVault -VaultName $keyVaultName -ResourceGroupName $RGNameSTORE -Location $Location -EnabledForDeployment #-EnableRbacAuthorization

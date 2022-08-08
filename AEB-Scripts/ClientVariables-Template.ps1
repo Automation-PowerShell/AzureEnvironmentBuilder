@@ -1,13 +1,15 @@
     # Client Azure Variables
-$azTenant = ""                                  # Azure Tenant ID
-$azSubscription = ""                            # Subscription ID
+$azTenant = "b21a1566-203d-4107-9544-fa2a464073ab"                                  # Azure Tenant ID
+$azSubscription = "12ffc0b7-8212-4d57-9591-3dc43c20c77c"                            # Subscription ID
 $gitlog = ""                                    # Path to GitLog location (if enabled on line 29)
 
-$ServicePrincipalUser = "default"               # Service Principal name if enabled on line 25 (used for ???)
-$LocalAdminUser = "default"                     # Local Admin UserName to create (will be used for VMs)
+$ServicePrincipalUser = "default"               # Service Principal name if enabled on line 26 (used for ???)
+$LocalAdminUser = "AppPackager"                     # Local Admin UserName to create (will be used for VMs)
 $HyperVLocalAdminUser = "default"               # Local Admin username to create for Hyper-V server
 $DomainJoinUser = "domain\default"              # Domain User with Domain Join rights (needs to exist in the domain)
 $DomainUserUser = "domain\default"              # ??? (needs to exist in the domain)
+
+$HyperVVMIsoImagePath = "SW_DVD9_Win_Pro_11_21H2_64BIT_English_Pro_Ent_EDU_N_MLF_-3_X22-89962.iso"   # This image is used to build the Hyper-V VMs
 
     # Domain Variables
 $Domain = ""                                    # Name of the AD Domain
@@ -24,25 +26,25 @@ $RequireUpdateStorage = $true                   # ???
 $RequireServicePrincipal = $false               # Enable use of Service Principal
 
     # Required Components
-$isProd = $false                                # Will this build be used for production?
+$isProd = $true                                # Will this build be used for production?
 $LogToGit = $false                              # Should the script log to GIT?
 $LogToSA = $false                               # Should the script log to the Storage Account?
 $RequireUserGroups = $false                     # Do User groups need creating?
 $RequireRBAC = $false                           # Is RBAC required???
-$RequireResourceGroups = $true                  # Should a Resource Group be created? (or use existing)
-$RequireStorageAccount = $true                  # Should a Storage Account be created (or use existing)
-$RequireVNET = $true                            # Should a VNET be created (or use existing)
-$RequireNSG = $true                             # Should an NSG be created (or use existing)
+$RequireResourceGroups = $false                  # Should a Resource Group be created? (or use existing)
+$RequireStorageAccount = $false                  # Should a Storage Account be created (or use existing)
+$RequireVNET = $false                            # Should a VNET be created (or use existing)
+$RequireNSG = $false                             # Should an NSG be created (or use existing)
 $RequirePublicIPs = $true                       # Should Public IPs be used
-$RequireKeyVault = $true
+$RequireKeyVault = $false
 
-$RequireStandardVMs = $true                     # Should standard VMs be created?
+$RequireStandardVMs = $false                     # Should standard VMs be created?
 $RequirePackagingVMs = $false                   # Should Packaging VMs be created?
 $RequireAdminStudioVMs = $false                 # Should AdminStudio VMs be created?
 $RequireJumpboxVMs = $false                     # Should Jumpbox VMs be created?
 $RequireCoreVMs = $false                        # Should Core VMs be created???
 $RequireStdSrv = $false
-$RequireHyperV = $false                         # Should a Hyper-V VM be created?
+$RequireHyperV = $true                         # Should a Hyper-V VM be created?
 
 $NumberofStandardVMs = 1                                    # Specify number of Standard VMs to be provisioned
 $NumberofPackagingVMs = 1                                   # Specify number of Packaging VMs to be provisioned
@@ -71,15 +73,15 @@ $NumberofHyperVVMs = 0                                      # Specify number of 
     # General Config Variables
 $location = "uksouth"                                       # Azure Region for resources to be built into
 $RGNameSTORE = "rg-euc-packaging-store"                     # Storage Account & KeyVault Resource Group name
-$RGNameDEV = "rg-euc-packaging-dev"                         # DEV Resource Group name
+$RGNameDEV = "rg-euc-packaging-prod"                         # DEV Resource Group name
 $RGNamePROD = "rg-euc-packaging-prod"                       # PROD Resource Group name
-$RGNameDEVVNET = "rg-euc-packaging-dev-vnet"                # DEV VNET Resource Group name
+$RGNameDEVVNET = "rg-euc-packaging-prod-vnet"                # DEV VNET Resource Group name
 $RGNamePRODVNET = "rg-euc-packaging-prod-vnet"              # PROD VNET Resource Group name
-$VNetDEV = "vnet-euc-dev"                                   # DEV Environment Virtual Network name
+$VNetDEV = "vnet-euc-prod"                                   # DEV Environment Virtual Network name
 $VNetPROD = "vnet-euc-prod"                                 # PROD Environment Virtual Network name
 $SubnetNameDEV = "default"                                  # Environment Virtual Subnet name
 $SubnetNamePROD = "default"                                 # Environment Virtual Subnet name
-$NsgNameDEV = "nsg-euc-packaging-dev"                       # DEV Network Security Group name (firewall)
+$NsgNameDEV = "nsg-euc-packaging-prod"                       # DEV Network Security Group name (firewall)
 $NsgNamePROD = "nsg-euc-packaging-prod"                     # PROD Network Security Group name (firewall)
 
     # Environment Variables
@@ -88,12 +90,12 @@ $rbacContributor = "euc-rbac-contributor"
 $rbacReadOnly = "euc-rbac-readonly"
 
     # Storage Account and Container Names
-$StorageAccountName = "default"                             # Storage account name (if used) (24 chars maximum)
+$StorageAccountName = "uolstoracc001"                       # Storage account name (if used) (24 chars maximum) (lowercase and numerical chars only). Needs to be globally unique within Azure
 $ContainerName = "data"                                     # Storage container name (if used) (do not change from 'data')
 $FileShareName = "pkgazfiles01"                             # Storage FileShare name (if used) (do not change from 'pkgazfiles01')
 $BlobFilesSource = "$root\BlobFilesSource"                  # Source Template Folder for CustomScriptExtension
 $BlobFilesDest = "$root\BlobFilesDestination"               # Destination Template Folder for CustomScriptExtension
-$keyVaultName = "default"
+$keyVaultName = "UoLKVAEB04"                                  # needs to be globally unique within Azure
 
     # Load Spec Files
 Try {
