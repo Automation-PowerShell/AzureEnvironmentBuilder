@@ -242,13 +242,13 @@
                 }
             ],
             "VMSize": "Standard_D8s_v4",
-            "VMNamePrefix": "vm-euc-hyprv-0",
+            "VMNamePrefix": "vm-euc-hypr2-0",
             "VMNumberStart": "1",
-            "dataDiskTier": "P10",
+            "dataDiskTier": "P20",
             "dataDiskSKU": "Premium_LRS",
-            "dataDiskSize": 128,
-            "AutoShutdownRequired": false,
-            "AutoShutdownTime": 0,
+            "dataDiskSize": 512,
+            "AutoShutdownRequired": true,
+            "AutoShutdownTime": 2000,
             "Tags": [
                 {
                     "Application": "Server-HyperV",

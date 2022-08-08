@@ -69,8 +69,6 @@ function Create-VM {
         Name = $VMName
         MemoryStartupBytes = $VMRamSize
         Generation = 1
-        NewVHDPath = "$VMDrive\$VMFolder\$VHDFolder\$VMName\$VMName.vhdx"
-        NewVHDSizeBytes = $VMVHDSize
         BootDevice = "VHD"
         Path = "$VMDrive\$VMFolder\$VMMachineFolder\$VMName"
         SwitchName = (Get-VMSwitch -Name $VMSwitchName).Name
@@ -80,13 +78,13 @@ function Create-VM {
     $VMObject = New-VM @VM -NoVHD -Verbose -ErrorAction Stop
 
     #New-Item -Path $VMDrive\$VMFolder\$VHDFolder\ -Name $VMName -ItemType Directory -Force -Verbose | Out-null
-    Copy-Item -Path $VMDrive\$VMFolder\Media\base-100.vhdx -Destination $VMDrive\$VMFolder\$VHDFolder\$VMName\$VMName.vhdx -Force -Verbose
+    Convert-VHD -Path $VMDrive\$VMFolder\Media\base-100.vhdx -DestinationPath $VMDrive\$VMFolder\$VHDFolder\$VMName\$VMName.vhdx -VHDType Dynamic -Verbose
 
     $VMObject | Set-VM -ProcessorCount $VMCPUCount
     $VMObject | Set-VM -StaticMemory
     $VMObject | Set-VM -AutomaticCheckpointsEnabled $false
     $VMObject | Set-VM -SnapshotFileLocation "$VMDrive\$VMFolder\$VMCheckpointFolder"
-    #$VMObject | Add-VMHardDiskDrive -Path $VMDrive\$VMFolder\$VHDFolder\$VMName\$VMName.vhdx
+    $VMObject | Add-VMHardDiskDrive -Path $VMDrive\$VMFolder\$VHDFolder\$VMName\$VMName.vhdx
 
     $Date = Get-Date -Format yyyy-MM-dd
     $Time = Get-Date -Format HH:mm
@@ -95,7 +93,7 @@ function Create-VM {
     $VMObject | Start-VM -Verbose -ErrorAction Stop
     Start-Sleep -Seconds 720
 
-    $IPAddress = ($VMListData | Where-Object {$_.Name -eq $VMName}).IPAddress
+    #$IPAddress = ($VMListData | Where-Object {$_.Name -eq $VMName}).IPAddress
 
         # Pre Domain Join
     Remove-Variable erroric -ErrorAction SilentlyContinue
@@ -215,11 +213,19 @@ Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -En
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Loading NuGet module"
 Install-PackageProvider -Name NuGet -Force -ErrorAction Stop
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Loading Az.Storage module"
-Install-Module -Name Az.Storage -Force -ErrorAction Stop
+Install-Module -Name Az.Storage,Az.KeyVault -Force -ErrorAction Stop
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Attempting to connect to Azure"
 Connect-AzAccount -Identity -ErrorAction Stop -Subscription sssss
 
-# Copy files to machine
+# Get Passwords from KeyVault
+$LocalAdminPassword = (Get-AzKeyVaultSecret -VaultName "kkkkk" -Name "HyperVLocalAdmin").SecretValue
+$LocalAdminCred = New-Object System.Management.Automation.PSCredential ("aaaaa", $LocalAdminPassword)
+$DomainJoinPassword = (Get-AzKeyVaultSecret -VaultName "kkkkk" -Name "DomainJoin").SecretValue
+$DomainJoinCred = New-Object System.Management.Automation.PSCredential ("jjjjj", $DomainJoinPassword)
+$DomainUserPassword = (Get-AzKeyVaultSecret -VaultName "kkkkk" -Name "DomainUser").SecretValue
+$DomainUserCred = New-Object System.Management.Automation.PSCredential ("uuuuu", $DomainUserPassword)
+
+<## Copy files to machine
 Try {
     Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Atempting to download DomainJoin.xml from Azure storage account to C:\Windows\Temp"
     $StorAcc = Get-AzStorageAccount -ResourceGroupName rrrrr -Name xxxxx
@@ -252,7 +258,7 @@ $DomainJoinCred = New-Object System.Management.Automation.PSCredential ($DomainJ
 }
 Catch {
     Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Error configuring Credentials"
-}
+}#>
 
 # Import Hyper-V Module
 Try {
@@ -263,7 +269,7 @@ Catch {
     Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Error Importing Hyper-V Module"
 }
 
-# Create Switch
+<## Create Switch
 Try {
     Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Creating VM Switch"
     $VMSwitch = Get-VMSwitch -Name $VMSwitchName
@@ -275,7 +281,7 @@ Try {
 }
 Catch {
     Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Error creating VM switch"
-}
+}#>
 
 # Create VMs
 Try {

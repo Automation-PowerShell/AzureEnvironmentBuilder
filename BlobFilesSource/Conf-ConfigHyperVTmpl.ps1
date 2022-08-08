@@ -40,14 +40,15 @@ Set-DhcpServerv4OptionValue -Router 192.168.0.1
 mkdir -Path "F:\" -Name "Hyper-V" -Force
 mkdir -Path "F:\Hyper-V" -Name "Virtual Hard Disks" -Force
 mkdir -Path "F:\Hyper-V" -Name "Media" -Force
-#Copy-Item -Path "Z:\en_windows_10_business_editions_version_20h2_updated_dec_2020_x64_dvd_2af15d50.iso" -Destination "F:\Hyper-V\Media" -Force -Verbose
 Copy-Item -Path "Z:\wwwww" -Destination "F:\Hyper-V\Media" -Force -Verbose
 
 # Windows Image Tools
 Install-Module -Name WindowsImageTools -Force -ErrorAction Stop
 Import-Module WindowsImageTools -Force
+
+# Get Passwords from KeyVault
 $adminPassword = (Get-AzKeyVaultSecret -VaultName "kkkkk" -Name "HyperVLocalAdmin").SecretValue
-$adminCred = New-Object System.Management.Automation.PSCredential ("administrator", $adminPassword)
+$adminCred = New-Object System.Management.Automation.PSCredential ("aaaaa", $adminPassword)
 
 New-UnattendXml -Path F:\Hyper-V\Media\Unattend.xml -AdminPassword $adminCred -logonCount 1 -enableAdministrator
 New-DataVHD -Path F:\Hyper-V\Media\basedisk.vhdx -Size 60GB -DataFormat NTFS -Dynamic
