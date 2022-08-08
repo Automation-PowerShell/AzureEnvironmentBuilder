@@ -8,7 +8,7 @@ Wrtitten by Graham Higginson and Daniel Ames.
 
 .NOTES
 Written by      : Graham Higginson & Daniel Ames
-Build Version   : v1
+Build Version   : v2
 
 .LINK
 More Info       : https://github.com/Automation-PowerShell/AzureEnvironmentBuilder

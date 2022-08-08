@@ -236,6 +236,9 @@
                 },
                 {
                     "Name": "Conf-Build-VMBase"
+                },
+                {
+                    "Name": "Conf-Build-VM"
                 }
             ],
             "VMSize": "Standard_D8s_v4",

@@ -50,8 +50,8 @@ function Delete-VM {
             Stop-VM -Name $VMName -Force -TurnOff -Verbose -ErrorAction Stop
         }
         Remove-VM -Name $VMName -Force -Verbose -ErrorAction Stop
-        Remove-Item -Path "$VMDrive\Hyper-V\$VMFolder\$VMName" -Recurse -Force
-        Remove-Item -Path "$VMDrive\Hyper-V\$VHDFolder\$VMName" -Recurse -Force
+        Remove-Item -Path "$VMDrive\$VMFolder\$VMMachineFolder\$VMName" -Recurse -Force
+        Remove-Item -Path "$VMDrive\$VMFolder\$VHDFolder\$VMName" -Recurse -Force
     }
 }
 
@@ -69,31 +69,31 @@ function Create-VM {
         Name = $VMName
         MemoryStartupBytes = $VMRamSize
         Generation = 1
-        NewVHDPath = "$VMDrive\Hyper-V\$VHDFolder\$VMName\$VMName.vhdx"
+        NewVHDPath = "$VMDrive\$VMFolder\$VHDFolder\$VMName\$VMName.vhdx"
         NewVHDSizeBytes = $VMVHDSize
         BootDevice = "VHD"
-        Path = "$VMDrive\Hyper-V\$VMFolder\$VMName"
+        Path = "$VMDrive\$VMFolder\$VMMachineFolder\$VMName"
         SwitchName = (Get-VMSwitch -Name $VMSwitchName).Name
     }
 
-    $VMObject = New-VM @VM -Verbose -ErrorAction Stop
-    #$VMObject = New-VM @VM -NoVHD -Verbose -ErrorAction Stop
+    #$VMObject = New-VM @VM -Verbose -ErrorAction Stop
+    $VMObject = New-VM @VM -NoVHD -Verbose -ErrorAction Stop
 
-    #New-Item -Path $VMDrive\Hyper-V\$VHDFolder\ -Name $VMName -ItemType Directory -Force -Verbose | Out-null
-    Copy-Item -Path $VMDrive\$VMFolder\Media\Base-100.vhdx -Destination $VMDrive\$VMFolder\$VHDFolder\$VMName\$VMName.vhdx -Force -Verbose
+    #New-Item -Path $VMDrive\$VMFolder\$VHDFolder\ -Name $VMName -ItemType Directory -Force -Verbose | Out-null
+    Copy-Item -Path $VMDrive\$VMFolder\Media\base-100.vhdx -Destination $VMDrive\$VMFolder\$VHDFolder\$VMName\$VMName.vhdx -Force -Verbose
 
     $VMObject | Set-VM -ProcessorCount $VMCPUCount
     $VMObject | Set-VM -StaticMemory
     $VMObject | Set-VM -AutomaticCheckpointsEnabled $false
-    $VMObject | Set-VM -SnapshotFileLocation "$VMDrive\Hyper-V\$VMCheckpointFolder"
-    #$VMObject | Add-VMHardDiskDrive -Path $VMDrive\Hyper-V\$VHDFolder\$VMName\$VMName.vhdx
+    $VMObject | Set-VM -SnapshotFileLocation "$VMDrive\$VMFolder\$VMCheckpointFolder"
+    #$VMObject | Add-VMHardDiskDrive -Path $VMDrive\$VMFolder\$VHDFolder\$VMName\$VMName.vhdx
 
     $Date = Get-Date -Format yyyy-MM-dd
     $Time = Get-Date -Format HH:mm
     $VMObject | Checkpoint-VM -SnapshotName "Base Config ($Date - $Time)"
 
     $VMObject | Start-VM -Verbose -ErrorAction Stop
-    Start-Sleep -Seconds 120
+    Start-Sleep -Seconds 720
 
     $IPAddress = ($VMListData | Where-Object {$_.Name -eq $VMName}).IPAddress
 

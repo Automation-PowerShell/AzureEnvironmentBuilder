@@ -51,24 +51,24 @@ $NumberofPackagingVMs = 1                                   # Specify number of 
 $NumberofAdminStudioVMs = 1                                 # Specify number of AdminStudio VMs to be provisioned
 $NumberofJumpboxVMs = 1                                     # Specify number of Jumpbox VMs to be provisioned
 $NumberofCoreVMs = 1                                        # Specify number of Core VMs to be provisioned
-$VMNamePrefixStandard = "vm-euc-van-"                       # Specifies the first part of the Standard VM name (15 chars max)
-$VMNamePrefixPackaging = "vm-euc-pkg-"                      # Specifies the first part of the Packaging VM name (15 chars max)
-$VMNamePrefixAdminStudio = "vm-euc-as-"                     # Specifies the first part of the Admin Studio VM name (15 chars max)
-$VMNamePrefixJumpbox = "vm-euc-jb-"                         # Specifies the first part of the Jumpbox VM name (15 chars max)
-$VMNamePrefixCore = "vm-euc-core-"                          # Specifies the first part of the Core VM name (15 chars max)
-$VMNumberStartStandard = 101                                # Specifies the second part of the Standard VM name
-$VMNumberStartPackaging = 201                               # Specifies the second part of the Packaging VM name
-$VMNumberStartAdminStudio = 301                             # Specifies the second part of the Admin Studio VM name
-$VMNumberStartJumpbox = 401                                 # Specifies the second part of the Jumpbox VM name
-$VMNumberStartCore = 501                                    # Specifies the second part of the Core VM name
+# Name now coming from JSON $VMNamePrefixStandard = "vm-euc-van-"                       # Specifies the first part of the Standard VM name (15 chars max)
+# Name now coming from JSON $VMNamePrefixPackaging = "vm-euc-pkg-"                      # Specifies the first part of the Packaging VM name (15 chars max)
+# Name now coming from JSON $VMNamePrefixAdminStudio = "vm-euc-as-"                     # Specifies the first part of the Admin Studio VM name (15 chars max)
+# Name now coming from JSON $VMNamePrefixJumpbox = "vm-euc-jb-"                         # Specifies the first part of the Jumpbox VM name (15 chars max)
+# Name now coming from JSON $VMNamePrefixCore = "vm-euc-core-"                          # Specifies the first part of the Core VM name (15 chars max)
+# Name now coming from JSON $VMNumberStartStandard = 101                                # Specifies the second part of the Standard VM name
+# Name now coming from JSON $VMNumberStartPackaging = 201                               # Specifies the second part of the Packaging VM name
+# Name now coming from JSON $VMNumberStartAdminStudio = 301                             # Specifies the second part of the Admin Studio VM name
+# Name now coming from JSON $VMNumberStartJumpbox = 401                                 # Specifies the second part of the Jumpbox VM name
+# Name now coming from JSON $VMNumberStartCore = 501                                    # Specifies the second part of the Core VM name
 $VMShutdown = $true                                         # Specifies if the newly provisioned VM should be shutdown (can save costs)
 
 $NumberofStdSrvVMs = 0                                      # Specify number of Standard Server VMs to be provisioned
-$NumberofHyperVVMs = 1                                      # Specify number of HyperV Server VMs to be provisioned
-$VMStdSrvVNamePrefix        # to be implemented in the code
-$VmStdSrvNumberStart        # to be implemented in the code
-$VMHyperVNamePrefix = "vm-euc-hyprv-0"                      # Specifies the first part of the VM name (usually alphabetic)
-$VmHyperVNumberStart = 1                                    # Specifies the second part of the VM name (usually numeric)
+$NumberofHyperVVMs = 0                                      # Specify number of HyperV Server VMs to be provisioned
+# Name now coming from JSON $VMStdSrvVNamePrefix        # to be implemented in the code
+# Name now coming from JSON $VmStdSrvNumberStart        # to be implemented in the code
+# Name now coming from JSON $VMHyperVNamePrefix = "vm-euc-hyprv-0"                      # Specifies the first part of the VM name (usually alphabetic)
+# Name now coming from JSON $VmHyperVNumberStart = 1                                    # Specifies the second part of the VM name (usually numeric)
 
     # General Config Variables
 $location = "uksouth"                                       # Azure Region for resources to be built into

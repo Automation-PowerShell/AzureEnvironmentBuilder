@@ -8,7 +8,7 @@ Wrtitten by Graham Higginson and Daniel Ames.
 
 .NOTES
 Written by      : Graham Higginson & Daniel Ames
-Build Version   : v1
+Build Version   : v2
 
 .LINK
 More Info       : https://github.com/Automation-PowerShell/AzureEnvironmentBuilder
@@ -47,12 +47,42 @@ $IPSubnetPrefix = "24"
 $IPGateway = "192.168.0.1"
 $IPDNS = @("10.21.224.10","10.21.224.11","10.21.239.196")
 
-Set-Location $PSScriptRoot
-$VMListData = Import-Csv .\hyperv-vms.csv
+# Create Error Trap
+trap {
+    Write-Error $error[0]
+    Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Error -Message $error[0].Exception
+    break
+}
 
-if($LocalCred) {Remove-Variable LocalCred;$LocalCred = Get-Credential -Credential $LocalCredUser;$LocalCred | Export-CliXml -Path .\HyperVLocalAdmin.xml} else{$LocalCred = Get-Credential -Credential $LocalCredUser;$LocalCred | Export-CliXml -Path .\HyperVLocalAdmin.xml}
-if($DomainCred) {Remove-Variable DomainCred;$DomainCred = Get-Credential -Credential $DomainCredUser;$DomainCred | Export-CliXml -Path .\DomainUser.xml} else{$DomainCred = Get-Credential -Credential $DomainCredUser;$DomainCred | Export-CliXml -Path .\DomainUser.xml}
-if($DomainJoinCred) {Remove-Variable DomainJoinCred;$DomainJoinCred = Get-Credential -Credential $DomainJoinUser;$DomainJoinCred | Export-CliXml -Path .\DomainJoin.xml} else{$DomainJoinCred = Get-Credential -Credential $DomainJoinUser;$DomainJoinCred | Export-CliXml -Path .\DomainJoin.xml}
+# Enable Logging to the EventLog
+New-EventLog -LogName $EventlogName -Source $EventlogSource
+Limit-EventLog -OverflowAction OverWriteAsNeeded -MaximumSize 64KB -LogName $EventlogName
+Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Information -Message "Starting $scriptname Install Script"
+
+# Load Modules and Connect to Azure
+Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Information -Message "Loading NuGet module"
+Install-PackageProvider -Name NuGet -Force -ErrorAction Stop
+Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Information -Message "Loading Az.Storage module"
+Install-Module -Name Az.Storage,Az.KeyVault -Force -ErrorAction Stop
+Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Information -Message "Attempting to connect to Azure"
+Connect-AzAccount -identity -ErrorAction Stop -Subscription 743e9d63-59c8-42c3-b823-28bb773a88a6
+
+Set-Location $PSScriptRoot
+$VMListData = Import-Csv .\hyperv-vms.csv       # needs improving.
+
+$adminPassword = (Get-AzKeyVaultSecret -VaultName "keyvault-dames102" -Name "HyperVLocalAdmin").SecretValue
+$adminCred = New-Object System.Management.Automation.PSCredential ($HyperVLocalAdminUser, $adminPassword)
+$LocalCred = $adminCred
+
+$DomainCredPassword = (Get-AzKeyVaultSecret -VaultName "keyvault-dames102" -Name "DomainUser").SecretValue
+$DomainCred = New-Object System.Management.Automation.PSCredential ($DomainUserUser, $DomainCredPassword)
+
+$DomainJoinPassword = (Get-AzKeyVaultSecret -VaultName "keyvault-dames102" -Name "DomainJoin").SecretValue
+$DomainJoinCred = New-Object System.Management.Automation.PSCredential ($DomainJoinUser, $DomainJoinPassword)
+
+#if($LocalCred) {Remove-Variable LocalCred;$LocalCred = Get-Credential -Credential $LocalCredUser;$LocalCred | Export-CliXml -Path .\HyperVLocalAdmin.xml} else{$LocalCred = Get-Credential -Credential $LocalCredUser;$LocalCred | Export-CliXml -Path .\HyperVLocalAdmin.xml}
+#if($DomainCred) {Remove-Variable DomainCred;$DomainCred = Get-Credential -Credential $DomainCredUser;$DomainCred | Export-CliXml -Path .\DomainUser.xml} else{$DomainCred = Get-Credential -Credential $DomainCredUser;$DomainCred | Export-CliXml -Path .\DomainUser.xml}
+#if($DomainJoinCred) {Remove-Variable DomainJoinCred;$DomainJoinCred = Get-Credential -Credential $DomainJoinUser;$DomainJoinCred | Export-CliXml -Path .\DomainJoin.xml} else{$DomainJoinCred = Get-Credential -Credential $DomainJoinUser;$DomainJoinCred | Export-CliXml -Path .\DomainJoin.xml}
 #$LocalCred = Import-CliXml -Path .\HyperVLocalAdmin.xml
 #$DomainCred = Import-CliXml -Path .\DomainUser.xml
 #$DomainJoinCred = Import-CliXml -Path .\DomainJoin.xml
@@ -60,10 +90,6 @@ if($DomainJoinCred) {Remove-Variable DomainJoinCred;$DomainJoinCred = Get-Creden
 if(!$DomainCred) {
     exit
 }
-
-New-EventLog -LogName $EventlogName -Source $EventlogSource -ErrorAction SilentlyContinue
-Limit-EventLog -OverflowAction OverWriteAsNeeded -MaximumSize 64KB -LogName $EventlogName
-Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Running $scriptname Script"
 
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Importing Hyper-V Module"
 Import-Module Hyper-V -Force -ErrorAction Stop

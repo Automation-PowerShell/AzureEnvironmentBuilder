@@ -8,7 +8,7 @@ Wrtitten by Graham Higginson and Daniel Ames.
 
 .NOTES
 Written by      : Graham Higginson & Daniel Ames
-Build Version   : v1
+Build Version   : v2
 
 .LINK
 More Info       : https://github.com/Automation-PowerShell/AzureEnvironmentBuilder
@@ -48,8 +48,8 @@ if(!($isProd) -and $RequireUserGroups) {
 Remove-AzResourceGroup -Name $RGNameDEV -Force -ErrorAction Ignore -Verbose
 Remove-AzResourceGroup -Name $RGNamePROD -Force -ErrorAction Ignore -Verbose
 if(!($isProd)) {
-    Remove-AzResourceGroup -Name $RGNameDEVVNET -Force -ErrorAction Ignore -Verbose         # Dont want to do this is a Production Environment
-    Remove-AzResourceGroup -Name $RGNamePRODVNET -Force -ErrorAction Ignore -Verbose        # Dont want to do this is a Production Environment
+    #Remove-AzResourceGroup -Name $RGNameDEVVNET -Force -ErrorAction Ignore -Verbose         # Dont want to do this is a Production Environment
+    #Remove-AzResourceGroup -Name $RGNamePRODVNET -Force -ErrorAction Ignore -Verbose        # Dont want to do this is a Production Environment
 }
 Write-AEBLog "Completed AEB-AzureRemover.ps1"
 Write-AEBLog "============================================================================================================="
