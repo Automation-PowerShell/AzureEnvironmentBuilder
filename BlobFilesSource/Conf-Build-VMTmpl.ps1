@@ -74,10 +74,7 @@ function Create-VM {
         SwitchName = (Get-VMSwitch -Name $VMSwitchName).Name
     }
 
-    #$VMObject = New-VM @VM -Verbose -ErrorAction Stop
     $VMObject = New-VM @VM -NoVHD -Verbose -ErrorAction Stop
-
-    #New-Item -Path $VMDrive\$VMFolder\$VHDFolder\ -Name $VMName -ItemType Directory -Force -Verbose | Out-null
     Convert-VHD -Path $VMDrive\$VMFolder\Media\base-100.vhdx -DestinationPath $VMDrive\$VMFolder\$VHDFolder\$VMName\$VMName.vhdx -VHDType Dynamic -Verbose
 
     $VMObject | Set-VM -ProcessorCount $VMCPUCount
@@ -98,17 +95,17 @@ function Create-VM {
         # Pre Domain Join
     Remove-Variable erroric -ErrorAction SilentlyContinue
     Invoke-Command -VMName $VMName -Credential $LocalAdminCred -ErrorVariable erroric -ScriptBlock {
-        $NetAdapter = Get-NetAdapter -Physical | Where-Object {$_.Status -eq "Up"}
-        if (($NetAdapter | Get-NetIPConfiguration).IPv4Address.IPAddress) {
-            $NetAdapter | Remove-NetIPAddress -AddressFamily IPv4 -Confirm:$false
-        }
-        if (($NetAdapter | Get-NetIPConfiguration).Ipv4DefaultGateway) {
-            $NetAdapter | Remove-NetRoute -AddressFamily IPv4 -Confirm:$false
-        }
-        $NetAdapter | New-NetIPAddress -AddressFamily IPv4 -IPAddress $Using:IPAddress -PrefixLength $Using:IPSubnetPrefix -DefaultGateway $Using:IPGateway | Out-Null
-        $NetAdapter | Set-DnsClientServerAddress -ServerAddresses $Using:IPDNS | Out-Null
-        Start-Sleep -Seconds 60
-        if(!(Test-Connection $VMHostIP -Quiet)) { Write-Error "Networking Issue" }
+        #$NetAdapter = Get-NetAdapter -Physical | Where-Object {$_.Status -eq "Up"}
+        #if (($NetAdapter | Get-NetIPConfiguration).IPv4Address.IPAddress) {
+        #    $NetAdapter | Remove-NetIPAddress -AddressFamily IPv4 -Confirm:$false
+        #}
+        #if (($NetAdapter | Get-NetIPConfiguration).Ipv4DefaultGateway) {
+        #    $NetAdapter | Remove-NetRoute -AddressFamily IPv4 -Confirm:$false
+        #}
+        #$NetAdapter | New-NetIPAddress -AddressFamily IPv4 -IPAddress $Using:IPAddress -PrefixLength $Using:IPSubnetPrefix -DefaultGateway $Using:IPGateway | Out-Null
+        #$NetAdapter | Set-DnsClientServerAddress -ServerAddresses $Using:IPDNS | Out-Null
+        #Start-Sleep -Seconds 60
+        #if(!(Test-Connection $VMHostIP -Quiet)) { Write-Error "Networking Issue" }
         #if(!(Test-Connection "google.com" -Quiet)) { Write-Error "DNS Issue" }
     }
     if($erroric) {
@@ -124,6 +121,7 @@ function Create-VM {
         Write-Error $error[0]
         Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Error -Message $error[0].Exception
     }
+
     Start-Sleep -Seconds 90
     Remove-Variable erroric -ErrorAction SilentlyContinue
     Invoke-Command -VMName $VMName -Credential $LocalAdminCred -ErrorVariable erroric -ScriptBlock {
@@ -151,6 +149,7 @@ function Create-VM {
         Write-Error $error[0]
         Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Error -Message $error[0].Exception
     }
+
         # Post Domain Join - LocalCred wont work anymore.
     Start-Sleep -Seconds 90
     Remove-Variable erroric -ErrorAction SilentlyContinue
@@ -192,6 +191,7 @@ function Create-VM {
         Write-Error $error[0]
         Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Error -Message $error[0].Exception
     }
+
     $Date = Get-Date -Format yyyy-MM-dd
     $Time = Get-Date -Format HH:mm
     $VMObject | Checkpoint-VM -SnapshotName "Domain Joined ($Date - $Time)"
