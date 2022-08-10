@@ -86,16 +86,6 @@ function Create-VM {
         # VM Customisations
     Remove-Variable erroric -ErrorAction SilentlyContinue
     Invoke-Command -VMName $VMName -Credential $LocalAdminCred -ErrorVariable erroric -ScriptBlock {
-            # Add Windows Capibilities Back In
-        #Add-WindowsCapability -Online -Name Microsoft.Windows.PowerShell.ISE~~~~0.0.1.0
-        #Add-WindowsCapability -Online -Name App.StepsRecorder~~~~0.0.1.0
-        #Add-WindowsCapability -Online -Name Microsoft.Windows.Notepad~~~~0.0.1.0
-        #Add-WindowsCapability -Online -Name Microsoft.Windows.MSPaint~~~~0.0.1.0
-        #Add-WindowsCapability -Online -Name Microsoft.Windows.WordPad~~~~0.0.1.0
-
-            # Disable IPV6
-        #Disable-NetAdapterBinding -Name "*" -ComponentID ms_tcpip6
-
             # Cleanup and Rename Host
         Get-AppxPackage -Name Microsoft.MicrosoftOfficeHub | Remove-AppxPackage
         Rename-Computer -NewName $Using:VMName -LocalCredential $Using:LocalAdminCred -Restart -Verbose
@@ -109,7 +99,7 @@ function Create-VM {
     $MACAddress = $VMObject.NetworkAdapters.MacAddress
     $IPAddress = (Get-DhcpServerv4Scope | Get-DhcpServerv4Lease | Where-Object {($_.ClientId -replace "-") -eq $MACAddress}).IPAddress.IPAddressToString
     if(!(Get-NetNatStaticMapping -NatName $VMNetNATName -ErrorAction SilentlyContinue | Where-Object {$_.ExternalPort -like "*$VMNumber"})) {
-        Add-NetNatStaticMapping -ExternalIPAddress "0.0.0.0" -ExternalPort 50$VMNumber -InternalIPAddress $IPAddress -InternalPort 3389 -NatName $VMNetNATName -Protocol TCP -ErrorAction Continue | Out-Null
+        Add-NetNatStaticMapping -ExternalIPAddress "0.0.0.0" -ExternalPort 55$VMNumber -InternalIPAddress $IPAddress -InternalPort 3389 -NatName $VMNetNATName -Protocol TCP -ErrorAction Continue | Out-Null
     }
     $VMObject | Stop-VM -Force -TurnOff -Verbose -ErrorAction Stop
 

@@ -26,8 +26,8 @@ $azSubscription = "7660dc8a-b807-45fd-817f-a5df6f70204b"        # Visual Studio 
 $VaultName = "keyvault-dames10"
 $Domain = "space"
 $OUPath = "OU=Workstations,OU=Computers,OU=Space,DC=space,DC=dan"
+$RGNameSTORE = "rg-euc-packaging-store"                         # Storage Account Resource Group name
 $StorageAccountName = "storageeucpackaging10"                   # Storage account name (if used) (24 chars maximum)
-$StorageAccountKey = '4sdj3IetnnAjfCLHCDOvkrnxa8HMIZ2Hy72K80b78QbDWg7oDPk1CtJOJOQb4SQBJQMt47pjwE/d+ASteI38Gw=='
 
 $HyperVLocalAdminUser = "administrator"
 $DomainJoinUser = "wella\svc_PackagingDJ"
@@ -69,6 +69,10 @@ Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -En
 Install-Module -Name Az.Storage,Az.KeyVault -Force -ErrorAction Stop
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Information -Message "Attempting to connect to Azure"
 Connect-AzAccount -identity -ErrorAction Stop -Subscription $azSubscription
+
+# Get Storage Account Key
+$Keys = Get-AzStorageAccountKey -ResourceGroupName $RGNameSTORE -AccountName $StorageAccountName -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+$StorageAccountKey = $Keys.value[0]
 
 # Get Passwords from KeyVault
 $LocalAdminPassword = (Get-AzKeyVaultSecret -VaultName $VaultName -Name "HyperVLocalAdmin").SecretValue
@@ -140,7 +144,7 @@ function Create-VM {
     $VMObject | Start-VM -Verbose -ErrorAction Stop
 
         # Pre Domain Join
-    Start-Sleep -Seconds 90
+    Start-Sleep -Seconds 180
     Remove-Variable erroric -ErrorAction SilentlyContinue
     Invoke-Command -VMName $VMName -Credential $LocalAdminCred -ErrorVariable erroric -ScriptBlock {
         Get-AppxPackage -Name Microsoft.MicrosoftOfficeHub | Remove-AppxPackage
@@ -156,7 +160,7 @@ function Create-VM {
             # Enable Remote Desktop
         Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server'-name "fDenyTSConnections" -Value 0
         Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
-        net localgroup "Remote Desktop Users" /add "Domain Users"
+        #net localgroup "Remote Desktop Users" /add "Domain Users"
 
             # Autopilot Hardware ID
         New-Item -Type Directory -Path "C:\HWID" -Force
@@ -234,6 +238,9 @@ function Create-VM {
         Get-NetNatStaticMapping -NatName LocalNAT | Where-Object {$_.ExternalPort -like "*$VMNumber"} | Remove-NetNatStaticMapping -Confirm:$false | Out-Null
         Add-NetNatStaticMapping -ExternalIPAddress "0.0.0.0" -ExternalPort 55$VMNumber -InternalIPAddress $IPAddress -InternalPort 3389 -NatName LocalNAT -Protocol TCP -ErrorAction Stop | Out-Null
     }
+
+    $DHCPScope = Get-DhcpServerv4Scope
+    Add-DhcpServerv4Reservation -ScopeId $DHCPScope.ScopeId -IPAddress $IPAddress -ClientId $MACAddress -Description "Reservation for UAT device"
 }
 
 #region Main
