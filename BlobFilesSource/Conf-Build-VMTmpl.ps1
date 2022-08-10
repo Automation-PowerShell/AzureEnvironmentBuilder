@@ -89,7 +89,7 @@ function Create-VM {
     $VMObject | Start-VM -Verbose -ErrorAction Stop
 
         # Pre Domain Join
-    Start-Sleep -Seconds 180
+    Start-Sleep -Seconds 240
     Remove-Variable erroric -ErrorAction SilentlyContinue
     Invoke-Command -VMName $VMName -Credential $LocalAdminCred -ErrorVariable erroric -ScriptBlock {
         Get-AppxPackage -Name Microsoft.MicrosoftOfficeHub | Remove-AppxPackage
@@ -186,6 +186,8 @@ function Create-VM {
 
     $DHCPScope = Get-DhcpServerv4Scope
     Add-DhcpServerv4Reservation -ScopeId $DHCPScope.ScopeId -IPAddress $IPAddress -ClientId $MACAddress -Description "Reservation for UAT device"
+
+    Stop-VM -Name $VMName -Force -Verbose -ErrorAction Stop
 }
 
 #region Main
