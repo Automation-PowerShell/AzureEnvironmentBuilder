@@ -21,15 +21,15 @@
 
 function RunVMConfig($ResourceGroup, $VMName, $BlobFilePath, $Blob) {
     $Params = @{
-        ContainerName       = $ContainerName
-        ResourceGroupName   = $ResourceGroup
-        VMName              = $VMName
-        Location            = $Location
-        StorageAccountName  = $StorageAccountName
-        StorageAccountKey   = $Keys.value[0]
-        Filename            = $Blob
-        Run                 = $Blob
-        Name                = "ConfigureVM2"
+        ContainerName      = $ContainerName
+        ResourceGroupName  = $ResourceGroup
+        VMName             = $VMName
+        Location           = $Location
+        StorageAccountName = $StorageAccountName
+        StorageAccountKey  = $Keys.value[0]
+        Filename           = $Blob
+        Run                = $Blob
+        Name               = $Blob
     }
 
     $VMConfigure = Set-AzVMCustomScriptExtension @Params -ErrorAction SilentlyContinue
@@ -50,14 +50,14 @@ function Write-LogScreen {
     $Time = Get-Date -Format HH:mm:ss
     $String = "$Date - $Time -- $String"
     switch ($Level) {
-        "Info" {
+        'Info' {
             Write-Host $String
         }
-        "Error" {
+        'Error' {
             $String = "ERROR: $String"
             Write-Host $String -ForegroundColor Red
         }
-        "Debug" {
+        'Debug' {
             $String = "DEBUG: $String"
             Write-Host $String -ForegroundColor Green
         }
@@ -74,15 +74,15 @@ function Write-LogFile {
     $String = "$Date - $Time -- $String"
     $logfile = "$root\AEB.log"
     switch ($Level) {
-        "Info" {
+        'Info' {
             $String = "$String"
             $string | Out-File -FilePath $logfile -Append -Force -Encoding ascii
         }
-        "Error" {
+        'Error' {
             $String = "ERROR: $String"
             $string | Out-File -FilePath $logfile -Append -Force -Encoding ascii
         }
-        "Debug" {
+        'Debug' {
             $String = "DEBUG: $String"
             $string | Out-File -FilePath $logfile -Append -Force -Encoding ascii
         }
@@ -97,16 +97,16 @@ function Write-LogCMFile {
     $Date = Get-Date -Format MM-dd-yyyy
     $Time = Get-Date -Format HH:mm:ss
     $logfile = "$root\AEB.log"
-        switch ($Level) {
-        "Info" {
+    switch ($Level) {
+        'Info' {
             $String = "<![LOG[$String]LOG]!><time=`"$Time.000-60`" date=`"$Date`" component=`"$azTenant`" context=`"`" type=`"1`" thread=`"`" file=`"`">"
             $string | Out-File -FilePath $logfile -Append -Force -Encoding utf8
         }
-        "Error" {
+        'Error' {
             $String = "<![LOG[$String]LOG]!><time=`"$Time.000-60`" date=`"$Date`" component=`"$azTenant`" context=`"`" type=`"3`" thread=`"`" file=`"`">"
             $string | Out-File -FilePath $logfile -Append -Force -Encoding utf8
         }
-        "Debug" {
+        'Debug' {
             $String = "<![LOG[$String]LOG]!><time=`"$Time.000-60`" date=`"$Date`" component=`"$azTenant`" context=`"`" type=`"2`" thread=`"`" file=`"`">"
             $string | Out-File -FilePath $logfile -Append -Force -Encoding utf8
         }
@@ -125,9 +125,9 @@ function Write-LogStorageAccount {
     $filename = "AEB-$Date.log"
     $logfile = "c:\temp\AEBSA\$filename"
 
-    if(!$saNotFirstRun) {
+    if (!$saNotFirstRun) {
         Remove-Item -Path C:\Temp\AEBSA -Force -Recurse -ErrorAction SilentlyContinue | Out-Null
-        mkdir -Path C:\Temp -Name "AEBSA" -Force | Out-Null
+        mkdir -Path C:\Temp -Name 'AEBSA' -Force | Out-Null
         $Script:StorageAccount = Get-AzStorageAccount -Name $StorageAccountName -ResourceGroupName $RGNameSTORE
         $Script:Context = $storageAccount.Context
         #$Script:FileShareContainer = Get-AzStorageShare -Name $FileShareName -Context $Context
@@ -135,17 +135,17 @@ function Write-LogStorageAccount {
     Set-Location c:\temp\AEBSA\
     $Script:saNotFirstRun = $true
     switch ($Level) {
-        "Info" {
+        'Info' {
             $String = "$azTenant / $String"
             $string | Out-File -FilePath $logfile -Append -Force -Encoding ascii
-            Set-AzStorageFileContent -ShareName $FileShareName -Source $logfile -Path "Logs/" -Context $Context -Force
+            Set-AzStorageFileContent -ShareName $FileShareName -Source $logfile -Path 'Logs/' -Context $Context -Force
         }
-        "Error" {
+        'Error' {
             $String = "ERROR: $azTenant / $String"
             $string | Out-File -FilePath $logfile -Append -Force -Encoding ascii
-            Set-AzStorageFileContent -ShareName $FileShareName -Source $logfile -Path "Logs/" -Context $Context -Force
+            Set-AzStorageFileContent -ShareName $FileShareName -Source $logfile -Path 'Logs/' -Context $Context -Force
         }
-        "Debug" {
+        'Debug' {
             $String = "DEBUG: $azTenant / $String"
             $string | Out-File -FilePath $logfile -Append -Force -Encoding ascii
             Set-AzStorageFileContent -ShareName $FileShareName -Source $logfile -Path "Logs/$filename" -Context $Context -Force
@@ -159,20 +159,20 @@ function Write-LogGit {
         [Parameter(Position = 0, Mandatory)][String]$String,
         [Parameter(Position = 1, Mandatory)][ValidateSet('Info', 'Error', 'Debug')][String]$Level
     )
-    if($gitlog -ne "") {
+    if ($gitlog -ne '') {
         $Date = Get-Date -Format yyyy-MM-dd
         $Time = Get-Date -Format HH:mm:ss
         $String = "$Date - $Time -- $String"
         $filename = "AEB-$Date.log"
         $logfile = "c:\temp\AEBgit\$filename"
-        if(!$gitNotFirstRun) {
+        if (!$gitNotFirstRun) {
             Remove-Item -Path C:\Temp\AEBgit -Force -Recurse -ErrorAction SilentlyContinue | Out-Null
-            mkdir -Path C:\Temp -Name "AEBgit" -Force | Out-Null
+            mkdir -Path C:\Temp -Name 'AEBgit' -Force | Out-Null
             Set-Location c:\temp\AEBgit\
             & git init *>&1 | Out-Null
             & git pull $gitlog *>&1 | Out-Null
-            if(!(Test-Path -Path $logfile)) {
-                Write-Output "" | Out-File -FilePath $logfile -Append -Force -Encoding ascii
+            if (!(Test-Path -Path $logfile)) {
+                Write-Output '' | Out-File -FilePath $logfile -Append -Force -Encoding ascii
             }
             & git add $filename -f *>&1 | Out-Null
             & git branch -M main *>&1 | Out-Null
@@ -181,19 +181,19 @@ function Write-LogGit {
         Set-Location c:\temp\AEBgit\
         $Script:gitNotFirstRun = $true
         switch ($Level) {
-            "Info" {
+            'Info' {
                 $String = "$azTenant / $String"
                 $string | Out-File -FilePath $logfile -Append -Force -Encoding ascii
                 & git commit -a -m "$Date" *>&1 | Out-Null
                 & git push -u origin main *>&1 | Out-Null
             }
-            "Error" {
+            'Error' {
                 $String = "ERROR: $azTenant / $String"
                 $string | Out-File -FilePath $logfile -Append -Force -Encoding ascii
                 & git commit -a -m "$Date" *>&1 | Out-Null
                 & git push -u origin main *>&1 | Out-Null
             }
-            "Debug" {
+            'Debug' {
                 $String = "DEBUG: $azTenant / $String"
                 $string | Out-File -FilePath $logfile -Append -Force -Encoding ascii
                 & git commit -a -m "$Date" *>&1 | Out-Null
@@ -207,14 +207,14 @@ function Write-LogGit {
 function Write-AEBLog {
     Param(
         [Parameter(Position = 0, Mandatory)][String]$String,
-        [ValidateSet('Info', 'Error', 'Debug')][String]$Level = "Info"
+        [ValidateSet('Info', 'Error', 'Debug')][String]$Level = 'Info'
     )
 
     Write-LogScreen -String $String -Level $Level
-    if(!($isProd)) {
+    if (!($isProd)) {
         Write-LogCMFile -String $String -Level $Level
-        if($LogToGit) { Write-LogGit -String $String -Level $Level }
-        if($LogToSA) { Write-LogStorageAccount -String $String -Level $Level }
+        if ($LogToGit) { Write-LogGit -String $String -Level $Level }
+        if ($LogToSA) { Write-LogStorageAccount -String $String -Level $Level }
     }
     else {
         Write-LogFile -String $String -Level $Level
@@ -225,13 +225,13 @@ function Write-DumpLine {
     #[CmdletBinding()]
     Param(
         [Parameter(Position = 0, Mandatory)][String]$varname,
-        [Parameter(Position = 1)][String]$varvalue = ""
+        [Parameter(Position = 1)][String]$varvalue = ''
     )
     $String = "$varname : $varvalue"
     Write-LogScreen -String $String -Level Debug
-    if(!($isProd)) {
+    if (!($isProd)) {
         Write-LogCMFile -String $String -Level Debug
-        if($LogToGit) { Write-LogGit -String $String -Level Debug }
+        if ($LogToGit) { Write-LogGit -String $String -Level Debug }
     }
     else {
         Write-LogFile -String $String -Level Debug
@@ -246,7 +246,7 @@ function Write-Dump {
         [Parameter(Position = 3)][object]$object4,
         [Parameter(Position = 4)][object]$object5
     )
-    Write-AEBLog -String "*** Write-Dump ***" -Level Debug
+    Write-AEBLog -String '*** Write-Dump ***' -Level Debug
     Write-DumpLine '$?' $?
     Write-DumpLine '$azSubscription' $azSubscription
     Write-DumpLine '$RGNameSTORE' $RGNameSTORE
@@ -255,23 +255,23 @@ function Write-Dump {
     Write-DumpLine '$RequireServicePrincipal' $RequireServicePrincipal
     Write-DumpLine '$RequireRBAC' $RequireRBAC
     Write-DumpLine '(Get-AzContext).Name' (Get-AzContext).Name
-    if($object1){Write-DumpLine '$object1' $object1}
-    if($object2){Write-DumpLine '$object2' $object2}
-    if($object3){Write-DumpLine '$object3' $object3}
-    if($object4){Write-DumpLine '$object4' $object4}
-    if($object5){Write-DumpLine '$object5' $object5}
-    if($Error[0]){Write-DumpLine '$Error[0]' $Error[0]}
-    if($Error[1]){Write-DumpLine '$Error[1]' $Error[1]}
-    if($Error[2]){Write-DumpLine '$Error[2]' $Error[2]}
-    Write-AEBLog "=============================================================================================================" -Level Debug
+    if ($object1) { Write-DumpLine '$object1' $object1 }
+    if ($object2) { Write-DumpLine '$object2' $object2 }
+    if ($object3) { Write-DumpLine '$object3' $object3 }
+    if ($object4) { Write-DumpLine '$object4' $object4 }
+    if ($object5) { Write-DumpLine '$object5' $object5 }
+    if ($Error[0]) { Write-DumpLine '$Error[0]' $Error[0] }
+    if ($Error[1]) { Write-DumpLine '$Error[1]' $Error[1] }
+    if ($Error[2]) { Write-DumpLine '$Error[2]' $Error[2] }
+    Write-AEBLog '=============================================================================================================' -Level Debug
     exit
 }
 
 function ConnectTo-Azure {
-    Import-Module Az.Accounts,Az.Compute,Az.Storage,Az.Network,Az.Resources,Az.KeyVault -ErrorAction SilentlyContinue
+    Import-Module Az.Accounts, Az.Compute, Az.Storage, Az.Network, Az.Resources, Az.KeyVault -ErrorAction SilentlyContinue
     if (!((Get-Module Az.Accounts) -and (Get-Module Az.Compute) -and (Get-Module Az.Storage) -and (Get-Module Az.Network) -and (Get-Module Az.Resources) -and (Get-Module Az.KeyVault))) {
-    Install-Module Az.Accounts,Az.Compute,Az.Storage,Az.Network,Az.Resources,Az.KeyVault -Repository PSGallery -Scope CurrentUser -Force
-        Import-Module Az.Accounts,AZ.Compute,Az.Storage,Az.Network,Az.Resources,Az.KeyVault
+        Install-Module Az.Accounts, Az.Compute, Az.Storage, Az.Network, Az.Resources, Az.KeyVault -Repository PSGallery -Scope CurrentUser -Force
+        Import-Module Az.Accounts, AZ.Compute, Az.Storage, Az.Network, Az.Resources, Az.KeyVault
     }
     Clear-AzContext -Force
     #Update-Module Az.Accounts,AZ.Compute,Az.Storage,Az.Network,Az.Resources -Force
@@ -279,14 +279,14 @@ function ConnectTo-Azure {
     Connect-AzAccount -Tenant $aztenant -Subscription $azSubscription | Out-Null
     $SubscriptionId = (Get-AzContext).Subscription.Id
     if (!($azSubscription -eq $SubscriptionId)) {
-        Write-AEBLog "*** Subscription ID Mismatch!!!! ***" -Level Error
+        Write-AEBLog '*** Subscription ID Mismatch!!!! ***' -Level Error
         exit
     }
-    Get-AzContext | Rename-AzContext -TargetName "User" -Force | Out-Null
+    Get-AzContext | Rename-AzContext -TargetName 'User' -Force | Out-Null
     if ($RequireServicePrincipal) {
         Connect-AzAccount -Tenant $azTenant -Subscription $azSubscription -Credential $ServicePrincipalCred -ServicePrincipal | Out-Null
-        Get-AzContext | Rename-AzContext -TargetName "StorageSP" -Force | Out-Null
-        Get-AzContext -Name "User" | Select-AzContext | Out-Null
+        Get-AzContext | Rename-AzContext -TargetName 'StorageSP' -Force | Out-Null
+        Get-AzContext -Name 'User' | Select-AzContext | Out-Null
     }
     $script:Keys = Get-AzStorageAccountKey -ResourceGroupName $RGNameSTORE -AccountName $StorageAccountName -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
 }

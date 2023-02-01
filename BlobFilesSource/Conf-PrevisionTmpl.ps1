@@ -1,28 +1,28 @@
-$scriptname = "Prevision.ps1"
-$EventlogName = "Accenture"
-$EventlogSource = "Prevision Script"
+$scriptname = 'Prevision.ps1'
+$EventlogName = 'Accenture'
+$EventlogSource = 'Prevision Script'
 
 Set-Location $PSScriptRoot
-$source = "X:\EUC Applications\Packaging Environment Build Files\Prevision"
-$modules = "D:\Modules"
+$source = 'X:\EUC Applications\Packaging Environment Build Files\Prevision'
+$modules = 'D:\Modules'
 
 # Create Error Trap
 trap {
     Write-Error $error[0]
-    Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Error -Message $error[0].Exception
+    Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Error -Message $error[0].Exception
     break
 }
 
-    # Enable Logging to the EventLog
+# Enable Logging to the EventLog
 New-EventLog -LogName $EventlogName -Source $EventlogSource
 Limit-EventLog -OverflowAction OverWriteAsNeeded -MaximumSize 64KB -LogName $EventlogName
-Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Information -Message "Starting $scriptname Script"
+Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Starting $scriptname Script"
 
-Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Information -Message "Mapping X:\ Drive"
+Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message 'Mapping X:\ Drive'
 cmd.exe /C cmdkey /add:`"xxxxx.file.core.windows.net`" /user:`"Azure\xxxxx`" /pass:`"yyyyy`"
-New-PSDrive -Name X -PSProvider FileSystem -Root "\\xxxxx.file.core.windows.net\fffff" -Persist
+New-PSDrive -Name X -PSProvider FileSystem -Root '\\xxxxx.file.core.windows.net\fffff' -Persist
 
-    # Import ZScaler Cert
+# Import ZScaler Cert
 Import-Certificate -FilePath "$source\ZscalerRootCertificate-2048-SHA256.crt" -CertStoreLocation Cert:\LocalMachine\Root
 
 <#    # Install NuGet Module

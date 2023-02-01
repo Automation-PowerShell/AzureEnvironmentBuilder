@@ -3,7 +3,7 @@ function CreateStandardVM-Script($VMName) {
     $names = $deviceSpecs.'Desktop-Standard'.Tags | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
     foreach ($name in $names) {
         $value = $deviceSpecs.'Desktop-Standard'.Tags.$name
-        $tags.Add($name,$value)
+        $tags.Add($name, $value)
     }
 
     $Vnet = Get-AzVirtualNetwork -Name $VNetDEV -ResourceGroupName $RGNameDEVVNET
@@ -27,7 +27,7 @@ function CreatePackagingVM-Script($VMName) {
     $names = $deviceSpecs.'Desktop-Packaging'.Tags | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
     foreach ($name in $names) {
         $value = $deviceSpecs.'Desktop-Packaging'.Tags.$name
-        $tags.Add($name,$value)
+        $tags.Add($name, $value)
     }
 
     $Vnet = Get-AzVirtualNetwork -Name $VNetDEV -ResourceGroupName $RGNameDEVVNET
@@ -51,7 +51,7 @@ function CreateAdminStudioVM-Script($VMName) {
     $names = $deviceSpecs.'Desktop-AdminStudio'.Tags | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
     foreach ($name in $names) {
         $value = $deviceSpecs.'Desktop-AdminStudio'.Tags.$name
-        $tags.Add($name,$value)
+        $tags.Add($name, $value)
     }
 
     $Vnet = Get-AzVirtualNetwork -Name $VNetDEV -ResourceGroupName $RGNameDEVVNET
@@ -75,7 +75,7 @@ function CreateJumpboxVM-Script($VMName) {
     $names = $deviceSpecs.'Desktop-Jumpbox'.Tags | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
     foreach ($name in $names) {
         $value = $deviceSpecs.'Desktop-Jumpbox'.Tags.$name
-        $tags.Add($name,$value)
+        $tags.Add($name, $value)
     }
 
     $Vnet = Get-AzVirtualNetwork -Name $VNetDEV -ResourceGroupName $RGNameDEVVNET
@@ -99,7 +99,7 @@ function CreateCoreVM-Script($VMName) {
     $names = $deviceSpecs.'Desktop-Core'.Tags | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
     foreach ($name in $names) {
         $value = $deviceSpecs.'Desktop-Core'.Tags.$name
-        $tags.Add($name,$value)
+        $tags.Add($name, $value)
     }
 
     $Vnet = Get-AzVirtualNetwork -Name $VNetDEV -ResourceGroupName $RGNameDEVVNET
@@ -131,7 +131,7 @@ function ConfigureVM {
         $appPS1 = $appSpec.PS1
         Write-AEBLog "VM: $VMName - Installing App: $appName"
         RunVMConfig $RG $VMName "https://$StorageAccountName.blob.core.windows.net/$ContainerName/$appPS1" $appPS1
-        if($appSpec.RebootRequired) {
+        if ($appSpec.RebootRequired) {
             Restart-AzVM -ResourceGroupName $RG -Name $VMName | Out-Null
             Write-AEBLog "VM: $VMName - Restarting VM for $($appSpec.RebootSeconds) Seconds..."
             Start-Sleep -Seconds $appSpec.RebootSeconds
@@ -140,7 +140,7 @@ function ConfigureVM {
 
     if ($VMShutdown) {
         $Stopvm = Stop-AzVM -ResourceGroupName $RG -Name $VMName -Force
-        if ($Stopvm.Status -eq "Succeeded") {
+        if ($Stopvm.Status -eq 'Succeeded') {
             Write-AEBLog "VM: $VMName shutdown successfully"
         }
         else {
@@ -157,29 +157,29 @@ function ConfigureBaseVM {
     )
 
     $VMCreate = Get-AzVM -ResourceGroupName $RG -Name $VMName
-    If ($VMCreate.ProvisioningState -eq "Succeeded") {
+    If ($VMCreate.ProvisioningState -eq 'Succeeded') {
         Write-AEBLog "VM: $VMName created successfully"
 
         $NewVm = Get-AzADServicePrincipal -DisplayName $VMName
         Start-Sleep -Seconds 30
         if ($RequireServicePrincipal) {
-            Get-AzContext -Name "StorageSP" | Select-AzContext | Out-Null
+            Get-AzContext -Name 'StorageSP' | Select-AzContext | Out-Null
         }
         if ($RequireRBAC) {
             $Group = Get-AzADGroup -searchstring $rbacContributor
-            $groupmember = Get-AzADGroupMember -GroupObjectId $Group.Id | Where-Object {$_.DisplayName -eq $VMName}
-            if($groupmember.DisplayName -eq $VMName) {
+            $groupmember = Get-AzADGroupMember -GroupObjectId $Group.Id | Where-Object { $_.DisplayName -eq $VMName }
+            if ($groupmember.DisplayName -eq $VMName) {
                 Remove-AzADGroupMember -GroupObjectId $Group.Id -MemberObjectId $groupmember.Id
             }
             Add-AzADGroupMember -TargetGroupObjectId $Group.Id -MemberObjectId $NewVm.Id -Verbose | Out-Null
-            Get-AzContext -Name "User" | Select-AzContext | Out-Null
+            Get-AzContext -Name 'User' | Select-AzContext | Out-Null
         }
         else {
-            New-AzRoleAssignment -ObjectId $NewVm.Id -RoleDefinitionName "Contributor" -Scope "/subscriptions/$azSubscription/resourceGroups/$RGNameSTORE/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" -ErrorAction SilentlyContinue | Out-Null
-            Get-AzContext -Name "User" | Select-AzContext | Out-Null
+            New-AzRoleAssignment -ObjectId $NewVm.Id -RoleDefinitionName 'Contributor' -Scope "/subscriptions/$azSubscription/resourceGroups/$RGNameSTORE/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" -ErrorAction SilentlyContinue | Out-Null
+            Get-AzContext -Name 'User' | Select-AzContext | Out-Null
             Start-Sleep -Seconds 30
             $confirm = Get-AzRoleAssignment -ObjectId $NewVm.Id -Scope "/subscriptions/$azSubscription/resourceGroups/$RGNameSTORE/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" -ErrorAction SilentlyContinue
-            if(!$confirm) {
+            if (!$confirm) {
                 Write-AEBLog -String "*** VM: $VMName - Unable to set Storage Account Permission ***" -Level Error
                 Write-Dump $VMCreate.Identity.PrincipalId $NewVm.Id
             }
@@ -193,12 +193,13 @@ function ConfigureBaseVM {
             $Properties = @{}
             $Properties.Add('status', 'Enabled')
             $Properties.Add('taskType', 'ComputeVmShutdownTask')
-            $Properties.Add('dailyRecurrence', @{'time' = $($deviceSpecs.$VMSpec.AutoShutdownTime)})
-            $Properties.Add('timeZoneId', "GMT Standard Time")
-            $Properties.Add('notificationSettings', @{status = 'Disabled'; timeInMinutes = 15 })
+            $Properties.Add('dailyRecurrence', @{'time' = $($deviceSpecs.$VMSpec.AutoShutdownTime) })
+            $Properties.Add('TimeZoneId', 'GMT Standard Time')
+            $Properties.Add('notificationSettings', @{status = 'Disabled'; timeInMinutes = 15; notificationLocale = "en" })
             $Properties.Add('targetResourceId', $VMCreate.Id)
-            New-AzResource -Location $Location -ResourceId $ScheduledShutdownResourceId -Properties $Properties -Force | Out-Null
-            Write-AEBLog "VM: $VMName - Auto Shutdown Enabled for $($deviceSpecs.$VMSpec.AutoShutdownTime)"
+            # Bug : New-AzResource is failing
+            #New-AzResource -Location $Location -ResourceId $ScheduledShutdownResourceId -Properties $Properties -Force | Out-Null
+            #Write-AEBLog "VM: $VMName - Auto Shutdown Enabled for $($deviceSpecs.$VMSpec.AutoShutdownTime)"
         }
     }
     else {
@@ -208,9 +209,9 @@ function ConfigureBaseVM {
 }
 
 function ScriptRebuild-Create-VM {
-    Get-AzContext -Name "User" | Select-AzContext | Out-Null
+    Get-AzContext -Name 'User' | Select-AzContext | Out-Null
     switch ($Spec) {
-        "Standard" {
+        'Standard' {
             $VMCheck = Get-AzVM -Name "$VMName" -ResourceGroup $RGNameDEV -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if ($VMCheck) {
                 Remove-AzVM -Name $VMName -ResourceGroupName $RGNameDEV -Force -Verbose | Out-Null
@@ -224,7 +225,7 @@ function ScriptRebuild-Create-VM {
                 CreateStandardVM-Script "$VMName"
             }
         }
-        "Packaging" {
+        'Packaging' {
             $VMCheck = Get-AzVM -Name "$VMName" -ResourceGroup $RGNameDEV -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if ($VMCheck) {
                 Remove-AzVM -Name $VMName -ResourceGroupName $RGNameDEV -Force -Verbose | Out-Null
@@ -238,7 +239,7 @@ function ScriptRebuild-Create-VM {
                 CreatePackagingVM-Script "$VMName"
             }
         }
-        "AdminStudio" {
+        'AdminStudio' {
             $VMCheck = Get-AzVM -Name "$VMName" -ResourceGroup $RGNameDEV -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if ($VMCheck) {
                 Remove-AzVM -Name $VMName -ResourceGroupName $RGNameDEV -Force -Verbose | Out-Null
@@ -252,7 +253,7 @@ function ScriptRebuild-Create-VM {
                 CreateAdminStudioVM-Script "$VMName"
             }
         }
-        "Jumpbox" {
+        'Jumpbox' {
             $VMCheck = Get-AzVM -Name "$VMName" -ResourceGroup $RGNameDEV -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if ($VMCheck) {
                 Remove-AzVM -Name $VMName -ResourceGroupName $RGNameDEV -Force -Verbose | Out-Null
@@ -266,7 +267,7 @@ function ScriptRebuild-Create-VM {
                 CreateJumpboxVM-Script "$VMName"
             }
         }
-        "Core" {
+        'Core' {
             $VMCheck = Get-AzVM -Name "$VMName" -ResourceGroup $RGNameDEV -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if ($VMCheck) {
                 Remove-AzVM -Name $VMName -ResourceGroupName $RGNameDEV -Force -Verbose | Out-Null
@@ -287,27 +288,27 @@ function ScriptRebuild-Create-VM {
 }
 
 function ScriptRebuild-Config-VM {
-    Get-AzContext -Name "User" | Select-AzContext | Out-Null
+    Get-AzContext -Name 'User' | Select-AzContext | Out-Null
     switch ($Spec) {
-        "Standard" {
-            ConfigureBaseVM -VMName "$VMName" -VMSpec "Desktop-Standard" -RG $RGNameDEV
-            ConfigureVM -VMName "$VMName" -VMSpec "Desktop-Standard" -RG $RGNameDEV
+        'Standard' {
+            ConfigureBaseVM -VMName "$VMName" -VMSpec 'Desktop-Standard' -RG $RGNameDEV
+            ConfigureVM -VMName "$VMName" -VMSpec 'Desktop-Standard' -RG $RGNameDEV
         }
-        "Packaging" {
-            ConfigureBaseVM -VMName "$VMName" -VMSpec "Desktop-Packaging" -RG $RGNameDEV
-            ConfigureVM -VMName "$VMName" -VMSpec "Desktop-Packaging" -RG $RGNameDEV
+        'Packaging' {
+            ConfigureBaseVM -VMName "$VMName" -VMSpec 'Desktop-Packaging' -RG $RGNameDEV
+            ConfigureVM -VMName "$VMName" -VMSpec 'Desktop-Packaging' -RG $RGNameDEV
         }
-        "AdminStudio" {
-            ConfigureBaseVM -VMName "$VMName" -VMSpec "Desktop-AdminStudio" -RG $RGNameDEV
-            ConfigureVM -VMName "$VMName" -VMSpec "Desktop-AdminStudio" -RG $RGNameDEV
+        'AdminStudio' {
+            ConfigureBaseVM -VMName "$VMName" -VMSpec 'Desktop-AdminStudio' -RG $RGNameDEV
+            ConfigureVM -VMName "$VMName" -VMSpec 'Desktop-AdminStudio' -RG $RGNameDEV
         }
-        "Jumpbox" {
-            ConfigureBaseVM -VMName "$VMName" -VMSpec "Desktop-Jumpbox" -RG $RGNameDEV
-            ConfigureVM -VMName "$VMName" -VMSpec "Desktop-Jumpbox" -RG $RGNameDEV
+        'Jumpbox' {
+            ConfigureBaseVM -VMName "$VMName" -VMSpec 'Desktop-Jumpbox' -RG $RGNameDEV
+            ConfigureVM -VMName "$VMName" -VMSpec 'Desktop-Jumpbox' -RG $RGNameDEV
         }
-        "Core" {
-            ConfigureBaseVM -VMName "$VMName" -VMSpec "Desktop-Core" -RG $RGNameDEV
-            ConfigureVM -VMName "$VMName" -VMSpec "Desktop-Core" -RG $RGNameDEV
+        'Core' {
+            ConfigureBaseVM -VMName "$VMName" -VMSpec 'Desktop-Core' -RG $RGNameDEV
+            ConfigureVM -VMName "$VMName" -VMSpec 'Desktop-Core' -RG $RGNameDEV
         }
         default {
             Write-Dump
@@ -316,13 +317,13 @@ function ScriptRebuild-Config-VM {
 }
 
 function ScriptBuild-Create-VM {
-        # Build Standard VMs
+    # Build Standard VMs
     if ($RequireStandardVMs) {
         $Count = 1
         [int]$VMNumberStart = $deviceSpecs.'Desktop-Standard'.VMNumberStart
         While ($Count -le $NumberofStandardVMs) {
-           Write-AEBLog "Creating $Count of $NumberofStandardVMs VMs"
-           $VM = $deviceSpecs.'Desktop-Standard'.VMNamePrefix + $VMNumberStart
+            Write-AEBLog "Creating $Count of $NumberofStandardVMs VMs"
+            $VM = $deviceSpecs.'Desktop-Standard'.VMNamePrefix + $VMNumberStart
             $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $RGNameDEV -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if (!$VMCheck) {
                 CreateStandardVM-Script "$VM"
@@ -336,7 +337,7 @@ function ScriptBuild-Create-VM {
         }
     }
 
-        # Build Packaging VMs
+    # Build Packaging VMs
     if ($RequirePackagingVMs) {
         $Count = 1
         [int]$VMNumberStart = $deviceSpecs.'Desktop-Packaging'.VMNumberStart
@@ -356,7 +357,7 @@ function ScriptBuild-Create-VM {
         }
     }
 
-        # Build AdminStudio VMs
+    # Build AdminStudio VMs
     if ($RequireAdminStudioVMs) {
         $Count = 1
         [int]$VMNumberStart = $deviceSpecs.'Desktop-AdminStudio'.VMNumberStart
@@ -376,7 +377,7 @@ function ScriptBuild-Create-VM {
         }
     }
 
-        # Build Jumpbox VMs
+    # Build Jumpbox VMs
     if ($RequireJumpboxVMs) {
         $Count = 1
         [int]$VMNumberStart = $deviceSpecs.'Desktop-Jumpbox'.VMNumberStart
@@ -396,7 +397,7 @@ function ScriptBuild-Create-VM {
         }
     }
 
-        # Build Core VMs
+    # Build Core VMs
     if ($RequireCoreVMs) {
         $Count = 1
         [int]$VMNumberStart = $deviceSpecs.'Desktop-Core'.VMNumberStart
@@ -418,71 +419,71 @@ function ScriptBuild-Create-VM {
 }
 
 function ScriptBuild-Config-VM {
-        # Configure Standard VMs
+    # Configure Standard VMs
     if ($RequireStandardVMs) {
         $Count = 1
         [int]$VMNumberStart = $deviceSpecs.'Desktop-Standard'.VMNumberStart
         While ($Count -le $NumberofStandardVMs) {
             Write-AEBLog "Configuring $Count of $NumberofStandardVMs VMs"
             $VM = $deviceSpecs.'Desktop-Standard'.VMNamePrefix + $VMNumberStart
-            ConfigureBaseVM -VMName "$VM" -VMSpec "Desktop-Standard" -RG $RGNameDEV
-            ConfigureVM -VMName "$VM" -VMSpec "Desktop-Standard" -RG $RGNameDEV
+            ConfigureBaseVM -VMName "$VM" -VMSpec 'Desktop-Standard' -RG $RGNameDEV
+            ConfigureVM -VMName "$VM" -VMSpec 'Desktop-Standard' -RG $RGNameDEV
             $Count++
             $VMNumberStart++
         }
     }
 
-        # Configure Packaging VMs
+    # Configure Packaging VMs
     if ($RequirePackagingVMs) {
         $Count = 1
         [int]$VMNumberStart = $deviceSpecs.'Desktop-Packaging'.VMNumberStart
         While ($Count -le $NumberofPackagingVMs) {
             Write-AEBLog "Configuring $Count of $NumberofPackagingVMs VMs"
             $VM = $deviceSpecs.'Desktop-Packaging'.VMNamePrefix + $VMNumberStart
-            ConfigureBaseVM -VMName "$VM" -VMSpec "Desktop-Packaging" -RG $RGNameDEV
-            ConfigureVM -VMName "$VM" -VMSpec "Desktop-Packaging" -RG $RGNameDEV
+            ConfigureBaseVM -VMName "$VM" -VMSpec 'Desktop-Packaging' -RG $RGNameDEV
+            ConfigureVM -VMName "$VM" -VMSpec 'Desktop-Packaging' -RG $RGNameDEV
             $Count++
             $VMNumberStart++
-            }
         }
+    }
 
-        # Configure AdminStudio VMs
+    # Configure AdminStudio VMs
     if ($RequireAdminStudioVMs) {
         $Count = 1
         [int]$VMNumberStart = $deviceSpecs.'Desktop-AdminStudio'.VMNumberStart
         While ($Count -le $NumberofAdminStudioVMs) {
             Write-AEBLog "Configuring $Count of $NumberofAdminStudioVMs VMs"
             $VM = $deviceSpecs.'Desktop-AdminStudio'.VMNamePrefix + $VMNumberStart
-            ConfigureBaseVM -VMName "$VM" -VMSpec "Desktop-AdminStudio" -RG $RGNameDEV
-            ConfigureVM -VMName "$VM" -VMSpec "Desktop-AdminStudio" -RG $RGNameDEV
+            ConfigureBaseVM -VMName "$VM" -VMSpec 'Desktop-AdminStudio' -RG $RGNameDEV
+            ConfigureVM -VMName "$VM" -VMSpec 'Desktop-AdminStudio' -RG $RGNameDEV
             $Count++
             $VMNumberStart++
         }
     }
 
-        # Configure Jumpbox VMs
+    # Configure Jumpbox VMs
     if ($RequireJumpboxVMs) {
         $Count = 1
         [int]$VMNumberStart = $deviceSpecs.'Desktop-Jumpbox'.VMNumberStart
         While ($Count -le $NumberofJumpboxVMs) {
             Write-AEBLog "Configuring $Count of $NumberofJumpboxVMs VMs"
             $VM = $deviceSpecs.'Desktop-Jumpbox'.VMNamePrefix + $VMNumberStart
-            ConfigureBaseVM -VMName "$VM" -VMSpec "Desktop-Jumpbox" -RG $RGNameDEV
-            ConfigureVM -VMName "$VM" -VMSpec "Desktop-Jumpbox" -RG $RGNameDEV
+            ConfigureBaseVM -VMName "$VM" -VMSpec 'Desktop-Jumpbox' -RG $RGNameDEV
+            ConfigureVM -VMName "$VM" -VMSpec 'Desktop-Jumpbox' -RG $RGNameDEV
             $Count++
             $VMNumberStart++
         }
     }
 
-        # Configure Core VMs
+    # Configure Core VMs
     if ($RequireCoreVMs) {
         $Count = 1
         [int]$VMNumberStart = $deviceSpecs.'Desktop-Core'.VMNumberStart
         While ($Count -le $NumberofCoreVMs) {
             Write-AEBLog "Configuring $Count of $NumberofCoreVMs VMs"
             $VM = $deviceSpecs.'Desktop-Core'.VMNamePrefix + $VMNumberStart
-            ConfigureBaseVM -VMName "$VM" -VMSpec "Desktop-Core" -RG $RGNameDEV
-            ConfigureVM -VMName "$VM" -VMSpec "Desktop-Core" -RG $RGNameDEV
+            ConfigureBaseVM -VMName "$VM" -VMSpec 'Desktop-Core' -RG $RGNameDEV
+            ConfigureVM -VMName "$VM" -VMSpec 'Desktop-Core' -RG $RGNameDEV
             $Count++
             $VMNumberStart++
         }
@@ -490,61 +491,61 @@ function ScriptBuild-Config-VM {
 }
 
 function CreateStandardVM-Terraform($VMName) {
-    mkdir -Path ".\Terraform\" -Name "$VMName" -Force
-    $TerraformVMVariables = (Get-Content -Path ".\Terraform\template-win10\variables.tf").Replace("xxxx", $VMName) | Set-Content -Path ".\Terraform\$VMName\variables.tf"
-    $TerraformVMMain = (Get-Content -Path ".\Terraform\template-win10\main.tf") | Set-Content -Path ".\Terraform\$VMName\main.tf"
+    mkdir -Path '.\Terraform\' -Name "$VMName" -Force
+    $TerraformVMVariables = (Get-Content -Path '.\Terraform\template-win10\variables.tf').Replace('xxxx', $VMName) | Set-Content -Path ".\Terraform\$VMName\variables.tf"
+    $TerraformVMMain = (Get-Content -Path '.\Terraform\template-win10\main.tf') | Set-Content -Path ".\Terraform\$VMName\main.tf"
 
-    $TerraformText = "
-module "+ [char]34 + $VMName + [char]34 + " {
-  source = "+ [char]34 + "./" + $VMName + [char]34 + "
+    $TerraformText = '
+module '+ [char]34 + $VMName + [char]34 + ' {
+  source = '+ [char]34 + './' + $VMName + [char]34 + '
 
   myterraformgroupName = module.environment.myterraformgroup.name
   myterraformsubnetID = module.environment.myterraformsubnet.id
   myterraformnsgID = module.environment.myterraformnsg.id
-}"
+}'
 
-    $TerraformMain = Get-Content -Path ".\Terraform\main.tf"
-    $TerraformText | Add-Content -Path ".\Terraform\main.tf"
+    $TerraformMain = Get-Content -Path '.\Terraform\main.tf'
+    $TerraformText | Add-Content -Path '.\Terraform\main.tf'
 }
 
 function CreateAdminStudioVM-Terraform($VMName) {
-    mkdir -Path ".\Terraform\" -Name "$VMName" -Force
-    $TerraformVMVariables = (Get-Content -Path ".\Terraform\template-win10\variables.tf").Replace("xxxx", $VMName) | Set-Content -Path ".\Terraform\$VMName\variables.tf"
-    $TerraformVMMain = (Get-Content -Path ".\Terraform\template-win10\main.tf") | Set-Content -Path ".\Terraform\$VMName\main.tf"
+    mkdir -Path '.\Terraform\' -Name "$VMName" -Force
+    $TerraformVMVariables = (Get-Content -Path '.\Terraform\template-win10\variables.tf').Replace('xxxx', $VMName) | Set-Content -Path ".\Terraform\$VMName\variables.tf"
+    $TerraformVMMain = (Get-Content -Path '.\Terraform\template-win10\main.tf') | Set-Content -Path ".\Terraform\$VMName\main.tf"
 
-    $TerraformText = "
-module " + [char]34 + $VMName + [char]34 + " {
-  source = " + [char]34 + "./" + $VMName + [char]34 + "
+    $TerraformText = '
+module ' + [char]34 + $VMName + [char]34 + ' {
+  source = ' + [char]34 + './' + $VMName + [char]34 + '
 
   myterraformgroupName = module.environment.myterraformgroup.name
   myterraformsubnetID = module.environment.myterraformsubnet.id
   myterraformnsgID = module.environment.myterraformnsg.id
-}"
+}'
 
-    $TerraformMain = Get-Content -Path ".\Terraform\main.tf"
-    $TerraformText | Add-Content -Path ".\Terraform\main.tf"
+    $TerraformMain = Get-Content -Path '.\Terraform\main.tf'
+    $TerraformText | Add-Content -Path '.\Terraform\main.tf'
 }
 
 function CreateJumpboxVM-Terraform($VMName) {
-    mkdir -Path ".\Terraform\" -Name "$VMName" -Force
-    $TerraformVMVariables = (Get-Content -Path ".\Terraform\template-win10\variables.tf").Replace("xxxx", $VMName) | Set-Content -Path ".\Terraform\$VMName\variables.tf"
-    $TerraformVMMain = (Get-Content -Path ".\Terraform\template-win10\main.tf") | Set-Content -Path ".\Terraform\$VMName\main.tf"
+    mkdir -Path '.\Terraform\' -Name "$VMName" -Force
+    $TerraformVMVariables = (Get-Content -Path '.\Terraform\template-win10\variables.tf').Replace('xxxx', $VMName) | Set-Content -Path ".\Terraform\$VMName\variables.tf"
+    $TerraformVMMain = (Get-Content -Path '.\Terraform\template-win10\main.tf') | Set-Content -Path ".\Terraform\$VMName\main.tf"
 
-    $TerraformText = "
-module "+ [char]34 + $VMName + [char]34 + " {
-  source = "+ [char]34 + "./" + $VMName + [char]34 + "
+    $TerraformText = '
+module '+ [char]34 + $VMName + [char]34 + ' {
+  source = '+ [char]34 + './' + $VMName + [char]34 + '
 
   myterraformgroupName = module.environment.myterraformgroup.name
   myterraformsubnetID = module.environment.myterraformsubnet.id
   myterraformnsgID = module.environment.myterraformnsg.id
-}"
+}'
 
-    $TerraformMain = Get-Content -Path ".\Terraform\main.tf"
-    $TerraformText | Add-Content -Path ".\Terraform\main.tf"
+    $TerraformMain = Get-Content -Path '.\Terraform\main.tf'
+    $TerraformText | Add-Content -Path '.\Terraform\main.tf'
 }
 
 function TerraformBuild-VM {
-        # Build Standard VMs
+    # Build Standard VMs
     if ($RequireStandardVMs) {
         $Count = 1
         $VMNumberStart = $VMNumberStartStandard
@@ -557,7 +558,7 @@ function TerraformBuild-VM {
             $VMNumberStart++
         }
     }
-        # Build AdminStudio VMs
+    # Build AdminStudio VMs
     if ($RequireAdminStudioVMs) {
         $Count = 1
         $VMNumberStart = $VMNumberStartAdminStudio
@@ -570,7 +571,7 @@ function TerraformBuild-VM {
             $VMNumberStart++
         }
     }
-        # Build Jumpbox VMs
+    # Build Jumpbox VMs
     if ($RequireJumpboxVMs) {
         $Count = 1
         $VMNumberStart = $VMNumberStartJumpbox
@@ -586,7 +587,7 @@ function TerraformBuild-VM {
 }
 
 function TerraformConfigure-VM {
-        # Configure Standard VMs
+    # Configure Standard VMs
     if ($RequireStandardVMs) {
         $Count = 1
         $VMNumberStart = $VMNumberStartStandard
@@ -599,7 +600,7 @@ function TerraformConfigure-VM {
         }
     }
 
-        # Configure AdminStudio VMs
+    # Configure AdminStudio VMs
     if ($RequireAdminStudioVMs) {
         $Count = 1
         $VMNumberStart = $VMNumberStartAdminStudio
@@ -612,7 +613,7 @@ function TerraformConfigure-VM {
         }
     }
 
-        # Configure Jumpbox VMs
+    # Configure Jumpbox VMs
     if ($RequireJumpboxVMs) {
         $Count = 1
         $VMNumberStart = $VMNumberStartJumpbox
@@ -625,7 +626,7 @@ function TerraformConfigure-VM {
         }
     }
 
-        # Configure Core VMs
+    # Configure Core VMs
     if ($RequireCoreVMs) {
         $Count = 1
         $VMNumberStart = $VMNumberStartCore

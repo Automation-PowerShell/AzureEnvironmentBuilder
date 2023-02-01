@@ -28,7 +28,7 @@
         {
             "PublisherName": "MicrosoftWindowsDesktop",
             "Offer": "Windows-11",
-            "SKUS": "Win11-21h2-ent",
+            "SKUS": "Win11-22h2-ent",
             "Version": "latest",
             "Apps": [
                 {
@@ -55,7 +55,7 @@
         {
             "PublisherName": "MicrosoftWindowsDesktop",
             "Offer": "Windows-11",
-            "SKUS": "win11-21h2-ent",
+            "SKUS": "Win11-22h2-ent",
             "Version": "latest",
             "Apps": [
                 {
@@ -100,7 +100,7 @@
         {
             "PublisherName": "MicrosoftWindowsDesktop",
             "Offer": "Windows-11",
-            "SKUS": "win11-21h2-ent",
+            "SKUS": "Win11-22h2-ent",
             "Version": "latest",
             "Apps": [
                 {
@@ -142,7 +142,7 @@
         {
             "PublisherName": "MicrosoftWindowsDesktop",
             "Offer": "Windows-11",
-            "SKUS": "win11-21h2-ent",
+            "SKUS": "Win11-22h2-ent",
             "Version": "latest",
             "Apps": [
                 {
@@ -175,7 +175,7 @@
         {
             "PublisherName": "MicrosoftWindowsDesktop",
             "Offer": "Windows-11",
-            "SKUS": "win11-21h2-ent",
+            "SKUS": "Win11-22h2-ent",
             "Version": "latest",
             "Apps": [
                 {
