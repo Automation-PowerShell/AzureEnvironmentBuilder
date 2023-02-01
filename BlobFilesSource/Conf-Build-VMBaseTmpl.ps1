@@ -21,7 +21,7 @@ $VMNetNATName = "LocalNAT"
 $VMNetNATPrefix = "192.168.0.0/24"
 $VMNetNATHost = "192.168.0.1"
 $VMNetNATPrefixLength = 24
-$VMHostIP = (Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias "Ethernet 2").IPAddress
+$VMHostIP = (Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias "Ethernet").IPAddress
 
 $Domain = "ddddd"
 $OUPath = "ooooo"
@@ -89,33 +89,21 @@ function Create-VM {
             # Cleanup and Rename Host
         Get-AppxPackage -Name Microsoft.MicrosoftOfficeHub | Remove-AppxPackage
         Rename-Computer -NewName $Using:VMName -LocalCredential $Using:LocalAdminCred -Restart -Verbose
-
-            # Disable IPV6
-        #Disable-NetAdapterBinding -Name "*" -ComponentID ms_tcpip6
-
-            # Add Windows Capibilities Back In
-        Add-WindowsCapability -Online -Name Microsoft.Windows.PowerShell.ISE~~~~0.0.1.0
-        Add-WindowsCapability -Online -Name App.StepsRecorder~~~~0.0.1.0
-        Add-WindowsCapability -Online -Name Microsoft.Windows.Notepad~~~~0.0.1.0
-        Add-WindowsCapability -Online -Name Microsoft.Windows.MSPaint~~~~0.0.1.0
-        Add-WindowsCapability -Online -Name Microsoft.Windows.WordPad~~~~0.0.1.0
     }
     if($erroric) {
         Write-Error $error[0]
         Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventID 25101 -EntryType Error -Message $error[0].Exception
     }
 
-    Start-Sleep -Seconds 30
+    Start-Sleep -Seconds 120
     $MACAddress = $VMObject.NetworkAdapters.MacAddress
     $IPAddress = (Get-DhcpServerv4Scope | Get-DhcpServerv4Lease | Where-Object {($_.ClientId -replace "-") -eq $MACAddress}).IPAddress.IPAddressToString
     if(!(Get-NetNatStaticMapping -NatName $VMNetNATName -ErrorAction SilentlyContinue | Where-Object {$_.ExternalPort -like "*$VMNumber"})) {
-        Add-NetNatStaticMapping -ExternalIPAddress "0.0.0.0" -ExternalPort 50$VMNumber -InternalIPAddress $IPAddress -InternalPort 3389 -NatName $VMNetNATName -Protocol TCP -ErrorAction Stop | Out-Null
+        Add-NetNatStaticMapping -ExternalIPAddress "0.0.0.0" -ExternalPort 55$VMNumber -InternalIPAddress $IPAddress -InternalPort 3389 -NatName $VMNetNATName -Protocol TCP -ErrorAction Continue | Out-Null
     }
-
-    Start-Sleep -Seconds 30
     $VMObject | Stop-VM -Force -TurnOff -Verbose -ErrorAction Stop
 
-    Start-Sleep -Seconds 30
+    Start-Sleep -Seconds 180
     Convert-VHD -Path $VMDrive\$VMFolder\$VHDFolder\$VMName\$VMName.vhdx -DestinationPath $VMDrive\$VMFolder\Media\$VMName.vhdx -VHDType Dynamic -Verbose
 }
 
@@ -129,11 +117,19 @@ Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -En
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Loading NuGet module"
 Install-PackageProvider -Name NuGet -Force -ErrorAction Stop
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Loading Az.Storage module"
-Install-Module -Name Az.Storage -Force -ErrorAction Stop
+Install-Module -Name Az.Storage,Az.KeyVault -Force -ErrorAction Stop
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Attempting to connect to Azure"
 Connect-AzAccount -Identity -ErrorAction Stop -Subscription sssss
 
-    # Copy files to machine
+# Get Passwords from KeyVault
+$LocalAdminPassword = (Get-AzKeyVaultSecret -VaultName "kkkkk" -Name "HyperVLocalAdmin").SecretValue
+$LocalAdminCred = New-Object System.Management.Automation.PSCredential ("aaaaa", $LocalAdminPassword)
+$DomainJoinPassword = (Get-AzKeyVaultSecret -VaultName "kkkkk" -Name "DomainJoin").SecretValue
+$DomainJoinCred = New-Object System.Management.Automation.PSCredential ("jjjjj", $DomainJoinPassword)
+$DomainUserPassword = (Get-AzKeyVaultSecret -VaultName "kkkkk" -Name "DomainUser").SecretValue
+$DomainUserCred = New-Object System.Management.Automation.PSCredential ("uuuuu", $DomainUserPassword)
+
+<#    # Copy files to machine
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Atempting to download DomainJoin.xml from Azure storage account to $TempFileStore"
 $StorAcc = Get-AzStorageAccount -ResourceGroupName rrrrr -Name xxxxx
 Get-AzStorageBlobContent -Container data -Blob "./HyperVLocalAdmin.xml" -Destination "$TempFileStore" -Context $StorAcc.context
@@ -144,7 +140,7 @@ $myKey = Get-Content "$TempFileStore\my.key"
 $LocalAdminUser = "DESKTOP-7O8HROP\administrator"
 $LocalAdminPassword = Import-Clixml $TempFileStore\HyperVLocalAdmin.xml | ConvertTo-SecureString -Key $myKey
 $LocalAdminCred = New-Object System.Management.Automation.PSCredential ($LocalAdminUser, $LocalAdminPassword)
-
+#>
     # Import Hyper-V Module
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Importing Hyper-V Module"
 Import-Module Hyper-V -Force -ErrorAction Stop

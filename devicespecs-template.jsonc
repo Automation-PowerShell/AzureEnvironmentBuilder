@@ -27,13 +27,10 @@
     "Desktop-Standard": [
         {
             "PublisherName": "MicrosoftWindowsDesktop",
-            "Offer": "Windows-10",
-            "SKUS": "20h2-ent",
+            "Offer": "Windows-11",
+            "SKUS": "Win11-21h2-ent",
             "Version": "latest",
             "Apps": [
-                {
-                    "Name": "Conf-Prevision"
-                },
                 {
                     "Name": "Conf-RunOnce"
                 },
@@ -57,13 +54,10 @@
     "Desktop-Packaging": [
         {
             "PublisherName": "MicrosoftWindowsDesktop",
-            "Offer": "Windows-10",
-            "SKUS": "20h2-ent",
+            "Offer": "Windows-11",
+            "SKUS": "win11-21h2-ent",
             "Version": "latest",
             "Apps": [
-                {
-                    "Name": "Conf-Prevision"
-                },
                 {
                     "Name": "Conf-VMConfig"
                 },
@@ -105,13 +99,10 @@
     "Desktop-AdminStudio": [
         {
             "PublisherName": "MicrosoftWindowsDesktop",
-            "Offer": "Windows-10",
-            "SKUS": "20h2-ent",
+            "Offer": "Windows-11",
+            "SKUS": "win11-21h2-ent",
             "Version": "latest",
             "Apps": [
-                {
-                    "Name": "Conf-Prevision"
-                },
                 {
                     "Name": "Conf-VMConfig"
                 },
@@ -150,13 +141,10 @@
     "Desktop-Jumpbox": [
         {
             "PublisherName": "MicrosoftWindowsDesktop",
-            "Offer": "Windows-10",
-            "SKUS": "20h2-ent",
+            "Offer": "Windows-11",
+            "SKUS": "win11-21h2-ent",
             "Version": "latest",
             "Apps": [
-                {
-                    "Name": "Conf-Prevision"
-                },
                 {
                     "Name": "Conf-RunOnce"
                 },
@@ -186,13 +174,10 @@
     "Desktop-Core": [
         {
             "PublisherName": "MicrosoftWindowsDesktop",
-            "Offer": "Windows-10",
-            "SKUS": "20h2-ent",
+            "Offer": "Windows-11",
+            "SKUS": "win11-21h2-ent",
             "Version": "latest",
             "Apps": [
-                {
-                    "Name": "Conf-Prevision"
-                },
                 {
                     "Name": "Conf-VMConfig"
                 },
@@ -239,9 +224,6 @@
             "Version": "latest",
             "Apps": [
                 {
-                    "Name": "Conf-Prevision"
-                },
-                {
                     "Name": "Conf-RunOnce"
                 },
                 {
@@ -272,9 +254,6 @@
             "Version": "latest",
             "Apps": [
                 {
-                    "Name": "Conf-Prevision"
-                },
-                {
                     "Name": "Conf-RunOnce"
                 },
                 {
@@ -285,9 +264,6 @@
                 },
                 {
                     "Name": "Conf-ConfigHyperV"
-                },
-                {
-                    "Name": "Conf-DomainJoin"
                 },
                 {
                     "Name": "Conf-Build-VMBase"
