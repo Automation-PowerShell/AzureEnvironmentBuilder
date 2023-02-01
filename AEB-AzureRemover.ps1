@@ -8,7 +8,7 @@ Wrtitten by Graham Higginson and Daniel Ames.
 
 .NOTES
 Written by      : Graham Higginson & Daniel Ames
-Build Version   : v2
+Build Version   : v3
 
 .LINK
 More Info       : https://github.com/Automation-PowerShell/AzureEnvironmentBuilder
@@ -18,39 +18,39 @@ More Info       : https://github.com/Automation-PowerShell/AzureEnvironmentBuild
 #region Setup
 Set-Location $PSScriptRoot
 
-    # Script Variables
+# Script Variables
 $root = $PSScriptRoot
 $AEBScripts = "$root\AEB-Scripts"
 $ExtraFiles = "$root\ExtraFiles"
 
-    # Dot Source Variables
+# Dot Source Variables
 #. $AEBScripts\ScriptVariables.ps1
 . $AEBScripts\ClientLoadVariables.ps1
 
-    # Dot Source Functions
+# Dot Source Functions
 . $AEBScripts\ScriptCoreFunctions.ps1
 
-    # Load Azure Modules and Connect
+# Load Azure Modules and Connect
 ConnectTo-Azure
 
-Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"  # Turns off Breaking Changes warnings for Cmdlets
+Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings 'true'  # Turns off Breaking Changes warnings for Cmdlets
 #endregion Setup
 
 #region Main
-Write-AEBLog "Running AEB-AzureRemover.ps1"
-if($isProd) { Write-Warning "Are you sure you want to delete the Azure Environment?  OK to Continue?" -WarningAction Inquire }
+Write-AEBLog 'Running AEB-AzureRemover.ps1'
+if ($isProd) { Write-Warning 'Are you sure you want to delete the Azure Environment?  OK to Continue?' -WarningAction Inquire }
 
-if(!($isProd) -and $RequireUserGroups) {
-    Remove-AzAdGroup -DisplayName $rbacOwner -ErrorAction Ignore -Verbose
-    Remove-AzAdGroup -DisplayName $rbacContributor -ErrorAction Ignore -Verbose
-    Remove-AzAdGroup -DisplayName $rbacReadOnly -ErrorAction Ignore -Verbose
+if (!($isProd) -and $RequireUserGroups) {
+    Remove-AzADGroup -DisplayName $rbacOwner -ErrorAction Ignore -Verbose
+    Remove-AzADGroup -DisplayName $rbacContributor -ErrorAction Ignore -Verbose
+    Remove-AzADGroup -DisplayName $rbacReadOnly -ErrorAction Ignore -Verbose
 }
 Remove-AzResourceGroup -Name $RGNameDEV -Force -ErrorAction Ignore -Verbose
 Remove-AzResourceGroup -Name $RGNamePROD -Force -ErrorAction Ignore -Verbose
-if(!($isProd)) {
+if (!($isProd)) {
     #Remove-AzResourceGroup -Name $RGNameDEVVNET -Force -ErrorAction Ignore -Verbose         # Dont want to do this is a Production Environment
     #Remove-AzResourceGroup -Name $RGNamePRODVNET -Force -ErrorAction Ignore -Verbose        # Dont want to do this is a Production Environment
 }
-Write-AEBLog "Completed AEB-AzureRemover.ps1"
-Write-AEBLog "============================================================================================================="
+Write-AEBLog 'Completed AEB-AzureRemover.ps1'
+Write-AEBLog '============================================================================================================='
 #endregion

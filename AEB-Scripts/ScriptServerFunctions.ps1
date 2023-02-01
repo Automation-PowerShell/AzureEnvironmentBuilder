@@ -3,7 +3,7 @@ function CreateStdSrv-Script($VMName) {
     $names = $deviceSpecs.'Server-Standard'.Tags | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
     foreach ($name in $names) {
         $value = $deviceSpecs.'Server-Standard'.Tags.$name
-        $tags.Add($name,$value)
+        $tags.Add($name, $value)
     }
 
     $Vnet = Get-AzVirtualNetwork -Name $VNetPROD -ResourceGroupName $RGNamePRODVNET
@@ -23,36 +23,36 @@ function CreateStdSrv-Script($VMName) {
 }
 function ConfigStdSrv-Script($VMName) {
     $VMCreate = Get-AzVM -ResourceGroupName $RGNamePROD -Name $VMName
-    If ($VMCreate.ProvisioningState -eq "Succeeded") {
+    If ($VMCreate.ProvisioningState -eq 'Succeeded') {
         Write-AEBLog "VM: $VMName created successfully"
 
         $NewVm = Get-AzADServicePrincipal -DisplayName $VMName
         Start-Sleep -Seconds 30
         if ($RequireServicePrincipal) {
-            Get-AzContext -Name "StorageSP" | Select-AzContext | Out-Null
+            Get-AzContext -Name 'StorageSP' | Select-AzContext | Out-Null
         }
         if ($RequireRBAC) {
             $Group = Get-AzADGroup -searchstring $rbacContributor
             Add-AzADGroupMember -TargetGroupObjectId $Group.Id -MemberObjectId $NewVm.Id -Verbose | Out-Null
         }
         else {
-            New-AzRoleAssignment -ObjectId $NewVm.Id -RoleDefinitionName "Contributor" -Scope "/subscriptions/$azSubscription/resourceGroups/$RGNameSTORE/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" -Verbose -ErrorAction SilentlyContinue | Out-Null
+            New-AzRoleAssignment -ObjectId $NewVm.Id -RoleDefinitionName 'Contributor' -Scope "/subscriptions/$azSubscription/resourceGroups/$RGNameSTORE/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" -Verbose -ErrorAction SilentlyContinue | Out-Null
         }
-        Get-AzContext -Name "User" | Select-AzContext | Out-Null
+        Get-AzContext -Name 'User' | Select-AzContext | Out-Null
         Set-AzKeyVaultAccessPolicy -ObjectId $NewVm.Id -VaultName $keyVaultName -PermissionsToSecrets Get
 
-            # Add Data disk to Server
+        # Add Data disk to Server
         $dataDiskName = $VMName + '_datadisk1'
         $diskConfig = New-AzDiskConfig -SkuName $deviceSpecs.'Server-Standard'.dataDiskSKU -Location $location -CreateOption Empty -DiskSizeGB $deviceSpecs.'Server-Standard'.dataDiskSize
         $dataDisk1 = New-AzDisk -DiskName $dataDiskName -Disk $diskConfig -ResourceGroupName $RGNamePROD
         Add-AzVMDataDisk -VM $VMCreate -Name $dataDiskName -CreateOption Attach -ManagedDiskId $dataDisk1.Id -Lun 1 -Verbose | Out-Null
         Update-AzVM -VM $VMCreate -ResourceGroupName $RGNamePROD -Verbose | Out-Null
 
-        Restart-AzVm -ResourceGroupName $RGNamePROD -Name $VMName | Out-Null
+        Restart-AzVM -ResourceGroupName $RGNamePROD -Name $VMName | Out-Null
         Write-AEBLog "VM: $VMName - Restarting VM for 120 Seconds..."
         Start-Sleep -Seconds 120
 
-        ConfigureVM -VMName $VMName -VMSpec "Server-Standard" -RG $RGNamePROD
+        ConfigureVM -VMName $VMName -VMSpec 'Server-Standard' -RG $RGNamePROD
     }
     Else {
         Write-AEBLog "*** VM: $VMName - Unable to configure Virtual Machine! ***" -Level Error
@@ -64,7 +64,7 @@ function CreateHyperVVM-Script($VMName) {
     $names = $deviceSpecs.'Server-HyperV'.Tags | Get-Member -MemberType NoteProperty | Select-Object Name -ExpandProperty Name
     foreach ($name in $names) {
         $value = $deviceSpecs.'Server-HyperV'.Tags.$name
-        $tags.Add($name,$value)
+        $tags.Add($name, $value)
     }
 
     $Vnet = Get-AzVirtualNetwork -Name $VNetPROD -ResourceGroupName $RGNamePRODVNET
@@ -84,36 +84,36 @@ function CreateHyperVVM-Script($VMName) {
 }
 function ConfigHyperVVM-Script($VMName) {
     $VMCreate = Get-AzVM -ResourceGroupName $RGNamePROD -Name $VMName
-    If ($VMCreate.ProvisioningState -eq "Succeeded") {
+    If ($VMCreate.ProvisioningState -eq 'Succeeded') {
         Write-AEBLog "VM: $VMName created successfully"
 
         $NewVm = Get-AzADServicePrincipal -DisplayName $VMName
         Start-Sleep -Seconds 30
         if ($RequireServicePrincipal) {
-            Get-AzContext -Name "StorageSP" | Select-AzContext | Out-Null
+            Get-AzContext -Name 'StorageSP' | Select-AzContext | Out-Null
         }
         if ($RequireRBAC) {
             $Group = Get-AzADGroup -searchstring $rbacContributor
             Add-AzADGroupMember -TargetGroupObjectId $Group.Id -MemberObjectId $NewVm.Id -Verbose | Out-Null
         }
         else {
-            New-AzRoleAssignment -ObjectId $NewVm.Id -RoleDefinitionName "Contributor" -Scope "/subscriptions/$azSubscription/resourceGroups/$RGNameSTORE/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" -Verbose -ErrorAction SilentlyContinue | Out-Null
+            New-AzRoleAssignment -ObjectId $NewVm.Id -RoleDefinitionName 'Contributor' -Scope "/subscriptions/$azSubscription/resourceGroups/$RGNameSTORE/providers/Microsoft.Storage/storageAccounts/$StorageAccountName" -Verbose -ErrorAction SilentlyContinue | Out-Null
         }
-        Get-AzContext -Name "User" | Select-AzContext | Out-Null
+        Get-AzContext -Name 'User' | Select-AzContext | Out-Null
         Set-AzKeyVaultAccessPolicy -ObjectId $NewVm.Id -VaultName $keyVaultName -PermissionsToSecrets Get
 
-            # Add Data disk to Hyper-V server
+        # Add Data disk to Hyper-V server
         $dataDiskName = $VMName + '_datadisk1'
         $diskConfig = New-AzDiskConfig -SkuName $deviceSpecs.'Server-HyperV'.dataDiskSKU -Location $location -CreateOption Empty -DiskSizeGB $deviceSpecs.'Server-HyperV'.dataDiskSize
         $dataDisk1 = New-AzDisk -DiskName $dataDiskName -Disk $diskConfig -ResourceGroupName $RGNamePROD
         Add-AzVMDataDisk -VM $VMCreate -Name $dataDiskName -CreateOption Attach -ManagedDiskId $dataDisk1.Id -Lun 1 -Verbose | Out-Null
         Update-AzVM -VM $VMCreate -ResourceGroupName $RGNamePROD -Verbose | Out-Null
 
-        Restart-AzVm -ResourceGroupName $RGNamePROD -Name $VMName | Out-Null
+        Restart-AzVM -ResourceGroupName $RGNamePROD -Name $VMName | Out-Null
         Write-AEBLog "VM: $VMName - Restarting VM for 120 Seconds..."
         Start-Sleep -Seconds 120
 
-        ConfigureVM -VMName $VMName -VMSpec "Server-HyperV" -RG $RGNamePROD
+        ConfigureVM -VMName $VMName -VMSpec 'Server-HyperV' -RG $RGNamePROD
     }
     Else {
         Write-AEBLog "*** VM: $VMName - Unable to configure Virtual Machine! ***" -Level Error
@@ -121,7 +121,7 @@ function ConfigHyperVVM-Script($VMName) {
 }
 
 function ScriptBuild-Create-Server {
-        # Build Standard Server VM
+    # Build Standard Server VM
     if ($RequireStdSrv) {
         $Count = 1
         [int]$VMNumberStart = $deviceSpecs.'Server-Standard'.VMNumberStart
@@ -141,7 +141,7 @@ function ScriptBuild-Create-Server {
         }
     }
 
-        # Build Hyper-V Server VM
+    # Build Hyper-V Server VM
     if ($RequireHyperV) {
         $Count = 1
         [int]$VMNumberStart = $deviceSpecs.'Server-HyperV'.VMNumberStart
@@ -163,7 +163,7 @@ function ScriptBuild-Create-Server {
 }
 
 function ScriptBuild-Config-Server {
-        # Configure Standard Server
+    # Configure Standard Server
     if ($RequireStdSrv) {
         $Count = 1
         [int]$VMNumberStart = $deviceSpecs.'Server-Standard'.VMNumberStart
@@ -176,7 +176,7 @@ function ScriptBuild-Config-Server {
         }
     }
 
-        # Configure Hyper-V Server
+    # Configure Hyper-V Server
     if ($RequireHyperV) {
         $Count = 1
         [int]$VMNumberStart = $deviceSpecs.'Server-HyperV'.VMNumberStart
@@ -191,25 +191,25 @@ function ScriptBuild-Config-Server {
 }
 
 function CreateHyperVVM-Terraform($VMName) {
-    mkdir -Path ".\Terraform\" -Name "$VMName" -Force
-    $TerraformVMVariables = (Get-Content -Path ".\Terraform\template-server2019\variables.tf").Replace("xxxx", $VMName) | Set-Content -Path ".\Terraform\$VMName\variables.tf"
-    $TerraformVMMain = (Get-Content -Path ".\Terraform\template-server2019\main.tf") | Set-Content -Path ".\Terraform\$VMName\main.tf"
+    mkdir -Path '.\Terraform\' -Name "$VMName" -Force
+    $TerraformVMVariables = (Get-Content -Path '.\Terraform\template-server2019\variables.tf').Replace('xxxx', $VMName) | Set-Content -Path ".\Terraform\$VMName\variables.tf"
+    $TerraformVMMain = (Get-Content -Path '.\Terraform\template-server2019\main.tf') | Set-Content -Path ".\Terraform\$VMName\main.tf"
 
-    $TerraformText = "
-module " + [char]34 + $VMName + [char]34 + " {
-  source = " + [char]34 + "./" + $VMName + [char]34 + "
+    $TerraformText = '
+module ' + [char]34 + $VMName + [char]34 + ' {
+  source = ' + [char]34 + './' + $VMName + [char]34 + '
 
   myterraformgroupName = module.environment.myterraformgroup.name
   myterraformsubnetID = module.environment.myterraformsubnet.id
   myterraformnsgID = module.environment.myterraformnsg.id
-}"
+}'
 
-    $TerraformMain = Get-Content -Path ".\Terraform\main.tf"
-    $TerraformText | Add-Content -Path ".\Terraform\main.tf"
+    $TerraformMain = Get-Content -Path '.\Terraform\main.tf'
+    $TerraformText | Add-Content -Path '.\Terraform\main.tf'
 }
 
 function TerraformBuild-HVVM {
-        # Build Hyper-V Server VM
+    # Build Hyper-V Server VM
     if ($RequireHyperV) {
         $Count = 1
         $VMNumberStart = $VMHyperVNumberStart
@@ -225,7 +225,7 @@ function TerraformBuild-HVVM {
 }
 
 function TerraformConfigure-HVVM {
-        # Configure Hyper-V VMs
+    # Configure Hyper-V VMs
     if ($RequireHyperV) {
         $Count = 1
         $VMNumberStart = $VmHyperVNumberStart

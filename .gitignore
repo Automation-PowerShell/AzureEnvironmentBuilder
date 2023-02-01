@@ -27,3 +27,7 @@ AEB.log
 PEB.log
 testing.ps1
 AEB-RebuildHyperVVM-Dan.ps1
+devicespecs-dan.jsonc
+devicespecs-template - Copy.jsonc
+devicespecs-wella.jsonc
+AEB-Scripts/ClientVariables-Workplace-Services.ps1
