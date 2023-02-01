@@ -45,7 +45,14 @@ if (!(Test-Path $ExtraFiles)) {
 . $AEBScripts\ScriptServerFunctions.ps1
 
 # Load Azure Modules and Connect
-ConnectTo-Azure
+$script:devops = ${env:TF_BUILD}
+if ($devops) {
+    # ...
+}
+else {
+    ConnectTo-Azure
+}
+
 
 #Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings 'true'  # Turns off Breaking Changes warnings for Cmdlets
 Update-AzConfig -DisplayBreakingChangeWarning $false
