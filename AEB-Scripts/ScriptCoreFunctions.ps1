@@ -19,7 +19,7 @@
     }
 }#>
 
-function RunVMConfig($ResourceGroup, $VMName, $BlobFilePath, $Blob) {
+<#function RunVMConfig($ResourceGroup, $VMName, $BlobFilePath, $Blob) {
     $Params = @{
         ContainerName      = $ContainerName
         ResourceGroupName  = $ResourceGroup
@@ -29,10 +29,40 @@ function RunVMConfig($ResourceGroup, $VMName, $BlobFilePath, $Blob) {
         StorageAccountKey  = $Keys.value[0]
         Filename           = $Blob
         Run                = $Blob
-        Name               = $Blob
+        Name               = 'ConfigureVM2'
     }
 
     $VMConfigure = Set-AzVMCustomScriptExtension @Params -ErrorAction SilentlyContinue
+    if ($VMConfigure.IsSuccessStatusCode -eq $True) {
+        Write-AEBLog "VM: $VMName configured with $Blob successfully"
+    }
+    else {
+        Write-AEBLog "*** VM: $VMName - Unable to configure Virtual Machine with $Blob ***" -Level Error
+    }
+}#>
+
+function RunVMConfig($ResourceGroup, $VMName, $BlobFilePath, $Blob) {
+    $fileUri = @($BlobFilePath)
+    $settings = @{'fileUris' = $fileUri }
+
+    $protectedSettings = @{
+        StorageAccountName = $StorageAccountName
+        StorageAccountKey  = $Keys.value[0]
+        commandToExecute   = "powershell -ExecutionPolicy Unrestricted -File $Blob"
+    }
+
+    #$VMConfigure = Set-AzVMCustomScriptExtension @Params -ErrorAction SilentlyContinue
+    $VMConfigure = Set-AzVMExtension `
+        -ResourceGroupName $ResourceGroup `
+        -Location $Location `
+        -VMName $VMName `
+        -Name 'ConfigureVM3' `
+        -Publisher 'Microsoft.Compute' `
+        -ExtensionType 'CustomScriptExtension' `
+        -TypeHandlerVersion '1.10' `
+        -Settings $settings `
+        -ProtectedSettings $protectedSettings
+
     if ($VMConfigure.IsSuccessStatusCode -eq $True) {
         Write-AEBLog "VM: $VMName configured with $Blob successfully"
     }
