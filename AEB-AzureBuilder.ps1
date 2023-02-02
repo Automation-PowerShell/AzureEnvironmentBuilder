@@ -113,20 +113,20 @@ if ($RequireCreate) {
     # Create Key Vault
     CreateKeyVault
 
-    # Create Desktop VM Script
-    if ($UseTerraform) {
-        TerraformBuild-VM
-    }
-    else {
-        ScriptBuild-Create-VM
-    }
-
     # Create Server Script
     if ($UseTerraform) {
         TerraformBuild-HVVM
     }
     else {
         ScriptBuild-Create-Server
+    }
+
+    # Create Desktop VM Script
+    if ($UseTerraform) {
+        TerraformBuild-VM
+    }
+    else {
+        ScriptBuild-Create-VM
     }
 
     if ($UseTerraform) {

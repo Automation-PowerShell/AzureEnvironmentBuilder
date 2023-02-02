@@ -138,7 +138,7 @@ function ConfigureVM {
         }
     }
 
-    if ($VMShutdown) {
+    if ($deviceSpecs.$VMSpec.BuildShutdownOnComplete) {
         $Stopvm = Stop-AzVM -ResourceGroupName $RG -Name $VMName -Force
         if ($Stopvm.Status -eq 'Succeeded') {
             Write-AEBLog "VM: $VMName shutdown successfully"

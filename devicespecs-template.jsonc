@@ -22,6 +22,12 @@
         },
         {
             "Name": "Server-HyperV"
+        },
+        {
+            "Name": "Server-DomainConttroller"
+        },
+        {
+            "Name": "Server-ConfigManager"
         }
     ],
     "Desktop-Standard": [
@@ -41,6 +47,7 @@
             "VMSize": "Standard_B2s",
             "VMNamePrefix": "vm-euc-van-",
             "VMNumberStart": "101",
+            "BuildShutdownOnComplete": true,
             "AutoShutdownRequired": true,
             "AutoShutdownTime": 1800,
             "Tags": [
@@ -86,6 +93,7 @@
             "VMSize": "Standard_B2s",
             "VMNamePrefix": "vm-euc-pkg-",
             "VMNumberStart": "201",
+            "BuildShutdownOnComplete": true,
             "AutoShutdownRequired": true,
             "AutoShutdownTime": 1800,
             "Tags": [
@@ -128,6 +136,7 @@
             "VMSize": "Standard_B2s",
             "VMNamePrefix": "vm-euc-as-",
             "VMNumberStart": "301",
+            "BuildShutdownOnComplete": true,
             "AutoShutdownRequired": true,
             "AutoShutdownTime": 1800,
             "Tags": [
@@ -161,6 +170,7 @@
             "VMSize": "Standard_B2s",
             "VMNamePrefix": "vm-euc-jb-",
             "VMNumberStart": "401",
+            "BuildShutdownOnComplete": true,
             "AutoShutdownRequired": true,
             "AutoShutdownTime": 1800,
             "Tags": [
@@ -206,6 +216,7 @@
             "VMSize": "Standard_B2s",
             "VMNamePrefix": "vm-euc-core-",
             "VMNumberStart": "501",
+            "BuildShutdownOnComplete": true,
             "AutoShutdownRequired": true,
             "AutoShutdownTime": 1800,
             "Tags": [
@@ -236,6 +247,7 @@
             "dataDiskTier": "S10",
             "dataDiskSKU": "Standard_LRS",
             "dataDiskSize": 128,
+            "BuildShutdownOnComplete": true,
             "AutoShutdownRequired": false,
             "AutoShutdownTime": 0,
             "Tags": [
@@ -278,11 +290,80 @@
             "dataDiskTier": "S10",
             "dataDiskSKU": "Standard_LRS",
             "dataDiskSize": 128,
+            "BuildShutdownOnComplete": true,
             "AutoShutdownRequired": false,
             "AutoShutdownTime": 0,
             "Tags": [
                 {
                     "Application": "Server-HyperV",
+                    "Environment": "Prod"
+                }
+            ]
+        }
+    ],
+    "Server-DomainController": [
+        {
+            "PublisherName": "MicrosoftWindowsServer",
+            "Offer": "WindowsServer",
+            "SKUS": "2019-Datacenter",
+            "Version": "latest",
+            "Apps": [
+                {
+                    "Name": "Conf-RunOnce"
+                },
+                {
+                    "Name": "Conf-ConfigureDataDisk"
+                },
+                {
+                    "Name": "Conf-EnableDomainController"
+                }
+            ],
+            "VMSize": "Standard_D4s_v4",
+            "VMNamePrefix": "vm-euc-dc-0",
+            "VMNumberStart": "1",
+            "dataDiskTier": "S10",
+            "dataDiskSKU": "Standard_LRS",
+            "dataDiskSize": 128,
+            "BuildShutdownOnComplete": false,
+            "AutoShutdownRequired": false,
+            "AutoShutdownTime": 0,
+            "Tags": [
+                {
+                    "Application": "Server-DomainController",
+                    "Environment": "Prod"
+                }
+            ]
+        }
+    ],
+    "Server-ConfigManager": [
+        {
+            "PublisherName": "MicrosoftWindowsServer",
+            "Offer": "WindowsServer",
+            "SKUS": "2019-Datacenter",
+            "Version": "latest",
+            "Apps": [
+                {
+                    "Name": "Conf-RunOnce"
+                },
+                {
+                    "Name": "Conf-ConfigureDataDisk"
+                },
+                {
+                    "Name": "App-7-Zip"
+                }
+            ],
+            "VMSize": "Standard_D4s_v4",
+            "VMNamePrefix": "vm-euc-sccm-0",
+            "VMNumberStart": "1",
+            "dataDiskTier": "S10",
+            "dataDiskSKU": "Standard_LRS",
+            "dataDiskSize": 128,
+            "BuildShutdownOnComplete": false,
+            "AutoShutdownRequired": false,
+            "AutoShutdownTime": 0,
+            "Tags": [
+                {
+                    "Application": "Server-ConfigManager",
                     "Environment": "Prod"
                 }
             ]

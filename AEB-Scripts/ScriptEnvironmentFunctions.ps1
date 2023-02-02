@@ -2,7 +2,7 @@ function UpdateStorage {
     if ($RequireUpdateStorage) {
         Write-AEBLog 'Syncing Files...'
         Try {
-            if (!(Test-Path -Path $BlobFilesDest)) { New-Item -Path $BlobFilesDest -ItemType 'directory' }
+            if (!(Test-Path -Path $BlobFilesDest)) { New-Item -Path $BlobFilesDest -ItemType 'directory' | Out-Null }
             $templates = Get-ChildItem -Path $BlobFilesSource -Filter *tmpl* -File
             foreach ($template in $templates) {
                 $content = Get-Content -Path "$BlobFilesSource\$(($template).Name)"
@@ -71,10 +71,10 @@ function ConfigureNetwork {
             if ($nsgPROD.ProvisioningState -eq 'Succeeded') { Write-AEBLog 'PROD Network Security Group created successfully' } Else { Write-AEBLog '*** Unable to create or configure PROD Network Security Group! ***' -Level Error }
             Set-AzVirtualNetworkSubnetConfig -Name $SubnetNamePROD -VirtualNetwork $virtualNetworkPROD -AddressPrefix '10.0.1.0/24' -NetworkSecurityGroup $nsgPROD | Out-Null
         }
-        if ($RequireKeyVault) {
+        #if ($RequireKeyVault) {
             Set-AzVirtualNetworkSubnetConfig -Name $SubnetNamePROD -VirtualNetwork $virtualNetworkPROD -AddressPrefix '10.0.1.0/24' -ServiceEndpoint 'Microsoft.KeyVault' | Out-Null
             Write-AEBLog 'PROD KeyVault Service Endpoint created'
-        }
+        #}
         $virtualNetworkPROD | Set-AzVirtualNetwork | Out-Null
         if ($virtualNetworkPROD.ProvisioningState -eq 'Succeeded') { Write-AEBLog 'PROD Virtual Network created and associated with the Network Security Group successfully' } Else { Write-AEBLog '*** Unable to create the PROD Virtual Network, or associate it to the Network Security Group! ***' -Level Error }
         if (!($RGNameDEVVNET -match $RGNamePRODVNET)) {
@@ -83,10 +83,10 @@ function ConfigureNetwork {
                 if ($nsgDEV.ProvisioningState -eq 'Succeeded') { Write-AEBLog 'DEV Network Security Group created successfully' }Else { Write-AEBLog '*** Unable to create or configure DEV Network Security Group! ***' }
                 Set-AzVirtualNetworkSubnetConfig -Name $SubnetNameDEV -VirtualNetwork $virtualNetworkDEV -AddressPrefix '10.0.1.0/24' -NetworkSecurityGroup $nsgDEV | Out-Null
             }
-            if ($RequireKeyVault) {
+            #if ($RequireKeyVault) {
                 Set-AzVirtualNetworkSubnetConfig -Name $SubnetNameDEV -VirtualNetwork $virtualNetworkDEV -AddressPrefix '10.0.1.0/24' -ServiceEndpoint 'Microsoft.KeyVault' | Out-Null
                 Write-AEBLog 'DEV KeyVault Service Endpoint created'
-            }
+            #}
             $virtualNetworkDEV | Set-AzVirtualNetwork | Out-Null
             if ($virtualNetworkDEV.ProvisioningState -eq 'Succeeded') { Write-AEBLog 'DEV Virtual Network created and associated with the Network Security Group successfully' } Else { Write-AEBLog '*** Unable to create the DEV Virtual Network, or associate it to the Network Security Group! ***' -Level Error }
         }
