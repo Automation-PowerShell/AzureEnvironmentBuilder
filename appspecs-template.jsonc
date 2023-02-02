@@ -88,6 +88,9 @@
         },
         {
             "Name": "Conf-EnableDomainController"
+        },
+        {
+            "Name": "Conf-EnableSCCM"
         }
     ],
     "Conf-Prevision": [
@@ -319,6 +322,14 @@
             "AppVersion": "",
             "PS1": "Conf-EnableDomainController.ps1",
             "RebootRequired": true,
+            "RebootSeconds": 120
+        }
+    ],
+    "Conf-EnableSCCM": [
+        {
+            "AppVersion": "",
+            "PS1": "Conf-EnableSCCM.ps1",
+            "RebootRequired": false,
             "RebootSeconds": 120
         }
     ]
