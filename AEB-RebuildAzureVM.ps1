@@ -52,7 +52,7 @@ if ($VMName -eq '') {
     $VMList = Get-AzVM -Name * -ResourceGroupName $RGNameDEV -ErrorAction SilentlyContinue
     $VMName = ($VMlist | Where-Object { $_.Name -notin $VMListExclude } | Select-Object Name | Out-GridView -Title 'Select Virtual Machine to Rebuild' -OutputMode Single).Name
     if (!$VMName) { exit }
-    $VMSpec = @('Standard', 'Packaging', 'AdminStudio', 'Jumpbox', 'Core')
+    $VMSpec = @('Desktop-Standard', 'Desktop-Packaging', 'Desktop-AdminStudio', 'Desktop-Jumpbox', 'Desktop-Core')
     $Spec = $VMSpec | Out-GridView -Title 'Select Virtual Machine Spec' -OutputMode Single
 }
 Write-Warning "This Script is about to Rebuild: $VMName with Spec: $Spec.  OK to Continue?" -WarningAction Inquire

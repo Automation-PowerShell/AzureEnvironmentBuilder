@@ -349,6 +349,9 @@
                     "Name": "Conf-ConfigureDataDisk"
                 },
                 {
+                    "Name": "Conf-EnableSCCM"
+                },
+                {
                     "Name": "App-7-Zip"
                 }
             ],

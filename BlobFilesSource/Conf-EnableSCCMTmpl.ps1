@@ -23,14 +23,13 @@ Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -En
 Connect-AzAccount -Identity -ErrorAction Stop -Subscription sssss
 
 # Enable Domain Controller Role
-Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message 'Enable Hyper-V'
-Import-Module ADDSDeployment
-$LocalAdminPassword = (Get-AzKeyVaultSecret -VaultName kkkkk -Name 'HyperVLocalAdmin').SecretValue
-Install-WindowsFeature -Name AD-Domain-Services -IncludeManagementTools
-Install-ADDSForest -CreateDnsDelegation:$false -DatabasePath "C:\Windows\NTDS" -DomainMode "WinThreshold" -DomainName "test.local" -DomainNetbiosName "TEST" -ForestMode "WinThreshold" -InstallDns:$true -LogPath "C:\Windows\NTDS" -NoRebootOnCompletion:$true -SysvolPath "C:\Windows\SYSVOL" -Force:$true -SafeModeAdministratorPassword $LocalAdminPassword
+Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message 'Configuring System'
+#$LocalAdminPassword = (Get-AzKeyVaultSecret -VaultName kkkkk -Name 'HyperVLocalAdmin').SecretValue
+Install-WindowsFeature -Name RDC
 # Post Steps
-# Static IP
-# Add IP to VNET DNS
-# Install AAD Connect?
+# Install SQL Server
+# Change SQL Logon to LocalSystem
+# Install ADK components
+
 
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Completed $scriptname"
