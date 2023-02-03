@@ -155,8 +155,8 @@ function CreateServer-Script {
         $tags.Add($name, $value)
     }
 
-    $Vnet = Get-AzVirtualNetwork -Name $VNetPROD -ResourceGroupName $RGNamePRODVNET
-    $Subnet = Get-AzVirtualNetworkSubnetConfig -Name $SubnetNamePROD -VirtualNetwork $vnet
+    $Vnet = Get-AzVirtualNetwork -Name $vnets.Prod.($deviceSpecs.$VMSpec.VnetRef) -ResourceGroupName $RGNamePRODVNET
+    $Subnet = Get-AzVirtualNetworkSubnetConfig -Name $SubnetNamePROD -VirtualNetwork $Vnet
     if ($RequirePublicIPs) {
         $PIP = New-AzPublicIpAddress -Name "$VMName-pip" -ResourceGroupName $RGNamePROD -Location $Location -AllocationMethod Dynamic -Sku Basic -Tier Regional -IpAddressVersion IPv4
         $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $RGNamePROD -Location $Location -SubnetId $Subnet.Id -PublicIpAddressId $PIP.Id

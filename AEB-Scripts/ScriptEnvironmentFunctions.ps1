@@ -54,7 +54,7 @@ function UpdateRBAC {
     Write-AEBLog 'Role Assignments Set'
 }
 
-function ConfigureNetwork {
+<#function ConfigureNetwork {
     if ($RequireVNET -and !$UseTerraform) {
         $virtualNetworkPROD = New-AzVirtualNetwork -ResourceGroupName $RGNamePRODVNET -Location $Location -Name $VNetPROD -AddressPrefix 10.0.0.0/16
         $subnetConfigPROD = Add-AzVirtualNetworkSubnetConfig -Name $SubnetNamePROD -AddressPrefix '10.0.1.0/24' -VirtualNetwork $virtualNetworkPROD
@@ -91,6 +91,85 @@ function ConfigureNetwork {
             if ($virtualNetworkDEV.ProvisioningState -eq 'Succeeded') { Write-AEBLog 'DEV Virtual Network created and associated with the Network Security Group successfully' } Else { Write-AEBLog '*** Unable to create the DEV Virtual Network, or associate it to the Network Security Group! ***' -Level Error }
         }
     }
+}#>
+
+function ConfigureNetwork {
+    if ($RequireNSG) {
+        $rule1 = New-AzNetworkSecurityRuleConfig -Name rdp-rule -Description 'Allow RDP' -Access Allow -Protocol Tcp -Direction Inbound -Priority 100 -SourceAddressPrefix * -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange 3389
+        $rule2 = New-AzNetworkSecurityRuleConfig -Name smb-rule -Description 'Allow SMB' -Access Allow -Protocol Tcp -Direction Outbound -Priority 100 -SourceAddressPrefix * -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange 445
+        $nsgPROD = New-AzNetworkSecurityGroup -ResourceGroupName $RGNamePRODVNET -Location $location -Name $NsgNamePROD -SecurityRules $rule1, $rule2 -Force    # $Rule1, $Rule2 etc.
+        if ($nsgPROD.ProvisioningState -eq 'Succeeded') {
+            Write-AEBLog 'PROD Network Security Group created successfully'
+        }
+        else {
+            Write-AEBLog '*** Unable to create or configure PROD Network Security Group! ***' -Level Error
+        }
+        $nsgcheck = Get-AzNetworkSecurityGroup -ResourceGroupName $RGNameDEVVNET -Name $NsgNameDEV
+        if (!$nsgcheck) {
+            $nsgDEV = New-AzNetworkSecurityGroup -ResourceGroupName $RGNameDEVVNET -Location $location -Name $NsgNameDEV -SecurityRules $rule1, $rule2 -Force   # $Rule1, $Rule2 etc.
+            if ($nsgDEV.ProvisioningState -eq 'Succeeded') {
+                Write-AEBLog 'DEV Network Security Group created successfully'
+            }
+            else {
+                Write-AEBLog '*** Unable to create or configure DEV Network Security Group! ***'
+            }
+        }
+    }
+
+    if ($RequireVNET -and !$UseTerraform) {
+        foreach ($vnet in $vnets.Prod.GetEnumerator()) {
+            $vnetcheck = Get-AzVirtualNetwork -ResourceGroupName $RGNamePRODVNET -Name $vnet.Value -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+            if (!$vnetcheck) {
+                $vnetcheck = New-AzVirtualNetwork -ResourceGroupName $RGNamePRODVNET -Location $Location -Name $vnet.Value -AddressPrefix 10.0.0.0/16
+                $subnetcheck = Get-AzVirtualNetworkSubnetConfig -Name $SubnetNamePROD -VirtualNetwork $vnetcheck -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+                if (!$subnetcheck) {
+                    if ($RequireNSG) {
+                        Add-AzVirtualNetworkSubnetConfig -Name $SubnetNamePROD -AddressPrefix '10.0.1.0/24' -VirtualNetwork $vnetcheck -NetworkSecurityGroup $NsgNamePROD -ServiceEndpoint 'Microsoft.KeyVault' | Set-AzVirtualNetwork
+                    }
+                    else {
+                        Add-AzVirtualNetworkSubnetConfig -Name $SubnetNamePROD -AddressPrefix '10.0.1.0/24' -VirtualNetwork $vnetcheck -ServiceEndpoint 'Microsoft.KeyVault' | Set-AzVirtualNetwork
+                    }
+                }
+            }
+            else {
+                $subnetcheck = Get-AzVirtualNetworkSubnetConfig -Name $SubnetNamePROD -VirtualNetwork $vnetcheck -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+                if (!$subnetcheck) {
+                    if ($RequireNSG) {
+                        Add-AzVirtualNetworkSubnetConfig -Name $SubnetNamePROD -AddressPrefix '10.0.1.0/24' -VirtualNetwork $vnetcheck -NetworkSecurityGroup $NsgNamePROD -ServiceEndpoint 'Microsoft.KeyVault' | Set-AzVirtualNetwork
+                    }
+                    else {
+                        Add-AzVirtualNetworkSubnetConfig -Name $SubnetNamePROD -AddressPrefix '10.0.1.0/24' -VirtualNetwork $vnetcheck -ServiceEndpoint 'Microsoft.KeyVault' | Set-AzVirtualNetwork
+                    }
+                }
+            }
+        }
+        foreach ($vnet in $vnets.Dev.GetEnumerator()) {
+            $vnetcheck = Get-AzVirtualNetwork -ResourceGroupName $RGNameDEVVNET -Name $vnet.Value -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+            if (!$vnetcheck) {
+                $vnetcheck = New-AzVirtualNetwork -ResourceGroupName $RGNameDEVVNET -Location $Location -Name $vnet.Value -AddressPrefix 10.0.0.0/16
+                $subnetcheck = Get-AzVirtualNetworkSubnetConfig -Name $SubnetNameDEV -VirtualNetwork $vnetcheck -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+                if (!$subnetcheck) {
+                    if ($RequireNSG) {
+                        Add-AzVirtualNetworkSubnetConfig -Name $SubnetNameDEV -AddressPrefix '10.0.2.0/24' -VirtualNetwork $vnetcheck -NetworkSecurityGroup $NsgNameDEV -ServiceEndpoint 'Microsoft.KeyVault' | Set-AzVirtualNetwork
+                    }
+                    else {
+                        Add-AzVirtualNetworkSubnetConfig -Name $SubnetNameDEV -AddressPrefix '10.0.2.0/24' -VirtualNetwork $vnetcheck -ServiceEndpoint 'Microsoft.KeyVault' | Set-AzVirtualNetwork
+                    }
+                }
+            }
+            else {
+                $subnetcheck = Get-AzVirtualNetworkSubnetConfig -Name $SubnetNameDEV -VirtualNetwork $vnetcheck -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+                if (!$subnetcheck) {
+                    if ($RequireNSG) {
+                        Add-AzVirtualNetworkSubnetConfig -Name $SubnetNameDEV -AddressPrefix '10.0.2.0/24' -VirtualNetwork $vnetcheck -NetworkSecurityGroup $NsgNameDEV -ServiceEndpoint 'Microsoft.KeyVault' | Set-AzVirtualNetwork
+                    }
+                    else {
+                        Add-AzVirtualNetworkSubnetConfig -Name $SubnetNameDEV -AddressPrefix '10.0.2.0/24' -VirtualNetwork $vnetcheck -ServiceEndpoint 'Microsoft.KeyVault' | Set-AzVirtualNetwork
+                    }
+                }
+            }
+        }
+    }
 }
 
 function CreateRBACConfig {
@@ -114,8 +193,8 @@ function CreateStorageAccount {
         }
         $storageAccount = New-AzStorageAccount -ResourceGroupName $RGNameSTORE -AccountName $StorageAccountName -Location $location -SkuName Standard_LRS
         Start-Sleep -Seconds 10
-        $ctx = $storageAccount.Context
-        $Container = New-AzStorageContainer -Name $ContainerName -Context $ctx -Permission Blob
+        $script:ctx = $storageAccount.Context
+        $Container = New-AzStorageContainer -Name $ContainerName -Context $ctx -Permission Off
         if ($storageAccount.StorageAccountName -eq $StorageAccountName -and $Container.Name -eq $ContainerName) {
             Write-AEBLog 'Storage Account and container created successfully'
         }
@@ -126,12 +205,13 @@ function CreateStorageAccount {
         $Share = New-AzStorageShare -Name $FileShareName -Context $ctx
         if ($Share.Name -eq $FileShareName) {
             Write-AEBLog 'Storage Share created successfully'
-            $script:Keys = Get-AzStorageAccountKey -ResourceGroupName $RGNameSTORE -AccountName $StorageAccountName
         }
         else {
             Write-AEBLog '*** Unable to create the Storage Share! ***' -Level Error
             Write-Dump
         }
+        $script:Keys = Get-AzStorageAccountKey -ResourceGroupName $RGNameSTORE -AccountName $StorageAccountName
+        $script:SAS = New-AzStorageContainerSASToken -Name $ContainerName -Context $ctx -Permission r -StartTime $(Get-Date) -ExpiryTime $((Get-Date).AddDays(1))
     }
     else {
         Write-AEBLog 'Creation of Storage Account and Storage Container not required'

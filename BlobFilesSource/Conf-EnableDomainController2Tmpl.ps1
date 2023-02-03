@@ -1,7 +1,6 @@
-$scriptname = 'EnableDomainController.ps1'
+$scriptname = 'EnableDomainController2.ps1'
 $EventlogName = 'Accenture'
 $EventlogSource = 'Enable Domain Controller Script'
-
 # Create Error Trap
 trap {
     Write-Error $error[0]
@@ -23,8 +22,10 @@ Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -En
 Connect-AzAccount -Identity -ErrorAction Stop -Subscription sssss
 
 # Enable Domain Controller Role
-Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message 'Enable Domain Controller'
-Install-WindowsFeature -Name AD-Domain-Services -IncludeManagementTools
+Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message 'Enable Domain Controller 2'
+$LocalAdminPassword = (Get-AzKeyVaultSecret -VaultName kkkkk -Name 'HyperVLocalAdmin').SecretValue
+Import-Module ADDSDeployment
+Install-ADDSForest -CreateDnsDelegation:$false -DatabasePath "C:\Windows\NTDS" -DomainMode "WinThreshold" -DomainName "test.local" -DomainNetbiosName "TEST" -ForestMode "WinThreshold" -InstallDns:$true -LogPath "C:\Windows\NTDS" -NoRebootOnCompletion:$true -SysvolPath "C:\Windows\SYSVOL" -Force:$true -SafeModeAdministratorPassword $LocalAdminPassword
 # Post Steps
 # Static IP
 # Add IP to VNET DNS

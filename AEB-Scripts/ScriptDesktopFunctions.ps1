@@ -10,8 +10,8 @@ function CreateDesktop-Script {
         $tags.Add($name, $value)
     }
 
-    $Vnet = Get-AzVirtualNetwork -Name $VNetDEV -ResourceGroupName $RGNameDEVVNET
-    $Subnet = Get-AzVirtualNetworkSubnetConfig -Name $SubnetNameDEV -VirtualNetwork $vnet
+    $Vnet = Get-AzVirtualNetwork -Name $vnets.Dev.($deviceSpecs.$VMSpec.VnetRef) -ResourceGroupName $RGNameDEVVNET
+    $Subnet = Get-AzVirtualNetworkSubnetConfig -Name $SubnetNameDEV -VirtualNetwork $Vnet
     if ($RequirePublicIPs) {
         $PIP = New-AzPublicIpAddress -Name "$VMName-pip" -ResourceGroupName $RGNameDEV -Location $Location -AllocationMethod Dynamic -Sku Basic -Tier Regional -IpAddressVersion IPv4
         $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $RGNameDEV -Location $Location -SubnetId $Subnet.Id -PublicIpAddressId $PIP.Id
