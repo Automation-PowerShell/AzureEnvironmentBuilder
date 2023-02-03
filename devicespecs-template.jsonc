@@ -50,6 +50,7 @@
             "BuildShutdownOnComplete": true,
             "AutoShutdownRequired": true,
             "AutoShutdownTime": 1800,
+            "VnetRef": "vnet-dev-azure",
             "Tags": [
                 {
                     "Application": "Desktop-Standard",
@@ -96,6 +97,7 @@
             "BuildShutdownOnComplete": true,
             "AutoShutdownRequired": true,
             "AutoShutdownTime": 1800,
+            "VnetRef": "vnet-dev-azure",
             "Tags": [
                 {
                     "Application": "Desktop-Packaging",
@@ -139,6 +141,7 @@
             "BuildShutdownOnComplete": true,
             "AutoShutdownRequired": true,
             "AutoShutdownTime": 1800,
+            "VnetRef": "vnet-dev-azure",
             "Tags": [
                 {
                     "Application": "Desktop-AdminStudio",
@@ -173,6 +176,7 @@
             "BuildShutdownOnComplete": true,
             "AutoShutdownRequired": true,
             "AutoShutdownTime": 1800,
+            "VnetRef": "vnet-dev-azure",
             "Tags": [
                 {
                     "Application": "Desktop-Jumpbox",
@@ -219,6 +223,7 @@
             "BuildShutdownOnComplete": true,
             "AutoShutdownRequired": true,
             "AutoShutdownTime": 1800,
+            "VnetRef": "vnet-dev-azure",
             "Tags": [
                 {
                     "Application": "Desktop-Core",
@@ -250,6 +255,7 @@
             "BuildShutdownOnComplete": true,
             "AutoShutdownRequired": false,
             "AutoShutdownTime": 0,
+            "VnetRef": "vnet-prod-domain",
             "Tags": [
                 {
                     "Application": "Server-Standard",
@@ -293,6 +299,7 @@
             "BuildShutdownOnComplete": true,
             "AutoShutdownRequired": false,
             "AutoShutdownTime": 0,
+            "VnetRef": "vnet-prod-azure",
             "Tags": [
                 {
                     "Application": "Server-HyperV",
@@ -316,6 +323,9 @@
                 },
                 {
                     "Name": "Conf-EnableDomainController"
+                },
+                {
+                    "Name": "Conf-EnableDomainController2"
                 }
             ],
             "VMSize": "Standard_D4s_v4",
@@ -327,6 +337,7 @@
             "BuildShutdownOnComplete": false,
             "AutoShutdownRequired": false,
             "AutoShutdownTime": 0,
+            "VnetRef": "vnet-prod-domain",
             "Tags": [
                 {
                     "Application": "Server-DomainController",
@@ -364,6 +375,7 @@
             "BuildShutdownOnComplete": false,
             "AutoShutdownRequired": false,
             "AutoShutdownTime": 0,
+            "VnetRef": "vnet-prod-domain",
             "Tags": [
                 {
                     "Application": "Server-ConfigManager",

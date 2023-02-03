@@ -3,8 +3,8 @@
         ResourceGroupName   = $ResourceGroup
         VMName              = $VMName
         Location            = $Location
-        #StorageAccountName  = $StorageAccountName
-        #StorageAccountKey   = $Keys.value[0]
+        StorageAccountName  = $StorageAccountName
+        StorageAccountKey   = $Keys.value[0]
         FileUri             = $BlobFilePath
         Run                 = $Blob
         Name                = "ConfigureVM"
@@ -42,12 +42,13 @@
 }#>
 
 function RunVMConfig($ResourceGroup, $VMName, $BlobFilePath, $Blob) {
-    $fileUri = @($BlobFilePath)
+    $script:fileUri = @($($BlobFilePath+$SAS))
     $settings = @{'fileUris' = $fileUri }
 
+    #managedIdentity = @{}
+    #StorageAccountName = $StorageAccountName
+    #StorageAccountKey  = $Keys.value[0]
     $protectedSettings = @{
-        StorageAccountName = $StorageAccountName
-        StorageAccountKey  = $Keys.value[0]
         commandToExecute   = "powershell -ExecutionPolicy Unrestricted -File $Blob"
     }
 
@@ -319,4 +320,6 @@ function ConnectTo-Azure {
         Get-AzContext -Name 'User' | Select-AzContext | Out-Null
     }
     $script:Keys = Get-AzStorageAccountKey -ResourceGroupName $RGNameSTORE -AccountName $StorageAccountName -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+    $script:ctx = New-AzStorageContext -StorageAccountName $StorageAccountName -StorageAccountKey $Keys.value[0] -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+    $script:SAS = New-AzStorageContainerSASToken -Name $ContainerName -Context $ctx -Permission r -StartTime $(Get-Date) -ExpiryTime $((Get-Date).AddDays(1)) -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
 }
