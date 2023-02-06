@@ -2,7 +2,7 @@
 $OUPath = 'ooooo'
 
 $scriptname = 'DomainJoin.ps1'
-$EventlogName = 'Accenture'
+$EventlogName = 'AEB'
 $EventlogSource = 'VM Domain Join Script'
 
 # Create Error Trap
@@ -20,21 +20,14 @@ Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -En
 # Load Modules and Connect to Azure
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message 'Loading NuGet module'
 Install-PackageProvider -Name NuGet -Force -ErrorAction Stop
-Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message 'Loading Az.Storage module'
-Install-Module -Name Az.Storage -Force -ErrorAction Stop
+Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message 'Loading Az Modules'
+Install-Module -Name Az.Storage, Az.KeyVault -Force -ErrorAction Stop
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message 'Attempting to connect to Azure'
 Connect-AzAccount -Identity -ErrorAction Stop -Subscription sssss
 
-# Copy files to machine
-Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message 'Atempting to download DomainJoin.xml from Azure storage account to C:\Windows\Temp'
-$StorAcc = Get-AzStorageAccount -ResourceGroupName rrrrr -Name xxxxx
-$passwordFile = Get-AzStorageBlobContent -Container data -Blob './DomainJoin.xml' -Destination 'c:\Windows\temp\' -Context $StorAcc.context
-$keyFile = Get-AzStorageBlobContent -Container data -Blob './my.key' -Destination 'c:\Windows\temp\' -Context $StorAcc.context
-$myKey = Get-Content 'c:\Windows\Temp\my.key'
-
 # Create Credential
-$DJUser = 'wella\svc_PackagingDJ'
-$DJPassword = Import-Clixml c:\Windows\temp\DomainJoin.xml | ConvertTo-SecureString -Key $myKey
+$DJUser = 'ddddd\AppPackager'
+$DJPassword = (Get-AzKeyVaultSecret -VaultName kkkkk -Name 'DomainJoin').SecretValue
 $DomainJoinCred = New-Object System.Management.Automation.PSCredential ($DJUser, $DJPassword)
 
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message 'Joining Domain'

@@ -3,7 +3,7 @@ $zip = $true
 $filename = 'Zscaler_3.2.0.87_x86_R01.zip'
 $exefilename = '.\Install.ps1'
 
-$EventLogName = 'Accenture'
+$EventLogName = 'AEB'
 $EventLogSource = "$app Install Script"
 
 # Create Error Trap

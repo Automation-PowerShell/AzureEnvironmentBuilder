@@ -312,7 +312,7 @@
         {
             "PublisherName": "MicrosoftWindowsServer",
             "Offer": "WindowsServer",
-            "SKUS": "2019-Datacenter",
+            "SKUS": "2022-datacenter-azure-edition",
             "Version": "latest",
             "Apps": [
                 {
@@ -326,6 +326,9 @@
                 },
                 {
                     "Name": "Conf-EnableDomainController2"
+                },
+                {
+                    "Name": "Conf-EnableDomainController3"
                 }
             ],
             "VMSize": "Standard_D4s_v4",
@@ -350,7 +353,7 @@
         {
             "PublisherName": "MicrosoftWindowsServer",
             "Offer": "WindowsServer",
-            "SKUS": "2019-Datacenter",
+            "SKUS": "2022-datacenter-azure-edition",
             "Version": "latest",
             "Apps": [
                 {
@@ -360,11 +363,17 @@
                     "Name": "Conf-ConfigureDataDisk"
                 },
                 {
-                    "Name": "Conf-EnableSCCM"
+                    "Name": "App-CMTrace"
                 },
                 {
-                    "Name": "App-7-Zip"
+                    "Name": "Conf-DomainJoin"
                 }
+                //{
+                //    "Name": "Conf-EnableSCCM"
+                //},
+                //{
+                //    "Name": "App-7-Zip"
+                //}
             ],
             "VMSize": "Standard_D4s_v4",
             "VMNamePrefix": "vm-euc-sccm-0",

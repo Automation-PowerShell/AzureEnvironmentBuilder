@@ -3,7 +3,7 @@ $zip = $true
 $filename = 'WorkplaceCloudClient_5.6.135_x64_R01.zip'
 $exefilename = '.\Install.ps1'
 
-$EventLogName = 'Accenture'
+$EventLogName = 'AEB'
 $EventLogSource = "$app Install Script"
 
 # Create Error Trap

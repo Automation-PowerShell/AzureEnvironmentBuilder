@@ -1,11 +1,11 @@
 #region Setup
 $scriptname = 'Build-VM.ps1'                                    # This file's filename
-$EventlogName = 'Accenture'                                     # Event Log Folder Name
+$EventlogName = 'AEB'                                           # Event Log Folder Name
 $EventlogSource = 'Hyper-V VM Build Script'                     # Event Log Source Name
 
 $VMDrive = 'F:'                                                 # Specify the root disk drive to use
 $VMFolder = 'Hyper-V'
-$VMMachineFolder = 'Virtual Machines'                                   # Specify the folder to store the VM data
+$VMMachineFolder = 'Virtual Machines'                           # Specify the folder to store the VM data
 $VHDFolder = 'Virtual Hard Disks'                               # Specify the folder to store the VHDs
 $VMCheckpointFolder = 'Checkpoints'                             # Specify the folder to store the Checkpoints
 $VMCount = 2                                                    # Specify number of VMs to be provisioned

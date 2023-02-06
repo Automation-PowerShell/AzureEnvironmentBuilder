@@ -1,5 +1,5 @@
 ﻿$scriptname = 'Jumpbox.ps1'
-$EventlogName = 'Accenture'
+$EventlogName = 'AEB'
 $EventlogSource = 'Jumpbox Config Script'
 
 # Create Error Trap

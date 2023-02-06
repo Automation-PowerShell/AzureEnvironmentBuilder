@@ -4,7 +4,7 @@ $filename = 'IntuneWinUtility.msi'
 $exefilename = 'C:\windows\system32\msiexec.exe'
 $Argument = '/i ' + [char]34 + 'IntuneWinUtility.msi' + [char]34 + ' /qb'
 
-$EventLogName = 'Accenture'
+$EventLogName = 'AEB'
 $EventLogSource = "$app Install Script"
 
 # Create Error Trap

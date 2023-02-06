@@ -1,5 +1,5 @@
 ﻿$scriptname = 'ConfigureDataDisk.ps1'
-$EventlogName = 'Accenture'
+$EventlogName = 'AEB'
 $EventlogSource = 'VM Configure Data Disk Script'
 
 # Create Error Trap

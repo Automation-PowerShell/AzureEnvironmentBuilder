@@ -4,7 +4,7 @@ $filename = 'InstEd-1.5.15.26.msi'
 $exefilename = 'C:\windows\system32\msiexec.exe'
 $Argument = '/i ' + [char]34 + 'InstEd-1.5.15.26.msi' + [char]34 + ' /qb'
 
-$EventLogName = 'Accenture'
+$EventLogName = 'AEB'
 $EventLogSource = "$app Install Script"
 
 # Create Error Trap

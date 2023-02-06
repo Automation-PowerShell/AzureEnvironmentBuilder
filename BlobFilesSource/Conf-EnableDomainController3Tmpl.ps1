@@ -1,4 +1,4 @@
-$scriptname = 'EnableDomainController2.ps1'
+$scriptname = 'EnableDomainController3.ps1'
 $EventlogName = 'AEB'
 $EventlogSource = 'Enable Domain Controller Script'
 
@@ -17,20 +17,19 @@ Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -En
 # Load Modules and Connect to Azure
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message 'Loading NuGet module'
 Install-PackageProvider -Name NuGet -Force -ErrorAction Stop
-Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message 'Loading Az.Storage module'
+Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message 'Loading Az Modules'
 Install-Module -Name Az.Storage, Az.KeyVault -Force -ErrorAction Stop
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message 'Attempting to connect to Azure'
 Connect-AzAccount -Identity -ErrorAction Stop -Subscription sssss
 
 # Enable Domain Controller Role
-Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message 'Enable Domain Controller 2'
-$LocalAdminPassword = (Get-AzKeyVaultSecret -VaultName kkkkk -Name 'HyperVLocalAdmin').SecretValue
-Import-Module ADDSDeployment
-Install-ADDSForest -CreateDnsDelegation:$false -DatabasePath 'C:\Windows\NTDS' -DomainMode 'WinThreshold' -DomainName 'ddddd' -DomainNetbiosName 'ddddd' -ForestMode 'WinThreshold' -InstallDns:$true -LogPath 'C:\Windows\NTDS' -NoRebootOnCompletion:$true -SysvolPath 'C:\Windows\SYSVOL' -Force:$true -SafeModeAdministratorPassword $LocalAdminPassword
-(Get-WmiObject -class "Win32_TSGeneralSetting" -Namespace root\cimv2\terminalservices -ComputerName 'localhost' -Filter "TerminalName='RDP-tcp'").SetUserAuthenticationRequired(0)
-# Post Steps
-# Static IP
-# Add IP to VNET DNS
-# Install AAD Connect?
+Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message 'Setting Up Domain'
+$domain = ddddd
+$domain = $domain.Split('.')
+New-ADOrganizationalUnit -Name 'EUC'
+New-ADOrganizationalUnit -Name 'Users' -Path "OU=EUC,DC=$domain[-2],DC=$domain[-1]"
+New-ADOrganizationalUnit -Name 'Computers' -Path "OU=EUC,DC=$($domain[-2]),DC=$($domain[-1])"
+New-ADOrganizationalUnit -Name 'Desktop' -Path "OU=Computers,OU=EUC,DC=$($domain[-2]),DC=$($domain[-1])"
+New-ADOrganizationalUnit -Name 'Server' -Path "OU=Computers,OU=EUC,DC=$($domain[-2]),DC=$($domain[-1])"
 
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Completed $scriptname"

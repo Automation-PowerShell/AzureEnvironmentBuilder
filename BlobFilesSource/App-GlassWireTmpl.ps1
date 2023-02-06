@@ -4,7 +4,7 @@ $filename = 'GlassWireSetup.exe'
 $exefilename = 'GlassWireSetup.exe'
 $Argument = '/S'
 
-$EventLogName = 'Accenture'
+$EventLogName = 'AEB'
 $EventLogSource = "$app Install Script"
 
 # Create Error Trap

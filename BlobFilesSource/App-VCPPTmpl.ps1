@@ -3,7 +3,7 @@ $zip = $true
 $filename = 'vcpp.zip'
 $exefilename = '.\prereqs.ps1'
 
-$EventLogName = 'Accenture'
+$EventLogName = 'AEB'
 $EventLogSource = "$app Install Script"
 
 # Create Error Trap

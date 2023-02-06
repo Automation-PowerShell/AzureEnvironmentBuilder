@@ -1,5 +1,5 @@
 ﻿$scriptname = 'VMConfig.ps1'
-$EventlogName = 'Accenture'
+$EventlogName = 'AEB'
 $EventlogSource = 'VM Configure Script'
 
 # Create Error Trap

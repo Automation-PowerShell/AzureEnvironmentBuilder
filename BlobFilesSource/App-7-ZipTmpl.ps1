@@ -4,7 +4,7 @@ $filename = '7z1900-x64.msi'
 $exefilename = 'C:\windows\system32\msiexec.exe'
 $Argument = '/i ' + [char]34 + '7z1900-x64.msi' + [char]34 + ' /qb'
 
-$EventLogName = 'Accenture'
+$EventLogName = 'AEB'
 $EventLogSource = "$app Install Script"
 
 # Create Error Trap

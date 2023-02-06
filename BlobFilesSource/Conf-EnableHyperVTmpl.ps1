@@ -1,5 +1,5 @@
 $scriptname = 'EnableHyperV.ps1'
-$EventlogName = 'Accenture'
+$EventlogName = 'AEB'
 $EventlogSource = 'Enable Hyper-V Script'
 
 # Create Error Trap
