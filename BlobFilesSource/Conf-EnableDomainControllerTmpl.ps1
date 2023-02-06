@@ -1,5 +1,5 @@
 $scriptname = 'EnableDomainController.ps1'
-$EventlogName = 'Accenture'
+$EventlogName = 'AEB'
 $EventlogSource = 'Enable Domain Controller Script'
 
 # Create Error Trap

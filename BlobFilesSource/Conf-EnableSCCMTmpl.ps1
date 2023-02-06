@@ -1,6 +1,6 @@
-$scriptname = 'EnableHyperV.ps1'
-$EventlogName = 'Accenture'
-$EventlogSource = 'Enable Hyper-V Script'
+$scriptname = 'EnableSCCM.ps1'
+$EventlogName = 'AEB'
+$EventlogSource = 'Enable SCCM Script'
 
 # Create Error Trap
 trap {

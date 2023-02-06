@@ -1,5 +1,5 @@
 $scriptname = 'RunOnce.ps1'
-$EventlogName = 'Accenture'
+$EventlogName = 'AEB'
 $EventlogSource = 'Configure RunOnce Script'
 
 # Create Error Trap

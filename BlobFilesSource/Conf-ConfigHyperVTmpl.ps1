@@ -1,5 +1,5 @@
 $scriptname = 'ConfigHyperV.ps1'
-$EventlogName = 'Accenture'
+$EventlogName = 'AEB'
 $EventlogSource = 'Config Hyper-V Script'
 
 $Domain = 'ddddd'

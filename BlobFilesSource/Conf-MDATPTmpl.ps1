@@ -4,7 +4,7 @@ $filename = 'WindowsDefenderATPOnboardingScript.cmd'
 $exefilename = 'WindowsDefenderATPOnboardingScript.cmd'
 $Argument = ' '
 
-$EventLogName = 'Accenture'
+$EventLogName = 'AEB'
 $EventLogSource = "$app Install Script"
 
 # Create Error Trap

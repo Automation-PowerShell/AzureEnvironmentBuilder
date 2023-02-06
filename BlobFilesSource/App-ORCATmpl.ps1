@@ -4,7 +4,7 @@ $filename = 'Orca.zip'
 $exefilename = 'C:\windows\system32\msiexec.exe'
 $Argument = '/i ' + [char]34 + 'Orca-x86_en-us.msi' + [char]34 + ' /qb'
 
-$EventLogName = 'Accenture'
+$EventLogName = 'AEB'
 $EventLogSource = "$app Install Script"
 
 # Create Error Trap

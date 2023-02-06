@@ -2,7 +2,7 @@
 Set-Location $PSScriptRoot
 
 $scriptname = 'Build-VMBase.ps1'                                # This file's filename
-$EventlogName = 'Accenture'                                     # Event Log Folder Name
+$EventlogName = 'AEB'                                           # Event Log Folder Name
 $EventlogSource = 'Hyper-V VM Base Build Script'                # Event Log Source Name
 
 $VMDrive = 'F:'                                                 # Specify the root disk drive to use

@@ -3,7 +3,7 @@ $zip = $true
 $filename = 'Office365.zip'
 $exefilename = '.\Install.ps1'
 
-$EventLogName = 'Accenture'
+$EventLogName = 'AEB'
 $EventLogSource = "$app Install Script"
 
 # Create Error Trap

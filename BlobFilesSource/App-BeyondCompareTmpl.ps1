@@ -4,7 +4,7 @@ $filename = 'BCompare-4.4.1.26165.exe'
 $exefilename = 'BCompare-4.4.1.26165.exe'
 $Argument = '/verysilent'
 
-$EventLogName = 'Accenture'
+$EventLogName = 'AEB'
 $EventLogSource = "$app Install Script"
 
 # Create Error Trap

@@ -4,7 +4,7 @@ $filename = 'AdminStudio2020R2SP1.exe'
 $exefilename = 'AdminStudio2020R2SP1.exe'
 $Argument = '/silent'
 
-$EventlogName = 'Accenture'
+$EventlogName = 'AEB'
 $EventLogSource = "$app Install Script"
 
 # Create Error Trap

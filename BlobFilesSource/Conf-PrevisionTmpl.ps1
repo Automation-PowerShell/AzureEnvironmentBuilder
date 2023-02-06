@@ -1,5 +1,5 @@
 $scriptname = 'Prevision.ps1'
-$EventlogName = 'Accenture'
+$EventlogName = 'AEB'
 $EventlogSource = 'Prevision Script'
 
 Set-Location $PSScriptRoot

@@ -3,7 +3,7 @@ $zip = $true
 $filename = 'ClickShareExtensionPack_1.1.2.7_x86_R01.zip'
 $exefilename = '.\Install.ps1'
 
-$EventLogName = 'Accenture'
+$EventLogName = 'AEB'
 $EventLogSource = "$app Install Script"
 
 # Create Error Trap

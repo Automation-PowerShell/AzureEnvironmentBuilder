@@ -1,6 +1,6 @@
-﻿$app = 'DesktopApps'
-$zip = $true
-$filename = 'DesktopApps.zip'
+﻿$app = 'CMTrace'
+$zip = $false
+$filename = 'cmtrace.exe'
 $exefilename = ''
 $Argument = ''
 
@@ -43,10 +43,10 @@ if ($zip) {
     }
 }
 else {
-    $Result = Get-AzStorageBlobContent -Container data -Blob "./Media/$filename" -Destination 'c:\Windows\temp\' -Context $StorAcc.context
+    $Result = Get-AzStorageBlobContent -Container data -Blob "./Media/$filename" -Destination 'C:\Users\Public\Desktop' -Context $StorAcc.context
     If ($Result.Name -eq "Media/$filename") {
         Set-Location C:\Windows\Temp\Media\
-        Start-Process -FilePath "$exefilename" -ArgumentList $Argument -Wait -ErrorAction Stop
+        #Start-Process -FilePath "$exefilename" -ArgumentList $Argument -Wait -ErrorAction Stop
     }
     Else {
         Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Error -Message "Failed to download $app"

@@ -1,5 +1,5 @@
-﻿$app = 'choco-coreapps'
-$chocoargs = 'install vcredist2013 vcredist140 adobereader 7zip.install googlechrome dotnet3.5 laps azure-information-protection-unified-labeling-client clickshare-desktop --limitoutput'
+﻿$app = 'choco-vscode'
+$chocoargs = 'install vscode --limitoutput'
 
 $EventLogName = 'AEB'
 $EventLogSource = "$app Install Script"
