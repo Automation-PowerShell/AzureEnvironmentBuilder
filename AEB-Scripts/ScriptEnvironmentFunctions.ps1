@@ -95,18 +95,25 @@ function UpdateRBAC {
 
 function ConfigureNetwork {
     if ($RequireNSG) {
-        $rule1 = New-AzNetworkSecurityRuleConfig -Name smb-rule -Description 'Allow SMB' -Access Allow -Protocol Tcp -Direction Outbound -Priority 100 -SourceAddressPrefix * -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange 445
-        #$rule2 = New-AzNetworkSecurityRuleConfig -Name rdp-rule -Description 'Allow RDP' -Access Allow -Protocol Tcp -Direction Inbound -Priority 100 -SourceAddressPrefix * -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange 3389
-        $rule2 = New-AzNetworkSecurityRuleConfig -Name rdp-rule -Description 'Allow RDP' -Access Allow -Protocol Tcp -Direction Inbound -Priority 100 -SourceAddressPrefix 'VirtualNetwork' -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange 3389
-        $rule3 = New-AzNetworkSecurityRuleConfig -Name smb-rule -Description 'Allow Internet 443' -Access Allow -Protocol Tcp -Direction Outbound -Priority 110 -SourceAddressPrefix * -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange 443
-        $rule4 = New-AzNetworkSecurityRuleConfig -Name smb-rule -Description 'Deny All Internet' -Access Allow -Protocol Tcp -Direction Outbound -Priority 4096 -SourceAddressPrefix * -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange *
+        $rule1 = New-AzNetworkSecurityRuleConfig -Name 'smb-rule' -Description 'Allow SMB' -Access Allow -Protocol Tcp -Direction Outbound -Priority 100 -SourceAddressPrefix * -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange 445
+        #$rule2 = New-AzNetworkSecurityRuleConfig -Name 'rdp-rule' -Description 'Allow RDP' -Access Allow -Protocol Tcp -Direction Inbound -Priority 100 -SourceAddressPrefix * -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange 3389
+        $rule2 = New-AzNetworkSecurityRuleConfig -Name 'rdp-rule' -Description 'Allow RDP' -Access Allow -Protocol Tcp -Direction Inbound -Priority 100 -SourceAddressPrefix 'VirtualNetwork' -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange 3389
+        $rule3 = New-AzNetworkSecurityRuleConfig -Name 'internet-allow-rule' -Description 'Allow Internet 443' -Access Allow -Protocol Tcp -Direction Outbound -Priority 110 -SourceAddressPrefix * -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange 443
+        $rule4 = New-AzNetworkSecurityRuleConfig -Name 'internet-deny-rule' -Description 'Deny All Internet' -Access Deny -Protocol Tcp -Direction Outbound -Priority 4096 -SourceAddressPrefix * -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange *
 
-        $nsgPROD = New-AzNetworkSecurityGroup -ResourceGroupName $RGNamePRODVNET -Location $location -Name $NsgNamePROD -SecurityRules $rule1, $rule2, $rule3, $rule4 -Force    # $Rule1, $Rule2 etc.
-        if ($nsgPROD.ProvisioningState -eq 'Succeeded') {
-            Write-AEBLog 'PROD Network Security Group created successfully'
+        $resourceCheck = Get-AzNetworkSecurityGroup -ResourceGroupName $RGNamePRODVNET -Name $NsgNamePROD
+        if (!$resourceCheck) {
+            $nsgPROD = New-AzNetworkSecurityGroup -ResourceGroupName $RGNamePRODVNET -Location $location -Name $NsgNamePROD -SecurityRules $rule1, $rule2, $rule3, $rule4 -Force    # $Rule1, $Rule2 etc.
+            if ($nsgPROD.ProvisioningState -eq 'Succeeded') {
+                Write-AEBLog 'PROD Network Security Group created successfully'
+            }
+            else {
+                Write-AEBLog '*** Unable to create or configure PROD Network Security Group! ***' -Level Error
+                Write-Dump
+            }
         }
         else {
-            Write-AEBLog '*** Unable to create or configure PROD Network Security Group! ***' -Level Error
+            Write-AEBLog "PROD Network Security Group not required"
         }
         $nsgcheck = Get-AzNetworkSecurityGroup -ResourceGroupName $RGNameDEVVNET -Name $NsgNameDEV
         if (!$nsgcheck) {
@@ -115,8 +122,13 @@ function ConfigureNetwork {
                 Write-AEBLog 'DEV Network Security Group created successfully'
             }
             else {
-                Write-AEBLog '*** Unable to create or configure DEV Network Security Group! ***'
+                Write-AEBLog '*** Unable to create or configure DEV Network Security Group! ***' -Level Error
+                Write-Dump
             }
+        }
+        else {
+            Write-AEBLog "DEV Network Security Group not required"
+            $nsgDEV = $nsgcheck
         }
     }
 
@@ -128,24 +140,24 @@ function ConfigureNetwork {
                 $subnetcheck = Get-AzVirtualNetworkSubnetConfig -Name $SubnetNamePROD -VirtualNetwork $vnetcheck -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
                 if (!$subnetcheck) {
                     if ($RequireNSG) {
-                        Add-AzVirtualNetworkSubnetConfig -Name $SubnetNamePROD -AddressPrefix '10.0.1.0/24' -VirtualNetwork $vnetcheck -NetworkSecurityGroup $NsgNamePROD -ServiceEndpoint 'Microsoft.KeyVault' | Set-AzVirtualNetwork
+                        Add-AzVirtualNetworkSubnetConfig -Name $SubnetNamePROD -AddressPrefix '10.0.1.0/24' -VirtualNetwork $vnetcheck -NetworkSecurityGroup $nsgPROD -ServiceEndpoint 'Microsoft.KeyVault' | Set-AzVirtualNetwork | Out-Null
                     }
                     else {
-                        Add-AzVirtualNetworkSubnetConfig -Name $SubnetNamePROD -AddressPrefix '10.0.1.0/24' -VirtualNetwork $vnetcheck -ServiceEndpoint 'Microsoft.KeyVault' | Set-AzVirtualNetwork
+                        Add-AzVirtualNetworkSubnetConfig -Name $SubnetNamePROD -AddressPrefix '10.0.1.0/24' -VirtualNetwork $vnetcheck -ServiceEndpoint 'Microsoft.KeyVault' | Set-AzVirtualNetwork | Out-Null
                     }
                 }
-                if ($RequiresBastion) {
-                    Add-AzVirtualNetworkSubnetConfig -Name 'AzureBastionSubnet' -AddressPrefix '10.0.100.0/24' -VirtualNetwork $vnetcheck | Set-AzVirtualNetwork
+                if ($RequireBastion) {
+                    Add-AzVirtualNetworkSubnetConfig -Name 'AzureBastionSubnet' -AddressPrefix '10.0.100.0/24' -VirtualNetwork $vnetcheck | Set-AzVirtualNetwork | Out-Null
                 }
             }
             else {
                 $subnetcheck = Get-AzVirtualNetworkSubnetConfig -Name $SubnetNamePROD -VirtualNetwork $vnetcheck -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
                 if (!$subnetcheck) {
                     if ($RequireNSG) {
-                        Add-AzVirtualNetworkSubnetConfig -Name $SubnetNamePROD -AddressPrefix '10.0.1.0/24' -VirtualNetwork $vnetcheck -NetworkSecurityGroup $NsgNamePROD -ServiceEndpoint 'Microsoft.KeyVault' | Set-AzVirtualNetwork
+                        Add-AzVirtualNetworkSubnetConfig -Name $SubnetNamePROD -AddressPrefix '10.0.1.0/24' -VirtualNetwork $vnetcheck -NetworkSecurityGroup $nsgPROD -ServiceEndpoint 'Microsoft.KeyVault' | Set-AzVirtualNetwork | Out-Null
                     }
                     else {
-                        Add-AzVirtualNetworkSubnetConfig -Name $SubnetNamePROD -AddressPrefix '10.0.1.0/24' -VirtualNetwork $vnetcheck -ServiceEndpoint 'Microsoft.KeyVault' | Set-AzVirtualNetwork
+                        Add-AzVirtualNetworkSubnetConfig -Name $SubnetNamePROD -AddressPrefix '10.0.1.0/24' -VirtualNetwork $vnetcheck -ServiceEndpoint 'Microsoft.KeyVault' | Set-AzVirtualNetwork | Out-Null
                     }
                 }
             }
@@ -157,26 +169,68 @@ function ConfigureNetwork {
                 $subnetcheck = Get-AzVirtualNetworkSubnetConfig -Name $SubnetNameDEV -VirtualNetwork $vnetcheck -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
                 if (!$subnetcheck) {
                     if ($RequireNSG) {
-                        Add-AzVirtualNetworkSubnetConfig -Name $SubnetNameDEV -AddressPrefix '10.0.2.0/24' -VirtualNetwork $vnetcheck -NetworkSecurityGroup $NsgNameDEV -ServiceEndpoint 'Microsoft.KeyVault' | Set-AzVirtualNetwork
+                        Add-AzVirtualNetworkSubnetConfig -Name $SubnetNameDEV -AddressPrefix '10.0.2.0/24' -VirtualNetwork $vnetcheck -NetworkSecurityGroup $nsgDEV -ServiceEndpoint 'Microsoft.KeyVault' | Set-AzVirtualNetwork | Out-Null
                     }
                     else {
-                        Add-AzVirtualNetworkSubnetConfig -Name $SubnetNameDEV -AddressPrefix '10.0.2.0/24' -VirtualNetwork $vnetcheck -ServiceEndpoint 'Microsoft.KeyVault' | Set-AzVirtualNetwork
+                        Add-AzVirtualNetworkSubnetConfig -Name $SubnetNameDEV -AddressPrefix '10.0.2.0/24' -VirtualNetwork $vnetcheck -ServiceEndpoint 'Microsoft.KeyVault' | Set-AzVirtualNetwork | Out-Null
                     }
                 }
-                if ($RequiresBastion) {
-                    Add-AzVirtualNetworkSubnetConfig -Name 'AzureBastionSubnet' -AddressPrefix '10.0.100.0/24' -VirtualNetwork $vnetcheck | Set-AzVirtualNetwork
+                if ($RequireBastion) {
+                    Add-AzVirtualNetworkSubnetConfig -Name 'AzureBastionSubnet' -AddressPrefix '10.0.100.0/24' -VirtualNetwork $vnetcheck | Set-AzVirtualNetwork | Out-Null
                 }
             }
             else {
                 $subnetcheck = Get-AzVirtualNetworkSubnetConfig -Name $SubnetNameDEV -VirtualNetwork $vnetcheck -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
                 if (!$subnetcheck) {
                     if ($RequireNSG) {
-                        Add-AzVirtualNetworkSubnetConfig -Name $SubnetNameDEV -AddressPrefix '10.0.2.0/24' -VirtualNetwork $vnetcheck -NetworkSecurityGroup $NsgNameDEV -ServiceEndpoint 'Microsoft.KeyVault' | Set-AzVirtualNetwork
+                        Add-AzVirtualNetworkSubnetConfig -Name $SubnetNameDEV -AddressPrefix '10.0.2.0/24' -VirtualNetwork $vnetcheck -NetworkSecurityGroup $nsgDEV -ServiceEndpoint 'Microsoft.KeyVault' | Set-AzVirtualNetwork | Out-Null
                     }
                     else {
-                        Add-AzVirtualNetworkSubnetConfig -Name $SubnetNameDEV -AddressPrefix '10.0.2.0/24' -VirtualNetwork $vnetcheck -ServiceEndpoint 'Microsoft.KeyVault' | Set-AzVirtualNetwork
+                        Add-AzVirtualNetworkSubnetConfig -Name $SubnetNameDEV -AddressPrefix '10.0.2.0/24' -VirtualNetwork $vnetcheck -ServiceEndpoint 'Microsoft.KeyVault' | Set-AzVirtualNetwork | Out-Null
                     }
                 }
+            }
+        }
+    }
+    if ($RequireBastion) {
+        foreach ($vnet in $vnets.Prod.GetEnumerator()) {
+            $resourceCheck = Get-AzBastion -ResourceGroupName $RGNamePRODVNET -Name "bastion-TestClient0-$($vnet.Value)"
+            if (!$resourceCheck) {
+                $publicip = New-AzPublicIpAddress -ResourceGroupName $RGNamePRODVNET -Name "bastion-TestClient0-$($vnet.Value)-pip" -Location $location -AllocationMethod Static -Sku Standard
+                $resource = New-AzBastion -ResourceGroupName $RGNamePRODVNET -Name "bastion-TestClient0-$($vnet.Value)" `
+                    -PublicIpAddressRgName $RGNamePRODVNET -PublicIpAddressName "bastion-TestClient0-$($vnet.Value)-pip" `
+                    -VirtualNetworkRgName $RGNamePRODVNET -VirtualNetworkName $vnet.Value `
+                    -Sku Basic -AsJob
+                if ($resource.ProvisioningState -eq 'Succeeded') {
+                    Write-AEBLog "PROD Bastion for VNET $($vnet.Value) created successfully"
+                }
+                else {
+                    Write-AEBLog "*** Unable to create PROD Bastion for VNET $($vnet.Value)! ***" -Level Error
+                    Write-Dump
+                }
+            }
+            else {
+                Write-AEBLog "PROD Bastion for VNET $($vnet.Value) not required"
+            }
+        }
+        foreach ($vnet in $vnets.Dev.GetEnumerator()) {
+            $resourceCheck = Get-AzBastion -ResourceGroupName $RGNameDEVVNET -Name "bastion-TestClient0-$($vnet.Value)"
+            if (!$resourceCheck) {
+                $publicip = New-AzPublicIpAddress -ResourceGroupName $RGNameDEVVNET -Name "bastion-TestClient0-$($vnet.Value)-pip" -Location $location -AllocationMethod Static -Sku Standard
+                $resource = New-AzBastion -ResourceGroupName $RGNameDEVVNET -Name "bastion-TestClient0-$($vnet.Value)" `
+                    -PublicIpAddressRgName $RGNameDEVVNET -PublicIpAddressName "bastion-TestClient0-$($vnet.Value)-pip" `
+                    -VirtualNetworkRgName $RGNameDEVVNET -VirtualNetworkName $vnet.Value `
+                    -Sku Basic -AsJob
+                if ($resource.ProvisioningState -eq 'Succeeded') {
+                    Write-AEBLog "DEV Bastion for VNET $($vnet.Value) created successfully"
+                }
+                else {
+                    Write-AEBLog "*** Unable to create DEV Bastion for VNET $($vnet.Value)! ***" -Level Error
+                    Write-Dump
+                }
+            }
+            else {
+                Write-AEBLog "DEV Bastion for VNET $($vnet.Value) not required"
             }
         }
     }
