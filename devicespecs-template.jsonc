@@ -42,6 +42,15 @@
                 },
                 {
                     "Name": "App-7-Zip"
+                },
+                {
+                    "Name": "App-CMTrace"
+                },
+                {
+                    "Name": "App-chocolatey"
+                },
+                {
+                    "Name": "App-choco-vscode"
                 }
             ],
             "VMSize": "Standard_B2s",

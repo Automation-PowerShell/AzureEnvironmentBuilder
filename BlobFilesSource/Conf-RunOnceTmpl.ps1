@@ -10,7 +10,7 @@ trap {
 }
 
 # Enable Logging to the EventLog
-New-EventLog -LogName $EventlogName -Source $EventlogSource
+New-EventLog -LogName $EventlogName -Source $EventlogSource -ErrorAction SilentlyContinue
 Limit-EventLog -OverflowAction OverWriteAsNeeded -MaximumSize 64KB -LogName $EventlogName
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Starting $scriptname Script"
 

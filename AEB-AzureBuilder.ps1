@@ -17,6 +17,8 @@ More Info       : https://github.com/Automation-PowerShell/AzureEnvironmentBuild
 
 #>
 
+# [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
 #region Setup
 Set-Location $PSScriptRoot
 

@@ -102,12 +102,12 @@ function ConfigureBaseVM {
             $Properties.Add('status', 'Enabled')
             $Properties.Add('taskType', 'ComputeVmShutdownTask')
             $Properties.Add('dailyRecurrence', @{'time' = $($deviceSpecs.$VMSpec.AutoShutdownTime) })
-            $Properties.Add('TimeZoneId', 'GMT Standard Time')
+            $Properties.Add('TimeZoneId', 'UTC')
             $Properties.Add('notificationSettings', @{status = 'Disabled'; timeInMinutes = 15; notificationLocale = "en" })
             $Properties.Add('targetResourceId', $VMCreate.Id)
             # Bug : New-AzResource is failing
-            #New-AzResource -Location $Location -ResourceId $ScheduledShutdownResourceId -Properties $Properties -Force | Out-Null
-            #Write-AEBLog "VM: $VMName - Auto Shutdown Enabled for $($deviceSpecs.$VMSpec.AutoShutdownTime)"
+            New-AzResource -Location $Location -ResourceId $ScheduledShutdownResourceId -Properties $Properties -Force | Out-Null
+            Write-AEBLog "VM: $VMName - Auto Shutdown Enabled for $($deviceSpecs.$VMSpec.AutoShutdownTime)"
         }
     }
     else {
