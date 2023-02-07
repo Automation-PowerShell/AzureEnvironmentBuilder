@@ -10,7 +10,7 @@ trap {
 }
 
 # Enable Logging to the EventLog
-New-EventLog -LogName $EventlogName -Source $EventlogSource
+New-EventLog -LogName $EventlogName -Source $EventlogSource -ErrorAction SilentlyContinue
 Limit-EventLog -OverflowAction OverWriteAsNeeded -MaximumSize 64KB -LogName $EventlogName
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Starting $scriptname Install Script"
 
@@ -25,9 +25,5 @@ Connect-AzAccount -Identity -ErrorAction Stop -Subscription sssss
 # Enable Domain Controller Role
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message 'Enable Domain Controller'
 Install-WindowsFeature -Name AD-Domain-Services -IncludeManagementTools
-# Post Steps
-# Static IP
-# Add IP to VNET DNS
-# Install AAD Connect?
 
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Completed $scriptname"

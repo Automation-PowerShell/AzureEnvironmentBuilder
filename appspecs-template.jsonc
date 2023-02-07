@@ -69,6 +69,9 @@
             "Name": "App-choco-coreapps"
         },
         {
+            "Name": "App-choco-vscode"
+        },
+        {
             "Name": "App-ClickShareExension"
         },
         {
@@ -362,6 +365,14 @@
         {
             "AppVersion": "",
             "PS1": "App-CMTrace.ps1",
+            "RebootRequired": false,
+            "RebootSeconds": 0
+        }
+    ],
+    "App-cocco-vscode": [
+        {
+            "AppVersion": "",
+            "PS1": "App-choco-vscode.ps1",
             "RebootRequired": false,
             "RebootSeconds": 0
         }

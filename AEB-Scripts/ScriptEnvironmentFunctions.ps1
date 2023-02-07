@@ -95,9 +95,13 @@ function UpdateRBAC {
 
 function ConfigureNetwork {
     if ($RequireNSG) {
-        $rule1 = New-AzNetworkSecurityRuleConfig -Name rdp-rule -Description 'Allow RDP' -Access Allow -Protocol Tcp -Direction Inbound -Priority 100 -SourceAddressPrefix * -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange 3389
-        $rule2 = New-AzNetworkSecurityRuleConfig -Name smb-rule -Description 'Allow SMB' -Access Allow -Protocol Tcp -Direction Outbound -Priority 100 -SourceAddressPrefix * -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange 445
-        $nsgPROD = New-AzNetworkSecurityGroup -ResourceGroupName $RGNamePRODVNET -Location $location -Name $NsgNamePROD -SecurityRules $rule1, $rule2 -Force    # $Rule1, $Rule2 etc.
+        $rule1 = New-AzNetworkSecurityRuleConfig -Name smb-rule -Description 'Allow SMB' -Access Allow -Protocol Tcp -Direction Outbound -Priority 100 -SourceAddressPrefix * -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange 445
+        #$rule2 = New-AzNetworkSecurityRuleConfig -Name rdp-rule -Description 'Allow RDP' -Access Allow -Protocol Tcp -Direction Inbound -Priority 100 -SourceAddressPrefix * -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange 3389
+        $rule2 = New-AzNetworkSecurityRuleConfig -Name rdp-rule -Description 'Allow RDP' -Access Allow -Protocol Tcp -Direction Inbound -Priority 100 -SourceAddressPrefix 'VirtualNetwork' -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange 3389
+        $rule3 = New-AzNetworkSecurityRuleConfig -Name smb-rule -Description 'Allow Internet 443' -Access Allow -Protocol Tcp -Direction Outbound -Priority 110 -SourceAddressPrefix * -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange 443
+        $rule4 = New-AzNetworkSecurityRuleConfig -Name smb-rule -Description 'Deny All Internet' -Access Allow -Protocol Tcp -Direction Outbound -Priority 4096 -SourceAddressPrefix * -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange *
+
+        $nsgPROD = New-AzNetworkSecurityGroup -ResourceGroupName $RGNamePRODVNET -Location $location -Name $NsgNamePROD -SecurityRules $rule1, $rule2, $rule3, $rule4 -Force    # $Rule1, $Rule2 etc.
         if ($nsgPROD.ProvisioningState -eq 'Succeeded') {
             Write-AEBLog 'PROD Network Security Group created successfully'
         }
@@ -106,7 +110,7 @@ function ConfigureNetwork {
         }
         $nsgcheck = Get-AzNetworkSecurityGroup -ResourceGroupName $RGNameDEVVNET -Name $NsgNameDEV
         if (!$nsgcheck) {
-            $nsgDEV = New-AzNetworkSecurityGroup -ResourceGroupName $RGNameDEVVNET -Location $location -Name $NsgNameDEV -SecurityRules $rule1, $rule2 -Force   # $Rule1, $Rule2 etc.
+            $nsgDEV = New-AzNetworkSecurityGroup -ResourceGroupName $RGNameDEVVNET -Location $location -Name $NsgNameDEV -SecurityRules $rule1, $rule2, $rule3, $rule4 -Force   # $Rule1, $Rule2 etc.
             if ($nsgDEV.ProvisioningState -eq 'Succeeded') {
                 Write-AEBLog 'DEV Network Security Group created successfully'
             }
@@ -129,6 +133,9 @@ function ConfigureNetwork {
                     else {
                         Add-AzVirtualNetworkSubnetConfig -Name $SubnetNamePROD -AddressPrefix '10.0.1.0/24' -VirtualNetwork $vnetcheck -ServiceEndpoint 'Microsoft.KeyVault' | Set-AzVirtualNetwork
                     }
+                }
+                if ($RequiresBastion) {
+                    Add-AzVirtualNetworkSubnetConfig -Name 'AzureBastionSubnet' -AddressPrefix '10.0.100.0/24' -VirtualNetwork $vnetcheck | Set-AzVirtualNetwork
                 }
             }
             else {
@@ -155,6 +162,9 @@ function ConfigureNetwork {
                     else {
                         Add-AzVirtualNetworkSubnetConfig -Name $SubnetNameDEV -AddressPrefix '10.0.2.0/24' -VirtualNetwork $vnetcheck -ServiceEndpoint 'Microsoft.KeyVault' | Set-AzVirtualNetwork
                     }
+                }
+                if ($RequiresBastion) {
+                    Add-AzVirtualNetworkSubnetConfig -Name 'AzureBastionSubnet' -AddressPrefix '10.0.100.0/24' -VirtualNetwork $vnetcheck | Set-AzVirtualNetwork
                 }
             }
             else {
@@ -191,7 +201,8 @@ function CreateStorageAccount {
             Write-AEBLog '*** Storage Account already exists ***' -Level Error
             return
         }
-        $storageAccount = New-AzStorageAccount -ResourceGroupName $RGNameSTORE -AccountName $StorageAccountName -Location $location -SkuName Standard_LRS
+        $storageAccount = New-AzStorageAccount -ResourceGroupName $RGNameSTORE -AccountName $StorageAccountName -Location $location -SkuName Standard_LRS -Kind StorageV2 -AccessTier Hot -AllowBlobPublicAccess $false -MinimumTlsVersion TLS1_2
+        New-AzStorageAccount -ResourceGroupName $RGNameSTORE -AccountName 'testdan102asfd' -Location $location -SkuName Standard_LRS -Kind StorageV2 -AccessTier Hot -AllowBlobPublicAccess $false -MinimumTlsVersion TLS1_2
         Start-Sleep -Seconds 10
         $script:ctx = $storageAccount.Context
         $Container = New-AzStorageContainer -Name $ContainerName -Context $ctx -Permission Off
