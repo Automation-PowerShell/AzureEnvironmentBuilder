@@ -49,8 +49,8 @@ Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings 'true'  # Turns off 
 #region Main
 Write-AEBLog 'Running AEB-RebuildAzureVM.ps1'
 if ($VMName -eq '') {
-    $VMList = Get-AzVM -Name * -ResourceGroupName $RGNameDEV -ErrorAction SilentlyContinue
-    $VMName = ($VMlist | Where-Object { $_.Name -notin $VMListExclude } | Select-Object Name | Out-GridView -Title 'Select Virtual Machine to Rebuild' -OutputMode Single).Name
+    $VMList = Get-AzVM -Name * -ResourceGroupName $clientSettings.RGNameDEV -ErrorAction SilentlyContinue
+    $VMName = ($VMlist | Where-Object { $_.Name -notin $clientSettings.VMListExclude } | Select-Object Name | Out-GridView -Title 'Select Virtual Machine to Rebuild' -OutputMode Single).Name
     if (!$VMName) { exit }
     $VMSpec = @('Desktop-Standard', 'Desktop-Packaging', 'Desktop-AdminStudio', 'Desktop-Jumpbox', 'Desktop-Core')
     $Spec = $VMSpec | Out-GridView -Title 'Select Virtual Machine Spec' -OutputMode Single

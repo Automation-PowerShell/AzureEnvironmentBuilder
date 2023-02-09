@@ -1,6 +1,6 @@
 ﻿$app = 'CMTrace'
 $zip = $false
-$filename = 'cmtrace.exe'
+$filename = 'CMTrace.exe'
 $exefilename = ''
 $Argument = ''
 
