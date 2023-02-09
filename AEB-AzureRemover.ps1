@@ -38,16 +38,16 @@ Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings 'true'  # Turns off 
 
 #region Main
 Write-AEBLog 'Running AEB-AzureRemover.ps1'
-if ($isProd) { Write-Warning 'Are you sure you want to delete the Azure Environment?  OK to Continue?' -WarningAction Inquire }
+if ($clientSettings.isProd) { Write-Warning 'Are you sure you want to delete the Azure Environment?  OK to Continue?' -WarningAction Inquire }
 
-if (!($isProd) -and $RequireUserGroups) {
-    Remove-AzADGroup -DisplayName $rbacOwner -ErrorAction Ignore -Verbose
-    Remove-AzADGroup -DisplayName $rbacContributor -ErrorAction Ignore -Verbose
-    Remove-AzADGroup -DisplayName $rbacReadOnly -ErrorAction Ignore -Verbose
+if (!($clientSettings.isProd) -and $clientSettings.RequireUserGroups) {
+    Remove-AzADGroup -DisplayName $clientSettings.rbacOwner -ErrorAction Ignore -Verbose
+    Remove-AzADGroup -DisplayName $clientSettings.rbacContributor -ErrorAction Ignore -Verbose
+    Remove-AzADGroup -DisplayName $clientSettings.rbacReadOnly -ErrorAction Ignore -Verbose
 }
-Remove-AzResourceGroup -Name $RGNameDEV -Force -ErrorAction Ignore -Verbose
-Remove-AzResourceGroup -Name $RGNamePROD -Force -ErrorAction Ignore -Verbose
-if (!($isProd)) {
+Remove-AzResourceGroup -Name $clientSettings.RGNameDEV -Force -ErrorAction Ignore -Verbose
+Remove-AzResourceGroup -Name $clientSettings.RGNamePROD -Force -ErrorAction Ignore -Verbose
+if (!($clientSettings.isProd)) {
     #Remove-AzResourceGroup -Name $RGNameDEVVNET -Force -ErrorAction Ignore -Verbose         # Dont want to do this is a Production Environment
     #Remove-AzResourceGroup -Name $RGNamePRODVNET -Force -ErrorAction Ignore -Verbose        # Dont want to do this is a Production Environment
 }

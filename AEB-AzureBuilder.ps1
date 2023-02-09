@@ -62,30 +62,30 @@ Update-AzConfig -DisplayBreakingChangeWarning $false
 
 #region Main
 Write-AEBLog 'Running AEB-AzureBuilder.ps1'
-if ($isProd) { Write-Warning 'Are you sure you want to rebuild the Azure Environment?  OK to Continue?' -WarningAction Inquire }
+if ($clientSettings.isProd) { Write-Warning 'Are you sure you want to rebuild the Azure Environment?  OK to Continue?' -WarningAction Inquire }
 
-if ($RequireCreate) {
+if ($clientSettings.RequireCreate) {
     # Create Resource Groups
-    if ($RequireResourceGroups -and !$UseTerraform) {
-        $RG = New-AzResourceGroup -Name $RGNamePROD -Location $Location
-        if ($RG.ResourceGroupName -eq $RGNamePROD) { Write-AEBLog 'PROD Resource Group created successfully' } else { Write-AEBLog '*** Unable to create PROD Resource Group! ***' -Level Error }
-        if (!($RGNameDEV -match $RGNamePROD)) {
-            $RG = New-AzResourceGroup -Name $RGNameDEV -Location $Location
-            if ($RG.ResourceGroupName -eq $RGNameDEV) { Write-AEBLog 'DEV Resource Group created successfully' } else { Write-AEBLog '*** Unable to create DEV Resource Group! ***' -Level Error }
+    if ($clientSettings.RequireResourceGroups -and !$clientSettings.UseTerraform) {
+        $RG = New-AzResourceGroup -Name $clientSettings.RGNamePROD -Location $clientSettings.Location
+        if ($RG.ResourceGroupName -eq $clientSettings.RGNamePROD) { Write-AEBLog 'PROD Resource Group created successfully' } else { Write-AEBLog '*** Unable to create PROD Resource Group! ***' -Level Error }
+        if (!($clientSettings.RGNameDEV -match $clientSettings.RGNamePROD)) {
+            $RG = New-AzResourceGroup -Name $clientSettings.RGNameDEV -Location $clientSettings.Location
+            if ($RG.ResourceGroupName -eq $clientSettings.RGNameDEV) { Write-AEBLog 'DEV Resource Group created successfully' } else { Write-AEBLog '*** Unable to create DEV Resource Group! ***' -Level Error }
         }
-        if (!($RGNameDEV -match $RGNameDEVVNET)) {
-            $RG = New-AzResourceGroup -Name $RGNameDEVVNET -Location $Location
-            if ($RG.ResourceGroupName -eq $RGNameDEVVNET) { Write-AEBLog 'DEV VNET Resource Group created successfully' } else { Write-AEBLog '*** Unable to create DEV VNET Resource Group! ***' -Level Error }
+        if (!($clientSettings.RGNameDEV -match $clientSettings.RGNameDEVVNET)) {
+            $RG = New-AzResourceGroup -Name $clientSettings.RGNameDEVVNET -Location $clientSettings.Location
+            if ($RG.ResourceGroupName -eq $clientSettings.RGNameDEVVNET) { Write-AEBLog 'DEV VNET Resource Group created successfully' } else { Write-AEBLog '*** Unable to create DEV VNET Resource Group! ***' -Level Error }
         }
-        if (!($RGNamePROD -match $RGNamePRODVNET)) {
-            $RG = New-AzResourceGroup -Name $RGNamePRODVNET -Location $Location
-            if ($RG.ResourceGroupName -eq $RGNamePRODVNET) { Write-AEBLog 'PROD VNET Resource Group created successfully' } else { Write-AEBLog '*** Unable to create PROD VNET Resource Group! ***' -Level Error }
+        if (!($clientSettings.RGNamePROD -match $clientSettings.RGNamePRODVNET)) {
+            $RG = New-AzResourceGroup -Name $clientSettings.RGNamePRODVNET -Location $clientSettings.Location
+            if ($RG.ResourceGroupName -eq $clientSettings.RGNamePRODVNET) { Write-AEBLog 'PROD VNET Resource Group created successfully' } else { Write-AEBLog '*** Unable to create PROD VNET Resource Group! ***' -Level Error }
         }
-        if (!($RGNamePROD -match $RGNameSTORE) -and $RequireStorageAccount) {
-            $RG = Get-AzResourceGroup -Name $RGNameSTORE -ErrorAction SilentlyContinue
+        if (!($clientSettings.RGNamePROD -match $clientSettings.RGNameSTORE) -and $clientSettings.RequireStorageAccount) {
+            $RG = Get-AzResourceGroup -Name $clientSettings.RGNameSTORE -ErrorAction SilentlyContinue
             if (!$RG) {
-                $RG = New-AzResourceGroup -Name $RGNameSTORE -Location $Location
-                if ($RG.ResourceGroupName -eq $RGNameSTORE) { Write-AEBLog 'STORE Resource Group created successfully' } else { Write-AEBLog '*** Unable to create STORE Resource Group! ***' -Level Error }
+                $RG = New-AzResourceGroup -Name $clientSettings.RGNameSTORE -Location $clientSettings.Location
+                if ($RG.ResourceGroupName -eq $clientSettings.RGNameSTORE) { Write-AEBLog 'STORE Resource Group created successfully' } else { Write-AEBLog '*** Unable to create STORE Resource Group! ***' -Level Error }
             }
             else {
                 Write-AEBLog 'STORE Resource Group already exists'
@@ -93,13 +93,13 @@ if ($RequireCreate) {
         }
     }
     else {
-        $RG = Get-AzResourceGroup -Name $RGNamePROD -ErrorAction SilentlyContinue
+        $RG = Get-AzResourceGroup -Name $clientSettings.RGNamePROD -ErrorAction SilentlyContinue
         if (!$RG) {
             Write-AEBLog '*** Resouce Groups are missing ***' -Level Error
             Write-Dump
         }
     }
-    if ($UseTerraform) {
+    if ($clientSettings.UseTerraform) {
         $TerraformMainTemplate = Get-Content -Path '.\Terraform\Root Template\main.tf' | Set-Content -Path '.\Terraform\main.tf'
     }
 
@@ -116,7 +116,7 @@ if ($RequireCreate) {
     CreateKeyVault
 
     # Create Server Script
-    if ($UseTerraform) {
+    if ($clientSettings.UseTerraform) {
         TerraformBuild-HVVM
     }
     else {
@@ -124,14 +124,14 @@ if ($RequireCreate) {
     }
 
     # Create Desktop VM Script
-    if ($UseTerraform) {
+    if ($clientSettings.UseTerraform) {
         TerraformBuild-VM
     }
     else {
         ScriptBuild-Create-VM
     }
 
-    if ($UseTerraform) {
+    if ($clientSettings.UseTerraform) {
         Set-Location .\terraform
         $ARGUinit = 'init'
         $ARGUplan = 'plan -out .\terraform.tfplan'
@@ -147,28 +147,29 @@ if ($RequireCreate) {
 UpdateStorage
 
 
-if ($RequireConfigure) {
-    if ($RequireRBAC) {
+if ($clientSettings.RequireConfigure) {
+    if ($clientSettings.RequireRBAC) {
         # Update RBAC
         UpdateRBAC
     }
 
-    # Configure Desktop VM Script
-    if ($UseTerraform) {
-        TerraformConfigure-VM
-    }
-    else {
-        ScriptBuild-Config-VM
-    }
-
     # Configure Server Script
-    if ($UseTerraform) {
+    if ($clientSettings.UseTerraform) {
         TerraformConfigure-HVVM
     }
     else {
         ScriptBuild-Config-Server
     }
+
+    # Configure Desktop VM Script
+    if ($clientSettings.UseTerraform) {
+        TerraformConfigure-VM
+    }
+    else {
+        ScriptBuild-Config-VM
+    }
 }
+
 Write-AEBLog 'Completed AEB-AzureBuilder.ps1'
 Write-AEBLog '============================================================================================================='
 #endregion Main

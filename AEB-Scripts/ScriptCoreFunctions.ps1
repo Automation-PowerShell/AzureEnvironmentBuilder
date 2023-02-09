@@ -55,7 +55,7 @@ function RunVMConfig($ResourceGroup, $VMName, $BlobFilePath, $Blob) {
     #$VMConfigure = Set-AzVMCustomScriptExtension @Params -ErrorAction SilentlyContinue
     $VMConfigure = Set-AzVMExtension `
         -ResourceGroupName $ResourceGroup `
-        -Location $Location `
+        -Location $clientSettings.Location `
         -VMName $VMName `
         -Name 'ConfigureVM3' `
         -Publisher 'Microsoft.Compute' `
@@ -130,15 +130,15 @@ function Write-LogCMFile {
     $logfile = "$root\AEB.log"
     switch ($Level) {
         'Info' {
-            $String = "<![LOG[$String]LOG]!><time=`"$Time.000-60`" date=`"$Date`" component=`"$azTenant`" context=`"`" type=`"1`" thread=`"`" file=`"`">"
+            $String = "<![LOG[$String]LOG]!><time=`"$Time.000-60`" date=`"$Date`" component=`"$clientSettings.azTenant`" context=`"`" type=`"1`" thread=`"`" file=`"`">"
             $string | Out-File -FilePath $logfile -Append -Force -Encoding utf8
         }
         'Error' {
-            $String = "<![LOG[$String]LOG]!><time=`"$Time.000-60`" date=`"$Date`" component=`"$azTenant`" context=`"`" type=`"3`" thread=`"`" file=`"`">"
+            $String = "<![LOG[$String]LOG]!><time=`"$Time.000-60`" date=`"$Date`" component=`"$clientSettings.azTenant`" context=`"`" type=`"3`" thread=`"`" file=`"`">"
             $string | Out-File -FilePath $logfile -Append -Force -Encoding utf8
         }
         'Debug' {
-            $String = "<![LOG[$String]LOG]!><time=`"$Time.000-60`" date=`"$Date`" component=`"$azTenant`" context=`"`" type=`"2`" thread=`"`" file=`"`">"
+            $String = "<![LOG[$String]LOG]!><time=`"$Time.000-60`" date=`"$Date`" component=`"$clientSettings.azTenant`" context=`"`" type=`"2`" thread=`"`" file=`"`">"
             $string | Out-File -FilePath $logfile -Append -Force -Encoding utf8
         }
     }
@@ -159,7 +159,7 @@ function Write-LogStorageAccount {
     if (!$saNotFirstRun) {
         Remove-Item -Path C:\Temp\AEBSA -Force -Recurse -ErrorAction SilentlyContinue | Out-Null
         mkdir -Path C:\Temp -Name 'AEBSA' -Force | Out-Null
-        $Script:StorageAccount = Get-AzStorageAccount -Name $StorageAccountName -ResourceGroupName $RGNameSTORE
+        $Script:StorageAccount = Get-AzStorageAccount -Name $clientSettings.StorageAccountName -ResourceGroupName $clientSettings.RGNameSTORE
         $Script:Context = $storageAccount.Context
         #$Script:FileShareContainer = Get-AzStorageShare -Name $FileShareName -Context $Context
     }
@@ -167,17 +167,17 @@ function Write-LogStorageAccount {
     $Script:saNotFirstRun = $true
     switch ($Level) {
         'Info' {
-            $String = "$azTenant / $String"
+            $String = "$clientSettings.azTenant / $String"
             $string | Out-File -FilePath $logfile -Append -Force -Encoding ascii
             Set-AzStorageFileContent -ShareName $FileShareName -Source $logfile -Path 'Logs/' -Context $Context -Force
         }
         'Error' {
-            $String = "ERROR: $azTenant / $String"
+            $String = "ERROR: $clientSettings.azTenant / $String"
             $string | Out-File -FilePath $logfile -Append -Force -Encoding ascii
             Set-AzStorageFileContent -ShareName $FileShareName -Source $logfile -Path 'Logs/' -Context $Context -Force
         }
         'Debug' {
-            $String = "DEBUG: $azTenant / $String"
+            $String = "DEBUG: $clientSettings.azTenant / $String"
             $string | Out-File -FilePath $logfile -Append -Force -Encoding ascii
             Set-AzStorageFileContent -ShareName $FileShareName -Source $logfile -Path "Logs/$filename" -Context $Context -Force
         }
@@ -242,10 +242,10 @@ function Write-AEBLog {
     )
 
     Write-LogScreen -String $String -Level $Level
-    if (!($isProd)) {
+    if (!($clientSettings.isProd)) {
         Write-LogCMFile -String $String -Level $Level
-        if ($LogToGit) { Write-LogGit -String $String -Level $Level }
-        if ($LogToSA) { Write-LogStorageAccount -String $String -Level $Level }
+        if ($clientSettings.LogToGit) { Write-LogGit -String $String -Level $Level }
+        if ($clientSettings.LogToSA) { Write-LogStorageAccount -String $String -Level $Level }
     }
     else {
         Write-LogFile -String $String -Level $Level
@@ -260,9 +260,9 @@ function Write-DumpLine {
     )
     $String = "$varname : $varvalue"
     Write-LogScreen -String $String -Level Debug
-    if (!($isProd)) {
+    if (!($clientSettings.isProd)) {
         Write-LogCMFile -String $String -Level Debug
-        if ($LogToGit) { Write-LogGit -String $String -Level Debug }
+        if ($clientSettings.LogToGit) { Write-LogGit -String $String -Level Debug }
     }
     else {
         Write-LogFile -String $String -Level Debug
@@ -279,12 +279,12 @@ function Write-Dump {
     )
     Write-AEBLog -String '*** Write-Dump ***' -Level Debug
     Write-DumpLine '$?' $?
-    Write-DumpLine '$azSubscription' $azSubscription
-    Write-DumpLine '$RGNameSTORE' $RGNameSTORE
-    Write-DumpLine '$StorageAccountName' $StorageAccountName
-    Write-DumpLine '$VMName' $VMName
-    Write-DumpLine '$RequireServicePrincipal' $RequireServicePrincipal
-    Write-DumpLine '$RequireRBAC' $RequireRBAC
+    Write-DumpLine '$azSubscription' $clientSettings.azSubscription
+    Write-DumpLine '$RGNameSTORE' $clientSettings.RGNameSTORE
+    Write-DumpLine '$StorageAccountName' $clientSettings.StorageAccountName
+    Write-DumpLine '$VMName' $clientSettings.VMName
+    Write-DumpLine '$RequireServicePrincipal' $clientSettings.RequireServicePrincipal
+    Write-DumpLine '$RequireRBAC' $clientSettings.RequireRBAC
     Write-DumpLine '(Get-AzContext).Name' (Get-AzContext).Name
     if ($object1) { Write-DumpLine '$object1' $object1 }
     if ($object2) { Write-DumpLine '$object2' $object2 }
@@ -307,19 +307,19 @@ function ConnectTo-Azure {
     Clear-AzContext -Force
     #Update-Module Az.Accounts,AZ.Compute,Az.Storage,Az.Network,Az.Resources -Force
 
-    Connect-AzAccount -Tenant $aztenant -Subscription $azSubscription | Out-Null
+    Connect-AzAccount -Tenant $clientSettings.aztenant -Subscription $clientSettings.azSubscription | Out-Null
     $SubscriptionId = (Get-AzContext).Subscription.Id
-    if (!($azSubscription -eq $SubscriptionId)) {
+    if (!($clientSettings.azSubscription -eq $SubscriptionId)) {
         Write-AEBLog '*** Subscription ID Mismatch!!!! ***' -Level Error
         exit
     }
     Get-AzContext | Rename-AzContext -TargetName 'User' -Force | Out-Null
-    if ($RequireServicePrincipal) {
-        Connect-AzAccount -Tenant $azTenant -Subscription $azSubscription -Credential $ServicePrincipalCred -ServicePrincipal | Out-Null
+    if ($clientSettings.RequireServicePrincipal) {
+        Connect-AzAccount -Tenant $azTenant -Subscription $clientSettings.azSubscription -Credential $clientSettings.ServicePrincipalCred -ServicePrincipal | Out-Null
         Get-AzContext | Rename-AzContext -TargetName 'StorageSP' -Force | Out-Null
         Get-AzContext -Name 'User' | Select-AzContext | Out-Null
     }
-    $script:Keys = Get-AzStorageAccountKey -ResourceGroupName $RGNameSTORE -AccountName $StorageAccountName -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
-    $script:ctx = New-AzStorageContext -StorageAccountName $StorageAccountName -StorageAccountKey $Keys.value[0] -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
-    $script:SAS = New-AzStorageContainerSASToken -Name $ContainerName -Context $ctx -Permission r -StartTime $(Get-Date) -ExpiryTime $((Get-Date).AddDays(1)) -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+    $script:Keys = Get-AzStorageAccountKey -ResourceGroupName $clientSettings.RGNameSTORE -AccountName $clientSettings.StorageAccountName -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+    $script:ctx = New-AzStorageContext -StorageAccountName $clientSettings.StorageAccountName -StorageAccountKey $Keys.value[0] -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+    $script:SAS = New-AzStorageContainerSASToken -Name $clientSettings.ContainerName -Context $ctx -Permission r -StartTime $(Get-Date) -ExpiryTime $((Get-Date).AddDays(1)) -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
 }

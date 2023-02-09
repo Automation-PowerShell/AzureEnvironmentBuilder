@@ -62,8 +62,10 @@
             "VnetRef": "vnet-dev-azure",
             "Tags": [
                 {
-                    "Application": "Desktop-Standard",
-                    "Environment": "Dev"
+                    "Service": "AEB",
+                    "AEB-Client": "TestClientX",
+                    "AEB-Application": "Desktop-Standard",
+                    "AEB-Environment": "Dev"
                 }
             ]
         }
@@ -109,8 +111,10 @@
             "VnetRef": "vnet-dev-azure",
             "Tags": [
                 {
-                    "Application": "Desktop-Packaging",
-                    "Environment": "Dev"
+                    "Service": "AEB",
+                    "AEB-Client": "TestClientX",
+                    "AEB-Application": "Desktop-Packaging",
+                    "AEB-Environment": "Dev"
                 }
             ]
         }
@@ -153,8 +157,10 @@
             "VnetRef": "vnet-dev-azure",
             "Tags": [
                 {
-                    "Application": "Desktop-AdminStudio",
-                    "Environment": "Dev"
+                    "Service": "AEB",
+                    "AEB-Client": "TestClientX",
+                    "AEB-Application": "Desktop-AdminStudio",
+                    "AEB-Environment": "Dev"
                 }
             ]
         }
@@ -188,8 +194,10 @@
             "VnetRef": "vnet-dev-azure",
             "Tags": [
                 {
-                    "Application": "Desktop-Jumpbox",
-                    "Environment": "Dev"
+                    "Service": "AEB",
+                    "AEB-Client": "TestClientX",
+                    "AEB-Application": "Desktop-Jumpbox",
+                    "AEB-Environment": "Dev"
                 }
             ]
         }
@@ -235,8 +243,10 @@
             "VnetRef": "vnet-dev-azure",
             "Tags": [
                 {
-                    "Application": "Desktop-Core",
-                    "Environment": "Dev"
+                    "Service": "AEB",
+                    "AEB-Client": "TestClientX",
+                    "AEB-Application": "Desktop-Core",
+                    "AEB-Environment": "Dev"
                 }
             ]
         }
@@ -267,8 +277,10 @@
             "VnetRef": "vnet-prod-domain",
             "Tags": [
                 {
-                    "Application": "Server-Standard",
-                    "Environment": "Prod"
+                    "Service": "AEB",
+                    "AEB-Client": "TestClientX",
+                    "AEB-Application": "Server-Standard",
+                    "AEB-Environment": "Prod"
                 }
             ]
         }
@@ -311,8 +323,10 @@
             "VnetRef": "vnet-prod-azure",
             "Tags": [
                 {
-                    "Application": "Server-HyperV",
-                    "Environment": "Prod"
+                    "Service": "AEB",
+                    "AEB-Client": "TestClientX",
+                    "AEB-Application": "Server-HyperV",
+                    "AEB-Environment": "Prod"
                 }
             ]
         }
@@ -352,8 +366,10 @@
             "VnetRef": "vnet-prod-domain",
             "Tags": [
                 {
-                    "Application": "Server-DomainController",
-                    "Environment": "Prod"
+                    "Service": "AEB",
+                    "AEB-Client": "TestClientX",
+                    "AEB-Application": "Server-DomainController",
+                    "AEB-Environment": "Prod"
                 }
             ]
         }
@@ -396,8 +412,10 @@
             "VnetRef": "vnet-prod-domain",
             "Tags": [
                 {
-                    "Application": "Server-ConfigManager",
-                    "Environment": "Prod"
+                    "Service": "AEB",
+                    "AEB-Client": "TestClientX",
+                    "AEB-Application": "Server-ConfigManager",
+                    "AEB-Environment": "Prod"
                 }
             ]
         }
