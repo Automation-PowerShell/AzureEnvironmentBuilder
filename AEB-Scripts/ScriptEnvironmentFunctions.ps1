@@ -101,7 +101,7 @@ function UpdateRBAC {
 
 function ConfigureNetwork {
     if ($clientSettings.RequireNSG) {
-        Write-AEBLog 'Creating Network Security Group'
+        Write-AEBLog 'Creating Network Security Groups'
         $rule1 = New-AzNetworkSecurityRuleConfig -Name 'smb-rule' -Description 'Allow SMB' -Access Allow -Protocol Tcp -Direction Outbound -Priority 100 -SourceAddressPrefix * -SourcePortRange * -DestinationAddressPrefix 'VirtualNetwork' -DestinationPortRange 445
         $rule2 = New-AzNetworkSecurityRuleConfig -Name 'rdp-rule' -Description 'Allow RDP' -Access Allow -Protocol Tcp -Direction Inbound -Priority 100 -SourceAddressPrefix 'VirtualNetwork' -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange 3389
         $rule3 = New-AzNetworkSecurityRuleConfig -Name 'internet-allow-rule' -Description 'Allow Internet 443' -Access Allow -Protocol Tcp -Direction Outbound -Priority 110 -SourceAddressPrefix * -SourcePortRange * -DestinationAddressPrefix 'Internet' -DestinationPortRange 443
@@ -156,10 +156,10 @@ function ConfigureNetwork {
                 $subnetcheck = Get-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNamePROD -VirtualNetwork $vnetcheck -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
                 if (!$subnetcheck) {
                     if ($clientSettings.RequireNSG) {
-                        Add-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNamePROD -AddressPrefix 10.$addressSpace.1.0/24 -VirtualNetwork $vnetcheck -NetworkSecurityGroup $clientSettings.nsgPROD -ServiceEndpoint 'Microsoft.KeyVault' | Set-AzVirtualNetwork | Out-Null
+                        Add-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNamePROD -AddressPrefix 10.$addressSpace.1.0/24 -VirtualNetwork $vnetcheck -NetworkSecurityGroup $clientSettings.nsgPROD -ServiceEndpoint 'Microsoft.KeyVault', 'Microsoft.StorageAccount' | Set-AzVirtualNetwork | Out-Null
                     }
                     else {
-                        Add-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNamePROD -AddressPrefix 10.$addressSpace.1.0/24 -VirtualNetwork $vnetcheck -ServiceEndpoint 'Microsoft.KeyVault' | Set-AzVirtualNetwork | Out-Null
+                        Add-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNamePROD -AddressPrefix 10.$addressSpace.1.0/24 -VirtualNetwork $vnetcheck -ServiceEndpoint 'Microsoft.KeyVault', 'Microsoft.StorageAccount' | Set-AzVirtualNetwork | Out-Null
                     }
                 }
                 if ($clientSettings.RequireBastion) {
@@ -167,13 +167,14 @@ function ConfigureNetwork {
                 }
             }
             else {
+                Write-AEBLog 'PROD VNET not required'
                 $subnetcheck = Get-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNamePROD -VirtualNetwork $vnetcheck -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
                 if (!$subnetcheck) {
                     if ($clientSettings.RequireNSG) {
-                        Add-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNamePROD -AddressPrefix 10.$addressSpace.1.0/24 -VirtualNetwork $vnetcheck -NetworkSecurityGroup $clientSettings.nsgPROD -ServiceEndpoint 'Microsoft.KeyVault' | Set-AzVirtualNetwork | Out-Null
+                        Add-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNamePROD -AddressPrefix 10.$addressSpace.1.0/24 -VirtualNetwork $vnetcheck -NetworkSecurityGroup $clientSettings.nsgPROD -ServiceEndpoint 'Microsoft.KeyVault', 'Microsoft.StorageAccount' | Set-AzVirtualNetwork | Out-Null
                     }
                     else {
-                        Add-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNamePROD -AddressPrefix 10.$addressSpace.1.0/24 -VirtualNetwork $vnetcheck -ServiceEndpoint 'Microsoft.KeyVault' | Set-AzVirtualNetwork | Out-Null
+                        Add-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNamePROD -AddressPrefix 10.$addressSpace.1.0/24 -VirtualNetwork $vnetcheck -ServiceEndpoint 'Microsoft.KeyVault', 'Microsoft.StorageAccount' | Set-AzVirtualNetwork | Out-Null
                     }
                 }
             }
@@ -280,7 +281,7 @@ function ConfigureNetwork {
         foreach ($environment in $clientSettings.vnets.GetEnumerator()) {
             switch ($environment.Name) {
                 'PROD' {
-                    $resourceCheck = Get-AzBastion -ResourceGroupName $clientSettings.RGNamePRODVNET -Name $clientSettings.BastionNamePROD -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+                    $resourceCheck = Get-AzResource -ResourceGroupName $clientSettings.RGNamePRODVNET -Name "$($clientSettings.BastionNamePROD)-pip" -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
                     if (!$resourceCheck) {
                         Write-AEBLog "Creating Bastion for VNET $($clientSettings.vnets.$($environment.Name)[0])"
                         $publicip = New-AzPublicIpAddress -ResourceGroupName $clientSettings.RGNamePRODVNET -Name "$($clientSettings.BastionNamePROD)-pip" -Location $clientSettings.location -AllocationMethod Static -Sku Standard
@@ -295,7 +296,8 @@ function ConfigureNetwork {
                 }
 
                 'DEV' {
-                    $resourceCheck = Get-AzBastion -ResourceGroupName $clientSettings.RGNameDEVVNET -Name $clientSettings.BastionNameDEV -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+                    #Start-Sleep -Seconds 60
+                    $resourceCheck = Get-AzResource -ResourceGroupName $clientSettings.RGNameDEVVNET -Name "$($clientSettings.BastionNameDEV)-pip" -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
                     if (!$resourceCheck) {
                         Write-AEBLog "Creating Bastion for VNET $($clientSettings.vnets.$($environment.Name)[0])"
                         $publicip = New-AzPublicIpAddress -ResourceGroupName $clientSettings.RGNameDEVVNET -Name "$($clientSettings.BastionNameDEV)-pip" -Location $clientSettings.location -AllocationMethod Static -Sku Standard
@@ -352,14 +354,39 @@ function CreateRBACConfig {
 function CreateStorageAccount {
     if ($clientSettings.RequireStorageAccount -and !$clientSettings.UseTerraform) {
         Write-AEBLog 'Creating Storage Account'
+        $vnetIDs = [System.Collections.ArrayList]@()
+        foreach ($vnet in $clientSettings.vnets.Prod.GetEnumerator()) {
+            $vnetcheck = Get-AzVirtualNetwork -ResourceGroupName $clientSettings.RGNamePRODVNET -Name $vnet.Value -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+            $subnetcheck = Get-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNamePROD -VirtualNetwork $vnetcheck -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+            $vnetIDs.Add($subnetcheck.Id) | Out-Null
+        }
+        foreach ($vnet in $clientSettings.vnets.Dev.GetEnumerator()) {
+            $vnetcheck = Get-AzVirtualNetwork -ResourceGroupName $clientSettings.RGNameDEVVNET -Name $vnet.Value -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+            $subnetcheck = Get-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNameDEV -VirtualNetwork $vnetcheck -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+            $vnetIDs.Add($subnetcheck.Id) | Out-Null
+        }
+        $myPublicIP = (Invoke-WebRequest ifconfig.me/ip -UseBasicParsing).Content
+
         $storageAccount = Get-AzStorageAccount -ResourceGroupName $clientSettings.RGNameSTORE -AccountName $clientSettings.StorageAccountName -ErrorAction SilentlyContinue
         if ($storageAccount) {
             Write-AEBLog '*** Storage Account already exists ***' -Level Error
             return
         }
-        $storageAccount = New-AzStorageAccount -ResourceGroupName $clientSettings.RGNameSTORE -AccountName $clientSettings.StorageAccountName -Location $clientSettings.location -SkuName Standard_LRS -Kind StorageV2 -AccessTier Hot -AllowBlobPublicAccess $false -MinimumTlsVersion TLS1_2
-        New-AzStorageAccount -ResourceGroupName $clientSettings.RGNameSTORE -AccountName 'testdan102asfd' -Location $clientSettings.location -SkuName Standard_LRS -Kind StorageV2 -AccessTier Hot -AllowBlobPublicAccess $false -MinimumTlsVersion TLS1_2
+        $storageAccount = New-AzStorageAccount `
+            -ResourceGroupName $clientSettings.RGNameSTORE `
+            -AccountName $clientSettings.StorageAccountName `
+            -Location $clientSettings.location `
+            -SkuName Standard_LRS `
+            -Kind StorageV2 `
+            -AccessTier Hot `
+            -AllowBlobPublicAccess $false `
+            -MinimumTlsVersion TLS1_2
         Start-Sleep -Seconds 10
+        Update-AzStorageAccountNetworkRuleSet -ResourceGroupName $clientSettings.RGNameSTORE -Name $clientSettings.StorageAccountName -DefaultAction Deny
+        foreach ($vnet in $vnetIDs) {
+            Add-AzStorageAccountNetworkRule -ResourceGroupName $clientSettings.RGNameSTORE -Name $clientSettings.StorageAccountName -VirtualNetworkResourceId $vnet
+        }
+        Add-AzStorageAccountNetworkRule -ResourceGroupName $clientSettings.RGNameSTORE -Name $clientSettings.StorageAccountName -IPAddressOrRange $myPublicIP
         $script:ctx = $storageAccount.Context
         $Container = New-AzStorageContainer -Name $clientSettings.ContainerName -Context $ctx -Permission Off
         if ($storageAccount.StorageAccountName -eq $clientSettings.StorageAccountName -and $Container.Name -eq $clientSettings.ContainerName) {

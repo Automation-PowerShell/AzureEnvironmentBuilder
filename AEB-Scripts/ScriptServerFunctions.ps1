@@ -181,7 +181,8 @@ function ConfigServer-Script {
     if ($VMCreate.ProvisioningState -eq 'Succeeded') {
         Write-AEBLog "VM: $VMName created successfully"
 
-        $NewVm = Get-AzADServicePrincipal -DisplayName $VMName
+        #$NewVm = Get-AzADServicePrincipal -DisplayName $VMName
+        $NewVm = (Get-AzADServicePrincipal -DisplayName $VMName | Where-Object { $_.AlternativeName[-1] -match $clientSettings.RGNamePROD })
         Start-Sleep -Seconds 30
         if ($clientSettings.RequireServicePrincipal) {
             Get-AzContext -Name 'StorageSP' | Select-AzContext | Out-Null
