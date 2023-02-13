@@ -64,7 +64,7 @@
             "AdminUsername": "AppPackager",
             "Tags": [
                 {
-                    "Service": "AEB",
+                    "Application": "AEB",
                     "AEB-Client": "TestClientX",
                     "AEB-Application": "Desktop-Standard",
                     "AEB-Environment": "Dev"
@@ -115,7 +115,7 @@
             "AdminUsername": "AppPackager",
             "Tags": [
                 {
-                    "Service": "AEB",
+                    "Application": "AEB",
                     "AEB-Client": "TestClientX",
                     "AEB-Application": "Desktop-Packaging",
                     "AEB-Environment": "Dev"
@@ -163,7 +163,7 @@
             "AdminUsername": "AppPackager",
             "Tags": [
                 {
-                    "Service": "AEB",
+                    "Application": "AEB",
                     "AEB-Client": "TestClientX",
                     "AEB-Application": "Desktop-AdminStudio",
                     "AEB-Environment": "Dev"
@@ -202,7 +202,7 @@
             "AdminUsername": "AppPackager",
             "Tags": [
                 {
-                    "Service": "AEB",
+                    "Application": "AEB",
                     "AEB-Client": "TestClientX",
                     "AEB-Application": "Desktop-Jumpbox",
                     "AEB-Environment": "Dev"
@@ -253,7 +253,7 @@
             "AdminUsername": "AppPackager",
             "Tags": [
                 {
-                    "Service": "AEB",
+                    "Application": "AEB",
                     "AEB-Client": "TestClientX",
                     "AEB-Application": "Desktop-Core",
                     "AEB-Environment": "Dev"
@@ -265,7 +265,7 @@
         {
             "PublisherName": "MicrosoftWindowsServer",
             "Offer": "WindowsServer",
-            "SKUS": "2019-Datacenter",
+            "SKUS": "2022-datacenter-azure-edition",
             "Version": "latest",
             "Apps": [
                 {
@@ -275,7 +275,7 @@
                     "Name": "Conf-ConfigureDataDisk"
                 }
             ],
-            "VMSize": "Standard_D4s_v4",
+            "VMSize": "Standard_B2ms",
             "VMNamePrefix": "vm-euc-srv-0",
             "VMNumberStart": "1",
             "dataDiskTier": "S10",
@@ -284,15 +284,15 @@
             "BuildShutdownOnComplete": true,
             "AutoShutdownRequired": false,
             "AutoShutdownTime": 0,
-            "VnetRef": "vnet-prod-domain",
-            "Environment": "PROD",
-            "AdminUsername": "administrator",
+            "VnetRef": "vnet-dev-azure",
+            "Environment": "DEV",
+            "AdminUsername": "aebadmin",
             "Tags": [
                 {
-                    "Service": "AEB",
+                    "Application": "AEB",
                     "AEB-Client": "TestClientX",
                     "AEB-Application": "Server-Standard",
-                    "AEB-Environment": "Prod"
+                    "AEB-Environment": "DEV"
                 }
             ]
         }
@@ -301,7 +301,7 @@
         {
             "PublisherName": "MicrosoftWindowsServer",
             "Offer": "WindowsServer",
-            "SKUS": "2019-Datacenter",
+            "SKUS": "2022-datacenter-azure-edition",
             "Version": "latest",
             "Apps": [
                 {
@@ -323,7 +323,7 @@
                     "Name": "Conf-Build-VM"
                 }
             ],
-            "VMSize": "Standard_D4s_v4",
+            "VMSize": "Standard_B2ms",
             "VMNamePrefix": "vm-euc-hyprv-0",
             "VMNumberStart": "1",
             "dataDiskTier": "S10",
@@ -334,10 +334,10 @@
             "AutoShutdownTime": 0,
             "VnetRef": "vnet-prod-azure",
             "Environment": "PROD",
-            "AdminUsername": "administrator",
+            "AdminUsername": "aebadmin",
             "Tags": [
                 {
-                    "Service": "AEB",
+                    "Application": "AEB",
                     "AEB-Client": "TestClientX",
                     "AEB-Application": "Server-HyperV",
                     "AEB-Environment": "Prod"
@@ -368,7 +368,7 @@
                     "Name": "Conf-EnableDomainController3"
                 }
             ],
-            "VMSize": "Standard_D4s_v4",
+            "VMSize": "Standard_B2ms",
             "VMNamePrefix": "vm-euc-dc-0",
             "VMNumberStart": "1",
             "dataDiskTier": "S10",
@@ -379,10 +379,10 @@
             "AutoShutdownTime": 0,
             "VnetRef": "vnet-prod-domain",
             "Environment": "PROD",
-            "AdminUsername": "administrator",
+            "AdminUsername": "aebadmin",
             "Tags": [
                 {
-                    "Service": "AEB",
+                    "Application": "AEB",
                     "AEB-Client": "TestClientX",
                     "AEB-Application": "Server-DomainController",
                     "AEB-Environment": "Prod"
@@ -416,7 +416,7 @@
                 //    "Name": "App-7-Zip"
                 //}
             ],
-            "VMSize": "Standard_D4s_v4",
+            "VMSize": "Standard_B2ms",
             "VMNamePrefix": "vm-euc-sccm-0",
             "VMNumberStart": "1",
             "dataDiskTier": "S10",
@@ -427,10 +427,10 @@
             "AutoShutdownTime": 0,
             "VnetRef": "vnet-prod-domain",
             "Environment": "PROD",
-            "AdminUsername": "administrator",
+            "AdminUsername": "aebadmin",
             "Tags": [
                 {
-                    "Service": "AEB",
+                    "Application": "AEB",
                     "AEB-Client": "TestClientX",
                     "AEB-Application": "Server-ConfigManager",
                     "AEB-Environment": "Prod"

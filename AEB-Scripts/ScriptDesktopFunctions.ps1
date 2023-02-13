@@ -17,8 +17,11 @@ function CreateDesktop-Script {
         $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$VMSpec.Environment).RGName -Location $clientSettings.Location -SubnetId $Subnet.Id -PublicIpAddressId $PIP.Id
     }
     else { $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$VMSpec.Environment).RGName -Location $clientSettings.Location -SubnetId $Subnet.Id }
+
+    $cred = New-Object System.Management.Automation.PSCredential ($deviceSpecs.$VMSpec.AdminUsername, $LocalAdminPassword)
+
     $VirtualMachine = New-AzVMConfig -VMName $VMName -VMSize $deviceSpecs.$VMSpec.VMSize -IdentityType SystemAssigned -Tags $tags
-    $VirtualMachine = Set-AzVMOperatingSystem -VM $VirtualMachine -Windows -ComputerName $VMName -Credential $LocalAdminCred #-ProvisionVMAgent -EnableAutoUpdate
+    $VirtualMachine = Set-AzVMOperatingSystem -VM $VirtualMachine -Windows -ComputerName $VMName -Credential $cred #-ProvisionVMAgent -EnableAutoUpdate
     $VirtualMachine = Add-AzVMNetworkInterface -VM $VirtualMachine -Id $NIC.Id
     $VirtualMachine = Set-AzVMSourceImage -VM $VirtualMachine -PublisherName $deviceSpecs.$VMSpec.PublisherName -Offer $deviceSpecs.$VMSpec.Offer -Skus $deviceSpecs.$VMSpec.SKUS -Version $deviceSpecs.$VMSpec.Version
     $VirtualMachine = Set-AzVMBootDiagnostic -VM $VirtualMachine -Disable

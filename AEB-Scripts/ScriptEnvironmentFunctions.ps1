@@ -278,38 +278,18 @@ function ConfigureNetwork {
     }#>
     if ($clientSettings.RequireBastion) {
         Write-AEBLog 'Creating Bastions'
-        foreach ($environment in $clientSettings.vnets.GetEnumerator()) {
-            switch ($environment.Name) {
-                'PROD' {
-                    $resourceCheck = Get-AzResource -ResourceGroupName $clientSettings.rgs.PROD.RGNameVNET -Name "$($clientSettings.BastionNamePROD)-pip" -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
-                    if (!$resourceCheck) {
-                        Write-AEBLog "Creating Bastion for VNET $($clientSettings.vnets.$($environment.Name)[0])"
-                        $publicip = New-AzPublicIpAddress -ResourceGroupName $clientSettings.rgs.PROD.RGNameVNET -Name "$($clientSettings.BastionNamePROD)-pip" -Location $clientSettings.location -AllocationMethod Static -Sku Standard
-                        $resource = New-AzBastion -ResourceGroupName $clientSettings.rgs.PROD.RGNameVNET -Name $clientSettings.BastionNamePROD `
-                            -PublicIpAddressRgName $clientSettings.rgs.PROD.RGNameVNET -PublicIpAddressName "$($clientSettings.BastionNamePROD)-pip" `
-                            -VirtualNetworkRgName $clientSettings.rgs.PROD.RGNameVNET -VirtualNetworkName $clientSettings.vnets.$($environment.Name)[0] `
-                            -Sku Basic -AsJob
-                    }
-                    else {
-                        Write-AEBLog "Bastion for VNET $($clientSettings.vnets.$($environment.Name)[0]) not required"
-                    }
-                }
-
-                'DEV' {
-                    #Start-Sleep -Seconds 60
-                    $resourceCheck = Get-AzResource -ResourceGroupName $clientSettings.rgs.DEV.RGNameVNET -Name "$($clientSettings.BastionNameDEV)-pip" -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
-                    if (!$resourceCheck) {
-                        Write-AEBLog "Creating Bastion for VNET $($clientSettings.vnets.$($environment.Name)[0])"
-                        $publicip = New-AzPublicIpAddress -ResourceGroupName $clientSettings.rgs.DEV.RGNameVNET -Name "$($clientSettings.BastionNameDEV)-pip" -Location $clientSettings.location -AllocationMethod Static -Sku Standard
-                        $resource = New-AzBastion -ResourceGroupName $clientSettings.rgs.DEV.RGNameVNET -Name $clientSettings.BastionNameDEV `
-                            -PublicIpAddressRgName $clientSettings.rgs.DEV.RGNameVNET -PublicIpAddressName "$($clientSettings.BastionNameDEV)-pip" `
-                            -VirtualNetworkRgName $clientSettings.rgs.DEV.RGNameVNET -VirtualNetworkName $clientSettings.vnets.$($environment.Name)[0] `
-                            -Sku Basic -AsJob
-                    }
-                    else {
-                        Write-AEBLog "Bastion for VNET $($clientSettings.vnets.$($environment.Name)[0]) not required"
-                    }
-                }
+        foreach ($environment in $clientSettings.vnets.GetEnumerator().Name) {
+            $resourceCheck = Get-AzResource -ResourceGroupName $clientSettings.rgs.$environment.RGNameVNET -Name "$($clientSettings.bastions.$environment.BastionName)-pip" -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+            if (!$resourceCheck) {
+                Write-AEBLog "Commisioning Bastion for $environment VNETS in RG: $($clientSettings.rgs.$environment.RGNameVNET)"
+                $publicip = New-AzPublicIpAddress -ResourceGroupName $clientSettings.rgs.$environment.RGNameVNET -Name "$($clientSettings.bastions.$environment.BastionName)-pip" -Location $clientSettings.location -AllocationMethod Static -Sku Standard
+                $resource = New-AzBastion -ResourceGroupName $clientSettings.rgs.$environment.RGNameVNET -Name $clientSettings.$clientSettings.bastions.$environment.BastionName `
+                    -PublicIpAddressRgName $clientSettings.rgs.$environment.RGNameVNET -PublicIpAddressName "$($clientSettings.bastions.$environment.BastionName)-pip" `
+                    -VirtualNetworkRgName $clientSettings.rgs.$environment.RGNameVNET -VirtualNetworkName $clientSettings.vnets.$environment[0] `
+                    -Sku Basic -AsJob
+            }
+            else {
+                Write-AEBLog "Bastion for $environment VNETs in RG: $($clientSettings.rgs.$environment.RGNameVNET) not required"
             }
         }
     }
