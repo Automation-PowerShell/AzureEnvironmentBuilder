@@ -42,14 +42,14 @@
 }#>
 
 function RunVMConfig($ResourceGroup, $VMName, $BlobFilePath, $Blob) {
-    $script:fileUri = @($($BlobFilePath+$SAS))
+    $script:fileUri = @($($BlobFilePath + $SAS))
     $settings = @{'fileUris' = $fileUri }
 
     #managedIdentity = @{}
     #StorageAccountName = $StorageAccountName
     #StorageAccountKey  = $Keys.value[0]
     $protectedSettings = @{
-        commandToExecute   = "powershell -ExecutionPolicy Unrestricted -File $Blob"
+        commandToExecute = "powershell -ExecutionPolicy Unrestricted -File $Blob"
     }
 
     #$VMConfigure = Set-AzVMCustomScriptExtension @Params -ErrorAction SilentlyContinue
@@ -319,7 +319,10 @@ function ConnectTo-Azure {
         Get-AzContext | Rename-AzContext -TargetName 'StorageSP' -Force | Out-Null
         Get-AzContext -Name 'User' | Select-AzContext | Out-Null
     }
-    $script:Keys = Get-AzStorageAccountKey -ResourceGroupName $clientSettings.RGNameSTORE -AccountName $clientSettings.StorageAccountName -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
-    $script:ctx = New-AzStorageContext -StorageAccountName $clientSettings.StorageAccountName -StorageAccountKey $Keys.value[0] -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
-    $script:SAS = New-AzStorageContainerSASToken -Name $clientSettings.ContainerName -Context $ctx -Permission r -StartTime $(Get-Date) -ExpiryTime $((Get-Date).AddDays(1)) -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+    $resource = Get-AzResource -ResourceGroupName $clientSettings.RGNameSTORE -Name $clientSettings.StorageAccountName
+    if ($resource) {
+        $script:Keys = Get-AzStorageAccountKey -ResourceGroupName $clientSettings.RGNameSTORE -AccountName $clientSettings.StorageAccountName
+        $script:ctx = New-AzStorageContext -StorageAccountName $clientSettings.StorageAccountName -StorageAccountKey $Keys.value[0]
+        $script:SAS = New-AzStorageContainerSASToken -Name $clientSettings.ContainerName -Context $ctx -Permission r -StartTime $(Get-Date) -ExpiryTime $((Get-Date).AddDays(1))
+    }
 }
