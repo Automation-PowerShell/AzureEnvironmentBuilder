@@ -33,46 +33,60 @@ $clientSettings = [ordered]@{
     RequireUserGroups = $false                          # Do User Groups need creating?
     RequireRBAC = $true                                 # Use RBAC groups model or directly add Managed Identities to Storage Account
     RequireResourceGroups = $false                      # Should a Resource Group be created? (or use existing)
-    RequireStorageAccount = $true                      # Should a Storage Account be created (or use existing)
+    RequireStorageAccount = $true                       # Should a Storage Account be created (or use existing)
     RequireVNET = $true                                 # Should a VNET be created (or use existing)
     RequireNSG = $true                                  # Should an NSG be created (or use existing)
     RequirePublicIPs = $false                           # Should Public IPs be used
     RequireBastion = $true                              # Should Bastion be used
-    RequireKeyVault = $true                            # Create KeyVault (used for storing passwords)
+    RequireKeyVault = $true                             # Create KeyVault (used for storing passwords)
 
     RequireStandardVMs = $true                          # Should Standard VMs be created?
     RequirePackagingVMs = $false                        # Should Packaging VMs be created?
     RequireAdminStudioVMs = $false                      # Should AdminStudio VMs be created?
     RequireJumpboxVMs = $false                          # Should Jumpbox VMs be created?
     RequireCoreVMs = $false                             # Should Core VMs be created???
-    RequireStdSrv = $false                              # Should a Standard Server VM be created?
+    RequireStdSrv = $true                               # Should a Standard Server VM be created?
     RequireHyperV = $false                              # Should a Hyper-V Server VM be created?
     RequireDC = $true                                   # Should a Domain Controller Server VM be created?
     RequireSCCM = $true                                 # Should a SCCM Server VM be created?
 
-    NumberofStandardVMs = 1                             # Specify number of Standard VMs to be provisioned
+    NumberofStandardVMs = 0                             # Specify number of Standard VMs to be provisioned
     NumberofPackagingVMs = 0                            # Specify number of Packaging VMs to be provisioned
     NumberofAdminStudioVMs = 0                          # Specify number of AdminStudio VMs to be provisioned
     NumberofJumpboxVMs = 0                              # Specify number of Jumpbox VMs to be provisioned
     NumberofCoreVMs = 0                                 # Specify number of Core VMs to be provisioned
-    NumberofStdSrvVMs = 0                               # Specify number of Standard Server VMs to be provisioned
+    NumberofStdSrvVMs = 1                               # Specify number of Standard Server VMs to be provisioned
     NumberofHyperVVMs = 0                               # Specify number of HyperV Server VMs to be provisioned
     NumberofDCVMs = 0                                   # Specify number of Domain Controller Server VMs to be provisioned
     NumberofSCCMVMs = 0                                 # Specify number of SCCM Server VMs to be provisioned
 
     # General Config Variables
     location = 'uksouth'                                # Azure Region for resources to be built into
-    RGNameSTORE = 'rg-TestClient1'                      # Storage Account & KeyVault Resource Group name
-    RGNameDEV = 'rg-TestClient1'                        # DEV Resource Group name
-    RGNamePROD = 'rg-TestClient1'                       # PROD Resource Group name
-    RGNameDEVVNET = 'rg-TestClient1'                    # DEV VNET Resource Group name
-    RGNamePRODVNET = 'rg-TestClient1'                   # PROD VNET Resource Group name
-    SubnetNameDEV = 'subnet-dev'                        # Environment Virtual Subnet name
-    SubnetNamePROD = 'subnet-prod'                      # Environment Virtual Subnet name
+    #RGNameSTORE = 'rg-TestClient1'                      # Storage Account & KeyVault Resource Group name
+    #RGNameDEV = 'rg-TestClient1'                        # DEV Resource Group name
+    #RGNamePROD = 'rg-TestClient1'                       # PROD Resource Group name
+    #RGNameDEVVNET = 'rg-TestClient1'                    # DEV VNET Resource Group name
+    #RGNamePRODVNET = 'rg-TestClient1'                   # PROD VNET Resource Group name
+    #SubnetNameDEV = 'subnet-dev'                        # Environment Virtual Subnet name
+    #SubnetNamePROD = 'subnet-prod'                      # Environment Virtual Subnet name
     NsgNameDEV = 'nsg-TestClient1'                      # DEV Network Security Group name (firewall)
     NsgNamePROD = 'nsg-TestClient1'                     # PROD Network Security Group name (firewall)
-    BastionNameDEV = 'bastion-TestClient1'              # DEV Bastion name
-    BastionNamePROD = 'bastion-TestClient1'             # PROD Bastion name
+    #BastionNameDEV = 'bastion-TestClient1'              # DEV Bastion name
+    #BastionNamePROD = 'bastion-TestClient1'             # PROD Bastion name
+
+    rgs = @{
+        PROD = [ordered]@{
+            RGName = 'rg-TestClient1'
+            RGNameVNET = 'rg-TestClient1'
+        }
+        DEV = [ordered]@{
+            RGName = 'rg-TestClient1'
+            RGNameVNET = 'rg-TestClient1'
+        }
+        STORE = [ordered]@{
+            RGName = 'rg-TestClient1'
+        }
+    }
 
     vnets = @{
         PROD = [ordered]@{
@@ -82,6 +96,24 @@ $clientSettings = [ordered]@{
         DEV = [ordered]@{
             'vnet-dev-azure' = 'vnet-TestClient1-azure'
             'vnet-dev-domain' = 'vnet-TestClient1-domain'
+        }
+    }
+
+    subnets = @{
+        PROD = [ordered]@{
+            SubnetName = 'subnet-prod'
+        }
+        DEV = [ordered]@{
+            SubnetName = 'subnet-dev'
+        }
+    }
+
+    bastions = @{
+        PROD = [ordered]@{
+            BastionName = 'bastion-TestClient1'
+        }
+        DEV = [ordered]@{
+            BastionName = 'bastion-TestClient1'
         }
     }
 
