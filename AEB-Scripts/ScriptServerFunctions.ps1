@@ -7,7 +7,7 @@ function ScriptBuild-Create-Server {
         While ($Count -le $clientSettings.NumberofStdSrvVMs) {
             Write-AEBLog "Creating $Count of $($clientSettings.NumberofStdSrvVMs) VMs"
             $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
-            $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $clientSettings.RGNamePROD -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+            $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if (!$VMCheck) {
                 CreateServer-Script -VMName $VM -VMSpec $deviceType
             }
@@ -28,7 +28,7 @@ function ScriptBuild-Create-Server {
         While ($Count -le $clientSettings.NumberofHyperVVMs) {
             Write-AEBLog "Creating $Count of $($clientSettings.NumberofHyperVVMs) VMs"
             $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
-            $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $clientSettings.RGNamePROD -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+            $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if (!$VMCheck) {
                 CreateServer-Script -VMName $VM -VMSpec $deviceType
             }
@@ -49,7 +49,7 @@ function ScriptBuild-Create-Server {
         While ($Count -le $clientSettings.NumberofDCVMs) {
             Write-AEBLog "Creating $Count of $($clientSettings.NumberofDCVMs) VMs"
             $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
-            $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $clientSettings.RGNamePROD -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+            $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if (!$VMCheck) {
                 CreateServer-Script -VMName $VM -VMSpec $deviceType
             }
@@ -70,7 +70,7 @@ function ScriptBuild-Create-Server {
         While ($Count -le $clientSettings.NumberofSCCMVMs) {
             Write-AEBLog "Creating $Count of $($clientSettings.NumberofSCCMVMs) VMs"
             $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
-            $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $clientSettings.RGNamePROD -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+            $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if (!$VMCheck) {
                 CreateServer-Script -VMName $VM -VMSpec $deviceType
             }
@@ -155,20 +155,20 @@ function CreateServer-Script {
         $tags.Add($name, $value)
     }
 
-    $Vnet = Get-AzVirtualNetwork -Name $clientSettings.vnets.PROD.($deviceSpecs.$VMSpec.VnetRef) -ResourceGroupName $clientSettings.RGNamePRODVNET
-    $Subnet = Get-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNamePROD -VirtualNetwork $Vnet
+    $Vnet = Get-AzVirtualNetwork -Name $clientSettings.vnets.($deviceSpecs.$VMSpec.Environment).($deviceSpecs.$VMSpec.VnetRef) -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$VMSpec.Environment).RGNameVNET
+    $Subnet = Get-AzVirtualNetworkSubnetConfig -Name $clientSettings.subnets.($deviceSpecs.$VMSpec.Environment).SubnetName -VirtualNetwork $Vnet
     if ($clientSettings.RequirePublicIPs) {
-        $PIP = New-AzPublicIpAddress -Name "$VMName-pip" -ResourceGroupName $clientSettings.RGNamePROD -Location $clientSettings.Location -AllocationMethod Dynamic -Sku Basic -Tier Regional -IpAddressVersion IPv4
-        $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $clientSettings.RGNamePROD -Location $clientSettings.Location -SubnetId $Subnet.Id -PublicIpAddressId $PIP.Id
+        $PIP = New-AzPublicIpAddress -Name "$VMName-pip" -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$VMSpec.Environment).RGName -Location $clientSettings.Location -AllocationMethod Dynamic -Sku Basic -Tier Regional -IpAddressVersion IPv4
+        $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$VMSpec.Environment).RGName -Location $clientSettings.Location -SubnetId $Subnet.Id -PublicIpAddressId $PIP.Id
     }
-    else { $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $clientSettings.RGNamePROD -Location $clientSettings.Location -SubnetId $Subnet.Id }
+    else { $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$VMSpec.Environment).RGName -Location $clientSettings.Location -SubnetId $Subnet.Id }
     $VirtualMachine = New-AzVMConfig -VMName $VMName -VMSize $deviceSpecs.$VMSpec.VMSize -IdentityType SystemAssigned -Tags $tags
     $VirtualMachine = Set-AzVMOperatingSystem -VM $VirtualMachine -Windows -ComputerName $VMName -Credential $LocalAdminCred #-ProvisionVMAgent -EnableAutoUpdate
     $VirtualMachine = Add-AzVMNetworkInterface -VM $VirtualMachine -Id $NIC.Id
     $VirtualMachine = Set-AzVMSourceImage -VM $VirtualMachine -PublisherName $deviceSpecs.$VMSpec.PublisherName -Offer $deviceSpecs.$VMSpec.Offer -Skus $deviceSpecs.$VMSpec.SKUS -Version $deviceSpecs.$VMSpec.Version
     $VirtualMachine = Set-AzVMBootDiagnostic -VM $VirtualMachine -Disable
 
-    New-AzVM -ResourceGroupName $clientSettings.RGNamePROD -Location $clientSettings.Location -VM $VirtualMachine -Verbose | Out-Null
+    New-AzVM -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$VMSpec.Environment).RGName -Location $clientSettings.Location -VM $VirtualMachine -Verbose | Out-Null
 }
 
 function ConfigServer-Script {
@@ -177,12 +177,12 @@ function ConfigServer-Script {
         [Parameter(Position = 1, Mandatory)][String]$VMSpec
     )
 
-    $VMCreate = Get-AzVM -ResourceGroupName $clientSettings.RGNamePROD -Name $VMName
+    $VMCreate = Get-AzVM -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$VMSpec.Environment).RGName -Name $VMName
     if ($VMCreate.ProvisioningState -eq 'Succeeded') {
         Write-AEBLog "VM: $VMName created successfully"
 
         #$NewVm = Get-AzADServicePrincipal -DisplayName $VMName
-        $NewVm = (Get-AzADServicePrincipal -DisplayName $VMName | Where-Object { $_.AlternativeName[-1] -match $clientSettings.RGNamePROD })
+        $NewVm = (Get-AzADServicePrincipal -DisplayName $VMName | Where-Object { $_.AlternativeName[-1] -match $clientSettings.rgs.($deviceSpecs.$VMSpec.Environment).RGName })
         Start-Sleep -Seconds 30
         if ($clientSettings.RequireServicePrincipal) {
             Get-AzContext -Name 'StorageSP' | Select-AzContext | Out-Null
@@ -192,7 +192,7 @@ function ConfigServer-Script {
             Add-AzADGroupMember -TargetGroupObjectId $Group.Id -MemberObjectId $NewVm.Id -Verbose | Out-Null
         }
         else {
-            New-AzRoleAssignment -ObjectId $NewVm.Id -RoleDefinitionName 'Contributor' -Scope "/subscriptions/$($clientSettings.azSubscription)/resourceGroups/$($clientSettings.RGNameSTORE)/providers/Microsoft.Storage/storageAccounts/$($clientSettings.StorageAccountName)" -Verbose -ErrorAction SilentlyContinue | Out-Null
+            New-AzRoleAssignment -ObjectId $NewVm.Id -RoleDefinitionName 'Contributor' -Scope "/subscriptions/$($clientSettings.azSubscription)/resourceGroups/$($clientSettings.rgs.STORE.RGName)/providers/Microsoft.Storage/storageAccounts/$($clientSettings.StorageAccountName)" -Verbose -ErrorAction SilentlyContinue | Out-Null
         }
         Get-AzContext -Name 'User' | Select-AzContext | Out-Null
         Set-AzKeyVaultAccessPolicy -ObjectId $NewVm.Id -VaultName $clientSettings.keyVaultName -PermissionsToSecrets Get
@@ -200,15 +200,15 @@ function ConfigServer-Script {
         # Add Data disk to Server
         $dataDiskName = $VMName + '_datadisk1'
         $diskConfig = New-AzDiskConfig -SkuName $deviceSpecs.$VMSpec.dataDiskSKU -Location $clientSettings.location -CreateOption Empty -DiskSizeGB $deviceSpecs.$VMSpec.dataDiskSize
-        $dataDisk1 = New-AzDisk -DiskName $dataDiskName -Disk $diskConfig -ResourceGroupName $clientSettings.RGNamePROD
+        $dataDisk1 = New-AzDisk -DiskName $dataDiskName -Disk $diskConfig -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$VMSpec.Environment).RGName
         Add-AzVMDataDisk -VM $VMCreate -Name $dataDiskName -CreateOption Attach -ManagedDiskId $dataDisk1.Id -Lun 1 -Verbose | Out-Null
-        Update-AzVM -VM $VMCreate -ResourceGroupName $clientSettings.RGNamePROD -Verbose | Out-Null
+        Update-AzVM -VM $VMCreate -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$VMSpec.Environment).RGName -Verbose | Out-Null
 
-        Restart-AzVM -ResourceGroupName $clientSettings.RGNamePROD -Name $VMName | Out-Null
+        Restart-AzVM -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$VMSpec.Environment).RGName -Name $VMName | Out-Null
         Write-AEBLog "VM: $VMName - Restarting VM for 60 Seconds..."
         Start-Sleep -Seconds 60
 
-        ConfigureVM -VMName $VMName -VMSpec $VMSpec -RG $clientSettings.RGNamePROD
+        ConfigureVM -VMName $VMName -VMSpec $VMSpec -RG $clientSettings.rgs.($deviceSpecs.$VMSpec.Environment).RGName
     }
     else {
         Write-AEBLog "*** VM: $VMName - Unable to configure Virtual Machine! ***" -Level Error

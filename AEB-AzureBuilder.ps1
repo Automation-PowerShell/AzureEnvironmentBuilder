@@ -67,25 +67,25 @@ if ($clientSettings.isProd) { Write-Warning 'Are you sure you want to rebuild th
 if ($clientSettings.RequireCreate) {
     # Create Resource Groups
     if ($clientSettings.RequireResourceGroups -and !$clientSettings.UseTerraform) {
-        $RG = New-AzResourceGroup -Name $clientSettings.RGNamePROD -Location $clientSettings.Location
-        if ($RG.ResourceGroupName -eq $clientSettings.RGNamePROD) { Write-AEBLog 'PROD Resource Group created successfully' } else { Write-AEBLog '*** Unable to create PROD Resource Group! ***' -Level Error }
-        if (!($clientSettings.RGNameDEV -match $clientSettings.RGNamePROD)) {
-            $RG = New-AzResourceGroup -Name $clientSettings.RGNameDEV -Location $clientSettings.Location
-            if ($RG.ResourceGroupName -eq $clientSettings.RGNameDEV) { Write-AEBLog 'DEV Resource Group created successfully' } else { Write-AEBLog '*** Unable to create DEV Resource Group! ***' -Level Error }
+        $RG = New-AzResourceGroup -Name $clientSettings.rgs.PROD.RGName -Location $clientSettings.Location
+        if ($RG.ResourceGroupName -eq $clientSettings.rgs.PROD.RGName) { Write-AEBLog 'PROD Resource Group created successfully' } else { Write-AEBLog '*** Unable to create PROD Resource Group! ***' -Level Error }
+        if (!($clientSettings.rgs.DEV.RGName -match $clientSettings.rgs.PROD.RGName)) {
+            $RG = New-AzResourceGroup -Name $clientSettings.rgs.DEV.RGName -Location $clientSettings.Location
+            if ($RG.ResourceGroupName -eq $clientSettings.rgs.DEV.RGName) { Write-AEBLog 'DEV Resource Group created successfully' } else { Write-AEBLog '*** Unable to create DEV Resource Group! ***' -Level Error }
         }
-        if (!($clientSettings.RGNameDEV -match $clientSettings.RGNameDEVVNET)) {
-            $RG = New-AzResourceGroup -Name $clientSettings.RGNameDEVVNET -Location $clientSettings.Location
-            if ($RG.ResourceGroupName -eq $clientSettings.RGNameDEVVNET) { Write-AEBLog 'DEV VNET Resource Group created successfully' } else { Write-AEBLog '*** Unable to create DEV VNET Resource Group! ***' -Level Error }
+        if (!($clientSettings.rgs.DEV.RGName -match $clientSettings.rgs.DEV.RGNameVNET)) {
+            $RG = New-AzResourceGroup -Name $clientSettings.rgs.DEV.RGNameVNET -Location $clientSettings.Location
+            if ($RG.ResourceGroupName -eq $clientSettings.$clientSettings.rgs.DEV.RGNameVNET) { Write-AEBLog 'DEV VNET Resource Group created successfully' } else { Write-AEBLog '*** Unable to create DEV VNET Resource Group! ***' -Level Error }
         }
-        if (!($clientSettings.RGNamePROD -match $clientSettings.RGNamePRODVNET)) {
-            $RG = New-AzResourceGroup -Name $clientSettings.RGNamePRODVNET -Location $clientSettings.Location
-            if ($RG.ResourceGroupName -eq $clientSettings.RGNamePRODVNET) { Write-AEBLog 'PROD VNET Resource Group created successfully' } else { Write-AEBLog '*** Unable to create PROD VNET Resource Group! ***' -Level Error }
+        if (!($clientSettings.rgs.PROD.RGName -match $clientSettings.rgs.PROD.RGNameVNET)) {
+            $RG = New-AzResourceGroup -Name $clientSettings.rgs.PROD.RGNameVNET -Location $clientSettings.Location
+            if ($RG.ResourceGroupName -eq $clientSettings.rgs.PROD.RGNameVNET) { Write-AEBLog 'PROD VNET Resource Group created successfully' } else { Write-AEBLog '*** Unable to create PROD VNET Resource Group! ***' -Level Error }
         }
-        if (!($clientSettings.RGNamePROD -match $clientSettings.RGNameSTORE) -and $clientSettings.RequireStorageAccount) {
-            $RG = Get-AzResourceGroup -Name $clientSettings.RGNameSTORE -ErrorAction SilentlyContinue
+        if (!($clientSettings.rgs.PROD.RGName -match $clientSettings.rgs.STORE.RGName) -and $clientSettings.RequireStorageAccount) {
+            $RG = Get-AzResourceGroup -Name $clientSettings.rgs.STORE.RGName -ErrorAction SilentlyContinue
             if (!$RG) {
-                $RG = New-AzResourceGroup -Name $clientSettings.RGNameSTORE -Location $clientSettings.Location
-                if ($RG.ResourceGroupName -eq $clientSettings.RGNameSTORE) { Write-AEBLog 'STORE Resource Group created successfully' } else { Write-AEBLog '*** Unable to create STORE Resource Group! ***' -Level Error }
+                $RG = New-AzResourceGroup -Name $clientSettings.rgs.STORE.RGName -Location $clientSettings.Location
+                if ($RG.ResourceGroupName -eq $clientSettings.rgs.STORE.RGName) { Write-AEBLog 'STORE Resource Group created successfully' } else { Write-AEBLog '*** Unable to create STORE Resource Group! ***' -Level Error }
             }
             else {
                 Write-AEBLog 'STORE Resource Group already exists'
@@ -93,7 +93,7 @@ if ($clientSettings.RequireCreate) {
         }
     }
     else {
-        $RG = Get-AzResourceGroup -Name $clientSettings.RGNamePROD -ErrorAction SilentlyContinue
+        $RG = Get-AzResourceGroup -Name $clientSettings.rgs.PROD.RGName -ErrorAction SilentlyContinue
         if (!$RG) {
             Write-AEBLog '*** Resouce Groups are missing ***' -Level Error
             Write-Dump

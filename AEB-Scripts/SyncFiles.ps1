@@ -28,7 +28,7 @@ Write-AEBLog 'Running SyncFiles.ps1'
 Try {
     switch ($CallFromCreatePackaging) {
         $True {
-            SyncFiles -LocalPath $clientSettings.BlobFilesDest -ResourceGroupName $clientSettings.RGNameSTORE -ContainerName $clientSettings.ContainerName -StorageAccountName $clientSettings.StorageAccountName
+            SyncFiles -LocalPath $clientSettings.BlobFilesDest -ResourceGroupName $clientSettings.rgs.STORE.RGName -ContainerName $clientSettings.ContainerName -StorageAccountName $clientSettings.StorageAccountName
         }
         $False {
             #SyncFiles -LocalPath $SFLocalPath -ResourceGroupName $SFResourceGroupName -StorageAccountName $SFStorageAccountName -ContainerName $SFContainerName

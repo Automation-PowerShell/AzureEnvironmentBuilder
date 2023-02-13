@@ -11,7 +11,7 @@ function UpdateStorage {
                 $content = $content.replace('yyyyy', $Keys.value[0])
                 $content = $content.replace('ddddd', $clientSettings.Domain)
                 $content = $content.replace('ooooo', $clientSettings.OUPath)
-                $content = $content.replace('rrrrr', $clientSettings.RGNameSTORE)
+                $content = $content.replace('rrrrr', $clientSettings.rgs.STORE.RGName)
                 $content = $content.replace('fffff', $clientSettings.FileShareName)
                 $content = $content.replace('kkkkk', $clientSettings.keyVaultName)
                 $content = $content.replace('wwwww', $clientSettings.HyperVVMIsoImagePath)
@@ -44,18 +44,18 @@ function UpdateRBAC {
         Write-Dump
     }
 
-    New-AzRoleAssignment -ObjectId $OwnerGroup.Id -RoleDefinitionName 'Owner' -ResourceGroupName $clientSettings.RGNamePROD -ErrorAction Ignore | Out-Null
-    New-AzRoleAssignment -ObjectId $ContributorGroup.Id -RoleDefinitionName 'Contributor' -ResourceGroupName $clientSettings.RGNamePROD -ErrorAction Ignore | Out-Null
-    New-AzRoleAssignment -ObjectId $ReadOnlyGroup.Id -RoleDefinitionName 'Reader' -ResourceGroupName $clientSettings.RGNamePROD -ErrorAction Ignore | Out-Null
-    if (!($clientSettings.RGNameDEV -match $clientSettings.RGNamePROD)) {
-        New-AzRoleAssignment -ObjectId $OwnerGroup.Id -RoleDefinitionName 'Owner' -ResourceGroupName $clientSettings.RGNameDEV -ErrorAction Ignore | Out-Null
-        New-AzRoleAssignment -ObjectId $ContributorGroup.Id -RoleDefinitionName 'Contributor' -ResourceGroupName $clientSettings.RGNameDEV -ErrorAction Ignore | Out-Null
-        New-AzRoleAssignment -ObjectId $ReadOnlyGroup.Id -RoleDefinitionName 'Reader' -ResourceGroupName $clientSettings.RGNameDEV -ErrorAction Ignore | Out-Null
+    New-AzRoleAssignment -ObjectId $OwnerGroup.Id -RoleDefinitionName 'Owner' -ResourceGroupName $clientSettings.rgs.PROD.RGName -ErrorAction Ignore | Out-Null
+    New-AzRoleAssignment -ObjectId $ContributorGroup.Id -RoleDefinitionName 'Contributor' -ResourceGroupName $clientSettings.rgs.PROD.RGName -ErrorAction Ignore | Out-Null
+    New-AzRoleAssignment -ObjectId $ReadOnlyGroup.Id -RoleDefinitionName 'Reader' -ResourceGroupName $clientSettings.rgs.PROD.RGName -ErrorAction Ignore | Out-Null
+    if (!($clientSettings.rgs.DEV.RGName -match $clientSettings.rgs.PROD.RGName)) {
+        New-AzRoleAssignment -ObjectId $OwnerGroup.Id -RoleDefinitionName 'Owner' -ResourceGroupName $clientSettings.rgs.DEV.RGName -ErrorAction Ignore | Out-Null
+        New-AzRoleAssignment -ObjectId $ContributorGroup.Id -RoleDefinitionName 'Contributor' -ResourceGroupName $clientSettings.rgs.DEV.RGName -ErrorAction Ignore | Out-Null
+        New-AzRoleAssignment -ObjectId $ReadOnlyGroup.Id -RoleDefinitionName 'Reader' -ResourceGroupName $clientSettings.rgs.DEV.RGName -ErrorAction Ignore | Out-Null
     }
-    if (!($clientSettings.RGNameSTORE -match $clientSettings.RGNamePROD)) {
-        New-AzRoleAssignment -ObjectId $OwnerGroup.Id -RoleDefinitionName 'Owner' -ResourceGroupName $clientSettings.RGNameSTORE -ErrorAction Ignore | Out-Null
-        New-AzRoleAssignment -ObjectId $ContributorGroup.Id -RoleDefinitionName 'Contributor' -ResourceGroupName $clientSettings.RGNameSTORE -ErrorAction Ignore | Out-Null
-        New-AzRoleAssignment -ObjectId $ReadOnlyGroup.Id -RoleDefinitionName 'Reader' -ResourceGroupName $clientSettings.RGNameSTORE -ErrorAction Ignore | Out-Null
+    if (!($clientSettings.rgs.STORE.RGName -match $clientSettings.rgs.PROD.RGName)) {
+        New-AzRoleAssignment -ObjectId $OwnerGroup.Id -RoleDefinitionName 'Owner' -ResourceGroupName $clientSettings.rgs.STORE.RGName -ErrorAction Ignore | Out-Null
+        New-AzRoleAssignment -ObjectId $ContributorGroup.Id -RoleDefinitionName 'Contributor' -ResourceGroupName $clientSettings.rgs.STORE.RGName -ErrorAction Ignore | Out-Null
+        New-AzRoleAssignment -ObjectId $ReadOnlyGroup.Id -RoleDefinitionName 'Reader' -ResourceGroupName $clientSettings.rgs.STORE.RGName -ErrorAction Ignore | Out-Null
     }
     Write-AEBLog 'Role Assignments Set'
 }
@@ -108,9 +108,9 @@ function ConfigureNetwork {
         $rule4 = New-AzNetworkSecurityRuleConfig -Name 'AllowVnetOutBound' -Description 'AllowVnetOutBound' -Access Allow -Protocol * -Direction Outbound -Priority 4000 -SourceAddressPrefix 'VirtualNetwork' -SourcePortRange * -DestinationAddressPrefix 'VirtualNetwork' -DestinationPortRange *
         $rule5 = New-AzNetworkSecurityRuleConfig -Name 'internet-deny-rule' -Description 'Deny All Internet' -Access Deny -Protocol * -Direction Outbound -Priority 4096 -SourceAddressPrefix * -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange *
 
-        $resourceCheck = Get-AzNetworkSecurityGroup -ResourceGroupName $clientSettings.RGNamePRODVNET -Name $clientSettings.NsgNamePROD -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+        $resourceCheck = Get-AzNetworkSecurityGroup -ResourceGroupName $clientSettings.rgs.PROD.RGNameVNET -Name $clientSettings.NsgNamePROD -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
         if (!$resourceCheck) {
-            $nsgPROD = New-AzNetworkSecurityGroup -ResourceGroupName $clientSettings.RGNamePRODVNET -Location $clientSettings.location -Name $clientSettings.NsgNamePROD -SecurityRules $rule1, $rule2, $rule3, $rule4, $rule5 -Force    # $Rule1, $Rule2 etc.
+            $nsgPROD = New-AzNetworkSecurityGroup -ResourceGroupName $clientSettings.rgs.PROD.RGNameVNET -Location $clientSettings.location -Name $clientSettings.NsgNamePROD -SecurityRules $rule1, $rule2, $rule3, $rule4, $rule5 -Force    # $Rule1, $Rule2 etc.
             if ($nsgPROD.ProvisioningState -eq 'Succeeded') {
                 Write-AEBLog 'PROD Network Security Group created successfully'
             }
@@ -122,9 +122,9 @@ function ConfigureNetwork {
         else {
             Write-AEBLog 'PROD Network Security Group not required'
         }
-        $nsgcheck = Get-AzNetworkSecurityGroup -ResourceGroupName $clientSettings.RGNameDEVVNET -Name $clientSettings.NsgNameDEV
+        $nsgcheck = Get-AzNetworkSecurityGroup -ResourceGroupName $clientSettings.rgs.DEV.RGNameVNET -Name $clientSettings.NsgNameDEV
         if (!$nsgcheck) {
-            $nsgDEV = New-AzNetworkSecurityGroup -ResourceGroupName $clientSettings.RGNameDEVVNET -Location $clientSettings.location -Name $clientSettings.NsgNameDEV -SecurityRules $rule1, $rule2, $rule3, $rule4 -Force   # $Rule1, $Rule2 etc.
+            $nsgDEV = New-AzNetworkSecurityGroup -ResourceGroupName $clientSettings.rgs.DEV.RGNameVNET -Location $clientSettings.location -Name $clientSettings.NsgNameDEV -SecurityRules $rule1, $rule2, $rule3, $rule4 -Force   # $Rule1, $Rule2 etc.
             if ($nsgDEV.ProvisioningState -eq 'Succeeded') {
                 Write-AEBLog 'DEV Network Security Group created successfully'
             }
@@ -143,9 +143,9 @@ function ConfigureNetwork {
         Write-AEBLog 'Creating VNETs'
         $addressSpace = 0
         foreach ($vnet in $clientSettings.vnets.Prod.GetEnumerator()) {
-            $vnetcheck = Get-AzVirtualNetwork -ResourceGroupName $clientSettings.RGNamePRODVNET -Name $vnet.Value -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+            $vnetcheck = Get-AzVirtualNetwork -ResourceGroupName $clientSettings.rgs.PROD.RGNameVNET -Name $vnet.Value -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if (!$vnetcheck) {
-                $vnetcheck = New-AzVirtualNetwork -ResourceGroupName $clientSettings.RGNamePRODVNET -Location $clientSettings.Location -Name $vnet.Value -AddressPrefix 10.$addressSpace.0.0/22
+                $vnetcheck = New-AzVirtualNetwork -ResourceGroupName $clientSettings.rgs.PROD.RGNameVNET -Location $clientSettings.Location -Name $vnet.Value -AddressPrefix 10.$addressSpace.0.0/22
                 if ($vnetcheck.ProvisioningState -eq 'Succeeded') {
                     Write-AEBLog 'PROD VNET created successfully'
                 }
@@ -153,13 +153,13 @@ function ConfigureNetwork {
                     Write-AEBLog '*** Unable to create PROD VNET! ***' -Level Error
                     Write-Dump
                 }
-                $subnetcheck = Get-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNamePROD -VirtualNetwork $vnetcheck -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+                $subnetcheck = Get-AzVirtualNetworkSubnetConfig -Name $clientSettings.subnets.PROD.SubnetName -VirtualNetwork $vnetcheck -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
                 if (!$subnetcheck) {
                     if ($clientSettings.RequireNSG) {
-                        Add-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNamePROD -AddressPrefix 10.$addressSpace.1.0/24 -VirtualNetwork $vnetcheck -NetworkSecurityGroup $clientSettings.nsgPROD -ServiceEndpoint 'Microsoft.KeyVault', 'Microsoft.Storage' | Set-AzVirtualNetwork | Out-Null
+                        Add-AzVirtualNetworkSubnetConfig -Name $clientSettings.subnets.PROD.SubnetName -AddressPrefix 10.$addressSpace.1.0/24 -VirtualNetwork $vnetcheck -NetworkSecurityGroup $clientSettings.nsgPROD -ServiceEndpoint 'Microsoft.KeyVault', 'Microsoft.Storage' | Set-AzVirtualNetwork | Out-Null
                     }
                     else {
-                        Add-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNamePROD -AddressPrefix 10.$addressSpace.1.0/24 -VirtualNetwork $vnetcheck -ServiceEndpoint 'Microsoft.KeyVault', 'Microsoft.Storage' | Set-AzVirtualNetwork | Out-Null
+                        Add-AzVirtualNetworkSubnetConfig -Name $clientSettings.subnets.PROD.SubnetName -AddressPrefix 10.$addressSpace.1.0/24 -VirtualNetwork $vnetcheck -ServiceEndpoint 'Microsoft.KeyVault', 'Microsoft.Storage' | Set-AzVirtualNetwork | Out-Null
                     }
                 }
                 if ($clientSettings.RequireBastion) {
@@ -168,13 +168,13 @@ function ConfigureNetwork {
             }
             else {
                 Write-AEBLog 'PROD VNET not required'
-                $subnetcheck = Get-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNamePROD -VirtualNetwork $vnetcheck -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+                $subnetcheck = Get-AzVirtualNetworkSubnetConfig -Name $clientSettings.subnets.PROD.SubnetName -VirtualNetwork $vnetcheck -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
                 if (!$subnetcheck) {
                     if ($clientSettings.RequireNSG) {
-                        Add-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNamePROD -AddressPrefix 10.$addressSpace.1.0/24 -VirtualNetwork $vnetcheck -NetworkSecurityGroup $clientSettings.nsgPROD -ServiceEndpoint 'Microsoft.KeyVault', 'Microsoft.Storage' | Set-AzVirtualNetwork | Out-Null
+                        Add-AzVirtualNetworkSubnetConfig -Name $clientSettings.subnets.PROD.SubnetName -AddressPrefix 10.$addressSpace.1.0/24 -VirtualNetwork $vnetcheck -NetworkSecurityGroup $clientSettings.nsgPROD -ServiceEndpoint 'Microsoft.KeyVault', 'Microsoft.Storage' | Set-AzVirtualNetwork | Out-Null
                     }
                     else {
-                        Add-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNamePROD -AddressPrefix 10.$addressSpace.1.0/24 -VirtualNetwork $vnetcheck -ServiceEndpoint 'Microsoft.KeyVault', 'Microsoft.Storage' | Set-AzVirtualNetwork | Out-Null
+                        Add-AzVirtualNetworkSubnetConfig -Name $clientSettings.subnets.PROD.SubnetName -AddressPrefix 10.$addressSpace.1.0/24 -VirtualNetwork $vnetcheck -ServiceEndpoint 'Microsoft.KeyVault', 'Microsoft.Storage' | Set-AzVirtualNetwork | Out-Null
                     }
                 }
             }
@@ -183,9 +183,9 @@ function ConfigureNetwork {
 
         $addressSpace = 0
         foreach ($vnet in $clientSettings.vnets.Dev.GetEnumerator()) {
-            $vnetcheck = Get-AzVirtualNetwork -ResourceGroupName $clientSettings.RGNameDEVVNET -Name $vnet.Value -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+            $vnetcheck = Get-AzVirtualNetwork -ResourceGroupName $clientSettings.rgs.DEV.RGNameVNET -Name $vnet.Value -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if (!$vnetcheck) {
-                $vnetcheck = New-AzVirtualNetwork -ResourceGroupName $clientSettings.RGNameDEVVNET -Location $clientSettings.Location -Name $vnet.Value -AddressPrefix 10.$addressSpace.0.0/22
+                $vnetcheck = New-AzVirtualNetwork -ResourceGroupName $clientSettings.rgs.DEV.RGNameVNET -Location $clientSettings.Location -Name $vnet.Value -AddressPrefix 10.$addressSpace.0.0/22
                 if ($vnetcheck.ProvisioningState -eq 'Succeeded') {
                     Write-AEBLog 'DEV VNET created successfully'
                 }
@@ -193,13 +193,13 @@ function ConfigureNetwork {
                     Write-AEBLog '*** Unable to create DEV VNET! ***' -Level Error
                     Write-Dump
                 }
-                $subnetcheck = Get-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNameDEV -VirtualNetwork $vnetcheck -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+                $subnetcheck = Get-AzVirtualNetworkSubnetConfig -Name $clientSettings.subnets.DEV.SubnetName -VirtualNetwork $vnetcheck -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
                 if (!$subnetcheck) {
                     if ($clientSettings.RequireNSG) {
-                        Add-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNameDEV -AddressPrefix 10.$addressSpace.2.0/24 -VirtualNetwork $vnetcheck -NetworkSecurityGroup $clientSettings.nsgDEV -ServiceEndpoint 'Microsoft.KeyVault', 'Microsoft.Storage' | Set-AzVirtualNetwork | Out-Null
+                        Add-AzVirtualNetworkSubnetConfig -Name $clientSettings.subnets.DEV.SubnetName -AddressPrefix 10.$addressSpace.2.0/24 -VirtualNetwork $vnetcheck -NetworkSecurityGroup $clientSettings.nsgDEV -ServiceEndpoint 'Microsoft.KeyVault', 'Microsoft.Storage' | Set-AzVirtualNetwork | Out-Null
                     }
                     else {
-                        Add-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNameDEV -AddressPrefix 10.$addressSpace.2.0/24 -VirtualNetwork $vnetcheck -ServiceEndpoint 'Microsoft.KeyVault', 'Microsoft.Storage' | Set-AzVirtualNetwork | Out-Null
+                        Add-AzVirtualNetworkSubnetConfig -Name $clientSettings.subnets.DEV.SubnetName -AddressPrefix 10.$addressSpace.2.0/24 -VirtualNetwork $vnetcheck -ServiceEndpoint 'Microsoft.KeyVault', 'Microsoft.Storage' | Set-AzVirtualNetwork | Out-Null
                     }
                 }
                 if ($clientSettings.RequireBastion) {
@@ -208,13 +208,13 @@ function ConfigureNetwork {
             }
             else {
                 Write-AEBLog 'DEV VNET not required'
-                $subnetcheck = Get-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNameDEV -VirtualNetwork $vnetcheck -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+                $subnetcheck = Get-AzVirtualNetworkSubnetConfig -Name $clientSettings.subnets.DEV.SubnetName -VirtualNetwork $vnetcheck -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
                 if (!$subnetcheck) {
                     if ($clientSettings.RequireNSG) {
-                        Add-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNameDEV -AddressPrefix 10.$addressSpace.2.0/24 -VirtualNetwork $vnetcheck -NetworkSecurityGroup $clientSettings.nsgDEV -ServiceEndpoint 'Microsoft.KeyVault', 'Microsoft.Storage' | Set-AzVirtualNetwork | Out-Null
+                        Add-AzVirtualNetworkSubnetConfig -Name $clientSettings.subnets.DEV.SubnetName -AddressPrefix 10.$addressSpace.2.0/24 -VirtualNetwork $vnetcheck -NetworkSecurityGroup $clientSettings.nsgDEV -ServiceEndpoint 'Microsoft.KeyVault', 'Microsoft.Storage' | Set-AzVirtualNetwork | Out-Null
                     }
                     else {
-                        Add-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNameDEV -AddressPrefix 10.$addressSpace.2.0/24 -VirtualNetwork $vnetcheck -ServiceEndpoint 'Microsoft.KeyVault', 'Microsoft.Storage' | Set-AzVirtualNetwork | Out-Null
+                        Add-AzVirtualNetworkSubnetConfig -Name $clientSettings.subnets.DEV.SubnetName -AddressPrefix 10.$addressSpace.2.0/24 -VirtualNetwork $vnetcheck -ServiceEndpoint 'Microsoft.KeyVault', 'Microsoft.Storage' | Set-AzVirtualNetwork | Out-Null
                     }
                 }
             }
@@ -226,9 +226,9 @@ function ConfigureNetwork {
             switch ($environment.Name) {
                 'PROD' {
                     $counter = 1
-                    $vnetbase = Get-AzVirtualNetwork -ResourceGroupName $clientSettings.RGNamePRODVNET -Name $clientSettings.vnets.$($environment.Name)[0] -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+                    $vnetbase = Get-AzVirtualNetwork -ResourceGroupName $clientSettings.rgs.PROD.RGNameVNET -Name $clientSettings.vnets.$($environment.Name)[0] -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
                     while ($counter -lt $clientSettings.vnets.$($environment.Name).Count) {
-                        $vnetCounter = Get-AzVirtualNetwork -ResourceGroupName $clientSettings.RGNamePRODVNET -Name $clientSettings.vnets.$($environment.Name)[$counter] -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+                        $vnetCounter = Get-AzVirtualNetwork -ResourceGroupName $clientSettings.rgs.PROD.RGNameVNET -Name $clientSettings.vnets.$($environment.Name)[$counter] -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
                         Add-AzVirtualNetworkPeering -Name "peer-0-to-$counter" -VirtualNetwork $vnetbase -RemoteVirtualNetworkId $vnetCounter.Id -ErrorAction SilentlyContinue | Out-Null
                         Add-AzVirtualNetworkPeering -Name "peer-$counter-to-0" -VirtualNetwork $vnetCounter -RemoteVirtualNetworkId $vnetbase.Id -ErrorAction SilentlyContinue | Out-Null
                         $counter++
@@ -237,9 +237,9 @@ function ConfigureNetwork {
 
                 'DEV' {
                     $counter = 1
-                    $vnetbase = Get-AzVirtualNetwork -ResourceGroupName $clientSettings.RGNamePRODVNET -Name $clientSettings.vnets.$($environment.Name)[0] -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+                    $vnetbase = Get-AzVirtualNetwork -ResourceGroupName $clientSettings.rgs.DEV.RGNameVNET -Name $clientSettings.vnets.$($environment.Name)[0] -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
                     while ($counter -lt $clientSettings.vnets.$($environment.Name).Count) {
-                        $vnetCounter = Get-AzVirtualNetwork -ResourceGroupName $clientSettings.RGNamePRODVNET -Name $clientSettings.vnets.$($environment.Name)[$counter] -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+                        $vnetCounter = Get-AzVirtualNetwork -ResourceGroupName $clientSettings.rgs.DEV.RGNameVNET -Name $clientSettings.vnets.$($environment.Name)[$counter] -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
                         Add-AzVirtualNetworkPeering -Name "peer-0-to-$counter" -VirtualNetwork $vnetbase -RemoteVirtualNetworkId $vnetCounter.Id -ErrorAction SilentlyContinue | Out-Null
                         Add-AzVirtualNetworkPeering -Name "peer-$counter-to-0" -VirtualNetwork $vnetCounter -RemoteVirtualNetworkId $vnetbase.Id -ErrorAction SilentlyContinue | Out-Null
                         $counter++
@@ -281,13 +281,13 @@ function ConfigureNetwork {
         foreach ($environment in $clientSettings.vnets.GetEnumerator()) {
             switch ($environment.Name) {
                 'PROD' {
-                    $resourceCheck = Get-AzResource -ResourceGroupName $clientSettings.RGNamePRODVNET -Name "$($clientSettings.BastionNamePROD)-pip" -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+                    $resourceCheck = Get-AzResource -ResourceGroupName $clientSettings.rgs.PROD.RGNameVNET -Name "$($clientSettings.BastionNamePROD)-pip" -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
                     if (!$resourceCheck) {
                         Write-AEBLog "Creating Bastion for VNET $($clientSettings.vnets.$($environment.Name)[0])"
-                        $publicip = New-AzPublicIpAddress -ResourceGroupName $clientSettings.RGNamePRODVNET -Name "$($clientSettings.BastionNamePROD)-pip" -Location $clientSettings.location -AllocationMethod Static -Sku Standard
-                        $resource = New-AzBastion -ResourceGroupName $clientSettings.RGNamePRODVNET -Name $clientSettings.BastionNamePROD `
-                            -PublicIpAddressRgName $clientSettings.RGNamePRODVNET -PublicIpAddressName "$($clientSettings.BastionNamePROD)-pip" `
-                            -VirtualNetworkRgName $clientSettings.RGNamePRODVNET -VirtualNetworkName $clientSettings.vnets.$($environment.Name)[0] `
+                        $publicip = New-AzPublicIpAddress -ResourceGroupName $clientSettings.rgs.PROD.RGNameVNET -Name "$($clientSettings.BastionNamePROD)-pip" -Location $clientSettings.location -AllocationMethod Static -Sku Standard
+                        $resource = New-AzBastion -ResourceGroupName $clientSettings.rgs.PROD.RGNameVNET -Name $clientSettings.BastionNamePROD `
+                            -PublicIpAddressRgName $clientSettings.rgs.PROD.RGNameVNET -PublicIpAddressName "$($clientSettings.BastionNamePROD)-pip" `
+                            -VirtualNetworkRgName $clientSettings.rgs.PROD.RGNameVNET -VirtualNetworkName $clientSettings.vnets.$($environment.Name)[0] `
                             -Sku Basic -AsJob
                     }
                     else {
@@ -297,13 +297,13 @@ function ConfigureNetwork {
 
                 'DEV' {
                     #Start-Sleep -Seconds 60
-                    $resourceCheck = Get-AzResource -ResourceGroupName $clientSettings.RGNameDEVVNET -Name "$($clientSettings.BastionNameDEV)-pip" -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+                    $resourceCheck = Get-AzResource -ResourceGroupName $clientSettings.rgs.DEV.RGNameVNET -Name "$($clientSettings.BastionNameDEV)-pip" -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
                     if (!$resourceCheck) {
                         Write-AEBLog "Creating Bastion for VNET $($clientSettings.vnets.$($environment.Name)[0])"
-                        $publicip = New-AzPublicIpAddress -ResourceGroupName $clientSettings.RGNameDEVVNET -Name "$($clientSettings.BastionNameDEV)-pip" -Location $clientSettings.location -AllocationMethod Static -Sku Standard
-                        $resource = New-AzBastion -ResourceGroupName $clientSettings.RGNameDEVVNET -Name $clientSettings.BastionNameDEV `
-                            -PublicIpAddressRgName $clientSettings.RGNameDEVVNET -PublicIpAddressName "$($clientSettings.BastionNameDEV)-pip" `
-                            -VirtualNetworkRgName $clientSettings.RGNameDEVVNET -VirtualNetworkName $clientSettings.vnets.$($environment.Name)[0] `
+                        $publicip = New-AzPublicIpAddress -ResourceGroupName $clientSettings.rgs.DEV.RGNameVNET -Name "$($clientSettings.BastionNameDEV)-pip" -Location $clientSettings.location -AllocationMethod Static -Sku Standard
+                        $resource = New-AzBastion -ResourceGroupName $clientSettings.rgs.DEV.RGNameVNET -Name $clientSettings.BastionNameDEV `
+                            -PublicIpAddressRgName $clientSettings.rgs.DEV.RGNameVNET -PublicIpAddressName "$($clientSettings.BastionNameDEV)-pip" `
+                            -VirtualNetworkRgName $clientSettings.rgs.DEV.RGNameVNET -VirtualNetworkName $clientSettings.vnets.$($environment.Name)[0] `
                             -Sku Basic -AsJob
                     }
                     else {
@@ -356,24 +356,24 @@ function CreateStorageAccount {
         Write-AEBLog 'Creating Storage Account'
         $vnetIDs = [System.Collections.ArrayList]@()
         foreach ($vnet in $clientSettings.vnets.Prod.GetEnumerator()) {
-            $vnetcheck = Get-AzVirtualNetwork -ResourceGroupName $clientSettings.RGNamePRODVNET -Name $vnet.Value -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
-            $subnetcheck = Get-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNamePROD -VirtualNetwork $vnetcheck -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+            $vnetcheck = Get-AzVirtualNetwork -ResourceGroupName $clientSettings.rgs.PROD.RGNameVNET -Name $vnet.Value -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+            $subnetcheck = Get-AzVirtualNetworkSubnetConfig -Name $clientSettings.subnets.PROD.SubnetName -VirtualNetwork $vnetcheck -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             $vnetIDs.Add($subnetcheck.Id) | Out-Null
         }
         foreach ($vnet in $clientSettings.vnets.Dev.GetEnumerator()) {
-            $vnetcheck = Get-AzVirtualNetwork -ResourceGroupName $clientSettings.RGNameDEVVNET -Name $vnet.Value -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
-            $subnetcheck = Get-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNameDEV -VirtualNetwork $vnetcheck -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+            $vnetcheck = Get-AzVirtualNetwork -ResourceGroupName $clientSettings.rgs.DEV.RGNameVNET -Name $vnet.Value -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+            $subnetcheck = Get-AzVirtualNetworkSubnetConfig -Name $clientSettings.subnets.DEV.SubnetName -VirtualNetwork $vnetcheck -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             $vnetIDs.Add($subnetcheck.Id) | Out-Null
         }
         $myPublicIP = (Invoke-WebRequest ifconfig.me/ip -UseBasicParsing).Content
 
-        $storageAccount = Get-AzStorageAccount -ResourceGroupName $clientSettings.RGNameSTORE -AccountName $clientSettings.StorageAccountName -ErrorAction SilentlyContinue
+        $storageAccount = Get-AzStorageAccount -ResourceGroupName $clientSettings.rgs.STORE.RGName -AccountName $clientSettings.StorageAccountName -ErrorAction SilentlyContinue
         if ($storageAccount) {
             Write-AEBLog '*** Storage Account already exists ***' -Level Error
             return
         }
         $storageAccount = New-AzStorageAccount `
-            -ResourceGroupName $clientSettings.RGNameSTORE `
+            -ResourceGroupName $clientSettings.rgs.STORE.RGName `
             -AccountName $clientSettings.StorageAccountName `
             -Location $clientSettings.location `
             -SkuName Standard_LRS `
@@ -382,11 +382,6 @@ function CreateStorageAccount {
             -AllowBlobPublicAccess $false `
             -MinimumTlsVersion TLS1_2
         Start-Sleep -Seconds 10
-        Update-AzStorageAccountNetworkRuleSet -ResourceGroupName $clientSettings.RGNameSTORE -Name $clientSettings.StorageAccountName -DefaultAction Deny
-        foreach ($vnet in $vnetIDs) {
-            Add-AzStorageAccountNetworkRule -ResourceGroupName $clientSettings.RGNameSTORE -Name $clientSettings.StorageAccountName -VirtualNetworkResourceId $vnet
-        }
-        Add-AzStorageAccountNetworkRule -ResourceGroupName $clientSettings.RGNameSTORE -Name $clientSettings.StorageAccountName -IPAddressOrRange $myPublicIP
         $script:ctx = $storageAccount.Context
         $Container = New-AzStorageContainer -Name $clientSettings.ContainerName -Context $ctx -Permission Off
         if ($storageAccount.StorageAccountName -eq $clientSettings.StorageAccountName -and $Container.Name -eq $clientSettings.ContainerName) {
@@ -404,8 +399,13 @@ function CreateStorageAccount {
             Write-AEBLog '*** Unable to create the Storage Share! ***' -Level Error
             Write-Dump
         }
-        $script:Keys = Get-AzStorageAccountKey -ResourceGroupName $clientSettings.RGNameSTORE -AccountName $clientSettings.StorageAccountName
+        $script:Keys = Get-AzStorageAccountKey -ResourceGroupName $clientSettings.rgs.STORE.RGName -AccountName $clientSettings.StorageAccountName
         $script:SAS = New-AzStorageContainerSASToken -Name $clientSettings.ContainerName -Context $ctx -Permission r -StartTime $(Get-Date) -ExpiryTime $((Get-Date).AddDays(1))
+        Update-AzStorageAccountNetworkRuleSet -ResourceGroupName $clientSettings.rgs.STORE.RGName -Name $clientSettings.StorageAccountName -DefaultAction Deny
+        foreach ($vnet in $vnetIDs) {
+            Add-AzStorageAccountNetworkRule -ResourceGroupName $clientSettings.rgs.STORE.RGName -Name $clientSettings.StorageAccountName -VirtualNetworkResourceId $vnet | Out-Null
+        }
+        Add-AzStorageAccountNetworkRule -ResourceGroupName $clientSettings.rgs.STORE.RGName -Name $clientSettings.StorageAccountName -IPAddressOrRange $myPublicIP | Out-Null
     }
     else {
         Write-AEBLog 'Creation of Storage Account and Storage Container not required'
@@ -417,20 +417,20 @@ function CreateKeyVault {
         Write-AEBLog 'Creating KeyVault'
         $vnetIDs = [System.Collections.ArrayList]@()
         foreach ($vnet in $clientSettings.vnets.Prod.GetEnumerator()) {
-            $vnetcheck = Get-AzVirtualNetwork -ResourceGroupName $clientSettings.RGNamePRODVNET -Name $vnet.Value -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
-            $subnetcheck = Get-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNamePROD -VirtualNetwork $vnetcheck -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+            $vnetcheck = Get-AzVirtualNetwork -ResourceGroupName $clientSettings.rgs.PROD.RGNameVNET -Name $vnet.Value -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+            $subnetcheck = Get-AzVirtualNetworkSubnetConfig -Name $clientSettings.subnets.PROD.SubnetName -VirtualNetwork $vnetcheck -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             $vnetIDs.Add($subnetcheck.Id) | Out-Null
         }
         foreach ($vnet in $clientSettings.vnets.Dev.GetEnumerator()) {
-            $vnetcheck = Get-AzVirtualNetwork -ResourceGroupName $clientSettings.RGNameDEVVNET -Name $vnet.Value -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
-            $subnetcheck = Get-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNameDEV -VirtualNetwork $vnetcheck -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+            $vnetcheck = Get-AzVirtualNetwork -ResourceGroupName $clientSettings.rgs.DEV.RGNameVNET -Name $vnet.Value -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+            $subnetcheck = Get-AzVirtualNetworkSubnetConfig -Name $clientSettings.subnets.DEV.SubnetName -VirtualNetwork $vnetcheck -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             $vnetIDs.Add($subnetcheck.Id) | Out-Null
         }
         $myPublicIP = (Invoke-WebRequest ifconfig.me/ip -UseBasicParsing).Content
 
-        $resource = Get-AzKeyVault -VaultName $clientSettings.keyVaultName -ResourceGroupName $clientSettings.RGNameSTORE -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+        $resource = Get-AzKeyVault -VaultName $clientSettings.keyVaultName -ResourceGroupName $clientSettings.rgs.STORE.RGName -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
         if ($clientSettings.RequireKeyVault -and !$resource) {
-            $resource = New-AzKeyVault -VaultName $clientSettings.keyVaultName -ResourceGroupName $clientSettings.RGNameSTORE -Location $clientSettings.Location -EnabledForDeployment #-EnableRbacAuthorization
+            $resource = New-AzKeyVault -VaultName $clientSettings.keyVaultName -ResourceGroupName $clientSettings.rgs.STORE.RGName -Location $clientSettings.Location -EnabledForDeployment #-EnableRbacAuthorization
             #if ($resource.ProvisioningState -eq 'Succeeded') {          # Bug with ProvisioningState
             #    Write-AEBLog 'KeyVault created successfully'
             #}
