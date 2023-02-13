@@ -156,10 +156,10 @@ function ConfigureNetwork {
                 $subnetcheck = Get-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNamePROD -VirtualNetwork $vnetcheck -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
                 if (!$subnetcheck) {
                     if ($clientSettings.RequireNSG) {
-                        Add-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNamePROD -AddressPrefix 10.$addressSpace.1.0/24 -VirtualNetwork $vnetcheck -NetworkSecurityGroup $clientSettings.nsgPROD -ServiceEndpoint 'Microsoft.KeyVault', 'Microsoft.StorageAccount' | Set-AzVirtualNetwork | Out-Null
+                        Add-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNamePROD -AddressPrefix 10.$addressSpace.1.0/24 -VirtualNetwork $vnetcheck -NetworkSecurityGroup $clientSettings.nsgPROD -ServiceEndpoint 'Microsoft.KeyVault', 'Microsoft.Storage' | Set-AzVirtualNetwork | Out-Null
                     }
                     else {
-                        Add-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNamePROD -AddressPrefix 10.$addressSpace.1.0/24 -VirtualNetwork $vnetcheck -ServiceEndpoint 'Microsoft.KeyVault', 'Microsoft.StorageAccount' | Set-AzVirtualNetwork | Out-Null
+                        Add-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNamePROD -AddressPrefix 10.$addressSpace.1.0/24 -VirtualNetwork $vnetcheck -ServiceEndpoint 'Microsoft.KeyVault', 'Microsoft.Storage' | Set-AzVirtualNetwork | Out-Null
                     }
                 }
                 if ($clientSettings.RequireBastion) {
@@ -171,10 +171,10 @@ function ConfigureNetwork {
                 $subnetcheck = Get-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNamePROD -VirtualNetwork $vnetcheck -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
                 if (!$subnetcheck) {
                     if ($clientSettings.RequireNSG) {
-                        Add-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNamePROD -AddressPrefix 10.$addressSpace.1.0/24 -VirtualNetwork $vnetcheck -NetworkSecurityGroup $clientSettings.nsgPROD -ServiceEndpoint 'Microsoft.KeyVault', 'Microsoft.StorageAccount' | Set-AzVirtualNetwork | Out-Null
+                        Add-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNamePROD -AddressPrefix 10.$addressSpace.1.0/24 -VirtualNetwork $vnetcheck -NetworkSecurityGroup $clientSettings.nsgPROD -ServiceEndpoint 'Microsoft.KeyVault', 'Microsoft.Storage' | Set-AzVirtualNetwork | Out-Null
                     }
                     else {
-                        Add-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNamePROD -AddressPrefix 10.$addressSpace.1.0/24 -VirtualNetwork $vnetcheck -ServiceEndpoint 'Microsoft.KeyVault', 'Microsoft.StorageAccount' | Set-AzVirtualNetwork | Out-Null
+                        Add-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNamePROD -AddressPrefix 10.$addressSpace.1.0/24 -VirtualNetwork $vnetcheck -ServiceEndpoint 'Microsoft.KeyVault', 'Microsoft.Storage' | Set-AzVirtualNetwork | Out-Null
                     }
                 }
             }
@@ -196,10 +196,10 @@ function ConfigureNetwork {
                 $subnetcheck = Get-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNameDEV -VirtualNetwork $vnetcheck -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
                 if (!$subnetcheck) {
                     if ($clientSettings.RequireNSG) {
-                        Add-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNameDEV -AddressPrefix 10.$addressSpace.2.0/24 -VirtualNetwork $vnetcheck -NetworkSecurityGroup $clientSettings.nsgDEV -ServiceEndpoint 'Microsoft.KeyVault' | Set-AzVirtualNetwork | Out-Null
+                        Add-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNameDEV -AddressPrefix 10.$addressSpace.2.0/24 -VirtualNetwork $vnetcheck -NetworkSecurityGroup $clientSettings.nsgDEV -ServiceEndpoint 'Microsoft.KeyVault', 'Microsoft.Storage' | Set-AzVirtualNetwork | Out-Null
                     }
                     else {
-                        Add-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNameDEV -AddressPrefix 10.$addressSpace.2.0/24 -VirtualNetwork $vnetcheck -ServiceEndpoint 'Microsoft.KeyVault' | Set-AzVirtualNetwork | Out-Null
+                        Add-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNameDEV -AddressPrefix 10.$addressSpace.2.0/24 -VirtualNetwork $vnetcheck -ServiceEndpoint 'Microsoft.KeyVault', 'Microsoft.Storage' | Set-AzVirtualNetwork | Out-Null
                     }
                 }
                 if ($clientSettings.RequireBastion) {
@@ -211,10 +211,10 @@ function ConfigureNetwork {
                 $subnetcheck = Get-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNameDEV -VirtualNetwork $vnetcheck -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
                 if (!$subnetcheck) {
                     if ($clientSettings.RequireNSG) {
-                        Add-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNameDEV -AddressPrefix 10.$addressSpace.2.0/24 -VirtualNetwork $vnetcheck -NetworkSecurityGroup $clientSettings.nsgDEV -ServiceEndpoint 'Microsoft.KeyVault' | Set-AzVirtualNetwork | Out-Null
+                        Add-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNameDEV -AddressPrefix 10.$addressSpace.2.0/24 -VirtualNetwork $vnetcheck -NetworkSecurityGroup $clientSettings.nsgDEV -ServiceEndpoint 'Microsoft.KeyVault', 'Microsoft.Storage' | Set-AzVirtualNetwork | Out-Null
                     }
                     else {
-                        Add-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNameDEV -AddressPrefix 10.$addressSpace.2.0/24 -VirtualNetwork $vnetcheck -ServiceEndpoint 'Microsoft.KeyVault' | Set-AzVirtualNetwork | Out-Null
+                        Add-AzVirtualNetworkSubnetConfig -Name $clientSettings.SubnetNameDEV -AddressPrefix 10.$addressSpace.2.0/24 -VirtualNetwork $vnetcheck -ServiceEndpoint 'Microsoft.KeyVault', 'Microsoft.Storage' | Set-AzVirtualNetwork | Out-Null
                     }
                 }
             }
