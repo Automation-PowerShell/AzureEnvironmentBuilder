@@ -319,9 +319,9 @@ function ConnectTo-Azure {
         Get-AzContext | Rename-AzContext -TargetName 'StorageSP' -Force | Out-Null
         Get-AzContext -Name 'User' | Select-AzContext | Out-Null
     }
-    $resource = Get-AzResource -ResourceGroupName $clientSettings.RGNameSTORE -Name $clientSettings.StorageAccountName
+    $resource = Get-AzResource -ResourceGroupName $clientSettings.rgs.STORE.RGName -Name $clientSettings.StorageAccountName
     if ($resource) {
-        $script:Keys = Get-AzStorageAccountKey -ResourceGroupName $clientSettings.RGNameSTORE -AccountName $clientSettings.StorageAccountName
+        $script:Keys = Get-AzStorageAccountKey -ResourceGroupName $clientSettings.rgs.STORE.RGName -AccountName $clientSettings.StorageAccountName
         $script:ctx = New-AzStorageContext -StorageAccountName $clientSettings.StorageAccountName -StorageAccountKey $Keys.value[0]
         $script:SAS = New-AzStorageContainerSASToken -Name $clientSettings.ContainerName -Context $ctx -Permission r -StartTime $(Get-Date) -ExpiryTime $((Get-Date).AddDays(1))
     }

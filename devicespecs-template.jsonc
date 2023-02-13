@@ -60,6 +60,8 @@
             "AutoShutdownRequired": true,
             "AutoShutdownTime": 1800,
             "VnetRef": "vnet-dev-azure",
+            "Environment": "DEV",
+            "AdminUsername": "AppPackager",
             "Tags": [
                 {
                     "Service": "AEB",
@@ -109,6 +111,8 @@
             "AutoShutdownRequired": true,
             "AutoShutdownTime": 1800,
             "VnetRef": "vnet-dev-azure",
+            "Environment": "DEV",
+            "AdminUsername": "AppPackager",
             "Tags": [
                 {
                     "Service": "AEB",
@@ -155,6 +159,8 @@
             "AutoShutdownRequired": true,
             "AutoShutdownTime": 1800,
             "VnetRef": "vnet-dev-azure",
+            "Environment": "DEV",
+            "AdminUsername": "AppPackager",
             "Tags": [
                 {
                     "Service": "AEB",
@@ -192,6 +198,8 @@
             "AutoShutdownRequired": true,
             "AutoShutdownTime": 1800,
             "VnetRef": "vnet-dev-azure",
+            "Environment": "DEV",
+            "AdminUsername": "AppPackager",
             "Tags": [
                 {
                     "Service": "AEB",
@@ -241,6 +249,8 @@
             "AutoShutdownRequired": true,
             "AutoShutdownTime": 1800,
             "VnetRef": "vnet-dev-azure",
+            "Environment": "DEV",
+            "AdminUsername": "AppPackager",
             "Tags": [
                 {
                     "Service": "AEB",
@@ -275,6 +285,8 @@
             "AutoShutdownRequired": false,
             "AutoShutdownTime": 0,
             "VnetRef": "vnet-prod-domain",
+            "Environment": "PROD",
+            "AdminUsername": "administrator",
             "Tags": [
                 {
                     "Service": "AEB",
@@ -321,6 +333,8 @@
             "AutoShutdownRequired": false,
             "AutoShutdownTime": 0,
             "VnetRef": "vnet-prod-azure",
+            "Environment": "PROD",
+            "AdminUsername": "administrator",
             "Tags": [
                 {
                     "Service": "AEB",
@@ -364,6 +378,8 @@
             "AutoShutdownRequired": false,
             "AutoShutdownTime": 0,
             "VnetRef": "vnet-prod-domain",
+            "Environment": "PROD",
+            "AdminUsername": "administrator",
             "Tags": [
                 {
                     "Service": "AEB",
@@ -410,6 +426,8 @@
             "AutoShutdownRequired": false,
             "AutoShutdownTime": 0,
             "VnetRef": "vnet-prod-domain",
+            "Environment": "PROD",
+            "AdminUsername": "administrator",
             "Tags": [
                 {
                     "Service": "AEB",
