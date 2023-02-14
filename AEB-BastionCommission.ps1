@@ -56,7 +56,7 @@ foreach ($environment in $clientSettings.vnets.GetEnumerator().Name) {
         $resource = New-AzBastion -ResourceGroupName $clientSettings.rgs.$environment.RGNameVNET -Name $clientSettings.$clientSettings.bastions.$environment.BastionName `
             -PublicIpAddressRgName $clientSettings.rgs.$environment.RGNameVNET -PublicIpAddressName "$($clientSettings.bastions.$environment.BastionName)-pip" `
             -VirtualNetworkRgName $clientSettings.rgs.$environment.RGNameVNET -VirtualNetworkName $clientSettings.vnets.$environment[0] `
-            -Sku Basic -AsJob
+            -Sku Basic -Tag $clientSettings.tags -AsJob
     }
     else {
         Write-AEBLog "Bastion for $environment VNETs in RG: $($clientSettings.rgs.$environment.RGNameVNET) not required"
