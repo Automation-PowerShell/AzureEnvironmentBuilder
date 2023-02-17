@@ -18,6 +18,12 @@
             "Name": "Desktop-Core"
         },
         {
+            "Name": "Desktop-Lite"
+        },
+        {
+            "Name": "Desktop-DomainJoined"
+        },
+        {
             "Name": "Server-Standard"
         },
         {
@@ -181,15 +187,15 @@
                 {
                     "Name": "Conf-RunOnce"
                 },
-                {
-                    "Name": "Conf-Jumpbox"
-                },
-                {
-                    "Name": "App-MECMConsole"
-                },
-                {
-                    "Name": "Conf-DomainJoin"
-                }
+                //{
+                //    "Name": "Conf-Jumpbox"
+                //},
+                //{
+                //    "Name": "App-MECMConsole"
+                //},
+                //{
+                //    "Name": "Conf-DomainJoin"
+                //}
             ],
             "VMSize": "Standard_B2s",
             "VMNamePrefix": "vm-euc-jb-",

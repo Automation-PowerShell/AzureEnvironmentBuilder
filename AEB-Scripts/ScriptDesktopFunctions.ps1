@@ -14,9 +14,14 @@ function CreateDesktop-Script {
     $Subnet = Get-AzVirtualNetworkSubnetConfig -Name $clientSettings.subnets.($deviceSpecs.$VMSpec.Environment).SubnetName -VirtualNetwork $Vnet
     if ($clientSettings.RequirePublicIPs) {
         $PIP = New-AzPublicIpAddress -Name "$VMName-pip" -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$VMSpec.Environment).RGName -Location $clientSettings.Location -AllocationMethod Dynamic -Sku Basic -Tier Regional -IpAddressVersion IPv4
+        Update-AzTag -ResourceId $PIP.Id -Tag $tags -Operation Merge | Out-Null
         $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$VMSpec.Environment).RGName -Location $clientSettings.Location -SubnetId $Subnet.Id -PublicIpAddressId $PIP.Id
+        Update-AzTag -ResourceId $NIC.Id -Tag $tags -Operation Merge | Out-Null
     }
-    else { $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$VMSpec.Environment).RGName -Location $clientSettings.Location -SubnetId $Subnet.Id }
+    else {
+        $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$VMSpec.Environment).RGName -Location $clientSettings.Location -SubnetId $Subnet.Id
+        Update-AzTag -ResourceId $NIC.Id -Tag $tags -Operation Merge | Out-Null
+    }
 
     $cred = New-Object System.Management.Automation.PSCredential ($deviceSpecs.$VMSpec.AdminUsername, $LocalAdminPassword)
 
@@ -73,6 +78,10 @@ function ConfigureBaseVM {
 
         #$NewVm = Get-AzADServicePrincipal -DisplayName $VMName
         $NewVm = (Get-AzADServicePrincipal -DisplayName $VMName | Where-Object { $_.AlternativeName[-1] -match $RG })
+        if (!$NewVm) {
+            Write-AEBLog -String "*** VM: $VMName - Unable to get System Assigned Managed Identity! ***" -Level Error
+            break
+        }
         Start-Sleep -Seconds 30
         if ($clientSettings.RequireServicePrincipal) {
             Get-AzContext -Name 'StorageSP' | Select-AzContext | Out-Null
@@ -92,7 +101,7 @@ function ConfigureBaseVM {
             Start-Sleep -Seconds 30
             $confirm = Get-AzRoleAssignment -ObjectId $NewVm.Id -Scope "/subscriptions/$($clientSettings.azSubscription)/resourceGroups/$($clientSettings.rgs.STORE.RGName)/providers/Microsoft.Storage/storageAccounts/$($clientSettings.StorageAccountName)" -ErrorAction SilentlyContinue
             if (!$confirm) {
-                Write-AEBLog -String "*** VM: $VMName - Unable to set Storage Account Permission ***" -Level Error
+                Write-AEBLog -String "*** VM: $VMName - Unable to set Storage Account Permission! ***" -Level Error
                 Write-Dump $VMCreate.Identity.PrincipalId $NewVm.Id
             }
 
@@ -107,16 +116,15 @@ function ConfigureBaseVM {
             $Properties.Add('taskType', 'ComputeVmShutdownTask')
             $Properties.Add('dailyRecurrence', @{'time' = $($deviceSpecs.$VMSpec.AutoShutdownTime) })
             $Properties.Add('TimeZoneId', 'UTC')
-            $Properties.Add('notificationSettings', @{status = 'Disabled'; timeInMinutes = 15; notificationLocale = "en" })
+            $Properties.Add('notificationSettings', @{status = 'Disabled'; timeInMinutes = 15; notificationLocale = 'en' })
             $Properties.Add('targetResourceId', $VMCreate.Id)
-            # Bug : New-AzResource is failing
             New-AzResource -Location $clientSettings.Location -ResourceId $ScheduledShutdownResourceId -Properties $Properties -Force | Out-Null
             Write-AEBLog "VM: $VMName - Auto Shutdown Enabled for $($deviceSpecs.$VMSpec.AutoShutdownTime)"
         }
     }
     else {
         Write-AEBLog "*** VM: $VMName - Unable to configure Virtual Machine! ***" -Level Error
-        Write-Dump
+        #Write-Dump
     }
 }
 
@@ -238,7 +246,7 @@ function ScriptBuild-Create-VM {
             }
             else {
                 Write-AEBLog "*** Virtual Machine $VM already exists! ***" -Level Error
-                break
+                #break
             }
             $Count++
             $VMNumberStart++
@@ -259,7 +267,7 @@ function ScriptBuild-Create-VM {
             }
             else {
                 Write-AEBLog "*** Virtual Machine $VM already exists! ***" -Level Error
-                break
+                #break
             }
             $Count++
             $VMNumberStart++
@@ -280,7 +288,7 @@ function ScriptBuild-Create-VM {
             }
             else {
                 Write-AEBLog "*** Virtual Machine $VM already exists! ***" -Level Error
-                break
+                #break
             }
             $Count++
             $VMNumberStart++
@@ -301,7 +309,7 @@ function ScriptBuild-Create-VM {
             }
             else {
                 Write-AEBLog "*** Virtual Machine $VM already exists! ***" -Level Error
-                break
+                #break
             }
             $Count++
             $VMNumberStart++
@@ -322,7 +330,7 @@ function ScriptBuild-Create-VM {
             }
             else {
                 Write-AEBLog "*** Virtual Machine $VM already exists! ***" -Level Error
-                break
+                #break
             }
             $Count++
             $VMNumberStart++
@@ -339,8 +347,13 @@ function ScriptBuild-Config-VM {
         While ($Count -le $clientSettings.NumberofStandardVMs) {
             Write-AEBLog "Configuring $Count of $($clientSettings.NumberofStandardVMs) VMs"
             $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
-            ConfigureBaseVM -VMName "$VM" -VMSpec $deviceType -RG $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName
-            ConfigureVM -VMName "$VM" -VMSpec $deviceType -RG $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName
+            $builddate = (Get-AzVM -Name $vm -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName).TimeCreated | Get-Date -Format 'yyyy-MM-dd'
+            #$builddate = (Get-AzVM -Name $vm).TimeCreated | Get-Date -Format 'yyyy-MM-dd'
+            $today = Get-Date -Format 'yyyy-MM-dd'
+            if ($builddate -ge $today ) {
+                ConfigureBaseVM -VMName "$VM" -VMSpec $deviceType -RG $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName
+                ConfigureVM -VMName "$VM" -VMSpec $deviceType -RG $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName
+            }
             $Count++
             $VMNumberStart++
         }
@@ -354,8 +367,13 @@ function ScriptBuild-Config-VM {
         While ($Count -le $clientSettings.NumberofPackagingVMs) {
             Write-AEBLog "Configuring $Count of $($clientSettings.NumberofPackagingVMs) VMs"
             $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
-            ConfigureBaseVM -VMName "$VM" -VMSpec $deviceType -RG $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName
-            ConfigureVM -VMName "$VM" -VMSpec $deviceType -RG $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName
+            $builddate = (Get-AzVM -Name $vm -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName).TimeCreated | Get-Date -Format 'yyyy-MM-dd'
+            #$builddate = (Get-AzVM -Name $vm).TimeCreated | Get-Date -Format 'yyyy-MM-dd'
+            $today = Get-Date -Format 'yyyy-MM-dd'
+            if ($builddate -ge $today ) {
+                ConfigureBaseVM -VMName "$VM" -VMSpec $deviceType -RG $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName
+                ConfigureVM -VMName "$VM" -VMSpec $deviceType -RG $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName
+            }
             $Count++
             $VMNumberStart++
         }
@@ -369,8 +387,13 @@ function ScriptBuild-Config-VM {
         While ($Count -le $clientSettings.NumberofAdminStudioVMs) {
             Write-AEBLog "Configuring $Count of $($clientSettings.NumberofAdminStudioVMs) VMs"
             $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
-            ConfigureBaseVM -VMName "$VM" -VMSpec $deviceType -RG $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName
-            ConfigureVM -VMName "$VM" -VMSpec $deviceType -RG $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName
+            $builddate = (Get-AzVM -Name $vm -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName).TimeCreated | Get-Date -Format 'yyyy-MM-dd'
+            #$builddate = (Get-AzVM -Name $vm).TimeCreated | Get-Date -Format 'yyyy-MM-dd'
+            $today = Get-Date -Format 'yyyy-MM-dd'
+            if ($builddate -ge $today ) {
+                ConfigureBaseVM -VMName "$VM" -VMSpec $deviceType -RG $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName
+                ConfigureVM -VMName "$VM" -VMSpec $deviceType -RG $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName
+            }
             $Count++
             $VMNumberStart++
         }
@@ -384,8 +407,13 @@ function ScriptBuild-Config-VM {
         While ($Count -le $clientSettings.NumberofJumpboxVMs) {
             Write-AEBLog "Configuring $Count of $($clientSettings.NumberofJumpboxVMs) VMs"
             $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
-            ConfigureBaseVM -VMName "$VM" -VMSpec $deviceType -RG $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName
-            ConfigureVM -VMName "$VM" -VMSpec $deviceType -RG $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName
+            $builddate = (Get-AzVM -Name $vm -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName).TimeCreated | Get-Date -Format 'yyyy-MM-dd'
+            #$builddate = (Get-AzVM -Name $vm).TimeCreated | Get-Date -Format 'yyyy-MM-dd'
+            $today = Get-Date -Format 'yyyy-MM-dd'
+            if ($builddate -ge $today ) {
+                ConfigureBaseVM -VMName "$VM" -VMSpec $deviceType -RG $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName
+                ConfigureVM -VMName "$VM" -VMSpec $deviceType -RG $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName
+            }
             $Count++
             $VMNumberStart++
         }
@@ -399,8 +427,13 @@ function ScriptBuild-Config-VM {
         While ($Count -le $clientSettings.NumberofCoreVMs) {
             Write-AEBLog "Configuring $Count of $($clientSettings.NumberofCoreVMs) VMs"
             $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
-            ConfigureBaseVM -VMName "$VM" -VMSpec $deviceType -RG $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName
-            ConfigureVM -VMName "$VM" -VMSpec $deviceType -RG $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName
+            $builddate = (Get-AzVM -Name $vm -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName).TimeCreated | Get-Date -Format 'yyyy-MM-dd'
+            #$builddate = (Get-AzVM -Name $vm).TimeCreated | Get-Date -Format 'yyyy-MM-dd'
+            $today = Get-Date -Format 'yyyy-MM-dd'
+            if ($builddate -ge $today ) {
+                ConfigureBaseVM -VMName "$VM" -VMSpec $deviceType -RG $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName
+                ConfigureVM -VMName "$VM" -VMSpec $deviceType -RG $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName
+            }
             $Count++
             $VMNumberStart++
         }

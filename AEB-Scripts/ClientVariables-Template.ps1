@@ -1,95 +1,98 @@
+$clientName = 'defaultName'
+$azTenant = 'defaultTenant'
+$azSubscription = 'defaultSub'
+$domain = 'test.local'                                                      # Name of the AD Domain
+$ouPath = 'OU=Computers,OU=EUC,DC=test,DC=local'                            # Name of the AD OU where computer objects will be created
+
+$clientName = $clientName.Replace('-','')
+$clientName = $clientName.Replace('_','')
+$clientName = $clientName.Replace(' ','')
+$clientName = $clientName.Replace('#','')
+$clientName = $clientName.Replace('/','')
+$clientName = $clientName.Replace('\','')
 $clientSettings = [ordered]@{
+    # Client Information
+    ClientName                = $clientName
+
     # Client Azure Variables
-    azTenant                = ''        # Azure Tenant ID
-    azSubscription          = ''        # Subscription ID
-    gitlog                  = ''         # Path to GitLog location (if enabled on line 29)
-
-    ServicePrincipalUser    = 'default'                                     # Service Principal name if enabled on line 26 (used for ???)
-    LocalAdminUser          = 'AppPackager'                                 # Local Admin UserName to create (will be used for VMs)
-    HyperVLocalAdminUser    = 'default'                                     # Local Admin username to create for Hyper-V server
-    DomainJoinUser          = 'domain\default'                              # Domain User with Domain Join rights (needs to exist in the domain)
-    DomainUserUser          = 'domain\default'                              # ??? (needs to exist in the domain)
-
-    HyperVVMIsoImagePath    = 'SW_DVD9_Win_Pro_11_21H2_64BIT_English_Pro_Ent_EDU_N_MLF_-3_X22-89962.iso'   # This image is used to build the Hyper-V VMs
+    azTenant                  = $azTenant
+    azSubscription            = $azSubscription
 
     # Domain Variables
-    Domain                  = 'test.local'                                  # Name of the AD Domain
-    OUPath                  = 'OU=Computers,OU=EUC,DC=test,DC=local'        # Name of the AD OU where computer objects will be created
-
-    # Script Customisations
-    VMListExclude           = @()                                           # Exclusion list for rebuilding Azure VMs
+    Domain                    = $domain
+    OUPath                    = $ouPath
 
     # Main Control
-    RequireCreate           = $true                                         # Switch to Create VMs
-    RequireConfigure        = $true                                         # Switch to Configure VMs
-    UseTerraform            = $false                                        # Use Terraform Templates
-    RequireUpdateStorage    = $true                                         # Switch to update content of Storage Account
-    RequireServicePrincipal = $false                                        # Enable use of Service Principal
+    RequireCreate             = $true                                       # Switch to Create VMs
+    RequireConfigure          = $true                                       # Switch to Configure VMs
+    RequireUpdateStorage      = $true                                       # Switch to update content of Storage Account
+    UseTerraform              = $false                                      # Use Terraform Templates
+    RequireServicePrincipal   = $false                                      # Enable use of Service Principal
 
     # Required Components
-    isProd                  = $false                                        # Will this build be used for production?
-    LogToGit                = $true                                         # Should the script log to GIT?
-    LogToSA                 = $false                                        # Should the script log to the Storage Account?
-    RequireUserGroups       = $false                                        # Do User Groups need creating?
-    RequireRBAC             = $true                                         # Use RBAC groups model or directly add Managed Identities to Storage Account
-    RequireResourceGroups   = $false                                        # Should a Resource Group be created? (or use existing)
-    RequireStorageAccount   = $true                                         # Should a Storage Account be created (or use existing)
-    RequireVNET             = $true                                         # Should a VNET be created (or use existing)
-    RequireNSG              = $true                                         # Should an NSG be created (or use existing)
-    RequirePublicIPs        = $false                                        # Should Public IPs be used
-    RequireBastion          = $true                                         # Should Bastion be used
-    RequireKeyVault         = $true                                         # Create KeyVault (used for storing passwords)
+    isProd                    = $false                                      # Will this build be used for production?
+    LogToGit                  = $false                                      # Use - Should the script log to GIT?
+    LogToSA                   = $false                                      # Use - Should the script log to the Storage Account?
+    RequireUserGroups         = $true                                       # Create - User Groups?
+    RequireRBAC               = $true                                       # Use - RBAC groups model or directly add Managed Identities to Storage Account
+    RequireResourceGroups     = $false                                      # Create - Should a Resource Group be created? (or use existing)
+    RequireStorageAccount     = $true                                       # Create - Storage Account Resources
+    RequireVNET               = $true                                       # Create - VNET Resources
+    RequireNSG                = $true                                       # Create - NSG Resources
+    RequirePublicIPs          = $false                                      # Use - Should Public IPs be used
+    RequireBastion            = $true                                       # Create - Bastion Resources
+    RequireKeyVault           = $true                                       # Create - KeyVault Resources
 
-    RequireStandardVMs      = $true                                         # Should Standard VMs be created?
-    RequirePackagingVMs     = $false                                        # Should Packaging VMs be created?
-    RequireAdminStudioVMs   = $false                                        # Should AdminStudio VMs be created?
-    RequireJumpboxVMs       = $false                                        # Should Jumpbox VMs be created?
-    RequireCoreVMs          = $false                                        # Should Core VMs be created???
-    RequireStdSrv           = $true                                         # Should a Standard Server VM be created?
-    RequireHyperV           = $false                                        # Should a Hyper-V Server VM be created?
-    RequireDC               = $true                                         # Should a Domain Controller Server VM be created?
-    RequireSCCM             = $true                                         # Should a SCCM Server VM be created?
+    RequireStandardVMs        = $true                                       # Should Standard VMs be created?
+    RequirePackagingVMs       = $true                                       # Should Packaging VMs be created?
+    RequireAdminStudioVMs     = $true                                       # Should AdminStudio VMs be created?
+    RequireJumpboxVMs         = $true                                       # Should Jumpbox VMs be created?
+    RequireCoreVMs            = $true                                       # Should Core VMs be created?
+    RequireStdSrv             = $true                                       # Should Standard Server VM be created?
+    RequireHyperV             = $true                                       # Should Hyper-V Server VM be created?
+    RequireDC                 = $true                                       # Should Domain Controller Server VM be created?
+    RequireSCCM               = $true                                       # Should SCCM Server VM be created?
 
-    NumberofStandardVMs     = 0                                             # Specify number of Standard VMs to be provisioned
-    NumberofPackagingVMs    = 0                                             # Specify number of Packaging VMs to be provisioned
-    NumberofAdminStudioVMs  = 0                                             # Specify number of AdminStudio VMs to be provisioned
-    NumberofJumpboxVMs      = 0                                             # Specify number of Jumpbox VMs to be provisioned
-    NumberofCoreVMs         = 0                                             # Specify number of Core VMs to be provisioned
-    NumberofStdSrvVMs       = 0                                             # Specify number of Standard Server VMs to be provisioned
-    NumberofHyperVVMs       = 0                                             # Specify number of HyperV Server VMs to be provisioned
-    NumberofDCVMs           = 0                                             # Specify number of Domain Controller Server VMs to be provisioned
-    NumberofSCCMVMs         = 0                                             # Specify number of SCCM Server VMs to be provisioned
+    NumberofStandardVMs       = 1                                           # Specify number of Standard VMs to be provisioned
+    NumberofPackagingVMs      = 0                                           # Specify number of Packaging VMs to be provisioned
+    NumberofAdminStudioVMs    = 0                                           # Specify number of AdminStudio VMs to be provisioned
+    NumberofJumpboxVMs        = 1                                           # Specify number of Jumpbox VMs to be provisioned
+    NumberofCoreVMs           = 0                                           # Specify number of Core VMs to be provisioned
+    NumberofStdSrvVMs         = 0                                           # Specify number of Standard Server VMs to be provisioned
+    NumberofHyperVVMs         = 0                                           # Specify number of HyperV Server VMs to be provisioned
+    NumberofDCVMs             = 0                                           # Specify number of Domain Controller Server VMs to be provisioned
+    NumberofSCCMVMs           = 0                                           # Specify number of SCCM Server VMs to be provisioned
 
     # General Config Variables
-    location                = 'uksouth'                                     # Azure Region for resources to be built into
+    location                  = 'uksouth'                                   # Azure Region for resources to be built into
 
     # Name Collections of Resource Groups, VNETS, Subnets, NSGs, Bastions, and Tags
-    rgs                     = @{
+    rgs                       = @{
         PROD  = [ordered]@{
-            RGName     = 'rg-TestClient1'
-            RGNameVNET = 'rg-TestClient1'
+            RGName     = "rg-$($clientName)"
+            RGNameVNET = "rg-$($clientName)"
         }
         DEV   = [ordered]@{
-            RGName     = 'rg-TestClient1'
-            RGNameVNET = 'rg-TestClient1'
+            RGName     = "rg-$($clientName)"
+            RGNameVNET = "rg-$($clientName)"
         }
         STORE = [ordered]@{
-            RGName = 'rg-TestClient1'
+            RGName = "rg-$($clientName)"
         }
     }
 
-    vnets                   = @{
+    vnets                     = @{
         PROD = [ordered]@{
-            'vnet-prod-azure'  = 'vnet-TestClient1-azure'
-            'vnet-prod-domain' = 'vnet-TestClient1-domain'
+            'vnet-prod-azure'  = "vnet-$($clientName)-azure"
+            'vnet-prod-domain' = "vnet-$($clientName)-domain"
         }
         DEV  = [ordered]@{
-            'vnet-dev-azure'  = 'vnet-TestClient1-azure'
-            'vnet-dev-domain' = 'vnet-TestClient1-domain'
+            'vnet-dev-azure'  = "vnet-$($clientName)-azure"
+            'vnet-dev-domain' = "vnet-$($clientName)-domain"
         }
     }
 
-    subnets                 = @{
+    subnets                   = @{
         PROD = [ordered]@{
             SubnetName   = 'subnet-prod'
             addressSpace = 1
@@ -100,43 +103,64 @@ $clientSettings = [ordered]@{
         }
     }
 
-    nsgs                    = @{
+    nsgs                      = @{
         PROD = [ordered]@{
-            NsgName = 'nsg-TestClient1'
+            NsgName = "nsg-$($clientName)"
         }
         DEV  = [ordered]@{
-            NsgName = 'nsg-TestClient1'
+            NsgName = "nsg-$($clientName)"
         }
     }
 
-    bastions                = @{
+    bastions                  = @{
         PROD = [ordered]@{
-            BastionName = 'bastion-TestClient1'
+            BastionName = "bastion-$($clientName)"
         }
         DEV  = [ordered]@{
-            BastionName = 'bastion-TestClient1'
+            BastionName = "bastion-$($clientName)"
         }
     }
 
-    tags                    = @{
+    tags                      = @{
         'Application'     = 'AEB'
-        'AEB-Client'      = 'TestClient1'
+        'AEB-Client'      = "$($clientName)"
         'AEB-Environment' = ''
     }
 
+    # Default Account IDs
+    ServicePrincipalUser      = 'default'                                       # Service Principal name if enabled on line 26 (used for ???)
+    LocalAdminUser            = 'AppPackager'                                   # Local Admin UserName to create (will be used for VMs)
+    HyperVLocalAdminUser      = 'default'                                       # Local Admin username to create for Hyper-V server
+    DomainJoinUser            = 'domain\default'                                # Domain User with Domain Join rights (needs to exist in the domain)
+    DomainUserUser            = 'domain\default'                                # ??? (needs to exist in the domain)
+
+
     # Environment Variables
-    rbacOwner               = 'rbac-owner-TestClient1'
-    rbacContributor         = 'rbac-contributor-TestClient1'
-    rbacReadOnly            = 'rbac-readonly-TestClient1'
+    rbacOwner                 = "rbac-owner-$($clientName)"
+    rbacContributor           = "rbac-contributor-$($clientName)"
+    rbacReadOnly              = "rbac-readonly-$($clientName)"
 
 
     # Storage Account and Container Names
-    StorageAccountName      = 'satestclient1'                                   # Storage account name (if used) (24 chars maximum) (lowercase and numerical chars only). Needs to be globally unique within Azure
-    ContainerName           = 'data'                                            # Storage container name (if used) (do not change from 'data')
-    FileShareName           = 'share'                                           # Storage FileShare name (if used) (do not change from 'pkgazfiles01')
-    BlobFilesSource         = "$root\BlobFilesSource"                           # Source Template Folder for CustomScriptExtension
-    BlobFilesDest           = "$root\BlobFilesDestination"                      # Destination Template Folder for CustomScriptExtension
-    keyVaultName            = 'kv-avaws-TestClient1'                            # needs to be globally unique within Azure
+    StorageAccountName        = "saavaws$($clientName.ToLower())"               # Storage account name (if used) (24 chars maximum) (lowercase and numerical chars only). Needs to be globally unique within Azure
+    ContainerName             = 'data'                                          # Storage container name (if used) (do not change from 'data')
+    FileShareName             = 'share'                                         # Storage FileShare name (if used) (do not change from 'pkgazfiles01')
+    BlobFilesSource           = "$root\BlobFilesSource"                         # Source Template Folder for CustomScriptExtension
+    BlobFilesDest             = "$root\BlobFilesDestination"                    # Destination Template Folder for CustomScriptExtension
+    keyVaultName              = "kv-avaws-$($clientName)"                       # needs to be globally unique within Azure
+
+    # Script Customisations
+    gitlog                    = 'https://github.com/satsuk81/log.git'           # Path to GitLog location (if enabled on line 29)
+    VMListExclude             = @()                                             # Exclusion list for rebuilding Azure VMs
+    HyperVVMIsoImagePath      = 'SW_DVD9_Win_Pro_11_21H2_64BIT_English_Pro_Ent_EDU_N_MLF_-3_X22-89962.iso'   # This image is used to build the Hyper-V VMs
+    StorageAccountFirewallIPs = @(
+        '3.16.7.30'
+        '13.59.164.228'
+        '18.191.115.70'
+        '18.218.243.39'
+        '18.221.72.80'
+        '18.223.141.221')
+
 }
 
 # Load Spec Files

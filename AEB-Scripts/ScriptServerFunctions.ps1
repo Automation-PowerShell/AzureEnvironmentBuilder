@@ -13,7 +13,7 @@ function ScriptBuild-Create-Server {
             }
             else {
                 Write-AEBLog "*** VM: $VM already exists! ***" -Level Error
-                break
+                #break
             }
             $Count++
             $VMNumberStart++
@@ -34,7 +34,7 @@ function ScriptBuild-Create-Server {
             }
             else {
                 Write-AEBLog "*** VM: $VM already exists! ***" -Level Error
-                break
+                #break
             }
             $Count++
             $VMNumberStart++
@@ -55,7 +55,7 @@ function ScriptBuild-Create-Server {
             }
             else {
                 Write-AEBLog "*** VM: $VM already exists! ***" -Level Error
-                break
+                #break
             }
             $Count++
             $VMNumberStart++
@@ -76,7 +76,7 @@ function ScriptBuild-Create-Server {
             }
             else {
                 Write-AEBLog "*** VM: $VM already exists! ***" -Level Error
-                break
+                #break
             }
             $Count++
             $VMNumberStart++
@@ -159,9 +159,14 @@ function CreateServer-Script {
     $Subnet = Get-AzVirtualNetworkSubnetConfig -Name $clientSettings.subnets.($deviceSpecs.$VMSpec.Environment).SubnetName -VirtualNetwork $Vnet
     if ($clientSettings.RequirePublicIPs) {
         $PIP = New-AzPublicIpAddress -Name "$VMName-pip" -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$VMSpec.Environment).RGName -Location $clientSettings.Location -AllocationMethod Dynamic -Sku Basic -Tier Regional -IpAddressVersion IPv4
+        Update-AzTag -ResourceId $PIP.Id -Tag $tags -Operation Merge | Out-Null
         $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$VMSpec.Environment).RGName -Location $clientSettings.Location -SubnetId $Subnet.Id -PublicIpAddressId $PIP.Id
+        Update-AzTag -ResourceId $NIC.Id -Tag $tags -Operation Merge | Out-Null
     }
-    else { $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$VMSpec.Environment).RGName -Location $clientSettings.Location -SubnetId $Subnet.Id }
+    else {
+        $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$VMSpec.Environment).RGName -Location $clientSettings.Location -SubnetId $Subnet.Id
+        Update-AzTag -ResourceId $NIC.Id -Tag $tags -Operation Merge | Out-Null
+    }
 
     $cred = New-Object System.Management.Automation.PSCredential ($deviceSpecs.$VMSpec.AdminUsername, $LocalAdminPassword)
 

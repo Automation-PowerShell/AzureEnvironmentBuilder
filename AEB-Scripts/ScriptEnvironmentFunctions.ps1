@@ -99,8 +99,8 @@ function ConfigureNetwork {
                     $vnetcheck = New-AzVirtualNetwork -ResourceGroupName $clientSettings.rgs.$environment.RGNameVNET -Location $clientSettings.Location -Name $vnet.Value -AddressPrefix "10.$addressSpace.0.0/22"
                     if ($vnetcheck.ProvisioningState -eq 'Succeeded') {
                         Write-AEBLog "$environment VNET created successfully"
-                        Update-AzTag -ResourceId $vnetcheck.Id -Tag $clientSettings.tags -Operation Merge
-                        Update-AzTag -ResourceId $vnetcheck.Id -Tag @{ 'AEB-Environment' = $environment } -Operation Merge
+                        Update-AzTag -ResourceId $vnetcheck.Id -Tag $clientSettings.tags -Operation Merge | Out-Null
+                        Update-AzTag -ResourceId $vnetcheck.Id -Tag @{ 'AEB-Environment' = $environment } -Operation Merge | Out-Null
                     }
                     else {
                         Write-AEBLog "*** Unable to create $environment VNET! ***" -Level Error
@@ -156,8 +156,8 @@ function ConfigureNetwork {
                 if (!$resourceCheck) {
                     Write-AEBLog "Commisioning Bastion for $environment VNETS in RG: $($clientSettings.rgs.$environment.RGNameVNET)"
                     $publicip = New-AzPublicIpAddress -ResourceGroupName $clientSettings.rgs.$environment.RGNameVNET -Name "$($clientSettings.bastions.$environment.BastionName)-pip" -Location $clientSettings.location -AllocationMethod Static -Sku Standard
-                    Update-AzTag -ResourceId $publicip.Id -Tag $clientSettings.tags -Operation Merge
-                    Update-AzTag -ResourceId $publicip.Id -Tag @{ 'AEB-Environment' = $environment } -Operation Merge
+                    Update-AzTag -ResourceId $publicip.Id -Tag $clientSettings.tags -Operation Merge | Out-Null
+                    Update-AzTag -ResourceId $publicip.Id -Tag @{ 'AEB-Environment' = $environment } -Operation Merge | Out-Null
                     $resource = New-AzBastion -ResourceGroupName $clientSettings.rgs.$environment.RGNameVNET -Name $clientSettings.bastions.$environment.BastionName `
                         -PublicIpAddressRgName $clientSettings.rgs.$environment.RGNameVNET -PublicIpAddressName "$($clientSettings.bastions.$environment.BastionName)-pip" `
                         -VirtualNetworkRgName $clientSettings.rgs.$environment.RGNameVNET -VirtualNetworkName $clientSettings.vnets.$environment[0] `
@@ -263,6 +263,9 @@ function CreateStorageAccount {
         Update-AzStorageAccountNetworkRuleSet -ResourceGroupName $clientSettings.rgs.STORE.RGName -Name $clientSettings.StorageAccountName -DefaultAction Deny | Out-Null
         foreach ($vnet in $vnetIDs) {
             Add-AzStorageAccountNetworkRule -ResourceGroupName $clientSettings.rgs.STORE.RGName -Name $clientSettings.StorageAccountName -VirtualNetworkResourceId $vnet | Out-Null
+        }
+        foreach ($ip in $clientSettings.StorageAccountFirewallIPs) {
+            Add-AzStorageAccountNetworkRule -ResourceGroupName $clientSettings.rgs.STORE.RGName -Name $clientSettings.StorageAccountName -IPAddressOrRange $ip | Out-Null
         }
         Add-AzStorageAccountNetworkRule -ResourceGroupName $clientSettings.rgs.STORE.RGName -Name $clientSettings.StorageAccountName -IPAddressOrRange $myPublicIP | Out-Null
         Start-Sleep -Seconds 30
