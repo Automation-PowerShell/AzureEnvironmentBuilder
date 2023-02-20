@@ -315,7 +315,7 @@ function ConnectTo-Azure {
     }
     Get-AzContext | Rename-AzContext -TargetName 'User' -Force | Out-Null
     if ($clientSettings.RequireServicePrincipal) {
-        Connect-AzAccount -Tenant $azTenant -Subscription $clientSettings.azSubscription -Credential $clientSettings.ServicePrincipalCred -ServicePrincipal | Out-Null
+        Connect-AzAccount -Tenant $clientSettings.azTenant -Subscription $clientSettings.azSubscription -Credential $clientSettings.ServicePrincipalCred -ServicePrincipal | Out-Null
         Get-AzContext | Rename-AzContext -TargetName 'StorageSP' -Force | Out-Null
         Get-AzContext -Name 'User' | Select-AzContext | Out-Null
     }

@@ -93,14 +93,16 @@ function ConfigureNetwork {
         Write-AEBLog 'Creating VNETs'
         foreach ($environment in $clientSettings.vnets.GetEnumerator().Name) {
             $addressSpace = 0
-            foreach ($vnet in $clientSettings.vnets.$environment.GetEnumerator()) {
-                $vnetcheck = Get-AzVirtualNetwork -ResourceGroupName $clientSettings.rgs.$environment.RGNameVNET -Name $vnet.Value -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+            foreach ($vnet in $clientSettings.vnets.$environment.Values) {
+                $vnetcheck = Get-AzVirtualNetwork -ResourceGroupName $clientSettings.rgs.$environment.RGNameVNET -Name $vnet -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
                 if (!$vnetcheck) {
-                    $vnetcheck = New-AzVirtualNetwork -ResourceGroupName $clientSettings.rgs.$environment.RGNameVNET -Location $clientSettings.Location -Name $vnet.Value -AddressPrefix "10.$addressSpace.0.0/22"
+                    $vnetcheck = New-AzVirtualNetwork -ResourceGroupName $clientSettings.rgs.$environment.RGNameVNET -Location $clientSettings.Location -Name $vnet -AddressPrefix "10.$addressSpace.0.0/22" -Tag $clientSettings.tags
                     if ($vnetcheck.ProvisioningState -eq 'Succeeded') {
                         Write-AEBLog "$environment VNET created successfully"
-                        Update-AzTag -ResourceId $vnetcheck.Id -Tag $clientSettings.tags -Operation Merge | Out-Null
-                        Update-AzTag -ResourceId $vnetcheck.Id -Tag @{ 'AEB-Environment' = $environment } -Operation Merge | Out-Null
+                        #Start-Sleep -Seconds 10
+                        #Update-AzTag -ResourceId $vnetcheck.Id -Tag $clientSettings.tags -Operation Merge | Out-Null
+                        #Start-Sleep -Seconds 10
+                        Update-AzTag -ResourceId $vnetcheck.Id -Tag @{ 'AEB-Environment' = $environment } -Operation Merge
                     }
                     else {
                         Write-AEBLog "*** Unable to create $environment VNET! ***" -Level Error

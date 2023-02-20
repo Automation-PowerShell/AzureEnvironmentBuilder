@@ -41,6 +41,7 @@ if ($devops) {
 else {
     ConnectTo-Azure
 }
+#endregion
 
 function Get-AllResourceGroups {
     $csvfile = './subscriptions-resourcegroups.csv'
@@ -87,7 +88,7 @@ function Get-AllTags {
         Write-Host "RG: $($counter) out of $($rgtotal)"
         Write-Host '----------------------------------'
 
-        $csub = Get-AzContext
+        <#$csub = Get-AzContext
         if (($csub.Subscription.Id) -ne ($RG.sub)) {
             try {
                 Write-Host "##vso[task.LogIssue type=warning;]Switching Subscription to $($RG.sub)"
@@ -98,7 +99,7 @@ function Get-AllTags {
                 Write-Host $Error[0]
                 break
             }
-        }
+        }#>
 
         try { $ResourceGroup = (Get-AzResourceGroup -Name $RG.RG -ErrorAction stop ) }
         catch {
