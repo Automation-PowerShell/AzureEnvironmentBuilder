@@ -24,9 +24,9 @@ Connect-AzAccount -Identity -ErrorAction Stop -Subscription sssss
 
 # Enable Domain Controller Role
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message 'Configuring System'
-#$LocalAdminPassword = (Get-AzKeyVaultSecret -VaultName kkkkk -Name 'HyperVLocalAdmin').SecretValue
 Install-WindowsFeature -Name RDC
 # Post Steps
+# Install .NET 3.5
 # Install SQL Server
 # Change SQL Logon to LocalSystem
 # Install ADK components

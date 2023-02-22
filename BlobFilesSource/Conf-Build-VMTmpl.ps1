@@ -206,11 +206,11 @@ Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -En
 Connect-AzAccount -Identity -ErrorAction Stop -Subscription sssss
 
 # Get Passwords from KeyVault
-$LocalAdminPassword = (Get-AzKeyVaultSecret -VaultName 'kkkkk' -Name 'HyperVLocalAdmin').SecretValue
+$LocalAdminPassword = (Get-AzKeyVaultSecret -VaultName 'kkkkk' -Name 'HyperVLocalAdmin-Secret').SecretValue
 $LocalAdminCred = New-Object System.Management.Automation.PSCredential ('aaaaa', $LocalAdminPassword)
-$DomainJoinPassword = (Get-AzKeyVaultSecret -VaultName 'kkkkk' -Name 'DomainJoin').SecretValue
+$DomainJoinPassword = (Get-AzKeyVaultSecret -VaultName 'kkkkk' -Name 'DomainJoin-Secret').SecretValue
 $DomainJoinCred = New-Object System.Management.Automation.PSCredential ('jjjjj', $DomainJoinPassword)
-$DomainUserPassword = (Get-AzKeyVaultSecret -VaultName 'kkkkk' -Name 'DomainUser').SecretValue
+$DomainUserPassword = (Get-AzKeyVaultSecret -VaultName 'kkkkk' -Name 'DomainUser-Secret').SecretValue
 $DomainUserCred = New-Object System.Management.Automation.PSCredential ('uuuuu', $DomainUserPassword)
 
 <## Copy files to machine

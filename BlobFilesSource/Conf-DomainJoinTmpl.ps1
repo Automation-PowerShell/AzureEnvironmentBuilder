@@ -26,8 +26,8 @@ Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -En
 Connect-AzAccount -Identity -ErrorAction Stop -Subscription sssss
 
 # Create Credential
-$DJUser = 'ddddd\AppPackager'
-$DJPassword = (Get-AzKeyVaultSecret -VaultName kkkkk -Name 'DomainJoin').SecretValue
+$DJUser = 'ddddd\' + $(Get-AzKeyVaultSecret -VaultName kkkkk -Name 'DomainJoin-Id').SecretValue
+$DJPassword = (Get-AzKeyVaultSecret -VaultName kkkkk -Name 'DomainJoin-Secret').SecretValue
 $DomainJoinCred = New-Object System.Management.Automation.PSCredential ($DJUser, $DJPassword)
 
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message 'Joining Domain'
