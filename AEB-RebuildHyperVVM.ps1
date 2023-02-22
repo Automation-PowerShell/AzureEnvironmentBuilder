@@ -73,11 +73,11 @@ $Keys = Get-AzStorageAccountKey -ResourceGroupName $RGNameSTORE -AccountName $St
 $StorageAccountKey = $Keys.value[0]
 
 # Get Passwords from KeyVault
-$LocalAdminPassword = (Get-AzKeyVaultSecret -VaultName $VaultName -Name 'HyperVLocalAdmin').SecretValue
+$LocalAdminPassword = (Get-AzKeyVaultSecret -VaultName $VaultName -Name 'HyperVLocalAdmin-Secret').SecretValue
 $LocalAdminCred = New-Object System.Management.Automation.PSCredential ($HyperVLocalAdminUser, $LocalAdminPassword)
-$DomainJoinPassword = (Get-AzKeyVaultSecret -VaultName $VaultName -Name 'DomainJoin').SecretValue
+$DomainJoinPassword = (Get-AzKeyVaultSecret -VaultName $VaultName -Name 'DomainJoin-Secret').SecretValue
 $DomainJoinCred = New-Object System.Management.Automation.PSCredential ($DomainJoinUser, $DomainJoinPassword)
-$DomainUserPassword = (Get-AzKeyVaultSecret -VaultName $VaultName -Name 'DomainUser').SecretValue
+$DomainUserPassword = (Get-AzKeyVaultSecret -VaultName $VaultName -Name 'DomainUser-Secret').SecretValue
 $DomainUserCred = New-Object System.Management.Automation.PSCredential ($DomainUserUser, $DomainUserPassword)
 
 if (!$DomainUserCred) {

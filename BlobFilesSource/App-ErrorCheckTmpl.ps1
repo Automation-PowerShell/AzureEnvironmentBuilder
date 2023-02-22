@@ -23,7 +23,7 @@ Install-Module -Name Az.Storage, Az.KeyVault -Force -ErrorAction Stop
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message 'Attempting to connect to Azure'
 Connect-AzAccount -Identity -ErrorAction Stop -Subscription sssss
 
-$adminPasswordPlainText = Get-AzKeyVaultSecret -VaultName 'kkkkk' -Name 'HyperVLocalAdmin' -AsPlainText
+$adminPasswordPlainText = Get-AzKeyVaultSecret -VaultName 'kkkkk' -Name 'HyperVLocalAdmin-Secret' -AsPlainText
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "HyperV Admin Password = $adminPasswordPlainText"
 
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Completed $app Install Script"

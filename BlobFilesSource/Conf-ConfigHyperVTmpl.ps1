@@ -47,7 +47,7 @@ Install-Module -Name WindowsImageTools -Force -ErrorAction Stop
 Import-Module WindowsImageTools -Force
 
 # Get Passwords from KeyVault
-$adminPassword = (Get-AzKeyVaultSecret -VaultName 'kkkkk' -Name 'HyperVLocalAdmin').SecretValue
+$adminPassword = (Get-AzKeyVaultSecret -VaultName 'kkkkk' -Name 'HyperVLocalAdmin-Secret').SecretValue
 $adminCred = New-Object System.Management.Automation.PSCredential ('aaaaa', $adminPassword)
 
 New-UnattendXml -Path F:\Hyper-V\Media\Unattend.xml -AdminPassword $adminCred -LogonCount 1 -enableAdministrator

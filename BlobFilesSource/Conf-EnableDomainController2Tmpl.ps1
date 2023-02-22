@@ -26,7 +26,7 @@ Connect-AzAccount -Identity -ErrorAction Stop -Subscription sssss
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message 'Enable Domain Controller 2'
 $domain = 'ddddd'
 $domainSplit = $domain.Split('.')
-$LocalAdminPassword = (Get-AzKeyVaultSecret -VaultName kkkkk -Name 'HyperVLocalAdmin').SecretValue
+$LocalAdminPassword = (Get-AzKeyVaultSecret -VaultName kkkkk -Name 'HyperVLocalAdmin-Secret').SecretValue
 Import-Module ADDSDeployment
 Install-ADDSForest -CreateDnsDelegation:$false -DatabasePath 'C:\Windows\NTDS' -DomainMode 'WinThreshold' -DomainName $domain -DomainNetbiosName $($domainSplit[-2]) -ForestMode 'WinThreshold' -InstallDns:$true -LogPath 'C:\Windows\NTDS' -NoRebootOnCompletion:$true -SysvolPath 'C:\Windows\SYSVOL' -Force:$true -SafeModeAdministratorPassword $LocalAdminPassword
 
