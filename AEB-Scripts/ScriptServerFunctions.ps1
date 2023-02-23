@@ -1,11 +1,12 @@
 function ScriptBuild-Create-Server {
     # Build Standard Server VM
     if ($clientSettings.RequireStdSrv) {
-        $Count = 1
+        $count = 1
+        $buildNumber = $clientSettings.NumberofStdSrvVMs
         $deviceType = 'Server-Standard'
         [int]$VMNumberStart = $deviceSpecs.$deviceType.VMNumberStart
-        While ($Count -le $clientSettings.NumberofStdSrvVMs) {
-            Write-AEBLog "Creating $Count of $($clientSettings.NumberofStdSrvVMs) VMs"
+        While ($count -le $buildNumber) {
+            Write-AEBLog "Creating $count of $buildNumber VMs"
             $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
             $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if (!$VMCheck) {
@@ -15,18 +16,19 @@ function ScriptBuild-Create-Server {
                 Write-AEBLog "*** VM: $VM already exists! ***" -Level Error
                 #break
             }
-            $Count++
+            $count++
             $VMNumberStart++
         }
     }
 
     # Build Hyper-V Server VM
     if ($clientSettings.RequireHyperV) {
-        $Count = 1
+        $count = 1
+        $buildNumber = $clientSettings.NumberofHyperVVMs
         $deviceType = 'Server-HyperV'
         [int]$VMNumberStart = $deviceSpecs.$deviceType.VMNumberStart
-        While ($Count -le $clientSettings.NumberofHyperVVMs) {
-            Write-AEBLog "Creating $Count of $($clientSettings.NumberofHyperVVMs) VMs"
+        While ($count -le $buildNumber) {
+            Write-AEBLog "Creating $count of $buildNumber VMs"
             $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
             $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if (!$VMCheck) {
@@ -36,18 +38,19 @@ function ScriptBuild-Create-Server {
                 Write-AEBLog "*** VM: $VM already exists! ***" -Level Error
                 #break
             }
-            $Count++
+            $count++
             $VMNumberStart++
         }
     }
 
     # Build Domain Controller Server VM
     if ($clientSettings.RequireDC) {
-        $Count = 1
+        $count = 1
+        $buildNumber = $clientSettings.NumberofDCVMs
         $deviceType = 'Server-DomainController'
         [int]$VMNumberStart = $deviceSpecs.$deviceType.VMNumberStart
-        While ($Count -le $clientSettings.NumberofDCVMs) {
-            Write-AEBLog "Creating $Count of $($clientSettings.NumberofDCVMs) VMs"
+        While ($count -le $buildNumber) {
+            Write-AEBLog "Creating $count of $buildNumber VMs"
             $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
             $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if (!$VMCheck) {
@@ -57,18 +60,19 @@ function ScriptBuild-Create-Server {
                 Write-AEBLog "*** VM: $VM already exists! ***" -Level Error
                 #break
             }
-            $Count++
+            $count++
             $VMNumberStart++
         }
     }
 
     # Build SCCM Server VM
     if ($clientSettings.RequireSCCM) {
-        $Count = 1
+        $count = 1
+        $buildNumber = $clientSettings.NumberofSCCMVMs
         $deviceType = 'Server-ConfigManager'
         [int]$VMNumberStart = $deviceSpecs.$deviceType.VMNumberStart
-        While ($Count -le $clientSettings.NumberofSCCMVMs) {
-            Write-AEBLog "Creating $Count of $($clientSettings.NumberofSCCMVMs) VMs"
+        While ($count -le $buildNumber) {
+            Write-AEBLog "Creating $count of $buildNumber VMs"
             $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
             $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if (!$VMCheck) {
@@ -78,7 +82,29 @@ function ScriptBuild-Create-Server {
                 Write-AEBLog "*** VM: $VM already exists! ***" -Level Error
                 #break
             }
-            $Count++
+            $count++
+            $VMNumberStart++
+        }
+    }
+
+    # Build A365 Server VM
+    if ($clientSettings.RequireA365) {
+        $count = 1
+        $buildNumber = $clientSettings.NumberofA365VMs
+        $deviceType = 'Server-A365'
+        [int]$VMNumberStart = $deviceSpecs.$deviceType.VMNumberStart
+        While ($count -le $buildNumber) {
+            Write-AEBLog "Creating $count of $buildNumber VMs"
+            $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
+            $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+            if (!$VMCheck) {
+                CreateServer-Script -VMName $VM -VMSpec $deviceType
+            }
+            else {
+                Write-AEBLog "*** VM: $VM already exists! ***" -Level Error
+                #break
+            }
+            $count++
             $VMNumberStart++
         }
     }
@@ -87,56 +113,75 @@ function ScriptBuild-Create-Server {
 function ScriptBuild-Config-Server {
     # Configure Standard Server
     if ($clientSettings.RequireStdSrv) {
-        $Count = 1
+        $count = 1
+        $buildNumber = $clientSettings.NumberofStdSrvVMs
         $deviceType = 'Server-Standard'
         [int]$VMNumberStart = $deviceSpecs.$deviceType.VMNumberStart
-        While ($Count -le $clientSettings.NumberofStdSrvVMs) {
-            Write-AEBLog "Configuring $Count of $($clientSettings.NumberofStdSrvVMs) VMs"
+        While ($count -le $buildNumber) {
+            Write-AEBLog "Configuring $count of $buildNumber VMs"
             $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
             ConfigServer-Script -VMName $VM -VMSpec $deviceType
-            $Count++
+            $count++
             $VMNumberStart++
         }
     }
 
     # Configure Hyper-V Server
     if ($clientSettings.RequireHyperV) {
-        $Count = 1
+        $count = 1
+        $buildNumber = $clientSettings.NumberofHyperVVMs
         $deviceType = 'Server-HyperV'
         [int]$VMNumberStart = $deviceSpecs.$deviceType.VMNumberStart
-        While ($Count -le $clientSettings.NumberofHyperVVMs) {
-            Write-AEBLog "Configuring $Count of $($clientSettings.NumberofHyperVVMs) VMs"
+        While ($count -le $buildNumber) {
+            Write-AEBLog "Configuring $count of $buildNumber VMs"
             $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
             ConfigServer-Script -VMName $VM -VMSpec $deviceType
-            $Count++
+            $count++
             $VMNumberStart++
         }
     }
 
     # Configure DC Server
     if ($clientSettings.RequireDC) {
-        $Count = 1
+        $count = 1
+        $buildNumber = $clientSettings.NumberofDCVMs
         $deviceType = 'Server-DomainController'
         [int]$VMNumberStart = $deviceSpecs.$deviceType.VMNumberStart
-        While ($Count -le $clientSettings.NumberofDCVMs) {
-            Write-AEBLog "Configuring $Count of $($clientSettings.NumberofDCVMs) VMs"
+        While ($count -le $buildNumber) {
+            Write-AEBLog "Configuring $count of $buildNumber VMs"
             $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
             ConfigServer-Script -VMName $VM -VMSpec $deviceType
-            $Count++
+            $count++
             $VMNumberStart++
         }
     }
 
     # Configure SCCM Server
     if ($clientSettings.RequireSCCM) {
-        $Count = 1
+        $count = 1
+        $buildNumber = $clientSettings.NumberofSCCMVMs
         $deviceType = 'Server-ConfigManager'
         [int]$VMNumberStart = $deviceSpecs.$deviceType.VMNumberStart
-        While ($Count -le $clientSettings.NumberofSCCMVMs) {
-            Write-AEBLog "Configuring $Count of $($clientSettings.NumberofSCCMVMs) VMs"
+        While ($count -le $buildNumber) {
+            Write-AEBLog "Configuring $count of $buildNumber VMs"
             $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
             ConfigServer-Script -VMName $VM -VMSpec $deviceType
-            $Count++
+            $count++
+            $VMNumberStart++
+        }
+    }
+
+    # Configure A365 Server
+    if ($clientSettings.RequireA365) {
+        $count = 1
+        $buildNumber = $clientSettings.NumberofA365VMs
+        $deviceType = 'Server-A365'
+        [int]$VMNumberStart = $deviceSpecs.$deviceType.VMNumberStart
+        While ($count -le $buildNumber) {
+            Write-AEBLog "Configuring $count of $buildNumber VMs"
+            $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
+            ConfigServer-Script -VMName $VM -VMSpec $deviceType
+            $count++
             $VMNumberStart++
         }
     }
