@@ -130,74 +130,20 @@ function ConfigureBaseVM {
 
 function ScriptRebuild-Create-VM {
     Get-AzContext -Name 'User' | Select-AzContext | Out-Null
+
+    $VMCheck = Get-AzVM -Name "$VMName" -ResourceGroup $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+    if ($VMCheck) {
+        Remove-AzVM -Name $VMName -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName -Force -Verbose | Out-Null
+        Get-AzNetworkInterface -Name $VMName* -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName | Remove-AzNetworkInterface -Force -Verbose | Out-Null
+        Get-AzPublicIpAddress -Name $VMName* -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName | Remove-AzPublicIpAddress -Force -Verbose | Out-Null
+        Get-AzDisk -Name $VMName* -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName | Remove-AzDisk -Force -Verbose | Out-Null
+    }
+    else {
+        Write-AEBLog "*** Virtual Machine $VMName doesn't exist! ***" -Level Error
+    }
     switch ($Spec) {
-        'Desktop-Standard' {
-            $VMCheck = Get-AzVM -Name "$VMName" -ResourceGroup $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
-            if ($VMCheck) {
-                Remove-AzVM -Name $VMName -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName -Force -Verbose | Out-Null
-                Get-AzNetworkInterface -Name $VMName* -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName | Remove-AzNetworkInterface -Force -Verbose | Out-Null
-                Get-AzPublicIpAddress -Name $VMName* -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName | Remove-AzPublicIpAddress -Force -Verbose | Out-Null
-                Get-AzDisk -Name $VMName* -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName | Remove-AzDisk -Force -Verbose | Out-Null
-            }
-            else {
-                Write-AEBLog "*** Virtual Machine $VMName doesn't exist! ***" -Level Error
-            }
-            CreateDesktop-Script -VMName $VM -VMSpec $Spec
-        }
-        'Desktop-Packaging' {
-            $VMCheck = Get-AzVM -Name "$VMName" -ResourceGroup $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
-            if ($VMCheck) {
-                Remove-AzVM -Name $VMName -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName -Force -Verbose | Out-Null
-                Get-AzNetworkInterface -Name $VMName* -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName | Remove-AzNetworkInterface -Force -Verbose | Out-Null
-                Get-AzPublicIpAddress -Name $VMName* -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName | Remove-AzPublicIpAddress -Force -Verbose | Out-Null
-                Get-AzDisk -Name $VMName* -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName | Remove-AzDisk -Force -Verbose | Out-Null
-            }
-            else {
-                Write-AEBLog "*** Virtual Machine $VMName doesn't exist! ***" -Level Error
-            }
-            CreateDesktop-Script -VMName $VM -VMSpec $Spec
-        }
-        'Desktop-AdminStudio' {
-            $VMCheck = Get-AzVM -Name "$VMName" -ResourceGroup $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
-            if ($VMCheck) {
-                Remove-AzVM -Name $VMName -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName -Force -Verbose | Out-Null
-                Get-AzNetworkInterface -Name $VMName* -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName | Remove-AzNetworkInterface -Force -Verbose | Out-Null
-                Get-AzPublicIpAddress -Name $VMName* -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName | Remove-AzPublicIpAddress -Force -Verbose | Out-Null
-                Get-AzDisk -Name $VMName* -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName | Remove-AzDisk -Force -Verbose | Out-Null
-            }
-            else {
-                Write-AEBLog "*** Virtual Machine $VMName doesn't exist! ***" -Level Error
-            }
-            CreateDesktop-Script -VMName $VM -VMSpec $Spec
-        }
-        'Desktop-Jumpbox' {
-            $VMCheck = Get-AzVM -Name "$VMName" -ResourceGroup $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
-            if ($VMCheck) {
-                Remove-AzVM -Name $VMName -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName -Force -Verbose | Out-Null
-                Get-AzNetworkInterface -Name $VMName* -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName | Remove-AzNetworkInterface -Force -Verbose | Out-Null
-                Get-AzPublicIpAddress -Name $VMName* -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName | Remove-AzPublicIpAddress -Force -Verbose | Out-Null
-                Get-AzDisk -Name $VMName* -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName | Remove-AzDisk -Force -Verbose | Out-Null
-            }
-            else {
-                Write-AEBLog "*** Virtual Machine $VMName doesn't exist! ***" -Level Error
-            }
-            CreateDesktop-Script -VMName $VM -VMSpec $Spec
-        }
-        'Desktop-Core' {
-            $VMCheck = Get-AzVM -Name "$VMName" -ResourceGroup $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
-            if ($VMCheck) {
-                Remove-AzVM -Name $VMName -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName -Force -Verbose | Out-Null
-                Get-AzNetworkInterface -Name $VMName* -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName | Remove-AzNetworkInterface -Force -Verbose | Out-Null
-                Get-AzPublicIpAddress -Name $VMName* -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName | Remove-AzPublicIpAddress -Force -Verbose | Out-Null
-                Get-AzDisk -Name $VMName* -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName | Remove-AzDisk -Force -Verbose | Out-Null
-            }
-            else {
-                Write-AEBLog "*** Virtual Machine $VMName doesn't exist! ***" -Level Error
-            }
-            CreateDesktop-Script -VMName $VM -VMSpec $Spec
-        }
         default {
-            Write-Dump
+            CreateDesktop-Script -VMName $VM -VMSpec $Spec
         }
     }
 }
@@ -205,28 +151,9 @@ function ScriptRebuild-Create-VM {
 function ScriptRebuild-Config-VM {
     Get-AzContext -Name 'User' | Select-AzContext | Out-Null
     switch ($Spec) {
-        'Desktop-Standard' {
-            ConfigureBaseVM -VMName "$VMName" -VMSpec $Spec -RG $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName
-            ConfigureVM -VMName "$VMName" -VMSpec $Spec -RG $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName
-        }
-        'Desktop-Packaging' {
-            ConfigureBaseVM -VMName "$VMName" -VMSpec $Spec -RG $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName
-            ConfigureVM -VMName "$VMName" -VMSpec $Spec -RG $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName
-        }
-        'Desktop-AdminStudio' {
-            ConfigureBaseVM -VMName "$VMName" -VMSpec $Spec -RG $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName
-            ConfigureVM -VMName "$VMName" -VMSpec $Spec -RG $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName
-        }
-        'Desktop-Jumpbox' {
-            ConfigureBaseVM -VMName "$VMName" -VMSpec $Spec -RG $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName
-            ConfigureVM -VMName "$VMName" -VMSpec $Spec -RG $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName
-        }
-        'Desktop-Core' {
-            ConfigureBaseVM -VMName "$VMName" -VMSpec $Spec -RG $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName
-            ConfigureVM -VMName "$VMName" -VMSpec $Spec -RG $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName
-        }
         default {
-            Write-Dump
+            ConfigureBaseVM -VMName "$VMName" -VMSpec $Spec -RG $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName
+            ConfigureVM -VMName "$VMName" -VMSpec $Spec -RG $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName
         }
     }
 }
@@ -318,11 +245,12 @@ function ScriptBuild-Create-VM {
 
     # Build Core VMs
     if ($clientSettings.RequireCoreVMs) {
-        $Count = 1
+        $count = 1
+        $buildNumber = $clientSettings.NumberofLiteVMs
         $deviceType = 'Desktop-Core'
         [int]$VMNumberStart = $deviceSpecs.$deviceType.VMNumberStart
-        While ($Count -le $clientSettings.NumberofCoreVMs) {
-            Write-AEBLog "Creating $Count of $($clientSettings.NumberofCoreVMs) VMs"
+        While ($Count -le $buildNumber) {
+            Write-AEBLog "Creating $Count of $buildNumber VMs"
             $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
             $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if (!$VMCheck) {
@@ -332,7 +260,51 @@ function ScriptBuild-Create-VM {
                 Write-AEBLog "*** Virtual Machine $VM already exists! ***" -Level Error
                 #break
             }
-            $Count++
+            $count++
+            $VMNumberStart++
+        }
+    }
+
+    # Build Lite VMs
+    if ($clientSettings.RequireLiteVMs) {
+        $count = 1
+        $buildNumber = $clientSettings.NumberofLiteVMs
+        $deviceType = 'Desktop-Lite'
+        [int]$VMNumberStart = $deviceSpecs.$deviceType.VMNumberStart
+        while ($count -le $buildNumber) {
+            Write-AEBLog "Creating $count of $buildNumber VMs"
+            $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
+            $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+            if (!$VMCheck) {
+                CreateDesktop-Script -VMName $VM -VMSpec $deviceType
+            }
+            else {
+                Write-AEBLog "*** Virtual Machine $VM already exists! ***" -Level Error
+                #break
+            }
+            $count++
+            $VMNumberStart++
+        }
+    }
+
+    # Build Domain Joined VMs
+    if ($clientSettings.RequireDomainJoinedVMs) {
+        $count = 1
+        $buildNumber = $clientSettings.NumberofDomainJoinedVMs
+        $deviceType = 'Desktop-DomainJoined'
+        [int]$VMNumberStart = $deviceSpecs.$deviceType.VMNumberStart
+        while ($count -le $buildNumber) {
+            Write-AEBLog "Creating $count of $buildNumber VMs"
+            $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
+            $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+            if (!$VMCheck) {
+                CreateDesktop-Script -VMName $VM -VMSpec $deviceType
+            }
+            else {
+                Write-AEBLog "*** Virtual Machine $VM already exists! ***" -Level Error
+                #break
+            }
+            $count++
             $VMNumberStart++
         }
     }
@@ -421,11 +393,12 @@ function ScriptBuild-Config-VM {
 
     # Configure Core VMs
     if ($clientSettings.RequireCoreVMs) {
-        $Count = 1
+        $count = 1
+        $buildNumber = $clientSettings.NumberofCoreVMs
         $deviceType = 'Desktop-Core'
         [int]$VMNumberStart = $deviceSpecs.$deviceType.VMNumberStart
-        While ($Count -le $clientSettings.NumberofCoreVMs) {
-            Write-AEBLog "Configuring $Count of $($clientSettings.NumberofCoreVMs) VMs"
+        While ($Count -le $buildNumber) {
+            Write-AEBLog "Configuring $count of $buildNumber VMs"
             $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
             $builddate = (Get-AzVM -Name $vm -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName).TimeCreated | Get-Date -Format 'yyyy-MM-dd'
             #$builddate = (Get-AzVM -Name $vm).TimeCreated | Get-Date -Format 'yyyy-MM-dd'
@@ -434,7 +407,49 @@ function ScriptBuild-Config-VM {
                 ConfigureBaseVM -VMName "$VM" -VMSpec $deviceType -RG $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName
                 ConfigureVM -VMName "$VM" -VMSpec $deviceType -RG $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName
             }
-            $Count++
+            $count++
+            $VMNumberStart++
+        }
+    }
+
+    # Configure Lite VMs
+    if ($clientSettings.RequireLiteVMs) {
+        $count = 1
+        $buildNumber = $clientSettings.NumberofLiteVMs
+        $deviceType = 'Desktop-Lite'
+        [int]$VMNumberStart = $deviceSpecs.$deviceType.VMNumberStart
+        While ($Count -le $buildNumber) {
+            Write-AEBLog "Configuring $count of $buildNumber VMs"
+            $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
+            $builddate = (Get-AzVM -Name $vm -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName).TimeCreated | Get-Date -Format 'yyyy-MM-dd'
+            #$builddate = (Get-AzVM -Name $vm).TimeCreated | Get-Date -Format 'yyyy-MM-dd'
+            $today = Get-Date -Format 'yyyy-MM-dd'
+            if ($builddate -ge $today ) {
+                ConfigureBaseVM -VMName "$VM" -VMSpec $deviceType -RG $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName
+                ConfigureVM -VMName "$VM" -VMSpec $deviceType -RG $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName
+            }
+            $count++
+            $VMNumberStart++
+        }
+    }
+
+    # Configure Domain Joined VMs
+    if ($clientSettings.RequireDomainJoinedVMs) {
+        $count = 1
+        $buildNumber = $clientSettings.NumberofDomainJoinedVMs
+        $deviceType = 'Desktop-DomainJoined'
+        [int]$VMNumberStart = $deviceSpecs.$deviceType.VMNumberStart
+        While ($Count -le $buildNumber) {
+            Write-AEBLog "Configuring $count of $buildNumber VMs"
+            $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
+            $builddate = (Get-AzVM -Name $vm -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName).TimeCreated | Get-Date -Format 'yyyy-MM-dd'
+            #$builddate = (Get-AzVM -Name $vm).TimeCreated | Get-Date -Format 'yyyy-MM-dd'
+            $today = Get-Date -Format 'yyyy-MM-dd'
+            if ($builddate -ge $today ) {
+                ConfigureBaseVM -VMName "$VM" -VMSpec $deviceType -RG $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName
+                ConfigureVM -VMName "$VM" -VMSpec $deviceType -RG $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName
+            }
+            $count++
             $VMNumberStart++
         }
     }
