@@ -34,6 +34,9 @@
         },
         {
             "Name": "Server-ConfigManager"
+        },
+        {
+            "Name": "Server-A365"
         }
     ],
     "Desktop-Standard": [
@@ -73,7 +76,7 @@
                     "Application": "AEB",
                     "AEB-Client": "TestClientX",
                     "AEB-Application": "Desktop-Standard",
-                    "AEB-Environment": "Dev"
+                    "AEB-Environment": "DEV"
                 }
             ]
         }
@@ -124,7 +127,7 @@
                     "Application": "AEB",
                     "AEB-Client": "TestClientX",
                     "AEB-Application": "Desktop-Packaging",
-                    "AEB-Environment": "Dev"
+                    "AEB-Environment": "DEV"
                 }
             ]
         }
@@ -172,7 +175,7 @@
                     "Application": "AEB",
                     "AEB-Client": "TestClientX",
                     "AEB-Application": "Desktop-AdminStudio",
-                    "AEB-Environment": "Dev"
+                    "AEB-Environment": "DEV"
                 }
             ]
         }
@@ -187,15 +190,12 @@
                 {
                     "Name": "Conf-RunOnce"
                 },
-                //{
-                //    "Name": "Conf-Jumpbox"
-                //},
-                //{
-                //    "Name": "App-MECMConsole"
-                //},
-                //{
-                //    "Name": "Conf-DomainJoin"
-                //}
+                {
+                    "Name": "Conf-Jumpbox"
+                },
+                {
+                    "Name": "App-MECMConsole"
+                }
             ],
             "VMSize": "Standard_B2s",
             "VMNamePrefix": "vm-euc-jb-",
@@ -211,7 +211,7 @@
                     "Application": "AEB",
                     "AEB-Client": "TestClientX",
                     "AEB-Application": "Desktop-Jumpbox",
-                    "AEB-Environment": "Dev"
+                    "AEB-Environment": "DEV"
                 }
             ]
         }
@@ -262,7 +262,70 @@
                     "Application": "AEB",
                     "AEB-Client": "TestClientX",
                     "AEB-Application": "Desktop-Core",
-                    "AEB-Environment": "Dev"
+                    "AEB-Environment": "DEV"
+                }
+            ]
+        }
+    ],
+    "Desktop-Lite": [
+        {
+            "PublisherName": "MicrosoftWindowsDesktop",
+            "Offer": "Windows-11",
+            "SKUS": "Win11-22h2-ent",
+            "Version": "latest",
+            "Apps": [
+                {
+                    "Name": "Conf-RunOnce"
+                }
+            ],
+            "VMSize": "Standard_B2s",
+            "VMNamePrefix": "vm-euc-lite-",
+            "VMNumberStart": "601",
+            "BuildShutdownOnComplete": true,
+            "AutoShutdownRequired": true,
+            "AutoShutdownTime": 1800,
+            "VnetRef": "vnet-dev-azure",
+            "Environment": "DEV",
+            "AdminUsername": "AppPackager",
+            "Tags": [
+                {
+                    "Application": "AEB",
+                    "AEB-Client": "TestClientX",
+                    "AEB-Application": "Desktop-Lite",
+                    "AEB-Environment": "DEV"
+                }
+            ]
+        }
+    ],
+    "Desktop-DomainJoined": [
+        {
+            "PublisherName": "MicrosoftWindowsDesktop",
+            "Offer": "Windows-11",
+            "SKUS": "Win11-22h2-ent",
+            "Version": "latest",
+            "Apps": [
+                {
+                    "Name": "Conf-RunOnce"
+                },
+                {
+                    "Name": "Conf-DomainJoin"
+                }
+            ],
+            "VMSize": "Standard_B2s",
+            "VMNamePrefix": "vm-euc-dom-",
+            "VMNumberStart": "701",
+            "BuildShutdownOnComplete": true,
+            "AutoShutdownRequired": true,
+            "AutoShutdownTime": 1800,
+            "VnetRef": "vnet-dev-domain",
+            "Environment": "DEV",
+            "AdminUsername": "AppPackager",
+            "Tags": [
+                {
+                    "Application": "AEB",
+                    "AEB-Client": "TestClientX",
+                    "AEB-Application": "Desktop-DomainJoined",
+                    "AEB-Environment": "DEV"
                 }
             ]
         }
@@ -279,6 +342,9 @@
                 },
                 {
                     "Name": "Conf-ConfigureDataDisk"
+                },
+                {
+                    "Name": "Conf-DomainJoin"
                 }
             ],
             "VMSize": "Standard_B2ms",
@@ -287,18 +353,18 @@
             "dataDiskTier": "S10",
             "dataDiskSKU": "Standard_LRS",
             "dataDiskSize": 128,
-            "BuildShutdownOnComplete": true,
-            "AutoShutdownRequired": false,
-            "AutoShutdownTime": 0,
-            "VnetRef": "vnet-dev-azure",
-            "Environment": "DEV",
+            "BuildShutdownOnComplete": false,
+            "AutoShutdownRequired": true,
+            "AutoShutdownTime": 1800,
+            "VnetRef": "vnet-prod-domain",
+            "Environment": "PROD",
             "AdminUsername": "aebadmin",
             "Tags": [
                 {
                     "Application": "AEB",
                     "AEB-Client": "TestClientX",
                     "AEB-Application": "Server-Standard",
-                    "AEB-Environment": "DEV"
+                    "AEB-Environment": "PROD"
                 }
             ]
         }
@@ -346,7 +412,7 @@
                     "Application": "AEB",
                     "AEB-Client": "TestClientX",
                     "AEB-Application": "Server-HyperV",
-                    "AEB-Environment": "Prod"
+                    "AEB-Environment": "PROD"
                 }
             ]
         }
@@ -391,7 +457,7 @@
                     "Application": "AEB",
                     "AEB-Client": "TestClientX",
                     "AEB-Application": "Server-DomainController",
-                    "AEB-Environment": "Prod"
+                    "AEB-Environment": "PROD"
                 }
             ]
         }
@@ -439,7 +505,46 @@
                     "Application": "AEB",
                     "AEB-Client": "TestClientX",
                     "AEB-Application": "Server-ConfigManager",
-                    "AEB-Environment": "Prod"
+                    "AEB-Environment": "PROD"
+                }
+            ]
+        }
+    ],
+    "Server-A365": [
+        {
+            "PublisherName": "MicrosoftWindowsServer",
+            "Offer": "WindowsServer",
+            "SKUS": "2019-Datacenter",
+            "Version": "latest",
+            "Apps": [
+                {
+                    "Name": "Conf-RunOnce"
+                },
+                {
+                    "Name": "Conf-ConfigureDataDisk"
+                },
+                {
+                    "Name": "Conf-DomainJoin"
+                }
+            ],
+            "VMSize": "Standard_B2ms",
+            "VMNamePrefix": "vm-euc-a365-0",
+            "VMNumberStart": "1",
+            "dataDiskTier": "S10",
+            "dataDiskSKU": "Standard_LRS",
+            "dataDiskSize": 128,
+            "BuildShutdownOnComplete": false,
+            "AutoShutdownRequired": true,
+            "AutoShutdownTime": 1800,
+            "VnetRef": "vnet-prod-domain",
+            "Environment": "PROD",
+            "AdminUsername": "aebadmin",
+            "Tags": [
+                {
+                    "Application": "AEB",
+                    "AEB-Client": "TestClientX",
+                    "AEB-Application": "Server-A365",
+                    "AEB-Environment": "PROD"
                 }
             ]
         }
