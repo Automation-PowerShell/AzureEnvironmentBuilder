@@ -63,16 +63,21 @@ function UpdateRBAC {
 function ConfigureNetwork {
     if ($clientSettings.RequireNSG) {
         Write-AEBLog 'Creating Network Security Groups'
-        $rule1 = New-AzNetworkSecurityRuleConfig -Name 'smb-rule' -Description 'Allow SMB' -Access Allow -Protocol Tcp -Direction Outbound -Priority 100 -SourceAddressPrefix * -SourcePortRange * -DestinationAddressPrefix 'VirtualNetwork' -DestinationPortRange 445
-        $rule2 = New-AzNetworkSecurityRuleConfig -Name 'rdp-rule' -Description 'Allow RDP' -Access Allow -Protocol Tcp -Direction Inbound -Priority 100 -SourceAddressPrefix 'VirtualNetwork' -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange 3389
-        $rule3 = New-AzNetworkSecurityRuleConfig -Name 'internet-allow-rule' -Description 'Allow Internet 443' -Access Allow -Protocol Tcp -Direction Outbound -Priority 110 -SourceAddressPrefix * -SourcePortRange * -DestinationAddressPrefix 'Internet' -DestinationPortRange 443
-        $rule4 = New-AzNetworkSecurityRuleConfig -Name 'AllowVnetOutBound' -Description 'AllowVnetOutBound' -Access Allow -Protocol * -Direction Outbound -Priority 4000 -SourceAddressPrefix 'VirtualNetwork' -SourcePortRange * -DestinationAddressPrefix 'VirtualNetwork' -DestinationPortRange *
-        $rule5 = New-AzNetworkSecurityRuleConfig -Name 'internet-deny-rule' -Description 'Deny All Internet' -Access Deny -Protocol * -Direction Outbound -Priority 4096 -SourceAddressPrefix * -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange *
+        $rule1 = New-AzNetworkSecurityRuleConfig -Name 'rdp-rule' -Description 'Allow RDP' -Access Allow -Protocol Tcp -Direction Inbound -Priority 100 -SourceAddressPrefix 'VirtualNetwork' -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange 3389
+        $rule2 = New-AzNetworkSecurityRuleConfig -Name 'dns-inbound-rule' -Description 'Allow Inbound DNS 53' -Access Allow -Protocol * -Direction Inbound -Priority 120 -SourceAddressPrefix 'VirtualNetwork' -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange 53
+
+        $rule3 = New-AzNetworkSecurityRuleConfig -Name 'smb-vnet-rule' -Description 'Allow VNET SMB' -Access Allow -Protocol Tcp -Direction Outbound -Priority 100 -SourceAddressPrefix * -SourcePortRange * -DestinationAddressPrefix 'VirtualNetwork' -DestinationPortRange 445
+        $rule4 = New-AzNetworkSecurityRuleConfig -Name 'smb-storage-rule' -Description 'Allow Storage SMB' -Access Allow -Protocol Tcp -Direction Outbound -Priority 105 -SourceAddressPrefix * -SourcePortRange * -DestinationAddressPrefix 'Storage' -DestinationPortRange 445
+        $rule5 = New-AzNetworkSecurityRuleConfig -Name 'internet-allow-443--rule' -Description 'Allow Internet 443' -Access Allow -Protocol Tcp -Direction Outbound -Priority 110 -SourceAddressPrefix * -SourcePortRange * -DestinationAddressPrefix 'Internet' -DestinationPortRange 443
+        $rule6 = New-AzNetworkSecurityRuleConfig -Name 'internet-allow-80-rule' -Description 'Allow Internet 80' -Access Allow -Protocol Tcp -Direction Outbound -Priority 115 -SourceAddressPrefix * -SourcePortRange * -DestinationAddressPrefix 'Internet' -DestinationPortRange 80
+        $rule7 = New-AzNetworkSecurityRuleConfig -Name 'dns-outbound-rule' -Description 'Allow Outbound DNS 53' -Access Allow -Protocol * -Direction Outbound -Priority 120 -SourceAddressPrefix * -SourcePortRange * -DestinationAddressPrefix 'VirtualNetwork' -DestinationPortRange 53
+        $rule8 = New-AzNetworkSecurityRuleConfig -Name 'AllowVnetOutBound' -Description 'AllowVnetOutBound' -Access Allow -Protocol * -Direction Outbound -Priority 4000 -SourceAddressPrefix 'VirtualNetwork' -SourcePortRange * -DestinationAddressPrefix 'VirtualNetwork' -DestinationPortRange *
+        $rule9 = New-AzNetworkSecurityRuleConfig -Name 'deny-all-rule' -Description 'Deny All' -Access Deny -Protocol * -Direction Outbound -Priority 4096 -SourceAddressPrefix * -SourcePortRange * -DestinationAddressPrefix * -DestinationPortRange *
 
         foreach ($environment in $clientSettings.vnets.GetEnumerator().Name) {
             $resourceCheck = Get-AzNetworkSecurityGroup -ResourceGroupName $clientSettings.rgs.$environment.RGNameVNET -Name $clientSettings.nsgs.$environment.NsgName -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if (!$resourceCheck) {
-                $nsg = New-AzNetworkSecurityGroup -ResourceGroupName $clientSettings.rgs.$environment.RGNameVNET -Location $clientSettings.location -Name $clientSettings.nsgs.$environment.NsgName -SecurityRules $rule1, $rule2, $rule3, $rule4, $rule5 -Force    # $Rule1, $Rule2 etc.
+                $nsg = New-AzNetworkSecurityGroup -ResourceGroupName $clientSettings.rgs.$environment.RGNameVNET -Location $clientSettings.location -Name $clientSettings.nsgs.$environment.NsgName -SecurityRules $rule1, $rule2, $rule3, $rule4, $rule5, $rule6, $rule7, $rule8, $rule9 -Force    # $Rule1, $Rule2 etc.
                 if ($nsg.ProvisioningState -eq 'Succeeded') {
                     Write-AEBLog "$environment Network Security Group created successfully"
                     Update-AzTag -ResourceId $nsg.Id -Tag $clientSettings.tags -Operation Merge | Out-Null
@@ -102,7 +107,7 @@ function ConfigureNetwork {
                         #Start-Sleep -Seconds 10
                         #Update-AzTag -ResourceId $vnetcheck.Id -Tag $clientSettings.tags -Operation Merge | Out-Null
                         #Start-Sleep -Seconds 10
-                        Update-AzTag -ResourceId $vnetcheck.Id -Tag @{ 'AEB-Environment' = $environment } -Operation Merge
+                        Update-AzTag -ResourceId $vnetcheck.Id -Tag @{ 'AEB-Environment' = $environment } -Operation Merge | Out-Null
                     }
                     else {
                         Write-AEBLog "*** Unable to create $environment VNET! ***" -Level Error

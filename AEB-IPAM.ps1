@@ -47,22 +47,37 @@ else {
 }
 #endregion
 
-$ResourceNames = @{
+<#$ResourceNames = @{
     appServiceName        = 'as-' + $clientSettings.ClientName + '-01'
     appServicePlanName    = 'asp-' + $clientSettings.ClientName + '-01'
     cosmosAccountName     = 'ca-' + $clientSettings.ClientName + '-01'
-    cosmosContainerName   = 'mycontainer01'
-    cosmosDatabaseName    = 'mydatabase01'
+    cosmosContainerName   = 'mycon01'
+    cosmosDatabaseName    = 'mydb01'
     keyVaultName          = 'kv-' + $clientSettings.ClientName + '-01'
     workspaceName         = 'law-' + $clientSettings.ClientName + '-01'
     managedIdentityName   = 'id-' + $clientSettings.ClientName + '-01'
     resourceGroupName     = $clientSettings.rgs.STORE.RGName
     storageAccountName    = 'sa' + $clientSettings.ClientName + '01'
     containerRegistryName = 'acr-' + $clientSettings.ClientName + '-01'
+}#>
+
+$ResourceNames = @{
+    appServiceName        = 'as-' + 'ws-ipam-dev' + '-01'
+    appServicePlanName    = 'asp-' + 'ws-ipam-dev' + '-01'
+    cosmosAccountName     = 'ca-' + 'ws-ipam-dev' + '-01'
+    cosmosContainerName   = 'mycon01'
+    cosmosDatabaseName    = 'mydb01'
+    keyVaultName          = 'kv-' + 'ws-ipam-dev' + '-01'
+    workspaceName         = 'law-' + 'ws-ipam-dev' + '-01'
+    managedIdentityName   = 'id-' + 'ws-ipam-dev' + '-01'
+    resourceGroupName     = 'rg-ipam-dev-001'
+    storageAccountName    = 'sa' + 'ws-ipam-dev' + '01'
+    containerRegistryName = 'acr-' + 'ws-ipam-dev' + '-01'
 }
 
+Get-Item -Path ./ipam | Remove-Item -Recurse -Force
 git clone https://github.com/Azure/ipam.git
-Set-Location .\ipam\deploy
+Set-Location ./ipam/deploy
 ./deploy.ps1 `
     -Location $clientSettings.location `
     -ResourceNames $ResourceNames #`

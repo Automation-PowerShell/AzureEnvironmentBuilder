@@ -21,7 +21,10 @@
             "Name": "Desktop-Lite"
         },
         {
-            "Name": "Desktop-DomainJoined"
+            "Name": "Desktop-DomainJoined-Win10-20h2"
+        },
+        {
+            "Name": "Desktop-DomainJoined-Win11-22h2"
         },
         {
             "Name": "Server-Standard"
@@ -297,7 +300,40 @@
             ]
         }
     ],
-    "Desktop-DomainJoined": [
+    "Desktop-DomainJoined-Win10-20h2": [
+        {
+            "PublisherName": "MicrosoftWindowsDesktop",
+            "Offer": "Windows-10",
+            "SKUS": "20h2-ent",
+            "Version": "latest",
+            "Apps": [
+                {
+                    "Name": "Conf-RunOnce"
+                },
+                {
+                    "Name": "Conf-DomainJoin"
+                }
+            ],
+            "VMSize": "Standard_B2s",
+            "VMNamePrefix": "vm-euc-dom-",
+            "VMNumberStart": "701",
+            "BuildShutdownOnComplete": true,
+            "AutoShutdownRequired": true,
+            "AutoShutdownTime": 1800,
+            "VnetRef": "vnet-dev-domain",
+            "Environment": "DEV",
+            "AdminUsername": "AppPackager",
+            "Tags": [
+                {
+                    "Application": "AEB",
+                    "AEB-Client": "TestClientX",
+                    "AEB-Application": "Desktop-DomainJoined",
+                    "AEB-Environment": "DEV"
+                }
+            ]
+        }
+    ],
+    "Desktop-DomainJoined-Win11-22h2": [
         {
             "PublisherName": "MicrosoftWindowsDesktop",
             "Offer": "Windows-11",
