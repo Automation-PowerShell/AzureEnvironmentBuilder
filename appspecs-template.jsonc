@@ -125,8 +125,8 @@
         {
             "AppVersion": "",
             "PS1": "Conf-RunOnce.ps1",
-            "RebootRequired": false,
-            "RebootSeconds": 0
+            "RebootRequired": true,
+            "RebootSeconds": 60
         }
     ],
     "App-ORCA": [

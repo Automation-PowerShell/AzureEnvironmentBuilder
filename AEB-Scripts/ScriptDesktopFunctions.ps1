@@ -287,11 +287,33 @@ function ScriptBuild-Create-VM {
         }
     }
 
-    # Build Domain Joined VMs
-    if ($clientSettings.RequireDomainJoinedVMs) {
+    # Build Windows 10 20h2 Domain Joined VMs
+    if ($clientSettings.RequireDomainJoinedWin1020h2VMs) {
         $count = 1
-        $buildNumber = $clientSettings.NumberofDomainJoinedVMs
-        $deviceType = 'Desktop-DomainJoined'
+        $buildNumber = $clientSettings.NumberofDomainJoinedWin1020h2VMs
+        $deviceType = 'Desktop-DomainJoined-Win10-20h2'
+        [int]$VMNumberStart = $deviceSpecs.$deviceType.VMNumberStart
+        while ($count -le $buildNumber) {
+            Write-AEBLog "Creating $count of $buildNumber VMs"
+            $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
+            $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+            if (!$VMCheck) {
+                CreateDesktop-Script -VMName $VM -VMSpec $deviceType
+            }
+            else {
+                Write-AEBLog "*** Virtual Machine $VM already exists! ***" -Level Error
+                #break
+            }
+            $count++
+            $VMNumberStart++
+        }
+    }
+
+    # Build Windows 11 22h2 Domain Joined VMs
+    if ($clientSettings.RequireDomainJoinedWin1122h2VMs) {
+        $count = 1
+        $buildNumber = $clientSettings.NumberofDomainJoinedWin1122h2VMs
+        $deviceType = 'Desktop-DomainJoined-Win10-22h2'
         [int]$VMNumberStart = $deviceSpecs.$deviceType.VMNumberStart
         while ($count -le $buildNumber) {
             Write-AEBLog "Creating $count of $buildNumber VMs"
@@ -433,11 +455,32 @@ function ScriptBuild-Config-VM {
         }
     }
 
-    # Configure Domain Joined VMs
-    if ($clientSettings.RequireDomainJoinedVMs) {
+    # Configure Windows 10 20h2 Domain Joined VMs
+    if ($clientSettings.RequireDomainJoinedWin1020h2VMs) {
         $count = 1
-        $buildNumber = $clientSettings.NumberofDomainJoinedVMs
-        $deviceType = 'Desktop-DomainJoined'
+        $buildNumber = $clientSettings.NumberofDomainJoinedWin1020h2VMs
+        $deviceType = 'Desktop-DomainJoined-Win10-20h2'
+        [int]$VMNumberStart = $deviceSpecs.$deviceType.VMNumberStart
+        While ($Count -le $buildNumber) {
+            Write-AEBLog "Configuring $count of $buildNumber VMs"
+            $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
+            $builddate = (Get-AzVM -Name $vm -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName).TimeCreated | Get-Date -Format 'yyyy-MM-dd'
+            #$builddate = (Get-AzVM -Name $vm).TimeCreated | Get-Date -Format 'yyyy-MM-dd'
+            $today = Get-Date -Format 'yyyy-MM-dd'
+            if ($builddate -ge $today ) {
+                ConfigureBaseVM -VMName "$VM" -VMSpec $deviceType -RG $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName
+                ConfigureVM -VMName "$VM" -VMSpec $deviceType -RG $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName
+            }
+            $count++
+            $VMNumberStart++
+        }
+    }
+
+    # Configure Windows 11 22h2 Domain Joined VMs
+    if ($clientSettings.RequireDomainJoinedWin1122h2VMs) {
+        $count = 1
+        $buildNumber = $clientSettings.NumberofDomainJoinedWin1122h2VMs
+        $deviceType = 'Desktop-DomainJoined-Win10-20h2'
         [int]$VMNumberStart = $deviceSpecs.$deviceType.VMNumberStart
         While ($Count -le $buildNumber) {
             Write-AEBLog "Configuring $count of $buildNumber VMs"
