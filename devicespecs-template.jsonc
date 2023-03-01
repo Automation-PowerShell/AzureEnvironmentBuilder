@@ -316,13 +316,13 @@
             ],
             "VMSize": "Standard_B2s",
             "VMNamePrefix": "vm-euc-dom-",
-            "VMNumberStart": "701",
+            "VMNumberStart": "101",
             "BuildShutdownOnComplete": true,
             "AutoShutdownRequired": true,
             "AutoShutdownTime": 1800,
             "VnetRef": "vnet-dev-domain",
             "Environment": "DEV",
-            "AdminUsername": "AppPackager",
+            "AdminUsername": "aebadmin",
             "Tags": [
                 {
                     "Application": "AEB",
@@ -355,7 +355,7 @@
             "AutoShutdownTime": 1800,
             "VnetRef": "vnet-dev-domain",
             "Environment": "DEV",
-            "AdminUsername": "AppPackager",
+            "AdminUsername": "aebadmin",
             "Tags": [
                 {
                     "Application": "AEB",
@@ -516,10 +516,10 @@
                 },
                 {
                     "Name": "Conf-DomainJoin"
+                },
+                {
+                    "Name": "Conf-EnableSCCM"
                 }
-                //{
-                //    "Name": "Conf-EnableSCCM"
-                //},
                 //{
                 //    "Name": "App-7-Zip"
                 //}
@@ -527,8 +527,8 @@
             "VMSize": "Standard_B2ms",
             "VMNamePrefix": "vm-euc-sccm-0",
             "VMNumberStart": "1",
-            "dataDiskTier": "S10",
-            "dataDiskSKU": "Standard_LRS",
+            "dataDiskTier": "E10",
+            "dataDiskSKU": "Standard_LRS",  // Needs removing / updating
             "dataDiskSize": 128,
             "BuildShutdownOnComplete": false,
             "AutoShutdownRequired": false,

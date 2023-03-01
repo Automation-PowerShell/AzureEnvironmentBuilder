@@ -16,7 +16,7 @@ More Info       : https://github.com/Automation-PowerShell/AzureEnvironmentBuild
 #>
 
 Param(
-    [Parameter(Mandatory = $false)][string]$VMName = '',
+    [Parameter(Mandatory = $false)][string]$VMName = 'vm-euc-dom-101',
     [Parameter(Mandatory = $false)][ValidateSet('Standard', 'Packaging', 'AdminStudio', 'Jumpbox', 'Core')][string]$Spec = 'Standard'
 )
 
@@ -49,12 +49,12 @@ Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings 'true'  # Turns off 
 #region Main
 Write-AEBLog 'Running AEB-RebuildAzureVM.ps1'
 if ($VMName -eq '') {
-    $VMList = Get-AzVM -Name * -ResourceGroupName $clientSettings.RGNameDEV -ErrorAction SilentlyContinue
+    $VMList = Get-AzVM -Name * -ErrorAction SilentlyContinue
     $VMName = ($VMlist | Where-Object { $_.Name -notin $clientSettings.VMListExclude } | Select-Object Name | Out-GridView -Title 'Select Virtual Machine to Rebuild' -OutputMode Single).Name
     if (!$VMName) { exit }
-    $VMSpec = @('Desktop-Standard', 'Desktop-Packaging', 'Desktop-AdminStudio', 'Desktop-Jumpbox', 'Desktop-Core')
-    $Spec = $VMSpec | Out-GridView -Title 'Select Virtual Machine Spec' -OutputMode Single
 }
+$VMSpec = $deviceSpecs.SpecList.Name | Sort-Object
+$Spec = $VMSpec | Out-GridView -Title 'Select Virtual Machine Spec' -OutputMode Single
 Write-Warning "This Script is about to Rebuild: $VMName with Spec: $Spec.  OK to Continue?" -WarningAction Inquire
 
 # Update Storage
