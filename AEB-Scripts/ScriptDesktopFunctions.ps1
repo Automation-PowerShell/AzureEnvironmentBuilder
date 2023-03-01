@@ -131,7 +131,7 @@ function ConfigureBaseVM {
 function ScriptRebuild-Create-VM {
     Get-AzContext -Name 'User' | Select-AzContext | Out-Null
 
-    $VMCheck = Get-AzVM -Name "$VMName" -ResourceGroup $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+    $VMCheck = Get-AzVM -Name $VMName -ResourceGroup $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
     if ($VMCheck) {
         Remove-AzVM -Name $VMName -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName -Force -Verbose | Out-Null
         Get-AzNetworkInterface -Name $VMName* -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$Spec.Environment).RGName | Remove-AzNetworkInterface -Force -Verbose | Out-Null
@@ -143,7 +143,7 @@ function ScriptRebuild-Create-VM {
     }
     switch ($Spec) {
         default {
-            CreateDesktop-Script -VMName $VM -VMSpec $Spec
+            CreateDesktop-Script -VMName $VMName -VMSpec $Spec
         }
     }
 }
