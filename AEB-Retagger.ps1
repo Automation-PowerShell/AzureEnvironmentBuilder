@@ -44,12 +44,6 @@ else {
 }
 #endregion
 
-#$csvfile = './subscriptions-resourcegroups.csv'
-#$csvpath = Split-Path -Path $csvfile -Parent
-#$Import = Import-Csv -Path $csvfile
-#$subscriptions = $Import.Sub | Sort-Object -Unique
-#$selectedSub = $subscriptions | Out-GridView -OutputMode Single
-
 $selectedSub = Get-AzSubscription -TenantId $clientSettings.azTenant | Out-GridView -OutputMode Single -Title 'Select Subscription'
 Write-Host "##vso[task.LogIssue type=warning;]Switching Subscription to $($selectedSub)"
 Select-AzSubscription -Subscription $selectedSub -Tenant $clientSettings.azTenant | Out-Null
