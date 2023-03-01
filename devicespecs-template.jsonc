@@ -73,7 +73,7 @@
             "AutoShutdownTime": 1800,
             "VnetRef": "vnet-dev-azure",
             "Environment": "DEV",
-            "AdminUsername": "AppPackager",
+            "AdminUsername": "aebadmin",
             "Tags": [
                 {
                     "Application": "AEB",
@@ -208,7 +208,7 @@
             "AutoShutdownTime": 1800,
             "VnetRef": "vnet-dev-azure",
             "Environment": "DEV",
-            "AdminUsername": "AppPackager",
+            "AdminUsername": "aebadmin",
             "Tags": [
                 {
                     "Application": "AEB",
@@ -289,7 +289,7 @@
             "AutoShutdownTime": 1800,
             "VnetRef": "vnet-dev-azure",
             "Environment": "DEV",
-            "AdminUsername": "AppPackager",
+            "AdminUsername": "aebadmin",
             "Tags": [
                 {
                     "Application": "AEB",
@@ -309,6 +309,9 @@
             "Apps": [
                 {
                     "Name": "Conf-RunOnce"
+                },
+                {
+                    "Name": "App-CMTrace"
                 },
                 {
                     "Name": "Conf-DomainJoin"
@@ -342,6 +345,9 @@
             "Apps": [
                 {
                     "Name": "Conf-RunOnce"
+                },
+                {
+                    "Name": "App-CMTrace"
                 },
                 {
                     "Name": "Conf-DomainJoin"
@@ -502,7 +508,7 @@
         {
             "PublisherName": "MicrosoftWindowsServer",
             "Offer": "WindowsServer",
-            "SKUS": "2022-datacenter-azure-edition",
+            "SKUS": "2019-Datacenter",
             "Version": "latest",
             "Apps": [
                 {
@@ -527,8 +533,8 @@
             "VMSize": "Standard_B2ms",
             "VMNamePrefix": "vm-euc-sccm-0",
             "VMNumberStart": "1",
-            "dataDiskTier": "E10",
-            "dataDiskSKU": "Standard_LRS",  // Needs removing / updating
+            "dataDiskTier": "E10",              // Is this ignored?
+            "dataDiskSKU": "StandardSSD_LRS",   // Needs removing / updating
             "dataDiskSize": 128,
             "BuildShutdownOnComplete": false,
             "AutoShutdownRequired": false,
