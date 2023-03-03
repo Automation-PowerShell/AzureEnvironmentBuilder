@@ -18,6 +18,23 @@ More Info       : https://github.com/Automation-PowerShell/AzureEnvironmentBuild
 #>
 
 #region Setup
+Set-Location $PSScriptRoot
+
+# Script Variables
+$root = $PSScriptRoot
+#$root = $pwd
+$AEBScripts = "$root\AEB-Scripts"
+$ExtraFiles = "$root\ExtraFiles"
+
+# Dot Source Variables
+. $AEBScripts\ClientLoadVariables.ps1
+
+# Dot Source Functions
+. $AEBScripts\ScriptCoreFunctions.ps1
+. $AEBScripts\ScriptEnvironmentFunctions.ps1
+. $AEBScripts\ScriptDesktopFunctions.ps1
+. $AEBScripts\ScriptServerFunctions.ps1
+
 Setup
 #endregion Setup
 
