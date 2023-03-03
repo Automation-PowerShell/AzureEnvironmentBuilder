@@ -328,14 +328,6 @@ function ConnectTo-Azure {
 }
 
 function Setup {
-    Set-Location $PSScriptRoot
-
-    # Script Variables
-    $root = $PSScriptRoot
-    #$root = $pwd
-    $AEBScripts = "$root\AEB-Scripts"
-    $ExtraFiles = "$root\ExtraFiles"
-    
     if (!(Test-Path $ExtraFiles)) {
         $output = 'AEBScripts\ClientVariables-Template.ps1'
         '. $' | Out-File $AEBScripts\ClientLoadVariables.ps1 -NoNewline
@@ -344,16 +336,7 @@ function Setup {
         Write-Host 'New Run Detected.  Please review ClientVariable file is correct within ClientLoadVariables.ps1'
         exit
     }
-    
-    # Dot Source Variables
-    . $AEBScripts\ClientLoadVariables.ps1
-    
-    # Dot Source Functions
-    . $AEBScripts\ScriptCoreFunctions.ps1
-    . $AEBScripts\ScriptEnvironmentFunctions.ps1
-    . $AEBScripts\ScriptDesktopFunctions.ps1
-    . $AEBScripts\ScriptServerFunctions.ps1
-    
+
     # Load Azure Modules and Connect
     $script:devops = ${env:TF_BUILD}
     if ($devops) {
@@ -362,7 +345,7 @@ function Setup {
     else {
         ConnectTo-Azure
     }
-    
+
     #Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings 'true'  # Turns off Breaking Changes warnings for Cmdlets
     Update-AzConfig -DisplayBreakingChangeWarning $false
 }
