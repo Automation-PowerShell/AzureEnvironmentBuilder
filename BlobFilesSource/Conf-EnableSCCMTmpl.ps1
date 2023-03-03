@@ -29,6 +29,7 @@ Install-WindowsFeature -Name BITS
 Install-WindowsFeature -Name NET-Framework-Core       # Install .NET 3.5
 dism.exe /online /norestart /enable-feature /ignorecheck /featurename:"IIS-WebServerRole" /featurename:"IIS-WebServer" /featurename:"IIS-CommonHttpFeatures" /featurename:"IIS-StaticContent" /featurename:"IIS-DefaultDocument" /featurename:"IIS-DirectoryBrowsing" /featurename:"IIS-HttpErrors" /featurename:"IIS-HttpRedirect" /featurename:"IIS-WebServerManagementTools" /featurename:"IIS-IIS6ManagementCompatibility" /featurename:"IIS-Metabase" /featurename:"IIS-WindowsAuthentication" /featurename:"IIS-WMICompatibility" /featurename:"IIS-ISAPIExtensions" /featurename:"IIS-ManagementScriptingTools" /featurename:"MSRDC-Infrastructure" /featurename:"IIS-ManagementService"
 # Post Steps
+# Firewall Settings
 # Install SQL Server
 # Change SQL Logon to LocalSystem
 # Install ADK components

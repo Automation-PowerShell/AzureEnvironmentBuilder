@@ -311,6 +311,9 @@
                     "Name": "Conf-RunOnce"
                 },
                 {
+                    "Name": "App-7-Zip"
+                },
+                {
                     "Name": "App-CMTrace"
                 },
                 {
@@ -318,9 +321,9 @@
                 }
             ],
             "VMSize": "Standard_B2s",
-            "VMNamePrefix": "vm-euc-dom-",
+            "VMNamePrefix": "vm-w10-20h2-",
             "VMNumberStart": "101",
-            "BuildShutdownOnComplete": true,
+            "BuildShutdownOnComplete": false,
             "AutoShutdownRequired": true,
             "AutoShutdownTime": 1800,
             "VnetRef": "vnet-dev-domain",
@@ -347,6 +350,9 @@
                     "Name": "Conf-RunOnce"
                 },
                 {
+                    "Name": "App-7-Zip"
+                },
+                {
                     "Name": "App-CMTrace"
                 },
                 {
@@ -354,9 +360,9 @@
                 }
             ],
             "VMSize": "Standard_B2s",
-            "VMNamePrefix": "vm-euc-dom-",
-            "VMNumberStart": "701",
-            "BuildShutdownOnComplete": true,
+            "VMNamePrefix": "vm-w11-22h2-",
+            "VMNumberStart": "101",
+            "BuildShutdownOnComplete": false,
             "AutoShutdownRequired": true,
             "AutoShutdownTime": 1800,
             "VnetRef": "vnet-dev-domain",
