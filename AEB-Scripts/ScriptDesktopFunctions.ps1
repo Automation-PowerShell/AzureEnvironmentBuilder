@@ -313,7 +313,7 @@ function ScriptBuild-Create-VM {
     if ($clientSettings.RequireDomainJoinedWin1122h2VMs) {
         $count = 1
         $buildNumber = $clientSettings.NumberofDomainJoinedWin1122h2VMs
-        $deviceType = 'Desktop-DomainJoined-Win10-22h2'
+        $deviceType = 'Desktop-DomainJoined-Win11-22h2'
         [int]$VMNumberStart = $deviceSpecs.$deviceType.VMNumberStart
         while ($count -le $buildNumber) {
             Write-AEBLog "Creating $count of $buildNumber VMs"
@@ -342,7 +342,6 @@ function ScriptBuild-Config-VM {
             Write-AEBLog "Configuring $Count of $($clientSettings.NumberofStandardVMs) VMs"
             $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
             $builddate = (Get-AzVM -Name $vm -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName).TimeCreated | Get-Date -Format 'yyyy-MM-dd'
-            #$builddate = (Get-AzVM -Name $vm).TimeCreated | Get-Date -Format 'yyyy-MM-dd'
             $today = Get-Date -Format 'yyyy-MM-dd'
             if ($builddate -ge $today ) {
                 ConfigureBaseVM -VMName "$VM" -VMSpec $deviceType -RG $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName
@@ -480,7 +479,7 @@ function ScriptBuild-Config-VM {
     if ($clientSettings.RequireDomainJoinedWin1122h2VMs) {
         $count = 1
         $buildNumber = $clientSettings.NumberofDomainJoinedWin1122h2VMs
-        $deviceType = 'Desktop-DomainJoined-Win10-20h2'
+        $deviceType = 'Desktop-DomainJoined-Win11-22h2'
         [int]$VMNumberStart = $deviceSpecs.$deviceType.VMNumberStart
         While ($Count -le $buildNumber) {
             Write-AEBLog "Configuring $count of $buildNumber VMs"

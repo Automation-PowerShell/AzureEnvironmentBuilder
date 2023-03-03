@@ -18,44 +18,7 @@ More Info       : https://github.com/Automation-PowerShell/AzureEnvironmentBuild
 #>
 
 #region Setup
-Set-Location $PSScriptRoot
-
-# Script Variables
-$root = $PSScriptRoot
-#$root = $pwd
-$AEBScripts = "$root\AEB-Scripts"
-$ExtraFiles = "$root\ExtraFiles"
-
-if (!(Test-Path $ExtraFiles)) {
-    $output = 'AEBScripts\ClientVariables-Template.ps1'
-    '. $' | Out-File $AEBScripts\ClientLoadVariables.ps1 -NoNewline
-    $output | Out-File $AEBScripts\ClientLoadVariables.ps1 -Append
-    New-Item -Path $ExtraFiles -ItemType Directory -Force
-    Write-Host 'New Run Detected.  Please review ClientVariable file is correct within ClientLoadVariables.ps1'
-    exit
-}
-
-# Dot Source Variables
-. $AEBScripts\ClientLoadVariables.ps1
-
-# Dot Source Functions
-. $AEBScripts\ScriptCoreFunctions.ps1
-. $AEBScripts\ScriptEnvironmentFunctions.ps1
-. $AEBScripts\ScriptDesktopFunctions.ps1
-. $AEBScripts\ScriptServerFunctions.ps1
-
-# Load Azure Modules and Connect
-$script:devops = ${env:TF_BUILD}
-if ($devops) {
-    # ...
-}
-else {
-    ConnectTo-Azure
-}
-
-
-#Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings 'true'  # Turns off Breaking Changes warnings for Cmdlets
-Update-AzConfig -DisplayBreakingChangeWarning $false
+Setup
 #endregion Setup
 
 #region Main
@@ -64,42 +27,7 @@ if ($clientSettings.isProd) { Write-Warning 'Are you sure you want to rebuild th
 
 if ($clientSettings.RequireCreate) {
     # Create Resource Groups
-    if ($clientSettings.RequireResourceGroups -and !$clientSettings.UseTerraform) {
-        $RG = New-AzResourceGroup -Name $clientSettings.rgs.PROD.RGName -Location $clientSettings.Location
-        if ($RG.ResourceGroupName -eq $clientSettings.rgs.PROD.RGName) { Write-AEBLog 'PROD Resource Group created successfully' } else { Write-AEBLog '*** Unable to create PROD Resource Group! ***' -Level Error }
-        if (!($clientSettings.rgs.DEV.RGName -match $clientSettings.rgs.PROD.RGName)) {
-            $RG = New-AzResourceGroup -Name $clientSettings.rgs.DEV.RGName -Location $clientSettings.Location
-            if ($RG.ResourceGroupName -eq $clientSettings.rgs.DEV.RGName) { Write-AEBLog 'DEV Resource Group created successfully' } else { Write-AEBLog '*** Unable to create DEV Resource Group! ***' -Level Error }
-        }
-        if (!($clientSettings.rgs.DEV.RGName -match $clientSettings.rgs.DEV.RGNameVNET)) {
-            $RG = New-AzResourceGroup -Name $clientSettings.rgs.DEV.RGNameVNET -Location $clientSettings.Location
-            if ($RG.ResourceGroupName -eq $clientSettings.$clientSettings.rgs.DEV.RGNameVNET) { Write-AEBLog 'DEV VNET Resource Group created successfully' } else { Write-AEBLog '*** Unable to create DEV VNET Resource Group! ***' -Level Error }
-        }
-        if (!($clientSettings.rgs.PROD.RGName -match $clientSettings.rgs.PROD.RGNameVNET)) {
-            $RG = New-AzResourceGroup -Name $clientSettings.rgs.PROD.RGNameVNET -Location $clientSettings.Location
-            if ($RG.ResourceGroupName -eq $clientSettings.rgs.PROD.RGNameVNET) { Write-AEBLog 'PROD VNET Resource Group created successfully' } else { Write-AEBLog '*** Unable to create PROD VNET Resource Group! ***' -Level Error }
-        }
-        if (!($clientSettings.rgs.PROD.RGName -match $clientSettings.rgs.STORE.RGName) -and $clientSettings.RequireStorageAccount) {
-            $RG = Get-AzResourceGroup -Name $clientSettings.rgs.STORE.RGName -ErrorAction SilentlyContinue
-            if (!$RG) {
-                $RG = New-AzResourceGroup -Name $clientSettings.rgs.STORE.RGName -Location $clientSettings.Location
-                if ($RG.ResourceGroupName -eq $clientSettings.rgs.STORE.RGName) { Write-AEBLog 'STORE Resource Group created successfully' } else { Write-AEBLog '*** Unable to create STORE Resource Group! ***' -Level Error }
-            }
-            else {
-                Write-AEBLog 'STORE Resource Group already exists'
-            }
-        }
-    }
-    else {
-        $RG = Get-AzResourceGroup -Name $clientSettings.rgs.PROD.RGName -ErrorAction SilentlyContinue
-        if (!$RG) {
-            Write-AEBLog '*** Resouce Groups are missing ***' -Level Error
-            Write-Dump
-        }
-    }
-    if ($clientSettings.UseTerraform) {
-        $TerraformMainTemplate = Get-Content -Path '.\Terraform\Root Template\main.tf' | Set-Content -Path '.\Terraform\main.tf'
-    }
+    CreateResourceGroups
 
     # Create RBAC groups and assignments
     CreateRBACConfig

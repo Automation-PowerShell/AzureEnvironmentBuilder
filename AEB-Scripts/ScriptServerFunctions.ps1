@@ -119,8 +119,12 @@ function ScriptBuild-Config-Server {
         [int]$VMNumberStart = $deviceSpecs.$deviceType.VMNumberStart
         While ($count -le $buildNumber) {
             Write-AEBLog "Configuring $count of $buildNumber VMs"
-            $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
-            ConfigServer-Script -VMName $VM -VMSpec $deviceType
+            $vm = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
+            $builddate = (Get-AzVM -Name $vm -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName).TimeCreated | Get-Date -Format 'yyyy-MM-dd'
+            $today = Get-Date -Format 'yyyy-MM-dd'
+            if ($builddate -ge $today ) {
+                ConfigServer-Script -VMName $VM -VMSpec $deviceType
+            }
             $count++
             $VMNumberStart++
         }
@@ -134,8 +138,12 @@ function ScriptBuild-Config-Server {
         [int]$VMNumberStart = $deviceSpecs.$deviceType.VMNumberStart
         While ($count -le $buildNumber) {
             Write-AEBLog "Configuring $count of $buildNumber VMs"
-            $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
-            ConfigServer-Script -VMName $VM -VMSpec $deviceType
+            $vm = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
+            $builddate = (Get-AzVM -Name $vm -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName).TimeCreated | Get-Date -Format 'yyyy-MM-dd'
+            $today = Get-Date -Format 'yyyy-MM-dd'
+            if ($builddate -ge $today ) {
+                ConfigServer-Script -VMName $VM -VMSpec $deviceType
+            }
             $count++
             $VMNumberStart++
         }
@@ -149,8 +157,12 @@ function ScriptBuild-Config-Server {
         [int]$VMNumberStart = $deviceSpecs.$deviceType.VMNumberStart
         While ($count -le $buildNumber) {
             Write-AEBLog "Configuring $count of $buildNumber VMs"
-            $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
-            ConfigServer-Script -VMName $VM -VMSpec $deviceType
+            $vm = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
+            $builddate = (Get-AzVM -Name $vm -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName).TimeCreated | Get-Date -Format 'yyyy-MM-dd'
+            $today = Get-Date -Format 'yyyy-MM-dd'
+            if ($builddate -ge $today ) {
+                ConfigServer-Script -VMName $VM -VMSpec $deviceType
+            }
             $count++
             $VMNumberStart++
         }
@@ -164,8 +176,12 @@ function ScriptBuild-Config-Server {
         [int]$VMNumberStart = $deviceSpecs.$deviceType.VMNumberStart
         While ($count -le $buildNumber) {
             Write-AEBLog "Configuring $count of $buildNumber VMs"
-            $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
-            ConfigServer-Script -VMName $VM -VMSpec $deviceType
+            $vm = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
+            $builddate = (Get-AzVM -Name $vm -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName).TimeCreated | Get-Date -Format 'yyyy-MM-dd'
+            $today = Get-Date -Format 'yyyy-MM-dd'
+            if ($builddate -ge $today ) {
+                ConfigServer-Script -VMName $VM -VMSpec $deviceType
+            }
             $count++
             $VMNumberStart++
         }
@@ -179,8 +195,12 @@ function ScriptBuild-Config-Server {
         [int]$VMNumberStart = $deviceSpecs.$deviceType.VMNumberStart
         While ($count -le $buildNumber) {
             Write-AEBLog "Configuring $count of $buildNumber VMs"
-            $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
-            ConfigServer-Script -VMName $VM -VMSpec $deviceType
+            $vm = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
+            $builddate = (Get-AzVM -Name $vm -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName).TimeCreated | Get-Date -Format 'yyyy-MM-dd'
+            $today = Get-Date -Format 'yyyy-MM-dd'
+            if ($builddate -ge $today ) {
+                ConfigServer-Script -VMName $VM -VMSpec $deviceType
+            }
             $count++
             $VMNumberStart++
         }
