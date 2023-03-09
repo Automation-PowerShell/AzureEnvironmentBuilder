@@ -70,14 +70,14 @@
             "VMNumberStart": "101",
             "BuildShutdownOnComplete": true,
             "AutoShutdownRequired": true,
-            "AutoShutdownTime": 1800,
+            "AutoShutdownTime": 1900,
             "VnetRef": "vnet-dev-azure",
             "Environment": "DEV",
             "AdminUsername": "aebadmin",
             "Tags": [
                 {
                     "Application": "AEB",
-                    "AEB-Client": "TestClientX",
+                    "AEB-Client": "TestClient0",
                     "AEB-Application": "Desktop-Standard",
                     "AEB-Environment": "DEV"
                 }
@@ -121,14 +121,14 @@
             "VMNumberStart": "201",
             "BuildShutdownOnComplete": true,
             "AutoShutdownRequired": true,
-            "AutoShutdownTime": 1800,
+            "AutoShutdownTime": 1900,
             "VnetRef": "vnet-dev-azure",
             "Environment": "DEV",
             "AdminUsername": "AppPackager",
             "Tags": [
                 {
                     "Application": "AEB",
-                    "AEB-Client": "TestClientX",
+                    "AEB-Client": "TestClient0",
                     "AEB-Application": "Desktop-Packaging",
                     "AEB-Environment": "DEV"
                 }
@@ -176,7 +176,7 @@
             "Tags": [
                 {
                     "Application": "AEB",
-                    "AEB-Client": "TestClientX",
+                    "AEB-Client": "TestClient0",
                     "AEB-Application": "Desktop-AdminStudio",
                     "AEB-Environment": "DEV"
                 }
@@ -205,14 +205,14 @@
             "VMNumberStart": "401",
             "BuildShutdownOnComplete": true,
             "AutoShutdownRequired": true,
-            "AutoShutdownTime": 1800,
+            "AutoShutdownTime": 1900,
             "VnetRef": "vnet-dev-azure",
             "Environment": "DEV",
             "AdminUsername": "aebadmin",
             "Tags": [
                 {
                     "Application": "AEB",
-                    "AEB-Client": "TestClientX",
+                    "AEB-Client": "TestClient0",
                     "AEB-Application": "Desktop-Jumpbox",
                     "AEB-Environment": "DEV"
                 }
@@ -256,14 +256,14 @@
             "VMNumberStart": "501",
             "BuildShutdownOnComplete": true,
             "AutoShutdownRequired": true,
-            "AutoShutdownTime": 1800,
+            "AutoShutdownTime": 1900,
             "VnetRef": "vnet-dev-azure",
             "Environment": "DEV",
             "AdminUsername": "AppPackager",
             "Tags": [
                 {
                     "Application": "AEB",
-                    "AEB-Client": "TestClientX",
+                    "AEB-Client": "TestClient0",
                     "AEB-Application": "Desktop-Core",
                     "AEB-Environment": "DEV"
                 }
@@ -286,14 +286,14 @@
             "VMNumberStart": "601",
             "BuildShutdownOnComplete": true,
             "AutoShutdownRequired": true,
-            "AutoShutdownTime": 1800,
+            "AutoShutdownTime": 1900,
             "VnetRef": "vnet-dev-azure",
             "Environment": "DEV",
             "AdminUsername": "aebadmin",
             "Tags": [
                 {
                     "Application": "AEB",
-                    "AEB-Client": "TestClientX",
+                    "AEB-Client": "TestClient0",
                     "AEB-Application": "Desktop-Lite",
                     "AEB-Environment": "DEV"
                 }
@@ -325,14 +325,14 @@
             "VMNumberStart": "101",
             "BuildShutdownOnComplete": false,
             "AutoShutdownRequired": true,
-            "AutoShutdownTime": 1800,
+            "AutoShutdownTime": 1900,
             "VnetRef": "vnet-dev-domain",
             "Environment": "DEV",
             "AdminUsername": "aebadmin",
             "Tags": [
                 {
                     "Application": "AEB",
-                    "AEB-Client": "TestClientX",
+                    "AEB-Client": "TestClient0",
                     "AEB-Application": "Desktop-DomainJoined",
                     "AEB-Environment": "DEV"
                 }
@@ -364,14 +364,14 @@
             "VMNumberStart": "101",
             "BuildShutdownOnComplete": false,
             "AutoShutdownRequired": true,
-            "AutoShutdownTime": 1800,
+            "AutoShutdownTime": 1900,
             "VnetRef": "vnet-dev-domain",
             "Environment": "DEV",
             "AdminUsername": "aebadmin",
             "Tags": [
                 {
                     "Application": "AEB",
-                    "AEB-Client": "TestClientX",
+                    "AEB-Client": "TestClient0",
                     "AEB-Application": "Desktop-DomainJoined",
                     "AEB-Environment": "DEV"
                 }
@@ -403,14 +403,14 @@
             "dataDiskSize": 128,
             "BuildShutdownOnComplete": false,
             "AutoShutdownRequired": true,
-            "AutoShutdownTime": 1800,
+            "AutoShutdownTime": 2000,
             "VnetRef": "vnet-prod-domain",
             "Environment": "PROD",
             "AdminUsername": "aebadmin",
             "Tags": [
                 {
                     "Application": "AEB",
-                    "AEB-Client": "TestClientX",
+                    "AEB-Client": "TestClient0",
                     "AEB-Application": "Server-Standard",
                     "AEB-Environment": "PROD"
                 }
@@ -458,7 +458,7 @@
             "Tags": [
                 {
                     "Application": "AEB",
-                    "AEB-Client": "TestClientX",
+                    "AEB-Client": "TestClient0",
                     "AEB-Application": "Server-HyperV",
                     "AEB-Environment": "PROD"
                 }
@@ -495,15 +495,15 @@
             "dataDiskSKU": "Standard_LRS",
             "dataDiskSize": 128,
             "BuildShutdownOnComplete": false,
-            "AutoShutdownRequired": false,
-            "AutoShutdownTime": 0,
+            "AutoShutdownRequired": true,
+            "AutoShutdownTime": 2000,
             "VnetRef": "vnet-prod-domain",
             "Environment": "PROD",
             "AdminUsername": "aebadmin",
             "Tags": [
                 {
                     "Application": "AEB",
-                    "AEB-Client": "TestClientX",
+                    "AEB-Client": "TestClient0",
                     "AEB-Application": "Server-DomainController",
                     "AEB-Environment": "PROD"
                 }
@@ -543,15 +543,15 @@
             "dataDiskSKU": "StandardSSD_LRS",   // Needs removing / updating
             "dataDiskSize": 128,
             "BuildShutdownOnComplete": false,
-            "AutoShutdownRequired": false,
-            "AutoShutdownTime": 0,
+            "AutoShutdownRequired": true,
+            "AutoShutdownTime": 2000,
             "VnetRef": "vnet-prod-domain",
             "Environment": "PROD",
             "AdminUsername": "aebadmin",
             "Tags": [
                 {
                     "Application": "AEB",
-                    "AEB-Client": "TestClientX",
+                    "AEB-Client": "TestClient0",
                     "AEB-Application": "Server-ConfigManager",
                     "AEB-Environment": "PROD"
                 }
@@ -583,14 +583,14 @@
             "dataDiskSize": 128,
             "BuildShutdownOnComplete": false,
             "AutoShutdownRequired": true,
-            "AutoShutdownTime": 1800,
+            "AutoShutdownTime": 2000,
             "VnetRef": "vnet-prod-domain",
             "Environment": "PROD",
             "AdminUsername": "aebadmin",
             "Tags": [
                 {
                     "Application": "AEB",
-                    "AEB-Client": "TestClientX",
+                    "AEB-Client": "TestClient0",
                     "AEB-Application": "Server-A365",
                     "AEB-Environment": "PROD"
                 }

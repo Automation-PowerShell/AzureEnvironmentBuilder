@@ -32,3 +32,4 @@ devicespecs-template - Copy.jsonc
 devicespecs-wella.jsonc
 AEB-Scripts/ClientVariables-Workplace-Services.ps1
 ipam/
+Temp/

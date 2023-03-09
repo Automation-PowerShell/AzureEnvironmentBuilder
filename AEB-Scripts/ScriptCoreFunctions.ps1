@@ -103,7 +103,7 @@ function Write-LogFile {
     $Date = Get-Date -Format yyyy-MM-dd
     $Time = Get-Date -Format HH:mm:ss
     $String = "$Date - $Time -- $String"
-    $logfile = "$root\AEB.log"
+    $logfile = "$AEBClientFiles\$($clientSettings.logFile)"
     switch ($Level) {
         'Info' {
             $String = "$String"
@@ -127,7 +127,7 @@ function Write-LogCMFile {
     )
     $Date = Get-Date -Format MM-dd-yyyy
     $Time = Get-Date -Format HH:mm:ss
-    $logfile = "$root\AEB.log"
+    $logfile = "$AEBClientFiles\$($clientSettings.logFile)"
     switch ($Level) {
         'Info' {
             $String = "<![LOG[$String]LOG]!><time=`"$Time.000-60`" date=`"$Date`" component=`"$clientSettings.azTenant`" context=`"`" type=`"1`" thread=`"`" file=`"`">"
@@ -329,7 +329,7 @@ function ConnectTo-Azure {
 
 function Setup {
     if (!(Test-Path $ExtraFiles)) {
-        $output = 'AEBScripts\ClientVariables-Template.ps1'
+        $output = 'AEBClientFiles\ClientVariables-Template.ps1'
         '. $' | Out-File $AEBScripts\ClientLoadVariables.ps1 -NoNewline
         $output | Out-File $AEBScripts\ClientLoadVariables.ps1 -Append
         New-Item -Path $ExtraFiles -ItemType Directory -Force

@@ -26,14 +26,17 @@ Connect-AzAccount -Identity -ErrorAction Stop -Subscription sssss
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message 'Configuring System'
 Install-WindowsFeature -Name RDC
 Install-WindowsFeature -Name BITS
-Install-WindowsFeature -Name NET-Framework-Core       # Install .NET 3.5
+Install-WindowsFeature -Name NET-Framework-Core         # Install .NET 3.5
+Install-WindowsFeature -Name RSAT-AD-Tools              # Install AD Tools
 dism.exe /online /norestart /enable-feature /ignorecheck /featurename:"IIS-WebServerRole" /featurename:"IIS-WebServer" /featurename:"IIS-CommonHttpFeatures" /featurename:"IIS-StaticContent" /featurename:"IIS-DefaultDocument" /featurename:"IIS-DirectoryBrowsing" /featurename:"IIS-HttpErrors" /featurename:"IIS-HttpRedirect" /featurename:"IIS-WebServerManagementTools" /featurename:"IIS-IIS6ManagementCompatibility" /featurename:"IIS-Metabase" /featurename:"IIS-WindowsAuthentication" /featurename:"IIS-WMICompatibility" /featurename:"IIS-ISAPIExtensions" /featurename:"IIS-ManagementScriptingTools" /featurename:"MSRDC-Infrastructure" /featurename:"IIS-ManagementService"
 # Post Steps
 # Firewall Settings
 # Install SQL Server
 # Change SQL Logon to LocalSystem
+# Enable SQL TCP Protocol
 # Install ADK components
-# Create System Management container in System in ADSI
+# Create System Management container in System in ADSI & Delegate Control
+# Extend AD Schema
 # Set MECM Computer as administrator on client devices
 
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Completed $scriptname"
