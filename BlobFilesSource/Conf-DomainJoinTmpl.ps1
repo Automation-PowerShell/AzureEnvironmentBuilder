@@ -38,7 +38,7 @@ while ($joined -eq $false) {
     $joined = $true
     $attempts++
     try {
-        Add-Computer -DomainName $Domain -Credential $DomainJoinCred -OUPath $OUPath -Restart -Verbose -ErrorAction Stop
+        Add-Computer -DomainName $Domain -Credential $DomainJoinCred -OUPath $OUPath -Verbose -ErrorAction Stop #-Restart
     }
     catch {
         $joined = $false

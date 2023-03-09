@@ -20,6 +20,7 @@ Set-Location $PSScriptRoot
 
 # Script Variables
 $root = $PSScriptRoot
+$AEBClientFiles= "$root\AEB-ClientFiles"
 $AEBScripts = "$root\AEB-Scripts"
 $ExtraFiles = "$root\ExtraFiles"
 
@@ -39,6 +40,7 @@ Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings 'true'  # Turns off 
 #region Main
 Write-AEBLog 'Running AEB-AzureRemover.ps1'
 if ($clientSettings.isProd) { Write-Warning 'Are you sure you want to delete the Azure Environment?  OK to Continue?' -WarningAction Inquire }
+Write-Warning 'Are you sure you want to delete the Azure Environment?  OK to Continue?' -WarningAction Inquire
 
 if (!($clientSettings.isProd) -and $clientSettings.RequireUserGroups) {
     Remove-AzADGroup -DisplayName $clientSettings.rbacOwner -ErrorAction Ignore -Verbose

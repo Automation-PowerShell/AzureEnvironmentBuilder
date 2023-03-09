@@ -26,6 +26,7 @@ Set-Location $PSScriptRoot
 # Script Variables
 $root = $PSScriptRoot
 #$root = $pwd
+$AEBClientFiles= "$root\AEB-ClientFiles"
 $AEBScripts = "$root\AEB-Scripts"
 $ExtraFiles = "$root\ExtraFiles"
 

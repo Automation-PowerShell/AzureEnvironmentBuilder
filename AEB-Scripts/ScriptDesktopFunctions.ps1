@@ -30,6 +30,7 @@ function CreateDesktop-Script {
     $VirtualMachine = Add-AzVMNetworkInterface -VM $VirtualMachine -Id $NIC.Id
     $VirtualMachine = Set-AzVMSourceImage -VM $VirtualMachine -PublisherName $deviceSpecs.$VMSpec.PublisherName -Offer $deviceSpecs.$VMSpec.Offer -Skus $deviceSpecs.$VMSpec.SKUS -Version $deviceSpecs.$VMSpec.Version
     $VirtualMachine = Set-AzVMBootDiagnostic -VM $VirtualMachine -Disable
+    #$VirtualMachine = Set-AzVMOSDisk -VM $VirtualMachine -StorageAccountType StandardSSD_LRS -CreateOption Attach -Windows
 
     New-AzVM -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$VMSpec.Environment).RGName -Location $clientSettings.Location -VM $VirtualMachine -Verbose | Out-Null
 }
