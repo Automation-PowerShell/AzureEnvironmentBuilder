@@ -21,7 +21,7 @@ Set-Location $PSScriptRoot
 # Script Variables
 $root = $PSScriptRoot
 #$root = $pwd
-$AEBClientFiles= "$root\AEB-ClientFiles"
+$AEBClientFiles = "$root\AEB-ClientFiles"
 $AEBScripts = "$root\AEB-Scripts"
 $ExtraFiles = "$root\ExtraFiles"
 
@@ -40,25 +40,50 @@ if ($devops) {
     # ...
 }
 else {
-    ConnectTo-Azure
+    Connect-AzAccount
+    #ConnectTo-Azure
 }
 
 #Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings 'true'  # Turns off Breaking Changes warnings for Cmdlets
 Update-AzConfig -DisplayBreakingChangeWarning $false
 #endregion Setup
 
-#region Main
-Write-AEBLog 'Running AEB-BastionDecommission.ps1'
+function AEBDecommission {
+    Write-AEBLog 'Running AEB-BastionDecommission.ps1'
 
-foreach ($environment in $clientSettings.vnets.GetEnumerator().Name) {
-    $resourceCheck = Get-AzResource -ResourceGroupName $clientSettings.rgs.$environment.RGNameVNET -ResourceName $clientSettings.bastions.$environment.BastionName -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
-    if ($resourceCheck) {
-        Write-AEBLog "Decommissioning Bastion for $environment VNETS in RG: $($clientSettings.rgs.$environment.RGNameVNET)"
-        Remove-AzBastion -ResourceGroupName $clientSettings.rgs.$environment.RGNameVNET -ResourceName $clientSettings.bastions.$environment.BastionName -Force
-        Remove-AzPublicIpAddress -ResourceGroupName $clientSettings.rgs.$environment.RGNameVNET -ResourceName "$($clientSettings.bastions.$environment.BastionName)-pip" -Force
+    foreach ($environment in $clientSettings.vnets.GetEnumerator().Name) {
+        $resourceCheck = Get-AzResource -ResourceGroupName $clientSettings.rgs.$environment.RGNameVNET -ResourceName $clientSettings.bastions.$environment.BastionName -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+        if ($resourceCheck) {
+            Write-AEBLog "Decommissioning Bastion for $environment VNETS in RG: $($clientSettings.rgs.$environment.RGNameVNET)"
+            Remove-AzBastion -ResourceGroupName $clientSettings.rgs.$environment.RGNameVNET -ResourceName $clientSettings.bastions.$environment.BastionName -Force
+            Remove-AzPublicIpAddress -ResourceGroupName $clientSettings.rgs.$environment.RGNameVNET -ResourceName "$($clientSettings.bastions.$environment.BastionName)-pip" -Force
+        }
     }
+
+    Write-AEBLog 'Completed AEB-BastionDecommission.ps1'
+    Write-AEBLog '============================================================================================================='
 }
 
-Write-AEBLog 'Completed AEB-BastionDecommission.ps1'
-Write-AEBLog '============================================================================================================='
-#endregion Main
+function AVAWSDecommission {
+    $bastionList = @{
+        '6745a72d-32fc-4525-b5e9-80119fa1606b' = @(
+            #'rg-AccessCapture-Dev'
+            'PowerPlatform'
+        )
+        #'205cb73d-d832-401b-96c9-99dfd5549a15' = @(
+        #    'rg-TestClient0'
+        #)
+    }
+
+    foreach ($sub in $bastionList.Keys) {
+        Select-AzSubscription -Subscription $sub | Out-Null
+        foreach ($rg in $bastionList.$sub) {
+            $resourceCheck = Get-AzResource -ResourceGroupName $rg -Name 'bastion-*-pip'
+            if ($resourceCheck) {
+                Write-Host "Bastion Found: $($resourceCheck.Name)"
+                #Remove-AzBastion -ResourceGroupName $rg -Force
+                #Remove-AzPublicIpAddress -ResourceGroupName $rg -Name 'bastion-*-pip' #-Force
+            }
+        }
+    }
+}
