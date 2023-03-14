@@ -21,7 +21,7 @@ Set-Location $PSScriptRoot
 # Script Variables
 $root = $PSScriptRoot
 #$root = $pwd
-$AEBClientFiles= "$root\AEB-ClientFiles"
+$AEBClientFiles = "$root\AEB-ClientFiles"
 $AEBScripts = "$root\AEB-Scripts"
 $ExtraFiles = "$root\ExtraFiles"
 
@@ -40,30 +40,58 @@ if ($devops) {
     # ...
 }
 else {
-    ConnectTo-Azure
+    Connect-AzAccount
+    #ConnectTo-Azure
 }
 
 #Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings 'true'  # Turns off Breaking Changes warnings for Cmdlets
 Update-AzConfig -DisplayBreakingChangeWarning $false
 #endregion Setup
 
-#region Main
-Write-AEBLog 'Running AEB-BastionCommission.ps1'
-foreach ($environment in $clientSettings.vnets.GetEnumerator().Name) {
-    $resourceCheck = Get-AzResource -ResourceGroupName $clientSettings.rgs.$environment.RGNameVNET -Name "$($clientSettings.bastions.$environment.BastionName)-pip" -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
-    if (!$resourceCheck) {
-        Write-AEBLog "Commissioning Bastion for $environment VNETS in RG: $($clientSettings.rgs.$environment.RGNameVNET)"
-        $publicip = New-AzPublicIpAddress -ResourceGroupName $clientSettings.rgs.$environment.RGNameVNET -Name "$($clientSettings.bastions.$environment.BastionName)-pip" -Location $clientSettings.location -AllocationMethod Static -Sku Standard
-        $resource = New-AzBastion -ResourceGroupName $clientSettings.rgs.$environment.RGNameVNET -Name $clientSettings.bastions.$environment.BastionName `
-            -PublicIpAddressRgName $clientSettings.rgs.$environment.RGNameVNET -PublicIpAddressName "$($clientSettings.bastions.$environment.BastionName)-pip" `
-            -VirtualNetworkRgName $clientSettings.rgs.$environment.RGNameVNET -VirtualNetworkName $clientSettings.vnets.$environment[0] `
-            -Sku Basic -Tag $clientSettings.tags -AsJob
+function AEBCommission {
+    Write-AEBLog 'Running AEB-BastionCommission.ps1'
+    foreach ($environment in $clientSettings.vnets.GetEnumerator().Name) {
+        $resourceCheck = Get-AzResource -ResourceGroupName $clientSettings.rgs.$environment.RGNameVNET -Name "$($clientSettings.bastions.$environment.BastionName)-pip" -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+        if (!$resourceCheck) {
+            Write-AEBLog "Commissioning Bastion for $environment VNETS in RG: $($clientSettings.rgs.$environment.RGNameVNET)"
+            $publicip = New-AzPublicIpAddress -ResourceGroupName $clientSettings.rgs.$environment.RGNameVNET -Name "$($clientSettings.bastions.$environment.BastionName)-pip" -Location $clientSettings.location -AllocationMethod Static -Sku Standard
+            $resource = New-AzBastion -ResourceGroupName $clientSettings.rgs.$environment.RGNameVNET -Name $clientSettings.bastions.$environment.BastionName `
+                -PublicIpAddressRgName $clientSettings.rgs.$environment.RGNameVNET -PublicIpAddressName "$($clientSettings.bastions.$environment.BastionName)-pip" `
+                -VirtualNetworkRgName $clientSettings.rgs.$environment.RGNameVNET -VirtualNetworkName $clientSettings.vnets.$environment[0] `
+                -Sku Basic -Tag $clientSettings.tags -AsJob
+        }
+        else {
+            Write-AEBLog "Bastion for $environment VNETs in RG: $($clientSettings.rgs.$environment.RGNameVNET) not required"
+        }
     }
-    else {
-        Write-AEBLog "Bastion for $environment VNETs in RG: $($clientSettings.rgs.$environment.RGNameVNET) not required"
-    }
+
+    Write-AEBLog 'Completed AEB-BastionCommission.ps1'
+    Write-AEBLog '============================================================================================================='
 }
 
-Write-AEBLog 'Completed AEB-BastionCommission.ps1'
-Write-AEBLog '============================================================================================================='
-#endregion Main
+function AVAWSCommission {
+    $bastionList = @{
+        '6745a72d-32fc-4525-b5e9-80119fa1606b' = @(
+            #'rg-AccessCapture-Dev'
+            'PowerPlatform'
+        )
+        #'205cb73d-d832-401b-96c9-99dfd5549a15' = @(
+        #    'rg-TestClient0'
+        #)
+    }
+
+    foreach ($sub in $bastionList.Keys) {
+        Select-AzSubscription -Subscription $sub | Out-Null
+        foreach ($rg in $bastionList.$sub) {
+            $resourceCheck = Get-AzResource -ResourceGroupName $rg -Name 'bastion-*-pip'
+            if (!$resourceCheck) {
+                $vnet = Get-AzVirtualNetwork -ResourceGroupName $rg | Select-Object -First 1
+                $publicip = New-AzPublicIpAddress -ResourceGroupName $rg -Name "bastion-$rg-pip" -Location 'uksouth' -AllocationMethod Static -Sku Standard
+                $resource = New-AzBastion -ResourceGroupName $rg -Name "bastion-$rg" `
+                    -PublicIpAddressRgName $rg -PublicIpAddressName "bastion-$rg-pip" `
+                    -VirtualNetworkRgName $rg -VirtualNetworkName $vnet `
+                    -Sku Basic -AsJob
+            }
+        }
+    }
+}
