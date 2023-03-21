@@ -68,11 +68,11 @@ function AVAWSDecommission {
     $bastionList = @{
         '6745a72d-32fc-4525-b5e9-80119fa1606b' = @(
             #'rg-AccessCapture-Dev'
-            'PowerPlatform'
+            #'PowerPlatform'
         )
-        #'205cb73d-d832-401b-96c9-99dfd5549a15' = @(
-        #    'rg-TestClient0'
-        #)
+        '205cb73d-d832-401b-96c9-99dfd5549a15' = @(
+            'rg-TestClient0'
+        )
     }
 
     foreach ($sub in $bastionList.Keys) {
@@ -81,9 +81,12 @@ function AVAWSDecommission {
             $resourceCheck = Get-AzResource -ResourceGroupName $rg -Name 'bastion-*-pip'
             if ($resourceCheck) {
                 Write-Host "Bastion Found: $($resourceCheck.Name)"
-                #Remove-AzBastion -ResourceGroupName $rg -Force
-                #Remove-AzPublicIpAddress -ResourceGroupName $rg -Name 'bastion-*-pip' #-Force
+                Get-AzBastion -ResourceGroupName $rg -Name 'bastion-*' | Remove-AzBastion -Force
+                Start-Sleep -Seconds 30
+                Get-AzPublicIpAddress -ResourceGroupName $rg -Name 'bastion-*-pip' | Remove-AzPublicIpAddress -Force
             }
         }
     }
 }
+
+AVAWSDecommission
