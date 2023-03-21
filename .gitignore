@@ -30,6 +30,7 @@ AEB-RebuildHyperVVM-Dan.ps1
 devicespecs-dan.jsonc
 devicespecs-template - Copy.jsonc
 devicespecs-wella.jsonc
-AEB-Scripts/ClientVariables-Workplace-Services.ps1
 ipam/
 Temp/
+AEB-ClientFiles/ClientVariables-Workplace-Services.ps1
+AEB-ClientFiles/
