@@ -247,7 +247,7 @@ function ScriptBuild-Create-VM {
     # Build Core VMs
     if ($clientSettings.RequireCoreVMs) {
         $count = 1
-        $buildNumber = $clientSettings.NumberofLiteVMs
+        $buildNumber = $clientSettings.NumberofCoreVMs
         $deviceType = 'Desktop-Core'
         [int]$VMNumberStart = $deviceSpecs.$deviceType.VMNumberStart
         While ($Count -le $buildNumber) {
