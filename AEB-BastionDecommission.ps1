@@ -67,8 +67,8 @@ function AEBDecommission {
 function AVAWSDecommission {
     $bastionList = @{
         '6745a72d-32fc-4525-b5e9-80119fa1606b' = @(
-            #'rg-AccessCapture-Dev'
-            #'PowerPlatform'
+            'rg-AccessCapture-Dev'
+            'rg-TestClient0'
         )
         '205cb73d-d832-401b-96c9-99dfd5549a15' = @(
             'rg-TestClient0'
