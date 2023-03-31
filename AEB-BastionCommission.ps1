@@ -40,8 +40,8 @@ if ($devops) {
     # ...
 }
 else {
-    Connect-AzAccount
-    #ConnectTo-Azure
+    #Connect-AzAccount
+    ConnectTo-Azure
 }
 
 #Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings 'true'  # Turns off Breaking Changes warnings for Cmdlets
@@ -55,6 +55,7 @@ function AEBCommission {
         if (!$resourceCheck) {
             Write-AEBLog "Commissioning Bastion for $environment VNETS in RG: $($clientSettings.rgs.$environment.RGNameVNET)"
             $publicip = New-AzPublicIpAddress -ResourceGroupName $clientSettings.rgs.$environment.RGNameVNET -Name "$($clientSettings.bastions.$environment.BastionName)-pip" -Location $clientSettings.location -AllocationMethod Static -Sku Standard
+            Start-Sleep -Seconds 10
             $resource = New-AzBastion -ResourceGroupName $clientSettings.rgs.$environment.RGNameVNET -Name $clientSettings.bastions.$environment.BastionName `
                 -PublicIpAddressRgName $clientSettings.rgs.$environment.RGNameVNET -PublicIpAddressName "$($clientSettings.bastions.$environment.BastionName)-pip" `
                 -VirtualNetworkRgName $clientSettings.rgs.$environment.RGNameVNET -VirtualNetworkName $clientSettings.vnets.$environment[0] `
@@ -72,26 +73,30 @@ function AEBCommission {
 function AVAWSCommission {
     $bastionList = @{
         '6745a72d-32fc-4525-b5e9-80119fa1606b' = @(
-            #'rg-AccessCapture-Dev'
-            'PowerPlatform'
+            'rg-AccessCapture-Dev'
+            'rg-TestClient0'
         )
-        #'205cb73d-d832-401b-96c9-99dfd5549a15' = @(
-        #    'rg-TestClient0'
-        #)
+        '205cb73d-d832-401b-96c9-99dfd5549a15' = @(
+            'rg-TestClient0'
+        )
     }
 
     foreach ($sub in $bastionList.Keys) {
         Select-AzSubscription -Subscription $sub | Out-Null
         foreach ($rg in $bastionList.$sub) {
-            $resourceCheck = Get-AzResource -ResourceGroupName $rg -Name 'bastion-*-pip'
+            $local:resourceCheck = Get-AzResource -ResourceGroupName $rg -Name 'bastion-*-pip' -Verbose
             if (!$resourceCheck) {
-                $vnet = Get-AzVirtualNetwork -ResourceGroupName $rg | Select-Object -First 1
-                $publicip = New-AzPublicIpAddress -ResourceGroupName $rg -Name "bastion-$rg-pip" -Location 'uksouth' -AllocationMethod Static -Sku Standard
-                $resource = New-AzBastion -ResourceGroupName $rg -Name "bastion-$rg" `
+                $local:vnet = Get-AzVirtualNetwork -ResourceGroupName $rg | Select-Object -First 1 -Verbose
+                $local:publicip = New-AzPublicIpAddress -ResourceGroupName $rg -Name "bastion-$rg-pip" -Location 'uksouth' -AllocationMethod Static -Sku Standard -Verbose
+                Start-Sleep -Seconds 10
+                New-AzBastion -ResourceGroupName $rg -Name "bastion-$rg" `
                     -PublicIpAddressRgName $rg -PublicIpAddressName "bastion-$rg-pip" `
-                    -VirtualNetworkRgName $rg -VirtualNetworkName $vnet `
-                    -Sku Basic -AsJob
+                    -VirtualNetworkRgName $rg -VirtualNetworkName $vnet.Name `
+                    -Sku Basic -AsJob -Verbose
             }
         }
     }
 }
+
+#AVAWSCommission
+AEBCommission
