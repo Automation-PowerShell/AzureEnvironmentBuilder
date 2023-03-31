@@ -40,29 +40,41 @@ if ($devops) {
   # ...
 }
 else {
-  ConnectTo-Azure -Tenant 9983e9de-6ceb-499b-a06c-e030f24bd236
-  #Connect-AzAccount -Tenant $clientSettings.azTenant
+  #ConnectTo-Azure
+  Connect-AzAccount -Tenant '9983e9de-6ceb-499b-a06c-e030f24bd236'
+  Connect-AzAccount -Tenant '7233444a-1eb9-4092-a211-485856124eb6'
 }
 #endregion
 
 #$selectedSub = Get-AzSubscription -TenantId $clientSettings.azTenant | Out-GridView -OutputMode Single -Title 'Select Subscription'
-$selectedSub = Get-AzSubscription | Out-GridView -OutputMode Single -Title 'Select Subscription'
+$selectedSub = Get-AzSubscription | Sort-Object -Property Name |  Out-GridView -OutputMode Single -Title 'Select Subscription'
 Write-Host "##vso[task.LogIssue type=warning;]Switching Subscription to $($selectedSub)"
 #Select-AzSubscription -Subscription $selectedSub -Tenant $clientSettings.azTenant | Out-Null
 Select-AzSubscription -Subscription $selectedSub | Out-Null
 
 $rgs = Get-AzResourceGroup | Select-Object ResourceGroupName | Sort-Object -Property ResourceGroupName
 $selectedRG = $rgs | Out-GridView -OutputMode Single -Title 'Select Resource Group'
+  if(!$selectedRG) {
+    exit
+  }
 
 $resources = Get-AzResource -ResourceGroupName $selectedRG.ResourceGroupName
 $selectedResources = ($resources | Select-Object -Property @(
     'Name'
+    'ResourceType'
     @{Name = 'Appliction'; Expression = { ($_.Tags.Application) } }
     @{Name = 'Environment'; Expression = { ($_.Tags.Environment) } }
     @{Name = 'AEB-Application'; Expression = { ($_.Tags.'AEB-Application') } }
     @{Name = 'AEB-Client'; Expression = { ($_.Tags.'AEB-Client') } }
     @{Name = 'AEB-Environment'; Expression = { ($_.Tags.'AEB-Environment') } }
+    @{Name = 'acp-ims-mde'; Expression = { ($_.Tags.'acp-ims-mde') } }
+    @{Name = 'acp-ims-qualys'; Expression = { ($_.Tags.'acp-ims-qualys') } }
+    @{Name = 'acp-ims-splunk'; Expression = { ($_.Tags.'acp-ims-splunk') } }
+    @{Name = 'acp-ims-tanium'; Expression = { ($_.Tags.'acp-ims-tanium') } }
     'Id' ) | Sort-Object -Property Name | Out-GridView -OutputMode Multiple -Title 'Select Resources to Retag')
+if(!$selectedResources) {
+  exit
+}
 
 
 $selectedTags = (Get-AzResourceGroup -ResourceGroupName $selectedRG.ResourceGroupName).Tags | Out-GridView -OutputMode Multiple -Title 'Select Tag Pairs'
@@ -77,12 +89,17 @@ foreach ($id in $selectedResources.Id) {
 
 $resources = Get-AzResource -ResourceGroupName $selectedRG.ResourceGroupName
 $selectedResources = ($resources | Select-Object -Property @(
-    'Name'
-    @{Name = 'Appliction'; Expression = { ($_.Tags.Application) } }
-    @{Name = 'Environment'; Expression = { ($_.Tags.Environment) } }
-    @{Name = 'AEB-Application'; Expression = { ($_.Tags.'AEB-Application') } }
-    @{Name = 'AEB-Client'; Expression = { ($_.Tags.'AEB-Client') } }
-    @{Name = 'AEB-Environment'; Expression = { ($_.Tags.'AEB-Environment') } }
+  'Name'
+  'ResourceType'
+  @{Name = 'Appliction'; Expression = { ($_.Tags.Application) } }
+  @{Name = 'Environment'; Expression = { ($_.Tags.Environment) } }
+  @{Name = 'AEB-Application'; Expression = { ($_.Tags.'AEB-Application') } }
+  @{Name = 'AEB-Client'; Expression = { ($_.Tags.'AEB-Client') } }
+  @{Name = 'AEB-Environment'; Expression = { ($_.Tags.'AEB-Environment') } }
+  @{Name = 'acp-ims-mde'; Expression = { ($_.Tags.'acp-ims-mde') } }
+  @{Name = 'acp-ims-qualys'; Expression = { ($_.Tags.'acp-ims-qualys') } }
+  @{Name = 'acp-ims-splunk'; Expression = { ($_.Tags.'acp-ims-splunk') } }
+  @{Name = 'acp-ims-tanium'; Expression = { ($_.Tags.'acp-ims-tanium') } }
     'Id' ) | Sort-Object -Property Name | Out-GridView -OutputMode None -Title 'Review Resources')
 
 #$rgID = (Get-AzResourceGroup -ResourceGroupName $selectedRG).ResourceId
