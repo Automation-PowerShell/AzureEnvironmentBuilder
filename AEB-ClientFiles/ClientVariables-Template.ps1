@@ -1,8 +1,8 @@
-$clientName = 'TestClient0'
-$azTenant = '7233444a-1eb9-4092-a211-485856124eb6'                                  # AVAWS Test Client 0
-$azSubscription = '205cb73d-d832-401b-96c9-99dfd5549a15'                            # AVAWS Test Client 0
-$domain = 'testclient0.local'                                                       # Name of the AD Domain
-$ouPath = 'OU=Computers,OU=EUC,DC=testclient0,DC=local'                             # Name of the AD OU where computer objects will be created
+$clientName = ''
+$azTenant = ''                                  # AVAWS Test Client 0
+$azSubscription = ''                            # AVAWS Test Client 0
+$domain = ''                                                       # Name of the AD Domain
+$ouPath = ''                             # Name of the AD OU where computer objects will be created
 $StorageAccountName = "sa2avaws$($clientName.ToLower())"
 $keyVaultName = "kv-2avaws-$($clientName)"
 
