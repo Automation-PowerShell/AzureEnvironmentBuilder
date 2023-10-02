@@ -41,8 +41,8 @@ if ($devops) {
 }
 else {
   #ConnectTo-Azure
-  Connect-AzAccount -Tenant '9983e9de-6ceb-499b-a06c-e030f24bd236'
-  Connect-AzAccount -Tenant '7233444a-1eb9-4092-a211-485856124eb6'
+  #Connect-AzAccount -Tenant '9983e9de-6ceb-499b-a06c-e030f24bd236'
+  #Connect-AzAccount -Tenant '7233444a-1eb9-4092-a211-485856124eb6'
 }
 #endregion
 
