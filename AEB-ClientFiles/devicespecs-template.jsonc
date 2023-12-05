@@ -303,8 +303,8 @@
             ],
             "VMSize": "Standard_B2s",
             "VMNamePrefix": "vm-euc-lite-",
-            "VMNumberStart": "601",
-            "BuildShutdownOnComplete": true,
+            "VMNumberStart": "605",
+            "BuildShutdownOnComplete": false,
             "AutoShutdownRequired": true,
             "AutoShutdownTime": 1900,
             "VnetRef": "vnet-dev-azure",
@@ -577,15 +577,12 @@
                 {
                     "Name": "Conf-EnableSCCM"
                 }
-                //{
-                //    "Name": "App-7-Zip"
-                //}
             ],
             "VMSize": "Standard_B2ms",
             "VMNamePrefix": "vm-euc-sccm-0",
             "VMNumberStart": "1",
-            "dataDiskTier": "E10",              // Is this ignored?
-            "dataDiskSKU": "StandardSSD_LRS",   // Needs removing / updating
+            "dataDiskTier": "E10",
+            "dataDiskSKU": "StandardSSD_LRS",
             "dataDiskSize": 128,
             "BuildShutdownOnComplete": false,
             "AutoShutdownRequired": true,
