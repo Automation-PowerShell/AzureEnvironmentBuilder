@@ -13,7 +13,7 @@ function CreateDesktop-Script {
     $Vnet = Get-AzVirtualNetwork -Name $clientSettings.vnets.($deviceSpecs.$VMSpec.Environment).($deviceSpecs.$VMSpec.VnetRef) -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$VMSpec.Environment).RGNameVNET
     $Subnet = Get-AzVirtualNetworkSubnetConfig -Name $clientSettings.subnets.($deviceSpecs.$VMSpec.Environment).SubnetName -VirtualNetwork $Vnet
     if ($clientSettings.RequirePublicIPs) {
-        $PIP = New-AzPublicIpAddress -Name "$VMName-pip" -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$VMSpec.Environment).RGName -Location $clientSettings.Location -AllocationMethod Dynamic -Sku Basic -Tier Regional -IpAddressVersion IPv4
+        $PIP = New-AzPublicIpAddress -Name "$VMName-pip" -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$VMSpec.Environment).RGName -Location $clientSettings.Location -AllocationMethod Static -Sku Basic -Tier Regional -IpAddressVersion IPv4
         Update-AzTag -ResourceId $PIP.Id -Tag $tags -Operation Merge | Out-Null
         $NIC = New-AzNetworkInterface -Name "$VMName-nic" -ResourceGroupName $clientSettings.rgs.($deviceSpecs.$VMSpec.Environment).RGName -Location $clientSettings.Location -SubnetId $Subnet.Id -PublicIpAddressId $PIP.Id
         Update-AzTag -ResourceId $NIC.Id -Tag $tags -Operation Merge | Out-Null
@@ -25,9 +25,9 @@ function CreateDesktop-Script {
 
     $cred = New-Object System.Management.Automation.PSCredential ($deviceSpecs.$VMSpec.AdminUsername, $LocalAdminPassword)
 
-    $VirtualMachine = New-AzVMConfig -VMName $VMName -VMSize $deviceSpecs.$VMSpec.VMSize -IdentityType SystemAssigned -Tags $tags
-    $VirtualMachine = Set-AzVMOperatingSystem -VM $VirtualMachine -Windows -ComputerName $VMName -Credential $cred #-ProvisionVMAgent -EnableAutoUpdate
-    $VirtualMachine = Add-AzVMNetworkInterface -VM $VirtualMachine -Id $NIC.Id
+    $VirtualMachine = New-AzVMConfig -VMName $VMName -VMSize $deviceSpecs.$VMSpec.VMSize -IdentityType SystemAssigned -Tags $tags -EnableVtpm:$true -EnableSecureBoot:$true -SecurityType TrustedLaunch -EncryptionAtHost
+    $VirtualMachine = Set-AzVMOperatingSystem -VM $VirtualMachine -Windows -ComputerName $VMName -Credential $cred -EnableAutoUpdate #-ProvisionVMAgent -EnableAutoUpdate
+    $VirtualMachine = Add-AzVMNetworkInterface -VM $VirtualMachine -Id $NIC.Id -DeleteOption Delete
     $VirtualMachine = Set-AzVMSourceImage -VM $VirtualMachine -PublisherName $deviceSpecs.$VMSpec.PublisherName -Offer $deviceSpecs.$VMSpec.Offer -Skus $deviceSpecs.$VMSpec.SKUS -Version $deviceSpecs.$VMSpec.Version
     $VirtualMachine = Set-AzVMBootDiagnostic -VM $VirtualMachine -Disable
     #$VirtualMachine = Set-AzVMOSDisk -VM $VirtualMachine -StorageAccountType StandardSSD_LRS -CreateOption Attach -Windows
@@ -73,8 +73,9 @@ function ConfigureBaseVM {
         [Parameter(Position = 3, Mandatory)][String]$RG
     )
 
+    Start-Sleep -Seconds 60
     $VMCreate = Get-AzVM -ResourceGroupName $RG -Name $VMName
-    If ($VMCreate.ProvisioningState -eq 'Succeeded') {
+    if ($VMCreate.ProvisioningState -eq 'Succeeded') {
         Write-AEBLog "VM: $VMName created successfully"
 
         #$NewVm = Get-AzADServicePrincipal -DisplayName $VMName
@@ -93,7 +94,12 @@ function ConfigureBaseVM {
             if ($groupmember.DisplayName -eq $VMName) {
                 Remove-AzADGroupMember -GroupObjectId $Group.Id -MemberObjectId $groupmember.Id
             }
-            Add-AzADGroupMember -TargetGroupObjectId $Group.Id -MemberObjectId $NewVm.Id -Verbose | Out-Null
+            Add-AzADGroupMember -TargetGroupObjectId $Group.Id -MemberObjectId $NewVm.Id -Verbose #| Out-Null
+            $groupmember = Get-AzADGroupMember -GroupObjectId $Group.Id | Where-Object { $_.DisplayName -eq $VMName }
+            if (!$groupmember.DisplayName -eq $VMName) {
+                Write-AEBLog "VM: $VMName not found in RBAC Group: $Group.Name" -Level Error
+                Write-Dump
+            }
             Get-AzContext -Name 'User' | Select-AzContext | Out-Null
         }
         else {
@@ -122,10 +128,40 @@ function ConfigureBaseVM {
             New-AzResource -Location $clientSettings.Location -ResourceId $ScheduledShutdownResourceId -Properties $Properties -Force | Out-Null
             Write-AEBLog "VM: $VMName - Auto Shutdown Enabled for $($deviceSpecs.$VMSpec.AutoShutdownTime)"
         }
+
+        Set-AzVMExtension -ResourceGroupName $RG `
+            -VMName $VMName `
+            -Name 'AADLoginForWindows' `
+            -Location $VMCreate.Location `
+            -Publisher 'Microsoft.Azure.ActiveDirectory' `
+            -Type 'AADLoginForWindows' `
+            -TypeHandlerVersion 0.4 `
+            | Out-Null
+
+        #Start-Sleep -Seconds $(60*5)
+        
+        Set-AzVMExtension -ResourceGroupName $RG `
+            -VMName $VMName `
+            -Name 'AzurePolicyforWindows' `
+            -Location $VMCreate.Location `
+            -Publisher 'Microsoft.GuestConfiguration' `
+            -Type 'ConfigurationforWindows' `
+            -TypeHandlerVersion 1.1 `
+            | Out-Null
+
+        <#Set-AzVMExtension -ResourceGroupName $RG `
+            -VMName $VMName `
+                -Location $VMCreate.Location `
+                -Name AzureMonitorWindowsAgent `
+                -ExtensionType AzureMonitorWindowsAgent `
+                -Publisher Microsoft.Azure.AzureMonitorWindowsAgent `
+                -TypeHandlerVersion 1.20.0 `
+                -EnableAutomaticUpgrade $true
+        #>
     }
     else {
         Write-AEBLog "*** VM: $VMName - Unable to configure Virtual Machine! ***" -Level Error
-        #Write-Dump
+        Write-Dump $VMCreate.ProvisioningState $VMCreate.Name
     }
 }
 
