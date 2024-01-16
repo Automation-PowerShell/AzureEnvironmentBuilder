@@ -303,7 +303,7 @@
             ],
             "VMSize": "Standard_B2s",
             "VMNamePrefix": "vm-euc-lite-",
-            "VMNumberStart": "605",
+            "VMNumberStart": "601",
             "BuildShutdownOnComplete": false,
             "AutoShutdownRequired": true,
             "AutoShutdownTime": 1900,
