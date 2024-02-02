@@ -307,7 +307,7 @@ function ConnectTo-Azure {
     Clear-AzContext -Force
     #Update-Module Az.Accounts,AZ.Compute,Az.Storage,Az.Network,Az.Resources -Force
 
-    Connect-AzAccount -Tenant $clientSettings.aztenant -Subscription $clientSettings.azSubscription | Out-Null
+    Connect-AzAccount -Tenant $clientSettings.aztenant -Subscription $clientSettings.azSubscription -ErrorAction Stop | Out-Null
     $SubscriptionId = (Get-AzContext).Subscription.Id
     if (!($clientSettings.azSubscription -eq $SubscriptionId)) {
         Write-AEBLog '*** Subscription ID Mismatch!!!! ***' -Level Error

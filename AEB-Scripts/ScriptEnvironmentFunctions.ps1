@@ -339,7 +339,7 @@ function CreateKeyVault {
 
         $resource = Get-AzKeyVault -VaultName $clientSettings.keyVaultName -ResourceGroupName $clientSettings.rgs.STORE.RGName -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
         if ($clientSettings.RequireKeyVault -and !$resource) {
-            $resource = New-AzKeyVault -VaultName $clientSettings.keyVaultName -ResourceGroupName $clientSettings.rgs.STORE.RGName -Location $clientSettings.Location -EnabledForDeployment #-EnableRbacAuthorization
+            $resource = New-AzKeyVault -VaultName $clientSettings.keyVaultName -ResourceGroupName $clientSettings.rgs.STORE.RGName -Location $clientSettings.Location -EnabledForDeployment -ErrorAction Stop #-EnableRbacAuthorization
             #if ($resource.ProvisioningState -eq 'Succeeded') {          # Bug with ProvisioningState
             #    Write-AEBLog 'KeyVault created successfully'
             #}
@@ -351,11 +351,11 @@ function CreateKeyVault {
             Update-AzKeyVaultNetworkRuleSet -DefaultAction Deny -VaultName $clientSettings.keyVaultName | Out-Null
             Add-AzKeyVaultNetworkRule -VaultName $clientSettings.keyVaultName -IpAddressRange $myPublicIP | Out-Null
 
-            Set-AzKeyVaultSecret -VaultName $clientSettings.keyVaultName -Name 'ServicePrincipal-Id' -SecretValue $(ConvertTo-SecureString -String $clientSettings.servicePrincipalUser -AsPlainText) | Out-Null
-            Set-AzKeyVaultSecret -VaultName $clientSettings.keyVaultName -Name 'LocalAdmin-Id' -SecretValue $(ConvertTo-SecureString -String $clientSettings.LocalAdminUser -AsPlainText) | Out-Null
-            Set-AzKeyVaultSecret -VaultName $clientSettings.keyVaultName -Name 'HyperVLocalAdmin-Id' -SecretValue $(ConvertTo-SecureString -String $clientSettings.HyperVLocalAdminUser -AsPlainText) | Out-Null
-            Set-AzKeyVaultSecret -VaultName $clientSettings.keyVaultName -Name 'DomainJoin-Id' -SecretValue $(ConvertTo-SecureString -String $clientSettings.DomainJoinUser -AsPlainText) | Out-Null
-            Set-AzKeyVaultSecret -VaultName $clientSettings.keyVaultName -Name 'DomainUser-Id' -SecretValue $(ConvertTo-SecureString -String $clientSettings.DomainUserUser -AsPlainText) | Out-Null
+            Set-AzKeyVaultSecret -VaultName $clientSettings.keyVaultName -Name 'ServicePrincipal-Id' -SecretValue $(ConvertTo-SecureString -String $clientSettings.servicePrincipalUser -AsPlainText -Force) | Out-Null
+            Set-AzKeyVaultSecret -VaultName $clientSettings.keyVaultName -Name 'LocalAdmin-Id' -SecretValue $(ConvertTo-SecureString -String $clientSettings.LocalAdminUser -AsPlainText -Force) | Out-Null
+            Set-AzKeyVaultSecret -VaultName $clientSettings.keyVaultName -Name 'HyperVLocalAdmin-Id' -SecretValue $(ConvertTo-SecureString -String $clientSettings.HyperVLocalAdminUser -AsPlainText -Force) | Out-Null
+            Set-AzKeyVaultSecret -VaultName $clientSettings.keyVaultName -Name 'DomainJoin-Id' -SecretValue $(ConvertTo-SecureString -String $clientSettings.DomainJoinUser -AsPlainText -Force) | Out-Null
+            Set-AzKeyVaultSecret -VaultName $clientSettings.keyVaultName -Name 'DomainUser-Id' -SecretValue $(ConvertTo-SecureString -String $clientSettings.DomainUserUser -AsPlainText -Force) | Out-Null
             Set-AzKeyVaultSecret -VaultName $clientSettings.keyVaultName -Name 'ServicePrincipal-Secret' -SecretValue $ServicePrincipalPassword | Out-Null
             Set-AzKeyVaultSecret -VaultName $clientSettings.keyVaultName -Name 'LocalAdmin-Secret' -SecretValue $LocalAdminPassword | Out-Null
             Set-AzKeyVaultSecret -VaultName $clientSettings.keyVaultName -Name 'HyperVLocalAdmin-Secret' -SecretValue $HyperVLocalAdminPassword | Out-Null
