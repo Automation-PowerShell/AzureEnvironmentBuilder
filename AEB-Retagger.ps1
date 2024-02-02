@@ -40,17 +40,19 @@ if ($devops) {
   # ...
 }
 else {
-  #ConnectTo-Azure
+  #Setup
+  ConnectTo-Azure
   #Connect-AzAccount -Tenant '9983e9de-6ceb-499b-a06c-e030f24bd236'
   #Connect-AzAccount -Tenant '7233444a-1eb9-4092-a211-485856124eb6'
-}
-#endregion
 
-#$selectedSub = Get-AzSubscription -TenantId $clientSettings.azTenant | Out-GridView -OutputMode Single -Title 'Select Subscription'
-$selectedSub = Get-AzSubscription | Sort-Object -Property Name |  Out-GridView -OutputMode Single -Title 'Select Subscription'
+  $selectedSub = Get-AzSubscription -TenantId $clientSettings.azTenant | Out-GridView -OutputMode Single -Title 'Select Subscription'
+  #$selectedSub = Get-AzSubscription | Sort-Object -Property Name |  Out-GridView -OutputMode Single -Title 'Select Subscription'
+
+}
 Write-Host "##vso[task.LogIssue type=warning;]Switching Subscription to $($selectedSub)"
-#Select-AzSubscription -Subscription $selectedSub -Tenant $clientSettings.azTenant | Out-Null
-Select-AzSubscription -Subscription $selectedSub | Out-Null
+Select-AzSubscription -Subscription $selectedSub -Tenant $clientSettings.azTenant | Out-Null
+#Select-AzSubscription -Subscription $selectedSub | Out-Null
+#endregion
 
 $rgs = Get-AzResourceGroup | Select-Object ResourceGroupName | Sort-Object -Property ResourceGroupName
 $selectedRG = $rgs | Out-GridView -OutputMode Single -Title 'Select Resource Group'
