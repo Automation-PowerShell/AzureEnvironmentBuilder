@@ -1,8 +1,8 @@
-﻿$app = 'CMTrace'
-$zip = $false
-$filename = 'CMTrace.exe'
-$exefilename = ''
-$Argument = ''
+﻿$app = 'Splunk_UF_9.1.2'
+$zip = $true
+$filename = 'splunk-installer-windows-uf-9.1.2r1.zip'
+$scriptfile = 'splunkwin_uf_manual_install.ps1'
+$arguments = ""
 
 $EventLogName = 'AEB'
 $EventLogSource = "$app Install Script"
@@ -15,7 +15,7 @@ trap {
 }
 
 # Enable Logging to the EventLog
-New-EventLog -LogName $EventlogName -Source $EventlogSource
+New-EventLog -LogName $EventlogName -Source $EventlogSource -ErrorAction SilentlyContinue
 Limit-EventLog -OverflowAction OverWriteAsNeeded -MaximumSize 64KB -LogName $EventlogName
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Starting $app Install Script"
 
@@ -33,22 +33,32 @@ Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -En
 $StorAcc = Get-AzStorageAccount -ResourceGroupName rrrrr -Name xxxxx
 if ($zip) {
     $Result = Get-AzStorageBlobContent -Container data -Blob "./Media/$filename" -Destination 'c:\Windows\temp\' -Context $StorAcc.context -Force
-    If ($Result.Name -eq "Media/$filename") {
-        Expand-Archive -Path "C:\Windows\Temp\Media\$filename" -DestinationPath C:\Users\Public\Desktop -Force
-        #cd C:\Windows\Temp\Media\$app\
-        #Start-Process -FilePath "$exefilename" -ArgumentList $Argument -Wait
+    if ($Result.Name -eq "Media/$filename") {
+        Expand-Archive -Path "C:\Windows\Temp\Media\$filename" -DestinationPath C:\Windows\Temp\Media\$app\ -Force
+        Set-Location C:\Windows\Temp\Media\$app\splunk-installer-windows-uf-9.1.2r1
+        if ($Argument -eq '') {
+            . ./$scriptfile
+        }
+        else {
+            . ./$scriptfile @arguments
+        }
     }
-    Else {
-        Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Error -Message "Failed to download $app"
+    else {
+        Write-EventLog -LogName ./$EventlogName -Source $EventlogSource -EventId 25101 -EntryType Error -Message "Failed to download $app"
     }
 }
 else {
-    $Result = Get-AzStorageBlobContent -Container data -Blob "./Media/$filename" -Destination 'C:\Users\Public\Desktop' -Context $StorAcc.context -Force
-    If ($Result.Name -eq "Media/$filename") {
+    $Result = Get-AzStorageBlobContent -Container data -Blob "./Media/$filename" -Destination 'c:\Windows\temp\' -Context $StorAcc.context -Force
+    if ($Result.Name -eq "Media/$filename") {
         Set-Location C:\Windows\Temp\Media\
-        #Start-Process -FilePath "$exefilename" -ArgumentList $Argument -Wait -ErrorAction Stop
+        if ($Argument -eq '') {
+            . ./$scriptfile
+        }
+        else {
+            . ./$scriptfile @arguments
+        }
     }
-    Else {
+    else {
         Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Error -Message "Failed to download $app"
     }
 }

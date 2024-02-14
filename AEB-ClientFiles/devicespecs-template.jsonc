@@ -46,29 +46,44 @@
         {
             "PublisherName": "MicrosoftWindowsDesktop",
             "Offer": "Windows-11",
-            "SKUS": "Win11-22h2-ent",
+            "SKUS": "Win11-23h2-ent",
             "Version": "latest",
             "Apps": [
                 {
                     "Name": "Conf-RunOnce"
                 },
-                {
-                    "Name": "App-7-Zip"
-                },
+                //{
+                //    "Name": "App-7-Zip"
+                //},
                 {
                     "Name": "App-CMTrace"
                 },
+                //{
+                //    "Name": "App-chocolatey"
+                //},
+                //{
+                //    "Name": "App-choco-vscode"
+                //},
                 {
-                    "Name": "App-chocolatey"
+                    "Name": "Conf-Accenture-Policy-Compliance"
                 },
                 {
-                    "Name": "App-choco-vscode"
+                    "Name": "App-Accenture-TaniumClient_7.4.8.1042-1"
+                },
+                {
+                    "Name": "App-Accenture-Qualys_5.0.0.17"
+                },
+                {
+                    "Name": "App-Accenture-MDEInstall"
+                },
+                {
+                    "Name": "App-Accenture-Splunk_9.1.2"
                 }
             ],
             "VMSize": "Standard_B2s",
-            "VMNamePrefix": "vm-euc-van-",
+            "VMNamePrefix": "vm-std%%%%-",
             "VMNumberStart": "101",
-            "BuildShutdownOnComplete": true,
+            "BuildShutdownOnComplete": false,
             "AutoShutdownRequired": true,
             "AutoShutdownTime": 1900,
             "VnetRef": "vnet-dev-azure",
@@ -79,11 +94,11 @@
                     "Application": "AEB",
                     "AEB-Client": "TestClient0",
                     "AEB-Application": "Desktop-Standard",
-                    "AEB-Environment": "DEV",
-                    "acp-ims-mde": "yes",
-                    "acp-ims-qualys": "yes",
-                    "acp-ims-splunk": "yes",
-                    "acp-ims-tanium": "yes"
+                    "AEB-Environment": "DEV"
+                    //"acp-ims-mde": "yes",
+                    //"acp-ims-qualys": "yes",
+                    //"acp-ims-splunk": "yes",
+                    //"acp-ims-tanium": "yes"
                 }
             ]
         }
@@ -121,7 +136,7 @@
                 }
             ],
             "VMSize": "Standard_B2s",
-            "VMNamePrefix": "vm-euc-pkg-",
+            "VMNamePrefix": "vm-pkg%%%%-",
             "VMNumberStart": "201",
             "BuildShutdownOnComplete": true,
             "AutoShutdownRequired": true,
@@ -173,7 +188,7 @@
                 }
             ],
             "VMSize": "Standard_B2s",
-            "VMNamePrefix": "vm-euc-as-",
+            "VMNamePrefix": "vm-as%%%%-",
             "VMNumberStart": "301",
             "BuildShutdownOnComplete": true,
             "AutoShutdownRequired": true,
@@ -213,7 +228,7 @@
                 }
             ],
             "VMSize": "Standard_B2s",
-            "VMNamePrefix": "vm-euc-jb-",
+            "VMNamePrefix": "vm-jb%%%%-",
             "VMNumberStart": "401",
             "BuildShutdownOnComplete": true,
             "AutoShutdownRequired": true,
@@ -268,7 +283,7 @@
                 }
             ],
             "VMSize": "Standard_B2s",
-            "VMNamePrefix": "vm-euc-core-",
+            "VMNamePrefix": "vm-core%%%%-",
             "VMNumberStart": "501",
             "BuildShutdownOnComplete": true,
             "AutoShutdownRequired": true,
@@ -302,8 +317,8 @@
                 }
             ],
             "VMSize": "Standard_B2s",
-            "VMNamePrefix": "vm-euc-lite-",
-            "VMNumberStart": "605",
+            "VMNamePrefix": "vm-lite%%%%-",
+            "VMNumberStart": "601",
             "BuildShutdownOnComplete": false,
             "AutoShutdownRequired": true,
             "AutoShutdownTime": 1900,
@@ -315,11 +330,11 @@
                     "Application": "AEB",
                     "AEB-Client": "TestClient0",
                     "AEB-Application": "Desktop-Lite",
-                    "AEB-Environment": "DEV",
-                    "acp-ims-mde": "yes",
-                    "acp-ims-qualys": "yes",
-                    "acp-ims-splunk": "yes",
-                    "acp-ims-tanium": "yes"
+                    "AEB-Environment": "DEV"
+                    //"acp-ims-mde": "yes",
+                    //"acp-ims-qualys": "yes",
+                    //"acp-ims-splunk": "yes",
+                    //"acp-ims-tanium": "yes"
                 }
             ]
         }
@@ -345,7 +360,7 @@
                 }
             ],
             "VMSize": "Standard_B2s",
-            "VMNamePrefix": "vm-w10-20h2-",
+            "VMNamePrefix": "w1020h2%%%%-",
             "VMNumberStart": "101",
             "BuildShutdownOnComplete": false,
             "AutoShutdownRequired": true,
@@ -358,11 +373,11 @@
                     "Application": "AEB",
                     "AEB-Client": "TestClient0",
                     "AEB-Application": "Desktop-DomainJoined",
-                    "AEB-Environment": "DEV",
-                    "acp-ims-mde": "yes",
-                    "acp-ims-qualys": "yes",
-                    "acp-ims-splunk": "yes",
-                    "acp-ims-tanium": "yes"
+                    "AEB-Environment": "DEV"//,
+                    //"acp-ims-mde": "yes",
+                    //"acp-ims-qualys": "yes",
+                    //"acp-ims-splunk": "yes",
+                    //"acp-ims-tanium": "yes"
                 }
             ]
         }
@@ -378,6 +393,15 @@
                     "Name": "Conf-RunOnce"
                 },
                 {
+                    "Name": "Conf-Accenture-Policy-Compliance"
+                },
+                {
+                    "Name": "App-Accenture-TaniumClient_7.4.8.1042-1"
+                }
+                ,{
+                    "Name": "App-Accenture-Qualys_5.0.0.17"
+                },
+                {
                     "Name": "App-7-Zip"
                 },
                 {
@@ -388,7 +412,7 @@
                 }
             ],
             "VMSize": "Standard_B2s",
-            "VMNamePrefix": "vm-w11-22h2-",
+            "VMNamePrefix": "w1122h2%%%%-",
             "VMNumberStart": "101",
             "BuildShutdownOnComplete": false,
             "AutoShutdownRequired": true,
@@ -401,11 +425,11 @@
                     "Application": "AEB",
                     "AEB-Client": "TestClient0",
                     "AEB-Application": "Desktop-DomainJoined",
-                    "AEB-Environment": "DEV",
-                    "acp-ims-mde": "yes",
-                    "acp-ims-qualys": "yes",
-                    "acp-ims-splunk": "yes",
-                    "acp-ims-tanium": "yes"
+                    "AEB-Environment": "DEV"//,
+                    //"acp-ims-mde": "yes",
+                    //"acp-ims-qualys": "yes",
+                    //"acp-ims-splunk": "yes",
+                    //"acp-ims-tanium": "yes"
                 }
             ]
         }
@@ -428,7 +452,7 @@
                 }
             ],
             "VMSize": "Standard_B2ms",
-            "VMNamePrefix": "vm-euc-srv-0",
+            "VMNamePrefix": "vm-srv%%%%-0",
             "VMNumberStart": "1",
             "dataDiskTier": "S10",
             "dataDiskSKU": "Standard_LRS",
@@ -480,7 +504,7 @@
                 }
             ],
             "VMSize": "Standard_B2ms",
-            "VMNamePrefix": "vm-euc-hyprv-0",
+            "VMNamePrefix": "vm-hypv%%%%-0",
             "VMNumberStart": "1",
             "dataDiskTier": "S10",
             "dataDiskSKU": "Standard_LRS",
@@ -529,7 +553,7 @@
                 }
             ],
             "VMSize": "Standard_B2ms",
-            "VMNamePrefix": "vm-euc-dc-0",
+            "VMNamePrefix": "vm-dc%%%%-0",
             "VMNumberStart": "1",
             "dataDiskTier": "S10",
             "dataDiskSKU": "Standard_LRS",
@@ -579,7 +603,7 @@
                 }
             ],
             "VMSize": "Standard_B2ms",
-            "VMNamePrefix": "vm-euc-sccm-0",
+            "VMNamePrefix": "vm-mecm%%%%-0",
             "VMNumberStart": "1",
             "dataDiskTier": "E10",
             "dataDiskSKU": "StandardSSD_LRS",
@@ -622,7 +646,7 @@
                 }
             ],
             "VMSize": "Standard_B2ms",
-            "VMNamePrefix": "vm-euc-a365-0",
+            "VMNamePrefix": "vm-a365%%%%-0",
             "VMNumberStart": "1",
             "dataDiskTier": "S10",
             "dataDiskSKU": "Standard_LRS",

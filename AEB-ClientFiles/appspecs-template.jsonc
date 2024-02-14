@@ -103,6 +103,21 @@
         },
         {
             "Name": "Conf-EnableSCCM"
+        },
+        {
+            "Name": "Conf-Accenture-Policy-Compliance"
+        },
+        {
+            "Name": "App-Accenture-TaniumClient_7.4.8.1042-1"
+        },
+        {
+            "Name": "App-Accenture-Qualys_5.0.0.17"
+        },
+        {
+            "Name": "App-Accenture-MDEInstall"
+        },
+        {
+            "Name": "App-Accenture-Splunk_9.1.2"
         }
     ],
     "Conf-Prevision": [
@@ -125,8 +140,8 @@
         {
             "AppVersion": "",
             "PS1": "Conf-RunOnce.ps1",
-            "RebootRequired": true,
-            "RebootSeconds": 60
+            "RebootRequired": false,
+            "RebootSeconds": 0
         }
     ],
     "App-ORCA": [
@@ -373,6 +388,46 @@
         {
             "AppVersion": "",
             "PS1": "App-choco-vscode.ps1",
+            "RebootRequired": false,
+            "RebootSeconds": 0
+        }
+    ],
+    "Conf-Accenture-Policy-Compliance": [
+        {
+            "AppVersion": "v1",
+            "PS1": "Conf-Accenture-Policy-Compliance.ps1",
+            "RebootRequired": false,
+            "RebootSeconds": 0
+        }
+    ],
+    "App-Accenture-TaniumClient_7.4.8.1042-1": [
+        {
+            "AppVersion": "7.4.8.1042-1",
+            "PS1": "App-Accenture-TaniumClient_7.4.8.1042-1.ps1",
+            "RebootRequired": false,
+            "RebootSeconds": 0
+        }
+    ],
+    "App-Accenture-Qualys_5.0.0.17": [
+        {
+            "AppVersion": "5.0.0.17",
+            "PS1": "App-Accenture-Qualys_5.0.0.17.ps1",
+            "RebootRequired": false,
+            "RebootSeconds": 0
+        }
+    ],
+    "App-Accenture-MDEInstall": [
+        {
+            "AppVersion": "v1",
+            "PS1": "App-Accenture-MDEInstall.ps1",
+            "RebootRequired": false,
+            "RebootSeconds": 0
+        }
+    ],
+    "App-Accenture-Splunk_9.1.2": [
+        {
+            "AppVersion": "9.1.2",
+            "PS1": "App-Accenture-Splunk_9.1.2.ps1",
             "RebootRequired": false,
             "RebootSeconds": 0
         }

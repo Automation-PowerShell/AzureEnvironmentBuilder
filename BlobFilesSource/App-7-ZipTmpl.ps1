@@ -15,7 +15,7 @@ trap {
 }
 
 # Enable Logging to the EventLog
-New-EventLog -LogName $EventlogName -Source $EventlogSource
+New-EventLog -LogName $EventlogName -Source $EventlogSource -ErrorAction SilentlyContinue
 Limit-EventLog -OverflowAction OverWriteAsNeeded -MaximumSize 64KB -LogName $EventlogName
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Starting $app Install Script"
 
@@ -32,7 +32,7 @@ Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -En
 
 $StorAcc = Get-AzStorageAccount -ResourceGroupName rrrrr -Name xxxxx
 if ($zip) {
-    $Result = Get-AzStorageBlobContent -Container data -Blob "./Media/$filename" -Destination 'c:\Windows\temp\' -Context $StorAcc.context
+    $Result = Get-AzStorageBlobContent -Container data -Blob "./Media/$filename" -Destination 'c:\Windows\temp\' -Context $StorAcc.context -Force
     If ($Result.Name -eq "Media/$filename") {
         Expand-Archive -Path "C:\Windows\Temp\Media\$filename" -DestinationPath C:\Windows\Temp\Media\$app\ -Force
         Set-Location C:\Windows\Temp\Media\$app\
@@ -43,7 +43,7 @@ if ($zip) {
     }
 }
 else {
-    $Result = Get-AzStorageBlobContent -Container data -Blob "./Media/$filename" -Destination 'c:\Windows\temp\' -Context $StorAcc.context
+    $Result = Get-AzStorageBlobContent -Container data -Blob "./Media/$filename" -Destination 'c:\Windows\temp\' -Context $StorAcc.context -Force
     If ($Result.Name -eq "Media/$filename") {
         Set-Location C:\Windows\Temp\Media\
         Start-Process -FilePath "$exefilename" -ArgumentList $Argument -Wait -ErrorAction Stop

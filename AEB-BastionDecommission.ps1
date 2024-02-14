@@ -40,8 +40,8 @@ if ($devops) {
     # ...
 }
 else {
-    Connect-AzAccount
-    #ConnectTo-Azure
+    #Connect-AzAccount
+    ConnectTo-Azure
 }
 
 #Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings 'true'  # Turns off Breaking Changes warnings for Cmdlets

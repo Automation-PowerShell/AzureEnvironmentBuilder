@@ -34,6 +34,7 @@ function UpdateStorage {
 }
 
 function UpdateRBAC {
+    if ($clientSettings.RequireRBAC) {
     try {
         $OwnerGroup = Get-AzADGroup -DisplayName $clientSettings.rbacOwner
         $ContributorGroup = Get-AzADGroup -DisplayName $clientSettings.rbacContributor
@@ -58,6 +59,7 @@ function UpdateRBAC {
         New-AzRoleAssignment -ObjectId $ReadOnlyGroup.Id -RoleDefinitionName 'Reader' -ResourceGroupName $clientSettings.rgs.STORE.RGName -ErrorAction Ignore | Out-Null
     }
     Write-AEBLog 'Role Assignments Set'
+}
 }
 
 function ConfigureNetwork {
@@ -304,8 +306,10 @@ function CreateStorageAccount {
             Write-AEBLog '*** Unable to create the Storage Share! ***' -Level Error
             Write-Dump
         }
-        $script:Keys = Get-AzStorageAccountKey -ResourceGroupName $clientSettings.rgs.STORE.RGName -AccountName $clientSettings.StorageAccountName
-        $script:SAS = New-AzStorageContainerSASToken -Name $clientSettings.ContainerName -Context $ctx -Permission r -StartTime $(Get-Date) -ExpiryTime $((Get-Date).AddDays(1))
+        $global:Keys = Get-AzStorageAccountKey -ResourceGroupName $clientSettings.rgs.STORE.RGName -AccountName $clientSettings.StorageAccountName
+        $global:SAS = New-AzStorageContainerSASToken -Name $clientSettings.ContainerName -Context $ctx -Permission r -StartTime $(Get-Date) -ExpiryTime $((Get-Date).AddDays(2))
+        $global:SAS = '?' + $SAS
+        
         Update-AzStorageAccountNetworkRuleSet -ResourceGroupName $clientSettings.rgs.STORE.RGName -Name $clientSettings.StorageAccountName -DefaultAction Deny | Out-Null
         foreach ($vnet in $vnetIDs) {
             Add-AzStorageAccountNetworkRule -ResourceGroupName $clientSettings.rgs.STORE.RGName -Name $clientSettings.StorageAccountName -VirtualNetworkResourceId $vnet | Out-Null

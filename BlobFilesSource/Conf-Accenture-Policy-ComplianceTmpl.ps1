@@ -1,6 +1,7 @@
-$scriptname = 'Conf-RunOnce.ps1'
+$scriptname = 'Conf-Accenture-Policy-Compliance.ps1'
+$scriptfile = 'Conf-Accenture-Policy-Compliance-Script.ps1'
 $EventlogName = 'AEB'
-$EventlogSource = 'Configure RunOnce Script'
+$EventlogSource = 'Configure Accnture Policy Compliance'
 
 # Create Error Trap
 trap {
@@ -22,16 +23,16 @@ Install-Module -Name Az.Storage -Force -ErrorAction Stop
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message 'Attempting to connect to Azure'
 Connect-AzAccount -Identity -ErrorAction Stop -Subscription sssss
 
-# Copy MapDrv.ps1 to local drive
-Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message 'Atempting to download MapDrv.ps1 from Azure storage account to C:\Users\Public\Desktop'
+# Copy $scriptfile to local drive
+Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Atempting to download $scriptfile from Azure storage account to C:\Windows\Temp"
 
 $StorAcc = Get-AzStorageAccount -ResourceGroupName rrrrr -Name xxxxx
-$Result = Get-AzStorageBlobContent -Container data -Blob 'MapDrv.ps1' -Destination 'C:\Users\Public\Desktop' -Context $StorAcc.context -Force
-If ($Result.Name -eq 'MapDrv.ps1') {
-    New-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run' -Name 'MapPackagingDrive' -Value "Powershell.exe -ExecutionPolicy Unrestricted -file `"C:\Users\Public\Desktop\MapDrv.ps1`"" -PropertyType 'String' -Force
+$Result = Get-AzStorageBlobContent -Container data -Blob $scriptfile -Destination 'C:\Windows\Temp' -Context $StorAcc.context -Force
+if ($Result.Name -eq $scriptfile) {
+    . C:\Windows\Temp\$scriptfile
 }
-Else {
-    Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Error -Message 'Failed to download MapDrv.ps1 from Azure storage account to C:\Users\Public\Desktop'
+else {
+    Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Error -Message "Failed to download $scriptfile from Azure storage account to C:\Windows\Temp"
 }
 
 Write-EventLog -LogName $EventlogName -Source $EventlogSource -EventId 25101 -EntryType Information -Message "Completed $scriptname"
