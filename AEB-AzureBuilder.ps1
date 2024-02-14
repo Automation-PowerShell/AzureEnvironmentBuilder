@@ -23,7 +23,7 @@ Set-Location $PSScriptRoot
 # Script Variables
 $root = $PSScriptRoot
 #$root = $pwd
-$AEBClientFiles= "$root\AEB-ClientFiles"
+$AEBClientFiles = "$root\AEB-ClientFiles"
 $AEBScripts = "$root\AEB-Scripts"
 $ExtraFiles = "$root\ExtraFiles"
 
@@ -41,6 +41,8 @@ Setup
 
 #region Main
 Write-AEBLog 'Running AEB-AzureBuilder.ps1'
+$logfile = "$AEBClientFiles\$($clientSettings.logFile)"
+code $logfile
 if ($clientSettings.isProd) { Write-Warning 'Are you sure you want to rebuild the Azure Environment?  OK to Continue?' -WarningAction Inquire }
 
 if ($clientSettings.RequireCreate) {
@@ -72,7 +74,8 @@ if ($clientSettings.RequireCreate) {
         TerraformBuild-VM
     }
     else {
-        ScriptBuild-Create-VM
+        $global:random = Get-Random -Minimum 1000 -Maximum 9999
+        ScriptBuild-Create-VM -Random $random
     }
 
     if ($clientSettings.UseTerraform) {
@@ -92,10 +95,8 @@ UpdateStorage
 
 
 if ($clientSettings.RequireConfigure) {
-    if ($clientSettings.RequireRBAC) {
-        # Update RBAC
-        UpdateRBAC
-    }
+    # Update RBAC
+    UpdateRBAC
 
     # Configure Server Script
     if ($clientSettings.UseTerraform) {
@@ -110,10 +111,12 @@ if ($clientSettings.RequireConfigure) {
         TerraformConfigure-VM
     }
     else {
-        ScriptBuild-Config-VM
+        ScriptBuild-Config-VM -Random $random
     }
 }
 
 Write-AEBLog 'Completed AEB-AzureBuilder.ps1'
 Write-AEBLog '============================================================================================================='
 #endregion Main
+
+$vars = (Get-Variable -Scope Global -Exclude args, input, MyInvocation, PROFILE, PSBoundParameters, PSCommandPath, PSScriptRoot, PWD, StackTrace | Where-Object { !($_.Description) })

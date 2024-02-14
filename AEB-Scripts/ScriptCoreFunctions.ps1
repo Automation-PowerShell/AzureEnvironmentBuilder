@@ -42,8 +42,8 @@
 }#>
 
 function RunVMConfig($ResourceGroup, $VMName, $BlobFilePath, $Blob) {
-    $script:fileUri = @($($BlobFilePath + $SAS))
-    $settings = @{'fileUris' = $fileUri }
+    $global:fileUri = @($($BlobFilePath + $SAS))
+    $settings = @{'fileUris' = @($fileUri) }
 
     #managedIdentity = @{}
     #StorageAccountName = $StorageAccountName
@@ -243,7 +243,8 @@ function Write-AEBLog {
 
     Write-LogScreen -String $String -Level $Level
     if (!($clientSettings.isProd)) {
-        Write-LogCMFile -String $String -Level $Level
+        Write-LogFile -String $String -Level $Level
+        #Write-LogCMFile -String $String -Level $Level
         if ($clientSettings.LogToGit) { Write-LogGit -String $String -Level $Level }
         if ($clientSettings.LogToSA) { Write-LogStorageAccount -String $String -Level $Level }
     }
@@ -261,7 +262,8 @@ function Write-DumpLine {
     $String = "$varname : $varvalue"
     Write-LogScreen -String $String -Level Debug
     if (!($clientSettings.isProd)) {
-        Write-LogCMFile -String $String -Level Debug
+        Write-LogFile -String $String -Level Debug
+        #Write-LogCMFile -String $String -Level Debug
         if ($clientSettings.LogToGit) { Write-LogGit -String $String -Level Debug }
     }
     else {
@@ -304,26 +306,32 @@ function ConnectTo-Azure {
         Install-Module Az.Accounts, Az.Compute, Az.Storage, Az.Network, Az.Resources, Az.KeyVault -Repository PSGallery -Scope CurrentUser -Force
         Import-Module Az.Accounts, AZ.Compute, Az.Storage, Az.Network, Az.Resources, Az.KeyVault
     }
-    Clear-AzContext -Force
-    #Update-Module Az.Accounts,AZ.Compute,Az.Storage,Az.Network,Az.Resources -Force
 
-    Connect-AzAccount -Tenant $clientSettings.aztenant -Subscription $clientSettings.azSubscription -ErrorAction Stop | Out-Null
-    $SubscriptionId = (Get-AzContext).Subscription.Id
-    if (!($clientSettings.azSubscription -eq $SubscriptionId)) {
-        Write-AEBLog '*** Subscription ID Mismatch!!!! ***' -Level Error
-        exit
-    }
-    Get-AzContext | Rename-AzContext -TargetName 'User' -Force | Out-Null
-    if ($clientSettings.RequireServicePrincipal) {
-        Connect-AzAccount -Tenant $clientSettings.azTenant -Subscription $clientSettings.azSubscription -Credential $clientSettings.ServicePrincipalCred -ServicePrincipal | Out-Null
-        Get-AzContext | Rename-AzContext -TargetName 'StorageSP' -Force | Out-Null
-        Get-AzContext -Name 'User' | Select-AzContext | Out-Null
+    $currentToken = Get-AzAccessToken -ErrorAction SilentlyContinue
+    $currentContext = Get-AzContext -ErrorAction SilentlyContinue
+    if ($currentToken.TenantId -eq $clientSettings.azTenant -or !$currentToken) {
+        if ($currentToken.ExpiresOn -lt ((Get-Date).AddHours(1)) -or !$currentToken) {
+            Clear-AzContext -Force
+            Connect-AzAccount -Tenant $clientSettings.aztenant -Subscription $clientSettings.azSubscription -ErrorAction Stop | Out-Null
+            $SubscriptionId = $currentContext.Subscription.Id
+            if (!($clientSettings.azSubscription -eq $SubscriptionId)) {
+                Write-AEBLog '*** Subscription ID Mismatch!!!! ***' -Level Error
+                exit
+            }
+            Get-AzContext | Rename-AzContext -TargetName 'User' -Force | Out-Null
+            if ($clientSettings.RequireServicePrincipal) {
+                Connect-AzAccount -Tenant $clientSettings.azTenant -Subscription $clientSettings.azSubscription -Credential $clientSettings.ServicePrincipalCred -ServicePrincipal | Out-Null
+                Get-AzContext | Rename-AzContext -TargetName 'StorageSP' -Force | Out-Null
+                Get-AzContext -Name 'User' | Select-AzContext | Out-Null
+            }
+        }
     }
     $resource = Get-AzResource -ResourceGroupName $clientSettings.rgs.STORE.RGName -Name $clientSettings.StorageAccountName
     if ($resource) {
-        $script:Keys = Get-AzStorageAccountKey -ResourceGroupName $clientSettings.rgs.STORE.RGName -AccountName $clientSettings.StorageAccountName
-        $script:ctx = New-AzStorageContext -StorageAccountName $clientSettings.StorageAccountName -StorageAccountKey $Keys.value[0]
-        $script:SAS = New-AzStorageContainerSASToken -Name $clientSettings.ContainerName -Context $ctx -Permission r -StartTime $(Get-Date) -ExpiryTime $((Get-Date).AddDays(1))
+        $global:Keys = Get-AzStorageAccountKey -ResourceGroupName $clientSettings.rgs.STORE.RGName -AccountName $clientSettings.StorageAccountName
+        $global:ctx = New-AzStorageContext -StorageAccountName $clientSettings.StorageAccountName -StorageAccountKey $Keys.value[0]
+        $global:SAS = New-AzStorageContainerSASToken -Name $clientSettings.ContainerName -Context $ctx -Permission r -StartTime $(Get-Date) -ExpiryTime $((Get-Date).AddDays(2))
+        $global:SAS = '?' + $SAS
     }
 }
 
