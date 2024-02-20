@@ -170,7 +170,7 @@ function ConfigureNetwork {
                     $resource = New-AzBastion -ResourceGroupName $clientSettings.rgs.$environment.RGNameVNET -Name $clientSettings.bastions.$environment.BastionName `
                         -PublicIpAddressRgName $clientSettings.rgs.$environment.RGNameVNET -PublicIpAddressName "$($clientSettings.bastions.$environment.BastionName)-pip" `
                         -VirtualNetworkRgName $clientSettings.rgs.$environment.RGNameVNET -VirtualNetworkName $clientSettings.vnets.$environment[0] `
-                        -Sku Basic -Tag $clientSettings.tags -AsJob
+                        -Sku Standard -Tag $clientSettings.tags -AsJob
                     #Update-AzTag -ResourceId $resource.Id -Tag $clientSettings.tags -Operation Merge
                     #Update-AzTag -ResourceId $resource.Id -Tag @{ 'AEB-Environment' = $environment } -Operation Merge
                 }

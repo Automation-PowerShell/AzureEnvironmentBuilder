@@ -3,8 +3,6 @@ $azTenant = ''                                  # AVAWS Test Client 0
 $azSubscription = ''                            # AVAWS Test Client 0
 $domain = ''                                                       # Name of the AD Domain
 $ouPath = ''                             # Name of the AD OU where computer objects will be created
-$StorageAccountName = "sa2avaws$($clientName.ToLower())"
-$keyVaultName = "kv-2avaws-$($clientName)"
 
 $clientName = $clientName.Replace('-', '')
 $clientName = $clientName.Replace('_', '')
@@ -12,6 +10,10 @@ $clientName = $clientName.Replace(' ', '')
 $clientName = $clientName.Replace('#', '')
 $clientName = $clientName.Replace('/', '')
 $clientName = $clientName.Replace('\', '')
+
+$StorageAccountName = "sa2avaws$($clientName.ToLower())"
+$keyVaultName = "kv-2avaws-$($clientName.ToLower())"
+
 $clientSettings = [ordered]@{
     # Client Information
     ClientName                       = $clientName
@@ -25,25 +27,25 @@ $clientSettings = [ordered]@{
     OUPath                           = $ouPath
 
     # Main Control
-    RequireCreate                    = $true                                         # Switch to Create VMs
-    RequireConfigure                 = $true                                         # Switch to Configure VMs
-    RequireUpdateStorage             = $true                                         # Switch to update content of Storage Account
-    UseTerraform                     = $false                                        # Use Terraform Templates
-    RequireServicePrincipal          = $false                                        # Enable use of Service Principal
+    RequireCreate                    = $true                                       # Switch to Create VMs
+    RequireConfigure                 = $true                                       # Switch to Configure VMs
+    RequireUpdateStorage             = $true                                       # Switch to update content of Storage Account
+    UseTerraform                     = $false                                      # Use Terraform Templates
+    RequireServicePrincipal          = $false                                      # Enable use of Service Principal
 
     # Required Components
-    isProd                           = $false                                        # Will this build be used for production?
-    LogToGit                         = $false                                        # Use - Should the script log to GIT?
-    LogToSA                          = $false                                        # Use - Should the script log to the Storage Account?
-    RequireUserGroups                = $false                                        # Create - User Groups?
-    RequireRBAC                      = $true                                         # Use - RBAC groups model or directly add Managed Identities to Storage Account
-    RequireResourceGroups            = $false                                        # Create - Should a Resource Group be created? (or use existing)
-    RequireStorageAccount            = $false                                        # Create - Storage Account Resources
-    RequireVNET                      = $false                                        # Create - VNET Resources
-    RequireNSG                       = $false                                        # Create - NSG Resources
-    RequirePublicIPs                 = $false                                        # Use - Should Public IPs be used
-    RequireBastion                   = $false                                        # Create - Bastion Resources
-    RequireKeyVault                  = $false                                        # Create - KeyVault Resources
+    isProd                           = $false                                      # Will this build be used for production?
+    LogToGit                         = $false                                      # Use - Should the script log to GIT?
+    LogToSA                          = $false                                      # Use - Should the script log to the Storage Account?
+    RequireUserGroups                = $false                                      # Create - User Groups?
+    RequireRBAC                      = $true                                       # Use - RBAC groups model or directly add Managed Identities to Storage Account
+    RequireResourceGroups            = $false                                      # Create - Should a Resource Group be created? (or use existing)
+    RequireStorageAccount            = $false                                      # Create - Storage Account Resources
+    RequireVNET                      = $false                                      # Create - VNET Resources
+    RequireNSG                       = $false                                      # Create - NSG Resources
+    RequirePublicIPs                 = $false                                      # Use - Should Public IPs be used
+    RequireBastion                   = $false                                      # Create - Bastion Resources
+    RequireKeyVault                  = $false                                      # Create - KeyVault Resources
 
     RequireStandardVMs               = $true                                       # Should Standard VMs be created?
     RequirePackagingVMs              = $true                                       # Should Packaging VMs be created?
@@ -66,7 +68,7 @@ $clientSettings = [ordered]@{
     NumberofCoreVMs                  = 0                                           # Specify number of Core VMs to be provisioned
     NumberofLiteVMs                  = 0                                           # Specify number of Lite VMs to be provisioned
     NumberofDomainJoinedWin1020h2VMs = 0                                           # Specify number of Domain Joined VMs to be provisioned
-    NumberofDomainJoinedWin1122h2VMs = 2                                           # Specify number of Domain Joined VMs to be provisioned
+    NumberofDomainJoinedWin1122h2VMs = 0                                           # Specify number of Domain Joined VMs to be provisioned
     NumberofStdSrvVMs                = 0                                           # Specify number of Standard Server VMs to be provisioned
     NumberofHyperVVMs                = 0                                           # Specify number of HyperV Server VMs to be provisioned
     NumberofDCVMs                    = 0                                           # Specify number of Domain Controller Server VMs to be provisioned
