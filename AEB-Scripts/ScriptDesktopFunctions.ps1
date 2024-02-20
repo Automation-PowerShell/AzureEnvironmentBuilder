@@ -75,6 +75,24 @@ function ConfigureVM {
         -TypeHandlerVersion 1.1 `
         | Out-Null
 
+    <#
+    $galleryName = "myGallery"
+    $rgName = "myResourceGroup"
+    $applicationName = "myApp"
+    $version = "1.0.0"
+    $vmName = "myVM"
+    $vm = Get-AzVM -ResourceGroupName $rgname -Name $vmName
+    $appVersion = Get-AzGalleryApplicationVersion `
+       -GalleryApplicationName $applicationName `
+       -GalleryName $galleryName `
+       -Name $version `
+       -ResourceGroupName $rgName
+    $packageId = $appVersion.Id
+    $app = New-AzVmGalleryApplication -PackageReferenceId $packageId
+    Add-AzVmGalleryApplication -VM $vm -GalleryApplication $app -TreatFailureAsDeploymentFailure true
+    Update-AzVM -ResourceGroupName $rgName -VM $vm
+    #>
+    
     if ($deviceSpecs.$VMSpec.BuildShutdownOnComplete) {
         $Stopvm = Stop-AzVM -ResourceGroupName $RG -Name $VMName -Force
         if ($Stopvm.Status -eq 'Succeeded') {

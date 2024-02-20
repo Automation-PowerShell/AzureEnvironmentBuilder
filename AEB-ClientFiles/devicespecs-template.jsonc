@@ -84,7 +84,7 @@
             "VMNamePrefix": "vm-std%%%%-",
             "VMNumberStart": "101",
             "BuildShutdownOnComplete": false,
-            "AutoShutdownRequired": true,
+            "AutoShutdownRequired": false,
             "AutoShutdownTime": 1900,
             "VnetRef": "vnet-dev-azure",
             "Environment": "DEV",
@@ -309,7 +309,7 @@
         {
             "PublisherName": "MicrosoftWindowsDesktop",
             "Offer": "Windows-11",
-            "SKUS": "Win11-22h2-ent",
+            "SKUS": "Win11-23h2-ent",
             "Version": "latest",
             "Apps": [
                 {

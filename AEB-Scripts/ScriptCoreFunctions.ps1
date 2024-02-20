@@ -303,16 +303,17 @@ function Write-Dump {
 function ConnectTo-Azure {
     Import-Module Az.Accounts, Az.Compute, Az.Storage, Az.Network, Az.Resources, Az.KeyVault -ErrorAction SilentlyContinue
     if (!((Get-Module Az.Accounts) -and (Get-Module Az.Compute) -and (Get-Module Az.Storage) -and (Get-Module Az.Network) -and (Get-Module Az.Resources) -and (Get-Module Az.KeyVault))) {
-        Install-Module Az.Accounts, Az.Compute, Az.Storage, Az.Network, Az.Resources, Az.KeyVault -Repository PSGallery -Scope CurrentUser -Force
+        Install-Module Az.Accounts, Az.Compute, Az.Storage, Az.Network, Az.Resources, Az.KeyVault -Repository PSGallery -Scope AllUsers -Force
         Import-Module Az.Accounts, AZ.Compute, Az.Storage, Az.Network, Az.Resources, Az.KeyVault
     }
 
     $currentToken = Get-AzAccessToken -ErrorAction SilentlyContinue
     $currentContext = Get-AzContext -ErrorAction SilentlyContinue
-    if ($currentToken.TenantId -eq $clientSettings.azTenant -or !$currentToken) {
-        if ($currentToken.ExpiresOn -lt ((Get-Date).AddHours(1)) -or !$currentToken) {
+    if ($currentToken.TenantId -eq $clientSettings.azTenant) {
+        if ($currentToken.ExpiresOn -lt ((Get-Date).AddHours(1))) {
             Clear-AzContext -Force
             Connect-AzAccount -Tenant $clientSettings.aztenant -Subscription $clientSettings.azSubscription -ErrorAction Stop | Out-Null
+            $currentContext = Get-AzContext -ErrorAction SilentlyContinue
             $SubscriptionId = $currentContext.Subscription.Id
             if (!($clientSettings.azSubscription -eq $SubscriptionId)) {
                 Write-AEBLog '*** Subscription ID Mismatch!!!! ***' -Level Error
@@ -324,6 +325,23 @@ function ConnectTo-Azure {
                 Get-AzContext | Rename-AzContext -TargetName 'StorageSP' -Force | Out-Null
                 Get-AzContext -Name 'User' | Select-AzContext | Out-Null
             }
+        }
+    }
+    else {
+        Write-AEBLog -String "*** Error with the Token ***" -Level Error
+        Clear-AzContext -Force
+        Connect-AzAccount -Tenant $clientSettings.aztenant -Subscription $clientSettings.azSubscription -ErrorAction Stop | Out-Null
+        $currentContext = Get-AzContext -ErrorAction SilentlyContinue
+        $SubscriptionId = $currentContext.Subscription.Id
+        if (!($clientSettings.azSubscription -eq $SubscriptionId)) {
+            Write-AEBLog '*** Subscription ID Mismatch!!!! ***' -Level Error
+            exit
+        }
+        Get-AzContext | Rename-AzContext -TargetName 'User' -Force | Out-Null
+        if ($clientSettings.RequireServicePrincipal) {
+            Connect-AzAccount -Tenant $clientSettings.azTenant -Subscription $clientSettings.azSubscription -Credential $clientSettings.ServicePrincipalCred -ServicePrincipal | Out-Null
+            Get-AzContext | Rename-AzContext -TargetName 'StorageSP' -Force | Out-Null
+            Get-AzContext -Name 'User' | Select-AzContext | Out-Null
         }
     }
     $resource = Get-AzResource -ResourceGroupName $clientSettings.rgs.STORE.RGName -Name $clientSettings.StorageAccountName
