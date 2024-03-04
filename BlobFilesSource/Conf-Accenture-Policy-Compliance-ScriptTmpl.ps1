@@ -1,4 +1,4 @@
-$policies = [ordered]@{
+$policiesDesktop = [ordered]@{
     '2605'     = @{
         'policytype' = 'reg'
         'key'        = 'Software\Microsoft\Windows\CurrentVersion\Policies\System\ConsentPromptBehaviorUser'
@@ -364,6 +364,108 @@ $policies = [ordered]@{
     }#>
 }
 
+$policiesServer = [ordered]@{
+    '1091'     = @{
+        'policytype' = 'reg'
+        'key'        = 'Software\Microsoft\Windows NT\CurrentVersion\Winlogon\PasswordExpiryWarning'
+        'type'       = 'REG_DWORD'
+        'value'      = 7
+    }
+    '8176'     = @{
+        'policytype' = 'reg'
+        'key'        = 'Software\Policies\Microsoft\Windows\System\DontEnumerateConnectedUsers'
+        'type'       = 'REG_DWORD'
+        'value'      = 1
+    }
+    '8399'     = @{
+        'policytype' = 'reg'
+        'key'        = 'Software\Policies\Microsoft\Windows\System\DisableLockScreenAppNotifications'
+        'type'       = 'REG_DWORD'
+        'value'      = 1
+    }
+    '9008'     = @{
+        'policytype' = 'reg'
+        'key'        = 'Software\Policies\Microsoft\Windows\System\DontDisplayNetworkSelectionUI'
+        'type'       = 'REG_DWORD'
+        'value'      = 1
+    }
+    '11192'    = @{
+        'policytype' = 'reg'
+        'key'        = 'SOFTWARE\Policies\Microsoft\Windows NT\DNSClient\EnableMulticast'
+        'type'       = 'REG_DWORD'
+        'value'      = 0
+    }
+    '11193'    = @{
+        'policytype' = 'reg'
+        'key'        = 'SOFTWARE\Policies\Microsoft\Windows\System\EnableCdp'
+        'type'       = 'REG_DWORD'
+        'value'      = 0
+    }
+    '11194'    = @{
+        'policytype' = 'reg'
+        'key'        = 'SOFTWARE\Policies\Microsoft\Windows\System\BlockUserFromShowingAccountDetailsOnSignin'
+        'type'       = 'REG_DWORD'
+        'value'      = 1
+    }
+    '13344'    = @{
+        'policytype' = 'reg'
+        'key'        = 'SOFTWARE\Policies\Microsoft\Windows Defender Security Center\App and Browser protection\DisallowExploitProtectionOverride'
+        'type'       = 'REG_DWORD'
+        'value'      = 1
+    }
+}
+
+$policiesServerDC = [ordered]@{
+    '1091'     = @{
+        'policytype' = 'reg'
+        'key'        = 'Software\Microsoft\Windows NT\CurrentVersion\Winlogon\PasswordExpiryWarning'
+        'type'       = 'REG_DWORD'
+        'value'      = 7
+    }
+    '5211'     = @{
+        'policytype' = 'reg'
+        'key'        = 'System\CurrentControlSet\Control\Session Manager\SubSystems'
+        'type'       = 'REG_SZ'
+        'value'      = "POSIX"
+    }
+    '8176'     = @{
+        'policytype' = 'reg'
+        'key'        = 'Software\Policies\Microsoft\Windows\System\DontEnumerateConnectedUsers'
+        'type'       = 'REG_DWORD'
+        'value'      = 1
+    }
+    '8399'     = @{
+        'policytype' = 'reg'
+        'key'        = 'Software\Policies\Microsoft\Windows\System\DisableLockScreenAppNotifications'
+        'type'       = 'REG_DWORD'
+        'value'      = 1
+    }
+    '9008'     = @{
+        'policytype' = 'reg'
+        'key'        = 'Software\Policies\Microsoft\Windows\System\DontDisplayNetworkSelectionUI'
+        'type'       = 'REG_DWORD'
+        'value'      = 1
+    }
+    '11192'    = @{
+        'policytype' = 'reg'
+        'key'        = 'SOFTWARE\Policies\Microsoft\Windows NT\DNSClient\EnableMulticast'
+        'type'       = 'REG_DWORD'
+        'value'      = 0
+    }
+    '11194'    = @{
+        'policytype' = 'reg'
+        'key'        = 'SOFTWARE\Policies\Microsoft\Windows\System\BlockUserFromShowingAccountDetailsOnSignin'
+        'type'       = 'REG_DWORD'
+        'value'      = 1
+    }
+    '13344'    = @{
+        'policytype' = 'reg'
+        'key'        = 'SOFTWARE\Policies\Microsoft\Windows Defender Security Center\App and Browser protection\DisallowExploitProtectionOverride'
+        'type'       = 'REG_DWORD'
+        'value'      = 1
+    }
+}
+
 $typeMap = [ordered]@{
     'REG_DWORD'      = 'DWord'
     'REG_SZ'         = 'String'
@@ -374,7 +476,7 @@ $typeMap = [ordered]@{
 }
 
 Function CheckPolicy {
-    $global:resultsCheck = foreach ($policy in $policies.GetEnumerator()) {
+    $global:resultsCheck = foreach ($policy in $policiesDesktop.GetEnumerator()) {
         if ($policy.Value.policytype -eq 'reg' -and $ActionReg) {
             Set-Location HKLM:\
             $splitLeaf = Split-Path -Path $($policy.Value.key) -Leaf
@@ -433,7 +535,7 @@ Function CheckPolicy {
 
 
 Function SetPolicy {
-    $global:resultsSet = foreach ($policy in $policies.GetEnumerator()) {
+    $global:resultsSet = foreach ($policy in $policiesDesktop.GetEnumerator()) {
         if ($policy.Value.policytype -eq 'reg' -and $ActionReg) {
             Set-Location HKLM:\
             $splitLeaf = Split-Path -Path $($policy.Value.key) -Leaf

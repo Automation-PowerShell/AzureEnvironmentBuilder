@@ -402,6 +402,12 @@
                     "Name": "App-Accenture-Qualys_5.0.0.17"
                 },
                 {
+                    "Name": "App-Accenture-MDEInstall"
+                },
+                {
+                    "Name": "App-Accenture-Splunk_9.1.2"
+                },
+                {
                     "Name": "App-7-Zip"
                 },
                 {
