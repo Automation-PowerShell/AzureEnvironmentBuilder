@@ -57,14 +57,16 @@ function ConfigureVM {
     }
 
     Write-AEBLog "VM: $VMName - Installing VM Extensions..."
-    Set-AzVMExtension -ResourceGroupName $RG `
-        -VMName $VMName `
-        -Name 'AADLoginForWindows' `
-        -Location $VMCreate.Location `
-        -Publisher 'Microsoft.Azure.ActiveDirectory' `
-        -Type 'AADLoginForWindows' `
-        -TypeHandlerVersion 0.4 `
+    if (!($deviceSpecs.$VMSpec.Apps | Where-Object { $_.Name -eq 'Conf-DomainJoin' })) {
+        Set-AzVMExtension -ResourceGroupName $RG `
+            -VMName $VMName `
+            -Name 'AADLoginForWindows' `
+            -Location $VMCreate.Location `
+            -Publisher 'Microsoft.Azure.ActiveDirectory' `
+            -Type 'AADLoginForWindows' `
+            -TypeHandlerVersion 0.4 `
         | Out-Null
+    }
 
     Set-AzVMExtension -ResourceGroupName $RG `
         -VMName $VMName `
@@ -73,7 +75,7 @@ function ConfigureVM {
         -Publisher 'Microsoft.GuestConfiguration' `
         -Type 'ConfigurationforWindows' `
         -TypeHandlerVersion 1.1 `
-        | Out-Null
+    | Out-Null
 
     <#
     $galleryName = "myGallery"
@@ -102,6 +104,11 @@ function ConfigureVM {
             Write-AEBLog "*** VM: $VMName - Unable to shutdown! ***" -Level Error
         }
     }
+
+    $VMResource = Get-AzVM -ResourceGroupName $RG -Name $VMName
+    $date = Get-Date -Format "yyyy-MM-dd"
+    $snapshotConfig = New-AzSnapshotConfig -SkuName Standard_LRS -OsType Windows -Location $VMResource.Location -CreateOption 'copy' -SourceUri $VMResource.StorageProfile.OsDisk.ManagedDisk.Id
+    New-AzSnapshot -ResourceGroupName $RG -SnapshotName "$($VMResource.Name)-OsDisk-$date-build" -Snapshot $snapshotConfig
 }
 
 function ConfigureBaseVM {
@@ -213,7 +220,7 @@ function ScriptBuild-Create-VM ($Random) {
         While ($Count -le $clientSettings.NumberofStandardVMs) {
             Write-AEBLog "Creating $Count of $($clientSettings.NumberofStandardVMs) VMs"
             $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
-            $VM = $VM -replace "%%%%",$random
+            $VM = $VM -replace '%%%%', $random
             $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if (!$VMCheck) {
                 CreateDesktop-Script -VMName $VM -VMSpec $deviceType
@@ -235,7 +242,7 @@ function ScriptBuild-Create-VM ($Random) {
         While ($Count -le $clientSettings.NumberofPackagingVMs) {
             Write-AEBLog "Creating $Count of $($clientSettings.NumberofPackagingVMs) VMs"
             $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
-            $VM = $VM -replace "%%%%",$random
+            $VM = $VM -replace '%%%%', $random
             $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if (!$VMCheck) {
                 CreateDesktop-Script -VMName $VM -VMSpec $deviceType
@@ -257,7 +264,7 @@ function ScriptBuild-Create-VM ($Random) {
         While ($Count -le $clientSettings.NumberofAdminStudioVMs) {
             Write-AEBLog "Creating $Count of $($clientSettings.NumberofAdminStudioVMs) VMs"
             $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
-            $VM = $VM -replace "%%%%",$random
+            $VM = $VM -replace '%%%%', $random
             $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if (!$VMCheck) {
                 CreateDesktop-Script -VMName $VM -VMSpec $deviceType
@@ -279,7 +286,7 @@ function ScriptBuild-Create-VM ($Random) {
         While ($Count -le $clientSettings.NumberofJumpboxVMs) {
             Write-AEBLog "Creating $Count of $($clientSettings.NumberofJumpboxVMs) VMs"
             $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
-            $VM = $VM -replace "%%%%",$random
+            $VM = $VM -replace '%%%%', $random
             $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if (!$VMCheck) {
                 CreateDesktop-Script -VMName $VM -VMSpec $deviceType
@@ -302,7 +309,7 @@ function ScriptBuild-Create-VM ($Random) {
         While ($Count -le $buildNumber) {
             Write-AEBLog "Creating $Count of $buildNumber VMs"
             $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
-            $VM = $VM -replace "%%%%",$random
+            $VM = $VM -replace '%%%%', $random
             $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if (!$VMCheck) {
                 CreateDesktop-Script -VMName $VM -VMSpec $deviceType
@@ -325,7 +332,7 @@ function ScriptBuild-Create-VM ($Random) {
         while ($count -le $buildNumber) {
             Write-AEBLog "Creating $count of $buildNumber VMs"
             $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
-            $VM = $VM -replace "%%%%",$random
+            $VM = $VM -replace '%%%%', $random
             $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if (!$VMCheck) {
                 CreateDesktop-Script -VMName $VM -VMSpec $deviceType
@@ -348,7 +355,7 @@ function ScriptBuild-Create-VM ($Random) {
         while ($count -le $buildNumber) {
             Write-AEBLog "Creating $count of $buildNumber VMs"
             $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
-            $VM = $VM -replace "%%%%",$random
+            $VM = $VM -replace '%%%%', $random
             $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if (!$VMCheck) {
                 CreateDesktop-Script -VMName $VM -VMSpec $deviceType
@@ -371,7 +378,7 @@ function ScriptBuild-Create-VM ($Random) {
         while ($count -le $buildNumber) {
             Write-AEBLog "Creating $count of $buildNumber VMs"
             $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
-            $VM = $VM -replace "%%%%",$random
+            $VM = $VM -replace '%%%%', $random
             $VMCheck = Get-AzVM -Name "$VM" -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
             if (!$VMCheck) {
                 CreateDesktop-Script -VMName $VM -VMSpec $deviceType
@@ -396,7 +403,7 @@ function ScriptBuild-Config-VM ($Random) {
         While ($Count -le $clientSettings.NumberofStandardVMs) {
             Write-AEBLog "Configuring $Count of $($clientSettings.NumberofStandardVMs) VMs"
             $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
-            $VM = $VM -replace "%%%%",$random
+            $VM = $VM -replace '%%%%', $random
             $builddate = (Get-AzVM -Name $vm -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName).TimeCreated | Get-Date -Format 'yyyy-MM-dd'
             $today = Get-Date -Format 'yyyy-MM-dd'
             if ($builddate -ge $today ) {
@@ -416,7 +423,7 @@ function ScriptBuild-Config-VM ($Random) {
         While ($Count -le $clientSettings.NumberofPackagingVMs) {
             Write-AEBLog "Configuring $Count of $($clientSettings.NumberofPackagingVMs) VMs"
             $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
-            $VM = $VM -replace "%%%%",$random
+            $VM = $VM -replace '%%%%', $random
             $builddate = (Get-AzVM -Name $vm -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName).TimeCreated | Get-Date -Format 'yyyy-MM-dd'
             #$builddate = (Get-AzVM -Name $vm).TimeCreated | Get-Date -Format 'yyyy-MM-dd'
             $today = Get-Date -Format 'yyyy-MM-dd'
@@ -437,7 +444,7 @@ function ScriptBuild-Config-VM ($Random) {
         While ($Count -le $clientSettings.NumberofAdminStudioVMs) {
             Write-AEBLog "Configuring $Count of $($clientSettings.NumberofAdminStudioVMs) VMs"
             $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
-            $VM = $VM -replace "%%%%",$random
+            $VM = $VM -replace '%%%%', $random
             $builddate = (Get-AzVM -Name $vm -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName).TimeCreated | Get-Date -Format 'yyyy-MM-dd'
             #$builddate = (Get-AzVM -Name $vm).TimeCreated | Get-Date -Format 'yyyy-MM-dd'
             $today = Get-Date -Format 'yyyy-MM-dd'
@@ -458,7 +465,7 @@ function ScriptBuild-Config-VM ($Random) {
         While ($Count -le $clientSettings.NumberofJumpboxVMs) {
             Write-AEBLog "Configuring $Count of $($clientSettings.NumberofJumpboxVMs) VMs"
             $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
-            $VM = $VM -replace "%%%%",$random
+            $VM = $VM -replace '%%%%', $random
             $builddate = (Get-AzVM -Name $vm -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName).TimeCreated | Get-Date -Format 'yyyy-MM-dd'
             #$builddate = (Get-AzVM -Name $vm).TimeCreated | Get-Date -Format 'yyyy-MM-dd'
             $today = Get-Date -Format 'yyyy-MM-dd'
@@ -480,7 +487,7 @@ function ScriptBuild-Config-VM ($Random) {
         While ($Count -le $buildNumber) {
             Write-AEBLog "Configuring $count of $buildNumber VMs"
             $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
-            $VM = $VM -replace "%%%%",$random
+            $VM = $VM -replace '%%%%', $random
             $builddate = (Get-AzVM -Name $vm -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName).TimeCreated | Get-Date -Format 'yyyy-MM-dd'
             #$builddate = (Get-AzVM -Name $vm).TimeCreated | Get-Date -Format 'yyyy-MM-dd'
             $today = Get-Date -Format 'yyyy-MM-dd'
@@ -502,7 +509,7 @@ function ScriptBuild-Config-VM ($Random) {
         While ($Count -le $buildNumber) {
             Write-AEBLog "Configuring $count of $buildNumber VMs"
             $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
-            $VM = $VM -replace "%%%%",$random
+            $VM = $VM -replace '%%%%', $random
             $builddate = (Get-AzVM -Name $vm -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName).TimeCreated | Get-Date -Format 'yyyy-MM-dd'
             #$builddate = (Get-AzVM -Name $vm).TimeCreated | Get-Date -Format 'yyyy-MM-dd'
             $today = Get-Date -Format 'yyyy-MM-dd'
@@ -524,7 +531,7 @@ function ScriptBuild-Config-VM ($Random) {
         While ($Count -le $buildNumber) {
             Write-AEBLog "Configuring $count of $buildNumber VMs"
             $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
-            $VM = $VM -replace "%%%%",$random
+            $VM = $VM -replace '%%%%', $random
             $builddate = (Get-AzVM -Name $vm -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName).TimeCreated | Get-Date -Format 'yyyy-MM-dd'
             #$builddate = (Get-AzVM -Name $vm).TimeCreated | Get-Date -Format 'yyyy-MM-dd'
             $today = Get-Date -Format 'yyyy-MM-dd'
@@ -546,7 +553,7 @@ function ScriptBuild-Config-VM ($Random) {
         While ($Count -le $buildNumber) {
             Write-AEBLog "Configuring $count of $buildNumber VMs"
             $VM = $deviceSpecs.$deviceType.VMNamePrefix + $VMNumberStart
-            $VM = $VM -replace "%%%%",$random
+            $VM = $VM -replace '%%%%', $random
             $builddate = (Get-AzVM -Name $vm -ResourceGroup $clientSettings.rgs.($deviceSpecs.$deviceType.Environment).RGName).TimeCreated | Get-Date -Format 'yyyy-MM-dd'
             #$builddate = (Get-AzVM -Name $vm).TimeCreated | Get-Date -Format 'yyyy-MM-dd'
             $today = Get-Date -Format 'yyyy-MM-dd'
